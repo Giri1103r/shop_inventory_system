@@ -420,6 +420,21 @@
                                                 {{ $getInvestigation->remark }}
                                             </div>
                                         </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Risk Analysis</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                            </div>
+                                        </div>
+                                        @if ($getInvestigation->risk_analysis == 2)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Risk Analysis Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getInvestigation->risk_analysis_remark }}
+                                                </div>
+                                            </div>
+                                        @endif
+
                                     </div>
                                     @if ($getInvestigation->root_cause_analysis == 1)
                                         <div class="row mt-3 whywhy">
@@ -734,7 +749,8 @@
                                             @csrf
                                             <div class="row">
                                                 <input type="hidden" class="form-control" name="accident_report_id"
-                                                    id="accident_report_id" value="{{ encryptId($accident_report->id) }}">
+                                                    id="accident_report_id"
+                                                    value="{{ encryptId($accident_report->id) }}">
 
                                                 <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
                                                     class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
@@ -929,7 +945,8 @@
                                             @csrf
                                             <div class="row">
                                                 <input type="hidden" class="form-control" name="accident_report_id"
-                                                    id="accident_report_id" value="{{ encryptId($accident_report->id) }}">
+                                                    id="accident_report_id"
+                                                    value="{{ encryptId($accident_report->id) }}">
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="name" class="form-label">Approval By</label>

@@ -32,7 +32,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="incidentAdd"
-                                        action="{{ admin_url('incident/fire-incident/add/submit') }}"  enctype="multipart/form-data">
+                                        action="{{ admin_url('incident/fire-incident/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">

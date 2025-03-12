@@ -258,7 +258,7 @@ class SafetyPermit extends Model
         $equipment_checklist_inspection = $request->has('equipment_checklist_inspection') ? 1 : 0;
 
         $insert_array = array(
-            'permit_id' => $request->permit_id,
+            // 'permit_id' => $request->permit_id,
             'date' => DBdateformat($request->date),
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
@@ -1074,16 +1074,6 @@ class SafetyPermit extends Model
         return $list;
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ptw_safety'));
-
-        static::created(function ($model) {
-
-            $uniqueId = 'UAUC-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['uauc_notification_id' => $uniqueId]);
-        });
-    }
 
     public function permitData($id)
     {
@@ -1094,4 +1084,16 @@ class SafetyPermit extends Model
     {
         return SafetyPermit::where('reference_id', $id)->exists();
     }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ptw_safety'));
+
+        static::created(function ($model) {
+
+            $uniqueId = 'ORD/' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['permit_id' => $uniqueId]);
+        });
+    }
+
 }

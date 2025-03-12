@@ -34,7 +34,10 @@
                                     <form method="POST" id="hiraAdd"
                                         action="{{ admin_url('incident/hira-master/add/submit') }}">
                                         @csrf
-
+                                        <input type="hidden" name="incident_id" value="{{ $incident_id }}">
+                                        <input type="hidden" name="accident_id" value="{{ $accident_id }}">
+                                        <input type="hidden" name="fire_id" value="{{ $fire_id }}">
+                                        <input type="hidden" name="hiramoc_id" value="{{ $hiramoc_id }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">

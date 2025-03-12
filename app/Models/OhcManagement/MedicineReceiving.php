@@ -134,7 +134,7 @@ class MedicineReceiving extends Model
             'expire_date' => DBdateformat($request->expire_date),
             'hsn_id' => $request->hsn_id,
             'rate' => $request->rate,
-            'pack_id' => decryptId($request->pack_id),
+            'pack_id' => ($request->pack_id),
             'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'created_by' => Auth::id(),
 
@@ -142,7 +142,7 @@ class MedicineReceiving extends Model
 
         return $this->create($insert_array);
     }
-    public function updates($id, $hsn)
+    public function updates($id, $hsn, $pack)
     {
         $request = request();
 
@@ -155,7 +155,7 @@ class MedicineReceiving extends Model
             'expire_date' => DBdateformat($request->expire_date),
             'hsn_id' => $request->hsn_id ?? $hsn->id,
             'rate' => $request->rate,
-            'pack_id' => ($request->pack_id),
+            'pack_id' =>  $request->pack_id ?? $pack->id,
             'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
             'updated_by' => Auth::id(),
         );

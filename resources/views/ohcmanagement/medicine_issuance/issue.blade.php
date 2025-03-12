@@ -71,7 +71,7 @@
                                                 <h4 class="text-white">Medicine details</h4>
 
                                             </div>
-                                            <div
+                                            {{-- <div
                                                 class="d-flex justify-content-end align-items-center mb-3 button-container">
 
                                                 <button class="btn btn-primary add-row" type="button" id="add-row"
@@ -80,7 +80,7 @@
                                                 </button>
 
 
-                                            </div>
+                                            </div> --}}
 
                                         </div>
                                 </div class="mt-2">
@@ -93,7 +93,7 @@
                                                     <th>Medicine</th>
                                                     <th>Available Quantity</th>
                                                     <th>Quantity</th>
-                                                    <th>Action</th>
+                                                    {{-- <th>Action</th> --}}
                                                 </tr>
                                             </thead>
                                             <tbody id="medicine-tbody">
@@ -141,7 +141,7 @@
                                                             </div>
                                                         </td>
 
-                                                        <td>
+                                                        {{-- <td>
 
                                                             <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
                                                                 style="width: 30px; height: 30px;">
@@ -149,7 +149,7 @@
                                                             </div>
 
 
-                                                        </td>
+                                                        </td> --}}
                                                     </tr>
                                                 @endforeach
 

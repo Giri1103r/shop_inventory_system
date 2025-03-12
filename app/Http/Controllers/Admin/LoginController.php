@@ -13,6 +13,7 @@ use App\Mail\PasswordOTPEmail;
 use Illuminate\Support\Carbon;
 use App\Mail\PasswordResetEmail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Cache\RateLimiting\Limit;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -54,44 +55,41 @@ class LoginController extends Controller
             'password.required' => 'Please enter your password',
             'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
+
         $validator = Validator::make($request->all(), $rules, $messages);
-
         if ($validator->fails()) {
-
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $email         = $request->email;
-        $ipAddress     = $request->ip();
+        $email = strtolower($request->email);
+        $ipAddress = $request->ip();
+        $throttleKey = "login_attempts:" . $email;
+        if ($ipAddress) {
+            if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+                $lockoutTime = RateLimiter::availableIn($throttleKey);
+                $minutesLeft = ceil($lockoutTime / 60);
+                Session::flash('error', "Too many failed login attempts. Try again in $minutesLeft minutes.");
+                return back()->withErrors(['email' => "Too many failed login attempts. Try again in $minutesLeft minutes."]);
+            }
+        }
 
         $credentials = $request->only('email', 'password');
-        $remember = $request->has('remember') ? true : false;
+        $remember = $request->has('remember');
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-
-            RateLimiter::clear('login:password:' . $email);
-            RateLimiter::clear('login:email:' . $ipAddress);
+            RateLimiter::clear($throttleKey);
 
             $user = Auth::user();
+            session()->put('locale', $user->language ?: env('APP_LOCALE'));
 
-            if ($user->language == '' || $user->language == null) {
-                session()->put('locale', env('APP_LOCALE'));
-            } else {
-                session()->put('locale', $user->language);
-            }
-            $requested_url = session('requested_url');
-            Session::flash('success', 'Login successfully');
-            if ($requested_url != null) {
-                session()->forget('requested_url');
-                return redirect()->to($requested_url);
-            }
+            Session::flash('success', 'Login successful');
             return redirect()->intended(admin_url('dashboard'));
         }
-        Session::flash('error', 'Invalid Email and Password');
-        return back()->withErrors([
-            'email' => 'Email or Password is incorrect',
-        ]);
+        RateLimiter::hit($throttleKey, 1800);
+
+        Session::flash('error', 'Invalid Email or Password');
+        return back()->withErrors(['email' => 'Email or Password is incorrect']);
     }
 
 
@@ -117,7 +115,6 @@ class LoginController extends Controller
     public function sendOTP(Request $request)
     {
         try {
-
             $rules = [
                 'email' => 'required',
             ];
@@ -133,6 +130,8 @@ class LoginController extends Controller
             }
 
             $user = User::where('email', '=', $request->email)->first();
+
+
 
             if ($user == null) {
 
@@ -231,9 +230,9 @@ class LoginController extends Controller
 
     public function passwordOTP(Request $request)
     {
+
         $token = Session::get('token');
         $email = Session::get('email');
-
         if (!$token) {
             Session::flash('error', 'Access Denied!');
             return redirect()->back();
@@ -259,6 +258,7 @@ class LoginController extends Controller
             'token'  => $token,
             'expire' => $remainingMinutes,
         ];
+
 
         return view('auth.passwords.otp', $data);
     }

@@ -88,7 +88,8 @@
 
                 $('#year').datepicker({
                     format: 'yyyy',
-                    minViewMode: 1,
+                    minViewMode: 'years',
+                    viewMode: 'years',
                     autoclose: true
                 });
             });
@@ -140,9 +141,9 @@
 
                             if (medicineData && Array.isArray(medicineData) && medicineData.length > 0) {
                                 $(".selectedMonthYear").text(monthNames[parseInt(selectedYear) - 1] + " " +
-                                selectedYear);
+                                    selectedYear);
                                 $("#dataDiv").show();
-                                fillMonthDays(medicineData,  selectedYear, response
+                                fillMonthDays(medicineData, selectedYear, response
                                     .receiving || [], response.issuing || []);
                             } else {
                                 Swal.fire({

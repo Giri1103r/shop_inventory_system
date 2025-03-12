@@ -61,6 +61,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
+        $query = $query->where('masters_work.status',1);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -254,10 +255,10 @@ class Work extends Model
                     'designation' => $item['designation'] ?? null,
                     'wfemptype' => $item['wfemptype'] ?? null,
                     'skill' => $item['skill'] ?? null,
-                    'status' => 1,
+                    'status' => $item['status'],
                     'created_by' => Auth::id(),
                 ];
-
+                // dd($valuesToInsertOrUpdate ,$item );
                 // Check if record exists
                 if ($this->where('emp_id', $item['emp_id'])->exists()) {
                     $valuesToInsertOrUpdate['updated_at'] = now();
@@ -270,8 +271,12 @@ class Work extends Model
 
                 // Add to insertedRecords for tracking
                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
+
             }
+
+
         }
+
 
         // Return inserted or updated records
         return $insertedRecords;

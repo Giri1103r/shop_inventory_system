@@ -365,6 +365,7 @@ class DiscardController extends Controller
                 'Quantity',
                 'Remarks',
                 'Discard Date',
+                'Status',
                 'Created by',
                 'Created at'
             ];
@@ -379,7 +380,8 @@ class DiscardController extends Controller
                 $export[] =  getMedicinename($data->medicine_id);
                 $export[] = $data->quantity;
                 $export[] = $data->remarks;
-                $export[] = Displaydateformat($data->discard_date);;
+                $export[] = Displaydateformat($data->discard_date);
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -418,6 +420,7 @@ class DiscardController extends Controller
                 'Quantity',
                 'Remarks',
                 'Discard Date',
+                'Status',
                 'Created by',
                 'Created at'
             ];

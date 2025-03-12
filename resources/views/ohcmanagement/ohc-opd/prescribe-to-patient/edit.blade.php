@@ -90,7 +90,8 @@
                                             <div class="col-md-4 mb-2 unit">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control" value="{{getUnitname($opdpatient->unit_id) }}">
+                                                    {{-- <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
@@ -98,7 +99,7 @@
                                                                 @if ($list->id == $opdpatient->unit_id) selected @endif>
                                                                 {{ $list->unit_name }}</option>
                                                         @endforeach
-                                                    </select>
+                                                    </select> --}}
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -586,8 +587,8 @@
                         success: function(response) {
                             if (response.employee) {
                                 $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-                                // $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
-                                // $('#department_id').val(response.departments.department_name).prop('readonly', true);
+                                $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
+                                $('#unit_id').val(response.units.unit_name).prop('readonly', true);
                             } else {
                                 alert("No employee details found.");
                             }
@@ -655,9 +656,10 @@
             function toggleWorkerFields() {
                 if ($("#is_outside_worker").is(":checked")) {
                     $(".unit").hide();
+                    $('#emp_id').val(null).trigger('change');
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
-
+                   
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
 
 
@@ -1042,6 +1044,10 @@
                 },
                 "Invalid format."
             );
+            $.validator.addMethod("notEqual", function(value, element, param) {
+                let otherValue = $(param).val();
+                return this.optional(element) || (otherValue !== undefined && value !== otherValue);
+            }, "Emergency contact and mobile number should not be the same.");
 
             $('#opdpatient').validate({
                 rules: {
@@ -1084,20 +1090,23 @@
                     //     },
 
                     // },
+
+                    dob: {
+                        required: true,
+                    },
                     emergency_contact: {
                         required: true,
                         digits: true,
                         minlength: 10,
-                        maxlength: 10
-                    },
-                    dob: {
-                        required: true,
+                        maxlength: 10,
+                        notEqual: "#mobile_no"
                     },
                     mobile_no: {
                         required: true,
                         digits: true,
                         minlength: 10,
-                        maxlength: 10
+                        maxlength: 10,
+                        notEqual: "#emergency_contact"
                     },
                     suggested_by: {
                         required: true,
@@ -1246,12 +1255,15 @@
                         digits: "The Moblie contains only the numeric",
                         minlength: "mobile number minimum 10 required",
                         maxlength: "mobile number maximum 10 required",
+                        notEqual: "Emergency contact and mobile number should not be the same."
                     },
                     emergency_contact: {
                         required: "Please enter the Emergency Contact.",
                         digits: "The Moblie contains only the numeric",
                         minlength: "Emergency Contact minimum 10 required",
                         maxlength: "Emergency Contact maximum 10 required",
+                        notEqual: "Emergency contact and mobile number should not be the same."
+
                     },
                     time: {
                         required: "Please select the time.",

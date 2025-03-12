@@ -134,6 +134,19 @@ class ImportIssuancejob implements ShouldQueue
                 $i++;
                 continue;
             }
+            $medicineExists = MedicineIssuance::where('medicine_id', $medicine->id)->where('reference_id',$this->medicnieissuance->id)
+                ->where('status', 1)
+                ->exists();
+
+            if ($medicineExists) {
+                $cond_error_datas[] = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Medicine is already exist',
+                ];
+                $i++;
+                continue;
+            }
 
             // Try issuing medicine
             try {
@@ -142,7 +155,7 @@ class ImportIssuancejob implements ShouldQueue
                     'medicine_id' => $medicine->id,
                     'available_quantity' => $availablequantity,
                     'quantity' => $quantity,
-                    'created_by' => Auth::id(),
+                    'created_by' => 1,
                 ]);
                 $medicine_issuance[] = $issued_medicine;
             } catch (\Exception $e) {
@@ -158,7 +171,7 @@ class ImportIssuancejob implements ShouldQueue
             $i++;
         }
 
-        // Update inventory for successful entries
+        
         foreach ($medicine_issuance as $medicine) {
             $medicine_id = $medicine->medicine_id;
             $unitId = $this->medicnieissuance->unit_id;

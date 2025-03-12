@@ -126,14 +126,71 @@ class HiraController extends Controller
     {
 
         try {
-
-            $data = array();
+            
+            $accident_id = null;
+            $incidentId = null;
+            $fire_id = null;
+            $hiramoc = null;
+            $data = array(
+                'incident_id' => $incidentId,
+                'accident_id' => $accident_id,
+                'fire_id' => $fire_id,
+                'hiramoc_id' => $hiramoc,
+            );
             return view('ims.master.hira.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
-
+    public function addNewHiraIncident(Request $request, $incidentId ,$hiramoc)
+    {
+        try {
+            $accident_id = null;
+            $fire_id = null;
+            $data = array(
+                'incident_id' => $incidentId,
+                'accident_id' => $accident_id,
+                'fire_id' => $fire_id,
+                'hiramoc_id' => $hiramoc,
+            );
+            return view('ims.master.hira.add', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+    public function addNewHiraAccident(Request $request, $accidentId ,$hiramoc)
+    {
+        try {
+            $incident_id = null;
+            $fire_id = null;
+            $data = array(
+                'incident_id' => $incident_id,
+                'accident_id' => $accidentId,
+                'fire_id' => $fire_id,
+                'hiramoc_id' => $hiramoc,
+            );
+            return view('ims.master.hira.add', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+    public function addNewHiraFire(Request $request, $fireId ,$hiramoc)
+    {
+        try {
+            $incident_id = null;
+            $accident_id = null;
+            $data = array(
+                'incident_id' => $incident_id,
+                'accident_id' => $accident_id,
+                'fire_id' => $fireId,
+                'hiramoc_id' => $hiramoc,
+            );
+            return view('ims.master.hira.add', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+ 
     public function Store(Request $request)
     {
         try {
@@ -177,7 +234,7 @@ class HiraController extends Controller
             try {
 
 
-                $this->hira->store();
+                $hiraStore = $this->hira->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -187,7 +244,15 @@ class HiraController extends Controller
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
-
+            if ($request->incident_id) {
+                return redirect(admin_url('incident/initial-incident/investigation/' . ($request->incident_id)));
+            } elseif ($request->accident_id) {
+                return redirect(admin_url('accidentReport/investigation/' . ($request->accident_id)));
+            } elseif ($request->fire_id) {
+                return redirect(admin_url('incident/fire-incident/investigation/' . ($request->fire_id)));
+            } else {
+                return redirect(admin_url('incident/hira-master/list'));
+            }
             return redirect(admin_url('incident/hira-master/list'));
         } catch (Exception $ex) {
             dd($ex);

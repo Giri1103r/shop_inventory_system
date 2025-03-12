@@ -259,13 +259,31 @@ class FirstAidLocationController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $firstaidlocation_name = $request->firstaidlocation_name;
+            $location_id = $request->location_id;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->firstaidlocation->uniqueCheck($firstaidlocation_name);
+                $record = $this->firstaidlocation->uniqueCheck($location_id);
             } else {
                 $id = decryptId($id);
-                $record = $this->firstaidlocation->ExistuniqueCheck($firstaidlocation_name, $id);
+                $record = $this->firstaidlocation->ExistuniqueCheck($location_id, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
+
+    public function StationNumberUniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $station_number = $request->station_number;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->firstaidlocation->stationnumberuniqueCheck($station_number);
+            } else {
+                $id = decryptId($id);
+                $record = $this->firstaidlocation->stationnumberexistUniqueCheck($station_number, $id);
             }
             if ($record->count()) {
                 return Response::json(false);

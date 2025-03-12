@@ -2,53 +2,86 @@
     <form action="" id="hiramoc" method="POST" novalidate>
         @csrf
         <div class="modal-header">
-            <h5 class="modal-title">HIRA</h5>
+            <h5 class="modal-title">MOC</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body m-3">
-            <div class="d-flex justify-content-left my-3">
-                <a href="{{ admin_url('incident/hira-master/add')}}" class="btn btn-primary mx-2" id="newHira">New</a>
-                <button type="button" class="btn btn-secondary mx-2" id="existingMOC">Existing</button>
-            </div>
-            <input type="hidden" name="incident_id" value="{{ $incident_id }}">
-            <input type="hidden" name="accident_id" value="{{ $accident_id }}">
-            <input type="hidden" name="fireincident_id" value="{{ $fireincident_id }}">
+            @if ($newHiraList == null)
+                <div class="d-flex justify-content-left my-3">
+                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(2)) }}"
+                        class="btn btn-primary mx-2" id="newHira">New</a>
+                    <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
+                </div>
+            @endif
+
+            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
 
             <div class="row" id="existingMOCdiv" style="display: none;">
                 <label for="moc_id" class="form-label require">MOC</label>
                 <div class="col-sm-7 form-input">
-                    <select name="moc_id" id="moc_id" class="form-control" style="width: 100%">
-                        <option value="">Select MOC</option>
-                        @foreach ($hiraList as $hira)
-                            <option value="{{ encryptId($hira->id) }}">{{ $hira->services }}</option>
-                        @endforeach
+                    <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
+                        <option value="">Select HIRA</option>
+                        @if ($selectedhira != null)
+                            @foreach ($hiraList as $hira)
+                                <option value="{{ encryptId($hira->id) }}"
+                                    {{ $selectedhira->hira_id == $hira->id ? 'selected' : '' }}>
+                                    {{ $hira->services }}
+                                </option>
+                            @endforeach
+                        @else
+                            @foreach ($hiraList as $hira)
+                                <option value="{{ encryptId($hira->id) }}">{{ $hira->services }}</option>
+                            @endforeach
+                        @endif
                     </select>
                 </div>
             </div>
 
 
-            <div id="hiramocDetails" class="mt-3" style="display: none;">
-                <h5>HIRA Details</h5>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Source, Situation, Act,Activity, Product,Services</th>
-                        <td id="mocservice"></td>
-                    </tr>
-                    <tr>
-                        <th>Likelihood</th>
-                        <td id="moclikelihood"></td>
-                    </tr>
-                    <tr>
-                        <th>Risk Level</th>
-                        <td id="mocriskLevel"></td>
-                    </tr>
-                </table>
-            </div>
+
+            @if ($newHiraList != null)
+                <div id="hiraDetails" class="mt-3">
+                    <h5>HIRA Details</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Source, Situation, Act,Activity, Product,Services</th>
+                            <td style="font-weight: bold">{{ $newHiraList->services }}</td>
+                        </tr>
+                        <tr>
+                            <th>Likelihood</th>
+                            <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
+                        </tr>
+                        <tr>
+                            <th>Risk Level</th>
+                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                        </tr>
+                    </table>
+                </div>
+            @else
+                <div id="hiraDetails" class="mt-3" style="display: none;">
+                    <h5>HIRA Details</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Source, Situation, Act,Activity, Product,Services</th>
+                            <td id="service"></td>
+                        </tr>
+                        <tr>
+                            <th>Likelihood</th>
+                            <td id="likelihood"></td>
+                        </tr>
+                        <tr>
+                            <th>Risk Level</th>
+                            <td id="riskLevel"></td>
+                        </tr>
+                    </table>
+                </div>
+            @endif
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="savemoc">Save HIRA</button>
-
+            @if ($newHiraList == null)
+                <button type="button" class="btn btn-primary" id="saveHira">Save HIRA</button>
+            @endif
         </div>
     </form>
 </div>
@@ -58,9 +91,7 @@
 
         $('#savemoc').on('click', function() {
             var mocId = $('#moc_id').val(); // Get selected HIRA ID
-            var incidentId = "{{ $incident_id }}"; // Get incident ID
-            var accidentId = "{{ $accident_id }}";
-            var fireincident_id = "{{ $fireincident_id }}";  // Get incident ID
+            var fireincident_id = "{{ $fireincident_id }}"; // Get incident ID
 
             if (!mocId) {
                 alert('Please select a MOC before proceeding.');
@@ -73,8 +104,6 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     moc_id: mocId,
-                    incident_id: incidentId,
-                    accidentId: accidentId,
                     fireincident_id: fireincident_id
                 },
                 dataType: "json",
@@ -82,7 +111,7 @@
                     if (response.success) {
                         alert("MOC saved successfully!");
                         $('#saved_hira_id').val(response
-                        .moc_id); // Update the hidden input
+                            .moc_id); // Update the hidden input
                         $('#hiraModal').modal('hide');
                     } else {
                         alert("Failed to save MOC: " + response.message);

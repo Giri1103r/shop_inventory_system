@@ -112,32 +112,31 @@ class PpeStockinventory extends Model
 
     public function store($data)
     {
+        $itemcodes = PpeTypeMaster::where('status', 1)->get();
+        $itemCodeMapping = $itemcodes->pluck('ppe_name', 'item_code')->toArray();
 
-        $itemcodes = PpeTypeMaster::where('status',1)->get();
-        $itemCodeMapping = collect($itemcodes)->pluck('ppe_name', 'item_code')->toArray();
-        $groupedData = collect($data)->groupBy('ITEM_CODE');
-        foreach ($groupedData as $itemCode => $items) {
-            foreach ($items as $item) {
-                $insert_array = [
-                    'org' => $item['ORG'] ?? null,
-                    'inventory_item_id' => $item['INVENTORY_ITEM_ID'] ?? null,
-                    'item_code' => $item['ITEM_CODE'] ?? null,
-                    'ppe_name' => $itemCodeMapping[$itemCode] ?? null,
-                    'sub' => $item['SUB'] ?? null,
-                    'uom' => $item['UOM'] ?? null,
-                    'quantity' => $item['QTY'] ?? null,
-                    'item_description' => $item['ITEM_DESCRIPTION'] ?? null,
-                    'created_by' => 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+        $itemCode = $data['ITEM_CODE'] ?? null;
+        $ppeName = $itemCodeMapping[$itemCode] ?? null;
 
-                $this->updateOrInsert(['item_code' => $itemCode], $insert_array);
-            }
-        }
+        $insert_array = [
+            'org' => $data['ORG'] ?? null,
+            'inventory_item_id' => $data['INVENTORY_ITEM_ID'] ?? null,
+            'item_code' => $itemCode,
+            'ppe_name' => $ppeName,
+            'sub' => $data['SUB'] ?? null,
+            'uom' => $data['UOM'] ?? null,
+            'quantity' => $data['QTY'] ?? null,
+            'item_description' => $data['ITEM_DESCRIPTION'] ?? null,
+            'created_by' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
 
-        return true;
+        $this->updateOrInsert(['item_code' => $itemCode], $insert_array);
     }
+
+
+
 
 
 

@@ -425,7 +425,22 @@
                         {{ $getInvestigation->remark }}
                     </td>
                 </tr>
-
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Risk Analysis</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
+                    </td>
+                </tr>
+                @if ($getInvestigation->risk_analysis == 2)
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Risk Analysis Remark</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getInvestigation->risk_analysis_remark }}
+                        </td>
+                    </tr>
+                @endif
             </table>
 
             @if ($getInvestigation->root_cause_analysis == 1 && !empty($getwhywhy))

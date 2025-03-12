@@ -86,7 +86,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TRAINING_NOMINATION_COMPLETED') or define('TRAINING_NOMINATION_COMPLETED', 5);
         defined('TRAINING_START') or define('TRAINING_START', 6);
         defined('TRAINING_FEEDBACK_ADMIN_APPROVE') or define('TRAINING_FEEDBACK_ADMIN_APPROVE', 7);
-        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED',8);
+        defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED', 8);
 
 
 
@@ -109,6 +109,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_REQUISITION') or define('TYPE_OHC_MEDICINE_REQUISITION', 5);
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
+        defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
 
 
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
@@ -164,6 +165,14 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_PARAMEDICS_REJECTED') or define('STATUS_OHC_PARAMEDICS_REJECTED', 4);
         defined('STATUS_OHC_REQUISITION_OPEN') or define('STATUS_OHC_REQUISITION_OPEN', 5);
         defined('STATUS_OHC_REQUISITION_CLOSE') or define('STATUS_OHC_REQUISITION_CLOSE', 6);
+        // Medical Certificate
+
+        defined('STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST') or define('STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST', 1);
+        defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING', 2);
+        defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVED') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVED', 3);
+        defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
+        defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
+
 
 
         // IMS  EHS_REVIEW

@@ -56,6 +56,7 @@ use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
+use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
@@ -121,9 +122,9 @@ Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave'])
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
 
-Route::get('stockrequest', [CronController::class, 'stockrequest']);
-Route::get('stockupdate', [CronController::class, 'stockupdate']);
-Route::get('prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
+Route::get('cron/ohc/stockrequest', [CronController::class, 'stockrequest']);
+Route::get('cron/ohc/stockupdate', [CronController::class, 'stockupdate']);
+Route::get('cron/ohc/prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
 
 Route::get('test', [TestController::class,  'index']);
 
@@ -149,7 +150,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
 
         Route::get('login', [LoginController::class, 'showLoginForm']);
-        Route::post('logintry', [LoginController::class, 'authenticate'])->middleware('loginattempt');
+        Route::post('logintry', [LoginController::class, 'authenticate']);
         Route::post('logout', [LoginController::class, 'logout']);
         Route::get('reset-password', [LoginController::class, 'showResetForm'])->name('password.reset.form');
         Route::post('reset-password/store', [LoginController::class, 'resetPassword'])->name('password.reset.store');
@@ -868,6 +869,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [FirstAidLocationController::class, 'importSubmit']);
                 Route::post('/status', [FirstAidLocationController::class, 'statusChange']);
                 Route::post('/unique', [FirstAidLocationController::class, 'Uniquecheck']);
+                Route::post('/station-number-unique', [FirstAidLocationController::class, 'StationNumberUniquecheck']);
                 Route::get('/employeename', [FirstAidLocationController::class, 'employeename']);
             });
 
@@ -887,6 +889,32 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/import/submit', [CertifiedFirstAiderController::class, 'importSubmit']);
                 Route::post('/status', [CertifiedFirstAiderController::class, 'statusChange']);
                 Route::post('/unique', [CertifiedFirstAiderController::class, 'Uniquecheck']);
+            });
+
+            // medical Fitness Certificate
+
+            Route::group(['prefix' => 'ohc/medical-fitness/'], function () {
+                Route::get('/list', [MedicalFitnessCertificateController::class, 'index']);
+                Route::post('/list', [MedicalFitnessCertificateController::class, 'index']);
+                Route::get('/add', [MedicalFitnessCertificateController::class, 'add']);
+                Route::post('/add/submit', [MedicalFitnessCertificateController::class, 'store']);
+                Route::get('/edit/{id}', [MedicalFitnessCertificateController::class, 'edit']);
+                Route::post('/edit/submit', [MedicalFitnessCertificateController::class, 'update']);
+                Route::get('/view/{id}', [MedicalFitnessCertificateController::class, 'view']);
+                Route::get('/approval/view/{id}', [MedicalFitnessCertificateController::class, 'approval']);
+                Route::post('/delete', [MedicalFitnessCertificateController::class, 'delete']);
+                Route::get('/export/excel', [MedicalFitnessCertificateController::class, 'exportExcel']);
+                Route::get('/export/pdf', [MedicalFitnessCertificateController::class, 'exportPdf']);
+                Route::get('generalpdf/{id}', [MedicalFitnessCertificateController::class, 'generalpdf']);
+
+                Route::get('/sampledownload', [MedicalFitnessCertificateController::class, 'DownloadSample']);
+                Route::get('/import', [MedicalFitnessCertificateController::class, 'import']);
+                Route::post('/import/submit', [MedicalFitnessCertificateController::class, 'importSubmit']);
+                Route::post('/status', [MedicalFitnessCertificateController::class, 'statusChange']);
+                Route::post('/unique', [MedicalFitnessCertificateController::class, 'Uniquecheck']);
+                Route::post('/approvereject/submit', [MedicalFitnessCertificateController::class, 'doctorapproval']);
+                Route::post('/ehsheadapprove/submit', [MedicalFitnessCertificateController::class, 'ehsheadapproval']);
+
             });
 
 
@@ -943,6 +971,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalpdf/{id}', [MedicineReceivingController::class, 'generalpdf']);
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
                 Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
+                Route::post('/pack-id', [MedicineReceivingController::class, 'packid']);
+
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
@@ -1155,6 +1185,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/list', [HiraController::class, 'index']);
                 Route::post('/list', [HiraController::class, 'index']);
                 Route::get('/add', [HiraController::class, 'add']);
+                Route::get('/incident-investigation/add/{incident_id}/{hiramoc}', [HiraController::class, 'addNewHiraIncident']);
+                Route::get('/accident-investigation/add/{accident_id}/{hiramoc}', [HiraController::class, 'addNewHiraAccident']);
+                Route::get('/fire-investigation/add/{fire_id}/{hiramoc}', [HiraController::class, 'addNewHiraFire']);
                 Route::post('/add/submit', [HiraController::class, 'store']);
                 Route::get('/edit/{id}', [HiraController::class, 'edit']);
                 Route::post('/edit/submit', [HiraController::class, 'update']);
@@ -1246,6 +1279,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/actiontaken/submit', [AccidentReportController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [AccidentReportController::class, 'ehsApprovalSubmit']);
                 Route::get('/accidentpdf/{id}', [AccidentReportController::class, 'accidentExportPdf']);
+                Route::get('/gethiradetails/{hira_id}', [AccidentReportController::class, 'gethiradetails']);
+                Route::post('/savehira', [AccidentReportController::class, 'saveHira']);
+
+
 
             });
 

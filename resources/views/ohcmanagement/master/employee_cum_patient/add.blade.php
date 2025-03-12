@@ -56,7 +56,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
-                                                        class="form-control" placeholder="Employee Name" readonly>
+                                                        class="form-control" placeholder="Employee Name" >
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -75,7 +75,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date of Birth</label>
-                                                    <input type="text" name="dob" id="dob" class="form-control"
+                                                    <input type="text" name="dateofbirth" id="dateofbirth" class="form-control"
                                                         placeholder="Enter the DOB">
                                                 </div>
                                             </div>
@@ -117,10 +117,8 @@
             });
         });
         $(document).ready(function() {
-            flatpickr("#dob", {
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "d-m-Y",
+            flatpickr("#dateofbirth", {
+                dateFormat: "d-m-Y",
                 allowInput: true,
                 maxDate: function() {
                     var today = new Date();
@@ -129,22 +127,21 @@
                         18);
                     return minDate;
                 }(),
-                disableMobile: true
+
             });
         });
         $(document).ready(function() {
-            $('#is_outside_worker').change(function() {
-                if ($(this).is(':checked')) {
+    $('#is_outside_worker').change(function() {
+        if ($(this).is(':checked')) {
+            $('#emp_id').val(null).trigger('change').prop('disabled', true);
+            $('#emp_name').prop('readonly', false); 
+        } else {
+            $('#emp_id').prop('disabled', false);
+            $('#emp_name').prop('readonly', true);
+        }
+    });
+});
 
-                    $('#emp_name').prop('readonly', false);
-                    $('#emp_id').prop('disabled', true);
-                } else {
-
-                    $('#emp_name').prop('readonly', true);
-                    $('#emp_id').prop('disabled', false);
-                }
-            });
-        });
 
         $('#emp_id').select2({
             ajax: {
@@ -184,6 +181,7 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
                         }
@@ -218,7 +216,7 @@
                     employee_type: {
                         required: true,
                     },
-                    dob: {
+                    dateofbirth: {
                         required: true,
                     },
                     emp_id: {
@@ -247,7 +245,7 @@
                     employee_type: {
                         required: "Please select an employee type.",
                     },
-                    dob: {
+                    dateofbirth: {
                         required: "Date of birth is required.",
                     },
                     emp_id: {

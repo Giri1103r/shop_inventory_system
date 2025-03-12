@@ -58,8 +58,9 @@ class InitialFireIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status','ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status','ims_incident_status.bg_color','ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
+        $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();

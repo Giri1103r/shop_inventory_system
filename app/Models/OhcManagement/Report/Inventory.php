@@ -52,6 +52,12 @@ class Inventory extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('total_purchase', 'LIKE', '%' . $search . '%')
+                    ->orWhere('total_first_aid', 'LIKE', '%' . $search . '%')
+                    ->orWhere('total_prescribe', 'LIKE', '%' . $search . '%')
+                    ->orWhere('total_received', 'LIKE', '%' . $search . '%')
+                    ->orWhere('balance', 'LIKE', '%' . $search . '%')
+                    ->orWhere('total_issue', 'LIKE', '%' . $search . '%')
                     ->orWhere('unit_id', 'LIKE', '%' . $search . '%');
             });
         }
@@ -198,7 +204,7 @@ class Inventory extends Model
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
                 ->increment('balance', $balancedata);
-           
+
         }
     }
 

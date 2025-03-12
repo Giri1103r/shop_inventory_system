@@ -11,7 +11,8 @@ class Statuslog extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'incident_id',
+        'ims_type',
+        'ims_id',
         'from_status',
         'to_status',
         'remarks',

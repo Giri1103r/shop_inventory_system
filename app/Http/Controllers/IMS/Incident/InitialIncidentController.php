@@ -129,8 +129,8 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // }
-                         
-                            if ((CheckUserRole(ROLE_SUPERADMIN) && $row->accident_status != 9 ) || CheckUserRole(ROLE_EHS_HEAD) || $row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8 || $row->accident_status == 6 || $row->accident_status == 7 ) {
+
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) ) && ($row->incident_status == 1 || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 7)) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
@@ -150,11 +150,16 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
 
+                            // $getEHSVerify = $this->initialincident->getEHSVerifyincident($row->id);
 
-                            // if ($row->incident_status == 5 || $row->incident_status == 8) {
-                            //     $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
-                            // }
-                            if ($row->incident_status == 6) {
+                            // $employees = Employee::select('id','login_id')->where('id',  $getEHSVerify->team_member)->first();
+                          
+
+                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
+                            }
+
+                            if ($row->incident_status == 6 ) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) .  '" 
                                             class="edit-icon" 
                                             title="' . __('Corrective Action') . '">';
@@ -163,17 +168,6 @@ class InitialIncidentController extends Controller
                                             style="width: 20px;">';
                                 $btn .= '</a>';
                             }
-
-                            // if ($row->incident_status == 7) {
-                            //     $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
-                            // }
-
-
-                            if ($row->incident_status == 4) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
-                            }
-
-
 
                             $btn .= '<a href="' . admin_url('incident/initial-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -306,7 +300,7 @@ class InitialIncidentController extends Controller
                 $this->initialincidentevidence->store($initialincident);
                 $incident_status = STATUS_INCIDENT_REPORT;
                 $user_role = ROLE_EHS_HEAD;
-                $mailsubject = 'Safety Permit has been submitted';
+                $mailsubject = 'Incident has been submitted';
                 $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
                 $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
@@ -347,8 +341,8 @@ class InitialIncidentController extends Controller
                 );
                 notificationSave($notificationData);
                 $insert_array = array(
-                    'incident_type' => 1,
-                    'incident_id' => $initialincident->id,
+                    'ims_type' => 1,
+                    'ims_id' => $initialincident->id,
                     'from_status' => 0,
                     'to_status' => $incident_status,
                     'is_reject' => null,
@@ -650,7 +644,7 @@ class InitialIncidentController extends Controller
                         'id' => $incidentDetails->id,
                         'module' => 1,
                     )),
-                    'web_link' => admin_url('incident/initial-incident/review/' . encryptId($incidentDetails->id)),
+                    'web_link' => admin_url('incident/initial-incident/investigation/' . encryptId($incidentDetails->id)),
                     'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
@@ -658,8 +652,8 @@ class InitialIncidentController extends Controller
 
                 // Insert status log
                 $insert_array = array(
-                    'incident_type' => 1,
-                    'incident_id' => $incidentDetails->id,
+                    'ims_type' => 1,
+                    'ims_id' => $incidentDetails->id,
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
@@ -733,14 +727,45 @@ class InitialIncidentController extends Controller
     public function existingHira($incident_id, Request $request)
     {
         try {
-            $accident_id = null;
-            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
+            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
+            $inc_id = decryptId($incident_id);
+            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', '1')->first();
+            // dd($newHiraList,$inc_id);
 
+            $selectedhira = $this->hiramoc
+                ->select('id', 'hira_id', 'incident_id', 'hiramoc_status')
+                ->where('hiramoc_status', 'T')
+                ->where('incident_id', $inc_id)
+                ->where('hira_id', '!=', 0)
+                ->first();
             if ($request->ajax()) {
-                return view('ims.initial.incident.existinghira', compact('hiraList', 'accident_id', 'incident_id'))->render();
+                return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.initial.incident.existinghira', compact('hiraList', 'accident_id', 'incident_id'));
+            return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'));
+        } catch (Exception $error) {
+            return response()->json(['error' => $error->getMessage()], 500);
+        }
+    }
+    public function existingMOC($incident_id, Request $request)
+    {
+        try {
+            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
+            $inc_id = decryptId($incident_id);
+            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', 2)->first();
+            // dd($newHiraList,$inc_id);
+
+            $selectedhira = $this->hiramoc
+                ->select('id', 'moc_id', 'incident_id', 'hiramoc_status')
+                ->where('hiramoc_status', 'T')
+                ->where('incident_id', $inc_id)
+                ->where('moc_id', '!=', 0)
+                ->first();
+            if ($request->ajax()) {
+                return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'))->render();
+            }
+
+            return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -752,8 +777,7 @@ class InitialIncidentController extends Controller
 
 
             $HiraMoc = new HiraMoc();
-            $HiraMoc->incident_id = $request->incident_id;
-            $HiraMoc->accident_id = $request->accidentId;
+            $HiraMoc->incident_id = decryptId($request->incident_id);
             $HiraMoc->hira_id = decryptId($request->hira_id) ?? null;
             $HiraMoc->moc_id = decryptId($request->moc_id) ?? null;
             $HiraMoc->created_by = Auth::id();
@@ -767,21 +791,7 @@ class InitialIncidentController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
-    public function existingMOC($incident_id, Request $request)
-    {
-        try {
-            $accident_id = null;
-            $hiraList = $this->hira->select('id', 'services')->where('status', '1')->get();
 
-            if ($request->ajax()) {
-                return view('ims.initial.incident.existingMOC', compact('hiraList', 'accident_id', 'incident_id'))->render();
-            }
-
-            return view('ims.initial.incident.existingMOC', compact('hiraList', 'accident_id', 'incident_id'));
-        } catch (Exception $error) {
-            return response()->json(['error' => $error->getMessage()], 500);
-        }
-    }
     public function investigationSubmit(Request $request)
     {
         //  dd($request);
@@ -810,52 +820,55 @@ class InitialIncidentController extends Controller
 
             $this->hiramoc->updateinvestigation($incident_id, $incidentinvestigation->id);
 
+            $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
 
-            $initialincident = $this->initialincident->selectOne($incident_id);
-            $user_role = ROLE_EHS_HEAD;
-            $mailsubject = 'Risk Analysis';
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+            $teamMemberIds = explode(',', $getEHSReview->team_member);
 
+            $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
 
-            if (count($users) > 0) {
-                foreach ($users as $user) {
+            // Extract login IDs into an array for notification
+            $loginIds = $employees->pluck('login_id')->toArray();
 
-                    $email_id = $user->email;
+            $mailsubject = 'Investigation Submitted';
 
-                    if ($email_id != '' || $email_id != null) {
-                        $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
-                        $incidentarray  = $incidentDetails->toArray();
+            // Fetch incident details once, not inside the loop
+            $incidentDetails = $this->initialincident->selectOne($incident_id);
+            $incidentarray = $incidentDetails->toArray();
 
-                        $incidentarray['name'] = $user->name;
-                        $incidentarray['email_id'] =  $email_id;
-                        $incidentarray['mail_subject'] = $mailsubject;
+            foreach ($employees as $employee) {
+                $username = $employee->emp_name;
+                $email_id = $employee->email;
 
-                        Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
-                    }
+                if (!empty($email_id)) { // Corrected email validation
+                    $incidentarray['name'] = $username;
+                    $incidentarray['email_id'] = $email_id;
+                    $incidentarray['mail_subject'] = $mailsubject;
+
+                    Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
                 }
             }
 
+            // Use incidentDetails for notification data
             $notificationData = array(
                 'notification_type' => 3,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                    'icon' =>  admin_url('public/assets/icons/incident.png'),
-                    'id' => $initialincident->id,
+                    'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($incidentinvestigation->created_by),
+                    'icon' => admin_url('public/assets/icons/incident.png'),
+                    'id' => $incidentDetails->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
-                'assigned_user' => $initialincident->created_by,
+                'web_link' => admin_url('incident/initial-incident/approvereject/' . encryptId($incidentDetails->id)),
+                'assigned_user' => implode(',', $loginIds),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
             $insert_array = array(
-                'incident_type' => 1,
-                'incident_id' => $initialincident->id,
-                'from_status' => $initialincident->incident_status,
+                'ims_type' => 1,
+                'ims_id' => $incidentDetails->id,
+                'from_status' => $incidentDetails->incident_status,
                 'to_status' => $incident_status,
                 'is_reject' => null,
                 'remarks' => null,
@@ -932,61 +945,121 @@ class InitialIncidentController extends Controller
 
         try {
             $incident_id = decryptId($request->incident_id);
-            $incident_status = STATUS_RISKANALYSIS_PENDING;
+            $getInvestigation = $this->initialincident->getInvestigation($incident_id);
+            if ($getInvestigation->risk_analysis == 1) {
+                $incident_status = STATUS_RISKANALYSIS_PENDING;
+            } else {
+                $incident_status = STATUS_EHSVERIFY_PENDING;
+            }
             $this->initialincident->uaucsubmit($incident_id);
             $this->initialincident->updateStatus($incident_id, $incident_status);
             $initialincident = $this->initialincident->selectOne($incident_id);
-            $user_role = ROLE_EHS_HEAD;
-            $mailsubject = 'Risk Analysis';
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+            if ($getInvestigation->risk_analysis == 1) {
+                $user_role = ROLE_EHS_HEAD;
+                $mailsubject = 'Risk Analysis';
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
 
-            if (count($users) > 0) {
-                foreach ($users as $user) {
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
 
-                    $email_id = $user->email;
+                        $email_id = $user->email;
 
-                    if ($email_id != '' || $email_id != null) {
-                        // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
-                        $incidentarray  = $initialincident->toArray();
+                        if ($email_id != '' || $email_id != null) {
+                            // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
+                            $incidentarray  = $initialincident->toArray();
 
-                        $incidentarray['name'] = $user->name;
-                        $incidentarray['email_id'] =  $email_id;
-                        $incidentarray['mail_subject'] = $mailsubject;
+                            $incidentarray['name'] = $user->name;
+                            $incidentarray['email_id'] =  $email_id;
+                            $incidentarray['mail_subject'] = $mailsubject;
 
-                        Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        }
                     }
                 }
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'id' => $initialincident->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                $insert_array = array(
+                    'ims_type' => 1,
+                    'ims_id' => $initialincident->id,
+                    'from_status' => $initialincident->incident_status,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+
+                $this->Statuslog->create($insert_array);
+            } else {
+                $user_role = ROLE_EHS_HEAD;
+                $mailsubject = 'EHS Verification Pending';
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
+                            $incidentarray  = $initialincident->toArray();
+
+                            $incidentarray['name'] = $user->name;
+                            $incidentarray['email_id'] =  $email_id;
+                            $incidentarray['mail_subject'] = $mailsubject;
+
+                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        }
+                    }
+                }
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'id' => $initialincident->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                $insert_array = array(
+                    'ims_type' => 1,
+                    'ims_id' => $initialincident->id,
+                    'from_status' => $initialincident->incident_status,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+
+                $this->Statuslog->create($insert_array);
             }
-
-            $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                    'icon' =>  admin_url('public/assets/icons/incident.png'),
-                    'id' => $initialincident->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
-                'assigned_user' => $initialincident->created_by,
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = array(
-                'incident_type' => 1,
-                'incident_id' => $initialincident->id,
-                'from_status' => $initialincident->incident_status,
-                'to_status' => $incident_status,
-                'is_reject' => null,
-                'remarks' => null,
-                'approved_by' => Auth::id(),
-            );
-
-            $this->Statuslog->create($insert_array);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
@@ -1007,7 +1080,7 @@ class InitialIncidentController extends Controller
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
             $initialincident = $this->initialincident->selectOne($incident_id);
             $user_role = ROLE_EHS_HEAD;
-            $mailsubject = 'Risk Analysis';
+            $mailsubject = 'EHS Verification Pending';
             $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
@@ -1047,8 +1120,8 @@ class InitialIncidentController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = array(
-                'incident_type' => 1,
-                'incident_id' => $initialincident->id,
+                'ims_type' => 1,
+                'ims_id' => $initialincident->id,
                 'from_status' => $initialincident->incident_status,
                 'to_status' => $incident_status,
                 'is_reject' => null,
@@ -1118,8 +1191,8 @@ class InitialIncidentController extends Controller
                 notificationSave($notificationData);
 
                 $insert_array = array(
-                    'incident_type' => 1,
-                    'incident_id' => $incidentDetails->id,
+                    'ims_type' => 1,
+                    'ims_id' => $incidentDetails->id,
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
@@ -1186,8 +1259,8 @@ class InitialIncidentController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = array(
-                'incident_type' => 1,
-                'incident_id' => $initialincident->id,
+                'ims_type' => 1,
+                'ims_id' => $initialincident->id,
                 'from_status' => $initialincident->incident_status,
                 'to_status' => $incident_status,
                 'is_reject' => null,
@@ -1219,58 +1292,111 @@ class InitialIncidentController extends Controller
             }
             $incident_id = $ehsApproval->inicdent_report_id;
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
+            if ($request->has('approve')) {
+                $mailsubject = 'Incident Closed';
+                $Assignedusers = User::where('id', $initialincident->created_by)
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
 
-            $mailsubject = 'EHS Approved';
-            $Assignedusers = User::where('id', $initialincident->created_by)
-                ->select('name', 'email')
-                ->get()
-                ->unique('email');
+                if ($Assignedusers != null) {
 
-            if ($Assignedusers != null) {
+                    foreach ($Assignedusers as $user) {
 
-                foreach ($Assignedusers as $user) {
+                        $email_id = $user->email;
 
-                    $email_id = $user->email;
+                        if ($email_id != '' || $email_id != null) {
+                            // $safetypermitdetails =  $this->initialincident->selectmail($id);
+                            $incidentarray  = $initialincident->toArray();
 
-                    if ($email_id != '' || $email_id != null) {
-                        // $safetypermitdetails =  $this->initialincident->selectmail($id);
-                        $incidentarray  = $initialincident->toArray();
+                            $incidentarray['name'] = $user->name;
+                            $incidentarray['email_id'] =  $email_id;
+                            $incidentarray['mail_subject'] = $mailsubject;
 
-                        $incidentarray['name'] = $user->name;
-                        $incidentarray['email_id'] =  $email_id;
-                        $incidentarray['mail_subject'] = $mailsubject;
-
-                        Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        }
                     }
                 }
-            }
-            $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                    'icon' =>  admin_url('public/assets/icons/incident.png'),
-                    'id' => $initialincident->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('incident/initial-incident/view/' . encryptId($initialincident->id)),
-                'assigned_user' => $initialincident->created_by,
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = array(
-                'incident_type' => 1,
-                'incident_id' => $initialincident->id,
-                'from_status' => $initialincident->incident_status,
-                'to_status' => $incident_status,
-                'is_reject' => null,
-                'remarks' => null,
-                'approved_by' => Auth::id(),
-            );
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'id' => $initialincident->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('incident/initial-incident/view/' . encryptId($initialincident->id)),
+                    'assigned_user' => $initialincident->created_by,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                $insert_array = array(
+                    'ims_type' => 1,
+                    'ims_id' => $initialincident->id,
+                    'from_status' => $initialincident->incident_status,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
 
-            $this->Statuslog->create($insert_array);
+                $this->Statuslog->create($insert_array);
+            } else {
+
+                $user_role = ROLE_EHS_HEAD;
+                $mailsubject = 'EHS Rejected';
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+
+                if (count($users) > 0) {
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            // $incidentDetails =  $this->initialincident->selectOne($incident_id);
+                            $incidentarray  = $initialincident->toArray();
+
+                            $incidentarray['name'] = $user->name;
+                            $incidentarray['email_id'] =  $email_id;
+                            $incidentarray['mail_subject'] = $mailsubject;
+
+                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        }
+                    }
+                }
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'id' => $initialincident->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+                $insert_array = array(
+                    'ims_type' => 1,
+                    'ims_id' => $initialincident->id,
+                    'from_status' => $initialincident->incident_status,
+                    'to_status' => $incident_status,
+                    'is_reject' => null,
+                    'remarks' => null,
+                    'approved_by' => Auth::id(),
+                );
+
+                $this->Statuslog->create($insert_array);
+            }
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
@@ -1383,7 +1509,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             dd($ex);

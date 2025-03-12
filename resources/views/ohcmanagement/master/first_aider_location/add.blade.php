@@ -43,8 +43,8 @@
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
                                                         @foreach ($unit as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->unit_name }}</option>
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -172,8 +172,17 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
-,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                location_id: function() {
+                                    return $('#location_id').val();
+                                },
+                            },
+                        },
                     },
                     department_id: {
                         required: true,
@@ -188,8 +197,17 @@
                         required: true,
                         minlength: 3,
                         maxlength: 20,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/
-,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                station_number: function() {
+                                    return $('#station_number').val();
+                                },
+                            },
+                        },
                     },
                 },
                 messages: {
@@ -198,6 +216,7 @@
                         minlength: "Location Name must be at least 3 characters long.",
                         maxlength: "Location Name must not exceed 30 characters.",
                         pattern: "Location Name contains invalid characters.",
+                        remote:"Location Name Must Be Unique",
                     },
                     department_id: {
                         required: "Department is required.",
@@ -207,12 +226,14 @@
                     },
                     station_master: {
                         required: "Station master is required.",
+
                     },
                     station_number: {
                         required: "Station number is required.",
                         minlength: "Station number must be at least 3 characters long.",
                         maxlength: "Station number must not exceed 20 characters.",
                         pattern: "Station number contains invalid characters.",
+                        remote:"Station Number Must Be Unique",
                     },
                 },
                 errorElement: 'span',

@@ -96,7 +96,7 @@ class UserMedicineRequisition extends Model
             $query->where('ohc_management_user_medicine_requisition.created_at', '<=', $endDate);
         }
         if ($request->filled('status')) {
-            $query->where('ohc_management_user_medicine_requisition.approve_status', 'LIKE', '%' . $request->status . '%');
+            $query->where('ohc_management_user_medicine_requisition.approve_status',  $request->status . '%');
         }
 
         $org_total_counts = $query->count();

@@ -314,8 +314,9 @@ class PpeTypeMaster extends Model
 
     public function getppetypemaster()
     {
-        return PpeTypeMaster::where('trash', 'No')->where('status', 1)->pluck('item_code');
+        return PpeTypeMaster::where('trash', 'No')->where('status', 1)->pluck('item_code')->toArray();
     }
+
 
     protected static function booted()
     {

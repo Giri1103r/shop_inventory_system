@@ -39,8 +39,7 @@ use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\Permit\Statuslog;
-
-
+use App\Models\WorkerCompanyDetails;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,6 +59,8 @@ class CronController extends Controller
     private $medicine;
     private $medicine_stock;
     private $medicine_receiving;
+    private $worker_details;
+
 
     public function __construct()
     {
@@ -76,6 +77,7 @@ class CronController extends Controller
         $this->medicine = new Medicine();
         $this->medicine_stock = new MedicineStock();
         $this->medicine_receiving = new MedicineReceiving();
+        $this->worker_details = new WorkerCompanyDetails();
     }
     public function queueHigh()
     {
@@ -208,29 +210,48 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
+            $office_id = $this->worker_details->getofficeid();
 
-            $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI&fromDate={$fromDate}&toDate={$toDate}";
+            $responses = [];
+            $errors = [];
 
+            try {
+                foreach ($office_id as $company) {
+                    $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
 
-            $response = Http::get($apiUrl);
+                    $response = Http::get($apiUrl);
 
-            if ($response->successful()) {
-                $data = $response->json();
+                    if ($response->successful()) {
+                        $data = $response->json();
 
-                if (!empty($data)) {
-                    $work = $this->worktemp->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
-                } else {
-                    return response()->json(['message' => 'No data found in API response.']);
+                        if (!empty($data)) {
+                            $this->worktemp->store($data);
+                            $responses[] = "Data saved successfully";
+                        } else {
+                            $responses[] = "No data found in API response";
+                        }
+                    } else {
+                        $errors[] = "API request failed";
+                    }
                 }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
+
+                return response()->json([
+                    'message' => 'Processing completed.',
+                    'results' => $responses,
+                    'errors' => $errors
+                ]);
+
+            } catch (Exception $ex) {
+                report($ex);
+                return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
             }
+
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+
 
     public function workMasterTemp()
     {
@@ -238,22 +259,23 @@ class CronController extends Controller
             $fromDate = todayDbdate();
             $toDate = todayDbdate();
 
-            $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId=PNI&fromDate={$fromDate}&toDate={$toDate}";
+            $office_id = $this->worker_details->getofficeid();
+            foreach ($office_id as $company) {
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
 
 
-            $response = Http::get($apiUrl);
+                $response = Http::get($apiUrl);
 
-            if ($response->successful()) {
-                $data = $response->json();
+                if ($response->successful()) {
+                    $data = $response->json();
 
-                if (!empty($data)) {
-                    $work = $this->worktemp->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
-                } else {
-                    return response()->json(['message' => 'No data found in API response.']);
+                    if (!empty($data)) {
+                        $work = $this->worktemp->store($data);
+                        return response()->json(['message' => 'Data saved successfully.']);
+                    } else {
+                        return response()->json(['message' => 'No data found in API response.']);
+                    }
                 }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
             report($ex);
@@ -264,11 +286,9 @@ class CronController extends Controller
     {
 
         try {
-            $worktemp = Worktemp::select('*')->where('upload_status', '0')->where('status',1)->get();
-
+            $worktemp = Worktemp::select('*')->where('upload_status', 0)->where('status', 1)->get();
 
             if (!empty($worktemp)) {
-
 
                 $work = $this->work->store($worktemp);
                 if (empty($work)) {
@@ -382,7 +402,7 @@ class CronController extends Controller
     {
 
         try {
-            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->where('status',1)->get();
+            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->where('status', 1)->get();
             if (!empty($emp_temp)) {
 
                 $employee = $this->employee->store($emp_temp);
@@ -461,16 +481,18 @@ class CronController extends Controller
         try {
             $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            foreach ($itemcodes as $itemList) {
-                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemList}";
+            foreach ($itemcodes as $itemCode) {
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemCode}";
 
                 $response = Http::get($apiUrl);
 
                 if ($response->successful()) {
                     $data = $response->json();
 
-                    if ($data && is_array($data)) {
-                        $this->ppestock->store($data);
+                    if (!empty($data) && is_array($data)) {
+                        foreach ($data as $item) {
+                            $this->ppestock->store($item);
+                        }
                     } else {
                         return response()->json(['message' => 'No data found in API response.']);
                     }
@@ -498,7 +520,7 @@ class CronController extends Controller
         try {
             $medicinestock = Inventory::whereColumn('balance', '<', 'threshold_limit')
                 ->where('status', 1)
-                ->where('unit_id',1)
+                ->where('unit_id', 1)
                 ->get();
 
             $ids = $medicinestock->pluck('medicine_id')->toArray();
@@ -526,9 +548,6 @@ class CronController extends Controller
                             // $details['request_link'] = admin_url('ohc/medicine-stock-inventory/list');
 
                             Mail::to($details['email_id'])->queue(new MedicineStockEmail($details, $data));
-
-
-
                         }
                     }
                 }
@@ -593,7 +612,7 @@ class CronController extends Controller
 
 
                 $recipients = array_merge($ehsEmail, $ehsHeadEmail);
-                if(!empty($recipients)){
+                if (!empty($recipients)) {
                     Mail::to($recipients)->queue(new MedicineStockRequestEmail($medicineDetails));
                 }
 

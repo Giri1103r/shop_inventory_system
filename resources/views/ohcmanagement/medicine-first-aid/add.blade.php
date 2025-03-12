@@ -147,13 +147,13 @@
                                                             </td>
 
                                                             <td>
-                                                                <div class="row gap-2">
+
 
                                                                     <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </div>
-                                                                </div>
+                                                               
 
                                                             </td>
                                                         </tr>

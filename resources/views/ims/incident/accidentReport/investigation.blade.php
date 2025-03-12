@@ -411,6 +411,7 @@
                                             value="{{ encryptId($accidentId) }}">
                                         <input type="hidden" name="acc_prim_add" id="acc_prim_add"
                                             value="{{ 'acc_prim_add' }} ">
+                                        <input type="hidden" name="fishbone_image" id="fishbone_image">
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
@@ -617,7 +618,7 @@
                                                     </div>
                                                     <x-button dataId="{{ $accidentId ?? '' }}"
                                                         class="popupwindow btn btn-primary"
-                                                        href="{{ admin_url('accidentReport/existingHira/' . ($accidentId ?? '')) }}">
+                                                        href="{{ admin_url('accidentReport/existingHira/' . (encryptId($accidentId) ?? '')) }}">
                                                         HIRA
                                                     </x-button>
                                                 </div>
@@ -641,7 +642,7 @@
                                                     </div>
                                                     <x-button-moc dataId="{{ $accidentId ?? '' }}"
                                                         class="add popupwindow btn btn-primary"
-                                                        href="{{ admin_url('accidentReport/existingMOC/' . ($accidentId ?? '')) }}">
+                                                        href="{{ admin_url('accidentReport/existingMOC/' . (encryptId($accidentId) ?? '')) }}">
                                                     </x-button-moc>
                                                 </div>
 
@@ -719,7 +720,8 @@
                                                             class="form-label require">Responsible
                                                             Person</label>
                                                         <select name="responsible_person_id" id="responsible_person_id"
-                                                            class="form-control single-select" style="width: 100%">
+                                                            class="form-control single-select responsible_person"
+                                                            style="width: 100%">
                                                             <option value="">Select Responsible Person</option>
                                                         </select>
                                                     </div>
@@ -737,6 +739,27 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Remarks (If Any)</label>
                                                         <textarea class="form-control" name="remark" id="remark"></textarea>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mt-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="risk_analysis" class="form-label require">Risk
+                                                            Analaysis</label><br>
+                                                        <input type="radio" id="yes" name="risk_analysis"
+                                                            value="1">
+                                                        <label for="yes">Yes</label>
+                                                        <input type="radio" id="no" name="risk_analysis"
+                                                            value="2">
+                                                        <label for="no">No</label><br>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mt-2" id="risk_analysis_remark_container"
+                                                    style="display: none;">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Risk Analaysis Remarks</label>
+                                                        <textarea class="form-control" name="risk_analysis_remark" id="risk_analysis_remark"></textarea>
 
                                                     </div>
                                                 </div>
@@ -1536,7 +1559,8 @@
                                                                         <area alt="" title="A. Left Palm"
                                                                             data-map='hand-left-palm' shape="poly"
                                                                             coords="152,20,177,14,209,13,230,13,250,16,268,18,267,36,266,54,267,68,267,79,269,94,274,106,278,120,284,133,294,144,305,152,314,162,322,173,316,198,309,221,304,235,291,243,283,258,280,272,277,286,276,295,277,315,267,318,239,326,221,326,201,326,194,325,173,317,159,310,148,302,124,289,126,262,128,242,132,210,138,187,142,158,146,151,150,134,153,106" />
-                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Left Thumb Finger"
                                                                             data-map='hand-left-thumb' shape="poly"
                                                                             coords="364,237,372,253,378,261,388,269,394,275,391,283,384,287,366,283,350,275,335,263,319,243,312,236,304,234,311,211,320,185,325,174" />
                                                                         <area alt=""
@@ -1689,7 +1713,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1701,8 +1725,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                                    </div>-->
             </div>
         </div>
     </div>
@@ -1717,6 +1741,13 @@
                     $('#details-container').show();
                 } else {
                     $('#details-container').hide();
+                }
+            });
+            $('input[name="risk_analysis"]').on('change', function() {
+                if ($('#no').is(':checked')) {
+                    $('#risk_analysis_remark_container').show();
+                } else {
+                    $('#risk_analysis_remark_container').hide();
                 }
             });
 
@@ -1748,6 +1779,7 @@
 
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
+                minDate: "today"
             });
 
 
@@ -1866,7 +1898,7 @@
             });
 
 
-            $('#responsible_person_id').select2({
+            $('.responsible_person').select2({
                 ajax: {
                     url: "{{ url('accidentReport/getemployeename') }}",
                     dataType: 'json',
@@ -1907,7 +1939,17 @@
 
 
             $(".addwhywhyanalysis").on("click", function() {
+                let rowCount = $("#whywhyanalysisBody tr").length;
 
+                if (rowCount >= 5) {
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Limit Reached",
+                        text: "Maximum of 5 rows can be added.",
+                        confirmButtonColor: "#d33"
+                    });
+                    return;
+                }
                 console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
             <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
@@ -1968,116 +2010,43 @@
 
 
         });
-        $(function() {
-            $('#accidentinvestigation').validate({
-                rules: {
-                    'witness_id[]': {
-                        required: true,
-                    },
-                    'is_damaged[]': {
-                        required: true,
-                    },
-                    root_cause_analysis: {
-                        required: true,
-                    },
-                    is_treatment: {
-                        required: true,
-                    },
-                    action_taken: {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
-                    },
-                    details: {
-                        required: function(element) {
-                            return $('input[name="is_treatment"]:checked').val() === '1';
-                        },
-                        minlength: 3,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
-                    },
-                    corrective_preventive_action: {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
-                    },
-                    responsible_person_id: {
-                        required: true,
-                    },
-                    target_date: {
-                        required: true,
-                    },
-                },
-                messages: {
-                    'witness_id[]': {
-                        required: "Witness ID is required.",
-                    },
-                    'is_damaged[]': {
-                        required: "Was anything damaged is required.",
-                    },
-                    root_cause_analysis: {
-                        required: "Root cause analysis is required.",
-                    },
-                    is_treatment: {
-                        required: "Where the injured person receiving any treatment at present is required.",
-                    },
-                    action_taken: {
-                        required: "Action taken is required.",
-                        minlength: "Minimum 10 characters required.",
-                        maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                    },
-                    details: {
-                        required: "Please provide details of the treatment.",
-                        minlength: "Details must be at least 3 characters long.",
-                        maxlength: "Details cannot exceed 2000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
-                    },
-                    corrective_preventive_action: {
-                        required: "Corrective/preventive action is required.",
-                        minlength: "Minimum 10 characters required.",
-                        maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                    },
-                    responsible_person_id: {
-                        required: "Responsible person ID is required.",
-                    },
-                    target_date: {
-                        required: "Target date is required.",
-                    },
-                },
-
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    if (errors) {
-                        console.log(`There are ${errors} validation errors.`);
-                        validator.errorList.forEach(function(error) {
-                            console.log(
-                                `Field: ${error.element.name}, Error: ${error.message}`
-                            );
-                        });
-                    }
-                },
-            });
-        });
 
         $(document).ready(function() {
+
+            function initializeSelect2() {
+                $('.responsible_person').select2({
+                    ajax: {
+                        url: "{{ url('accidentReport/getemployeename') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.log("Error in AJAX request:", textStatus, errorThrown);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+            }
+
+            // Initialize select2 on page load
+            initializeSelect2();
+
             let injuryIndex = 0;
 
             // Add new injury details row
@@ -2143,6 +2112,10 @@
 
                 $(".injury-details-templat").append(newRow);
                 $(".single-select").select2();
+
+                addInjuryPersonValidation(injuryIndex);
+                initializeSelect2();
+
             });
 
             $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
@@ -2298,6 +2271,166 @@
                 }
             });
 
+            function addInjuryPersonValidation(injuryIndex) {
+                $(`select[name="injury_person[${injuryIndex}][injury_person_type]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Type is required."
+                    }
+                });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_name]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Name is required."
+                    }
+                });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_designation]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Designation is required."
+                    }
+                });
+                $(`select[name="injury_person[${injuryIndex}][injury_person_department_id]"], input[name="injury_person[${injuryIndex}][injury_person_department_id]"]`)
+                    .rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Injury Person Department is required."
+                        }
+                    });
+            }
+            $(function() {
+                $('#accidentinvestigation').validate({
+                    rules: {
+                        'injury_person[0][injury_person_type]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_name]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_designation]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_department_id]': {
+                            required: true,
+                        },
+                        'witness_id[]': {
+                            required: true,
+                        },
+                        'is_damaged[]': {
+                            required: true,
+                        },
+                        root_cause_analysis: {
+                            required: true,
+                        },
+                        is_treatment: {
+                            required: true,
+                        },
+                        action_taken: {
+                            required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        details: {
+                            required: function(element) {
+                                return $('input[name="is_treatment"]:checked').val() === '1';
+                            },
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                        },
+                        corrective_preventive_action: {
+                            required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        },
+                        responsible_person_id: {
+                            required: true,
+                        },
+                        target_date: {
+                            required: true,
+                        },
+                    },
+                    messages: {
+                        'injury_person[0][injury_person_type]': {
+                            required: "Injury Person Type is required."
+                        },
+                        'injury_person[0][injury_person_name]': {
+                            required: "Injury Person Name is required."
+                        },
+                        'injury_person[0][injury_person_designation]': {
+                            required: "Injury Person Designation is required."
+                        },
+                        'injury_person[0][injury_person_department_id]': {
+                            required: "Injury Person Department is required."
+                        },
+                        'witness_id[]': {
+                            required: "Witness ID is required.",
+                        },
+                        'is_damaged[]': {
+                            required: "Was anything damaged is required.",
+                        },
+                        root_cause_analysis: {
+                            required: "Root cause analysis is required.",
+                        },
+                        is_treatment: {
+                            required: "Where the injured person receiving any treatment at present is required.",
+                        },
+                        action_taken: {
+                            required: "Action taken is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        details: {
+                            required: "Please provide details of the treatment.",
+                            minlength: "Details must be at least 3 characters long.",
+                            maxlength: "Details cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        },
+                        corrective_preventive_action: {
+                            required: "Corrective/preventive action is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        responsible_person_id: {
+                            required: "Responsible person ID is required.",
+                        },
+                        target_date: {
+                            required: "Target date is required.",
+                        },
+                    },
+
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        if (errors) {
+                            console.log(`There are ${errors} validation errors.`);
+                            validator.errorList.forEach(function(error) {
+                                console.log(
+                                    `Field: ${error.element.name}, Error: ${error.message}`
+                                );
+                            });
+                        }
+                    },
+                });
+
+            });
 
 
 
