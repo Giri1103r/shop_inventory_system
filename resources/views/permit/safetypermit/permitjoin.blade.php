@@ -56,14 +56,14 @@
             border-spacing: 0;
             border-collapse: collapse;
             background-color: #fff;
-            
+
         }
 
         .details-table td {
             padding: 10px;
             text-align: left;
             vertical-align: middle;
-            
+
         }
 
         .details-table td:nth-child(2) {
@@ -75,7 +75,7 @@
             padding: 10px;
             font-weight: bold;
             text-align: left;
-            
+
         }
 
         .qr-code-container {

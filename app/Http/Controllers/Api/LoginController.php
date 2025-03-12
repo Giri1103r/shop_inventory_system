@@ -65,7 +65,7 @@ class LoginController extends BaseController
                 return $this->sendError('Invalid user details', ['error' => 'Unauthorised'], 406);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Invalid user details', ['error' => 'Unauthorised'], 406);
         }
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Permit;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
+use App\Mail\SafetyPermitEmail;
 use App\Models\Permit\SafetyApproveReject;
 use App\Models\Permit\SafetyPermit;
 use Exception;
@@ -11,6 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Permit\SafetyPermitExtension;
 use App\Models\Permit\Statuslog;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SafetyPermitController extends BaseController
 {
@@ -31,7 +37,11 @@ class SafetyPermitController extends BaseController
     public function list(Request $request)
     {
         if (Auth::user()) {
-            $search = '';
+            if ($request->has('search')) {
+                if ($request->search != '' && $request->search != null) {
+                    $search = $request->search;
+                }
+            }
             $empid = Auth::id();
 
             $user = Auth::user();
@@ -51,12 +61,15 @@ class SafetyPermitController extends BaseController
             } else {
                 $safety_permit_array = SafetyPermit::select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $empid);
             }
-            if (!empty($request->search['value'])) {
-                $search = $request->search['value'];
-                $safety_permit_array = $safety_permit_array->where(function ($query) use ($search) {
-                    $query->orWhereRaw('permit_id LIKE ?', ["%{$search}%"]);
+            if (!empty($search)) {
+                $searchDate = DBdateformat($search);
+
+                $safety_permit_array->where(function ($query) use ($searchDate, $search) {
+                    $query->whereDate('ptw_safety.date', $searchDate)
+                          ->orWhere('ptw_safety.permit_id', $search);
                 });
             }
+
 
             $safety_permit_array = $safety_permit_array->orderBy('ptw_safety.id', 'DESC')->paginate($request->input('per_page', 10));
 
@@ -178,6 +191,100 @@ class SafetyPermitController extends BaseController
 
                     ];
                 }
+                $protective_equip = [];
+
+                foreach ($safetypermit->mapped_protective_equip as $job => $details) {
+                    foreach ($details['checkpoint_names'] as $checkpoint_name) {
+                        $protective_equip[] = [
+                            'name' => $checkpoint_name,
+                            'checked' => 'Yes'
+                        ];
+                    }
+                }
+                // equipment involve
+                $equipment_involve = [];
+
+                foreach ($safetypermit->mapped_equiment_involved as $job => $details) {
+                    foreach ($details['checkpoint_names'] as $checkpoint_name) {
+                        $equipment_involve[] = [
+                            'name' => $checkpoint_name,
+                            'checked' => 'Yes'
+                        ];
+                    }
+                }
+
+                // precaution taken
+
+                $precaution_taken = [];
+
+                foreach ($safetypermit->mapped_precaution_taken as $job => $details) {
+                    foreach ($details['checkpoint_names'] as $checkpoint_name) {
+                        $precaution_taken[] = [
+                            'name' => $checkpoint_name,
+                            'checked' => 'Yes'
+                        ];
+                    }
+                }
+
+                // equipment checklist
+                $equipment_checklist = [];
+
+                foreach ($safetypermit->mapped_equipment_checklist as $job => $details) {
+                    foreach ($details['checkpoint_names'] as $checkpoint_name) {
+                        $equipment_checklist[] = [
+                            'name' => $checkpoint_name,
+                            'checked' => 'Yes'
+                        ];
+                    }
+                }
+
+                $safework_instruction = [];
+
+                foreach ($safetypermit->mapped_safework_instruction as $job => $details) {
+                    foreach ($details['checkpoint_names'] as $checkpoint_name) {
+                        $safework_instruction[] = [
+                            'name' => $checkpoint_name,
+                            'checked' => 'Yes'
+                        ];
+                    }
+                }
+                $file_paths = [];
+
+                if (!empty($getEhSverification->file_paths)) {
+                    foreach (explode(',', $getEhSverification->file_paths) as $file) {
+                        $file_paths[] = [
+                            'filepath' => trim($file)
+                        ];
+                    }
+                }
+
+                $ptwstatusLogs = [];
+
+                if (!empty($status_log)) {
+
+
+                    foreach ($status_log as $status) {
+                        $logEntry = [
+                            'from_status' => isset($status['to_status']) ? $status['to_status'] : '-',
+                            'to_status' => isset($status['status_name']) ? $status['status_name'] : '-',
+                            'remarks' => isset($status['remarks']) ? $status['remarks'] : '-',
+                            'created_at' => isset($status['created_at']) ? Displaydateformat($status['created_at']) : '-',
+                        ];
+
+
+                        if ($status['to_status'] == 'EHS Approved') {
+                            $logEntry['additional_approval'] = [
+                                'next_status_1' => 'Plant Head Approval Pending',
+                                'next_status_2' => 'Plant Head Approved',
+                                'approved_by' => isset($status['approved_by']) ? getUsername($status['approved_by']) : '-',
+                                'approval_remarks' => isset($status['remarks']) ? $status['remarks'] : '-',
+                                'approval_date' => isset($status['created_at']) ? Displaydateformat($status['created_at']) : '-',
+                            ];
+                        }
+
+                        $ptwstatusLogs[] = $logEntry; // Push log entry to array
+                    }
+                }
 
                 $success = [
                     'id' => $safetypermit->id,
@@ -232,54 +339,146 @@ class SafetyPermitController extends BaseController
                     'confined_space_entry' => [
                         'o2' => [
                             'name' => "O2%",
-                            "O2" => $confined_space_entry->o2_percentage,
+                            "O2" => $confined_space_entry->o2_percentage ?? 'N/A',
                         ],
                         'system_isolated' => [
                             'name' => "System Isolated",
-                            "system_isolated_checked" => $confined_space_entry->system_isolated  == 1 ? 'Yes' : 'No',
+                            "system_isolated_checked" => $confined_space_entry && $confined_space_entry->system_isolated == 1 ? 'Yes' : 'No',
                         ],
                         'rescue_system' => [
                             'name' => "Rescue System Available",
-                            "rescue_system_checked" => $confined_space_entry->rescue_system  == 1 ? 'Yes' : 'No',
+                            "rescue_system_checked" => $confined_space_entry && $confined_space_entry->rescue_system  == 1 ? 'Yes' : 'No',
                         ],
                         'confined_attendant' => [
                             'name' => "Confined Space Attendant",
-                            "confined_attendant_checked" => $confined_space_entry->confined_attendant  == 1 ? 'Yes' : 'No',
+                            "confined_attendant_checked" => $confined_space_entry && $confined_space_entry->confined_attendant  == 1 ? 'Yes' : 'No',
                         ],
                         'attendant_name' => [
                             'name' => "Attendant Name",
-                            "attendant_name" => $confined_space_entry->attendant_name,
+                            "attendant_name" => $confined_space_entry->attendant_name ?? 'N/A',
                         ],
                         'register_entry_exits' => [
                             'name' => "Register for entry & exits ",
-                            "register_entry_exits_checked" => $confined_space_entry->register_entry_exits  == 1 ? 'Yes' : 'No',
+                            "register_entry_exits_checked" => $confined_space_entry && $confined_space_entry->register_entry_exits  == 1 ? 'Yes' : 'No',
                         ],
                         'other_gas' => [
                             'name' => "Any Other Gas / PPM",
-                            "other_gas_checked" => $confined_space_entry->other_gas  == 1 ? 'Yes' : 'No',
+                            "other_gas_checked" => $confined_space_entry && $confined_space_entry->other_gas  == 1 ? 'Yes' : 'No',
                         ],
                         'ppm_safe_to_enter' => [
                             'name' => "PPM and is therefore safe to enter from",
-                            "ppm_safe_to_enter" => $confined_space_entry->ppm_safe_to_enter ?? 'N/A',
+                            "ppm_safe_to_enter" => isset($confined_space_entry->ppm_safe_to_enter) ? $confined_space_entry->ppm_safe_to_enter : 'N/A',
                         ],
                         'to' => [
                             'name' => "PPM and is therefore safe to enter To",
-                            "to" => $confined_space_entry->to ?? 'N/A',
+                            "to" =>  isset($confined_space_entry->to) ? $confined_space_entry->to : 'N/A',
                         ],
                     ],
+
                     'protective_equipments_worn' => [
                         'images' => [
-                            "{{ url('public/assets/images/safetypermit/gloves.png') }}",
-                            "{{ url('public/assets/images/safetypermit/helmet.png') }}",
-                            "{{ url('public/assets/images/safetypermit/shoes.png') }}",
-                            "{{ url('public/assets/images/safetypermit/gloves (1).png') }}",
-                            "{{ url('public/assets/images/safetypermit/boots (1).png') }}",
-                            "{{ url('public/assets/images/safetypermit/boots.png') }}",
-                            "{{ url('public/assets/images/safetypermit/safety-goggles.png') }}",
-                                 
+                            url('public/assets/images/safetypermit/gloves.png'),
+                            url('public/assets/images/safetypermit/helmet.png'),
+                            url('public/assets/images/safetypermit/shoes.png'),
+                            url('public/assets/images/safetypermit/gloves (1).png'),
+                            url('public/assets/images/safetypermit/boots (1).png'),
+                            url('public/assets/images/safetypermit/boots.png'),
+                            url('public/assets/images/safetypermit/safety-goggles.png'),
+                        ],
+                        'protective_equipments_worn' => $protective_equip,
+                    ],
+                    'mandatory_notes_for_ppe' => [
+                        'PPEs must be of national/international standard.',
+                        'Damaged/defective PPEs shall not be used.',
+                        'Non-standard PPEs shall not be used.',
+                        'PPEs must be inspected before use.',
+                    ],
+                    'equipment_involved_job' => [
+                        'images' => [
+                            url('public/assets/images/safetypermit/flash.png'),
+                            url('public/assets/images/safetypermit/shoes.png'),
+                            url('public/assets/images/safetypermit/gloves (1).png'),
+                            url('public/assets/images/safetypermit/gloves.png'),
 
-                        ]
-                    ]
+                        ],
+                        'equipment_involved_job' => $equipment_involve,
+                        'others_if_any' => isset($safetypermit->equiment_involved_others) ? $safetypermit->equiment_involved_others : 'N/A'
+                    ],
+                    'precaution_taken' => [
+                        'precaution_taken' => $precaution_taken,
+                    ],
+                    'equipment_checklist' => [
+                        'equipment_checklist' => $equipment_checklist,
+                        'inspection_checklist_prior_to_start_work_checked' => $safetypermit->equipment_checklist_inspection == 1 ? 'Yes' : 'No'
+                    ],
+                    'safework_instruction' => [
+                        'safework_instruction' => $safework_instruction,
+                        'safe_work_procedure_discussed_in_tool_box_talk_before_start_the_work' => $safetypermit->toolbox_talk  == 1 ? 'Yes' : 'No',
+                        'tool_box_talk_given_by' => $safetypermit->talk_givenby,
+                    ],
+                    'mandatory_notes_for_equipments' => [
+                        'Equipemnt must be of national/international standard.',
+                        'Damaged/Defective equipment shall not be used.',
+                        'Equipment should be in good working condition.',
+                        'Non standard equipment shall not be used.',
+                    ],
+                    'list_of_workman_job' => [
+                        'workman' => $workmaninvolved->map(function ($workman) {
+                            return [
+                                'employee_code'   => $workman->emp_id,
+                                'name_of_workman' => $workman->workman_name,
+                                'designation'     => $workman->workman_desig,
+                                'department'      => $workman->department_name,
+                                'nature_of_job'   => $workman->nature_of_job,
+                            ];
+                        })->toArray(),
+                        ' assigned_job_physically_fit_for_duty' => $safetypermit->assigned_job  == 1 ? 'Yes' : 'No',
+                        'attendance_in_tool_box_talk' => $safetypermit->attendance_toolbox_talk
+                    ],
+                    'notes' => [
+                        ' Work Permit is mandatory for non routine work, third party working agency & high risk Job.',
+                        ' Work Permit is valid for 8 hours / Renewal may be extended as per unit head approval.',
+                        ' Work Permit will be canceled in case of emergency i.e Fire, weather condition, disaster etc.',
+                        ' Work permit is not valid without signature of Requestor, Verifier & Approver.',
+                        ' Safe Work procedure & method of statement must be discussed in the tool box talk.',
+                        '  Permit to be signed by (Requestor, Verifier & Approver) people not less than Site Engineer / Floor Manager.',
+                        ' Permit Safety compliance shall be discussed to all involved person in local language.',
+                    ],
+                    'ehs_verification' => [
+                        'approver_name' => $getEhSverification->approve_reject_by ?? '',
+                        'date' => isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '',
+                        'additional_suggestion' => $getEhSverification->remarks ?? '',
+                        'signature' => $file_paths // Use the correctly structured array
+                    ],
+                    'permit_extention' => [
+                        'approver_name' => getUsername(isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : ''),
+                        'date' =>  isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '',
+                        'time' => isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '',
+                        'remarks' => isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : ''
+                    ],
+                    'permit_extention_approval' => [
+                        'approver_name' => isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '',
+                        'date' =>  isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '',
+                        'remarks' => isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : ''
+                    ],
+                    'ehs_head_approval' => [
+                        'approver_name' => isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '',
+                        'date' =>  isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '',
+                        'remarks' => isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : ''
+                    ],
+                    'plant_head_approval' => [
+                        'approver_name' => isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '',
+                        'date' => isset($getplantheadapproval->date) ? Displaydateformat($getplantheadapproval->date) : '',
+                        'remarks' => isset($getplantheadapproval->remarks) ? $getplantheadapproval->remarks : ''
+                    ],
+                    'status_closed' => [
+                        'approver_name' => getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : ''),
+                        'date' => isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '',
+                        'remarks' => isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : ''
+                    ],
+                    'status_logs' => [
+                        'status_log' => $ptwstatusLogs
+                    ],
 
                 ];
 
@@ -288,8 +487,364 @@ class SafetyPermitController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function ehsapproval(Request $request)
+    {
+
+        try {
+
+            $rules = [
+                'ptw_id' => 'required',
+                'remarks' => 'required',
+                'status' => 'required',
+
+
+            ];
+            $messages = [
+                'ptw_id.required' => 'id is Required',
+                'remarks.required' => 'Remarks is Required',
+                'status.required' => 'Status is Required',
+
+
+
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error', $validator->errors(), 422);
+            }
+            $id = $request->ptw_id;
+            $safetypermit = $this->safetypermit->find($id);
+
+            if ($request->status == '1') {
+                $permit_status = STATUS_EHS_HOLD;
+            } elseif ($request->status == '2') {
+                $permit_status = STATUS_EHS_RESUME;
+            } elseif ($request->status == '3') {
+                $permit_status = STATUS_EHS_DECLINE;
+            } elseif ($request->status == '4') {
+                $permit_status = STATUS_EHS_REASSIGN;
+            } elseif ($request->status == '5') {
+
+                $permit_status = STATUS_PLANT_HEAD_PENDING;
+            }
+
+            $approve =   $this->approvereject->ehsapproval_api($permit_status, $safetypermit);
+            if ($request->status == '4') {
+                $this->safetypermit->reassignto_api($request->reassign_to, $id);
+            } elseif ($request->status == '2' || $request->status == '1') {
+                $this->safetypermit->resume_hold($approve->created_by, $id);
+            }
+            $this->safetypermit->permitstatus($permit_status, $id);
+
+            if ($request->status == '1') {
+
+                $mailsubject = 'EHS Holded the permit';
+                $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
+
+                if (count($Assignedusers) > 0) {
+
+                    foreach ($Assignedusers as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                    ->pluck('id')
+                    ->toArray();
+
+                $UserIdsCommaSeparated = implode(',', $UserIds);
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => $UserIdsCommaSeparated,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            } elseif ($request->status == '2') {
+                $mailsubject = 'EHS Resumed the permit';
+                $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
+                    ->select('name', 'email')
+                    ->get()
+                    ->unique('email');
+
+                if (count($Assignedusers) > 0) {
+
+                    foreach ($Assignedusers as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+                    ->pluck('id')
+                    ->toArray();
+
+                $UserIdsCommaSeparated = implode(',', $UserIds);
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => $UserIdsCommaSeparated,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            } elseif ($request->status == '3') {
+                $mailsubject = 'EHS declined the permit Rework the permit';
+                $notifywhere = array(
+                    'id' => $safetypermit->created_by,
+                );
+                $userids = User::where($notifywhere)->pluck('id')->toArray();
+                $users = User::where($notifywhere)->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            } elseif ($request->status == '4') {
+                $mailsubject = 'EHS Re-assigned the permit';
+                $notifywhere = array(
+                    'id' => $request->reassign_to,
+                );
+                $userids = User::where($notifywhere)->pluck('id')->toArray();
+                $users = User::where($notifywhere)->get();
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            } elseif ($request->status == '5') {
+                // dd('STATUS_PLANT_HEAD_PENDING', $request);
+                $mailsubject = 'EHS Approved';
+                $user_role = ROLE_PLANT_HEAD;
+
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+
+
+
+                if (count($users) > 0) {
+
+                    foreach ($users as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
+                            $permitrray  = $safetypermitdetails->toArray();
+
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+
+
+                /**
+                 * Send Web notification
+                 */
+
+                $notificationData = array(
+                    'notification_type' => 3,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
+                        'id' => $safetypermit->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+            }
+
+            $insert_array = array(
+                'permit_type' => 2,
+                'permit_id' => $id,
+                'from_status' => 2,
+                'to_status' => $permit_status,
+                'is_reject' => null,
+                'remarks' => $request->remarks,
+                'approved_by' => Auth::id(),
+            );
+
+            $this->statuslog->create($insert_array);
+            $success = [
+                'ptw_id' => $id
+            ];
+            return $this->sendResponse($success, 'Responded successfully');
+        } catch (Exception $ex) {
+
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function qrcode(Request $request)
+    {
+        try {
+            $ptw_id = $request->ptw_id;
+
+
+            $safetypermit = $this->safetypermit->selectOne($ptw_id);
+
+
+            if (!$safetypermit) {
+                return $this->sendError('Permit not found.', ['error' => 'Invalid PTW ID'], 404);
+            }
+
+
+            $url = admin_url('safetypermit/join/' . $ptw_id);
+            $qrSvg = QrCode::size(150)
+                ->backgroundColor(255, 255, 255)
+                ->color(1, 1, 1)
+                ->generate($url);
+
+
+            $qrBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
+
+
+            $success = [
+                'permit_no' => get_permit_no($ptw_id),
+                'date' => isset($safetypermit->date) ? Displaydateformat($safetypermit->date) : '-',
+                'from_time' => $safetypermit->time_from ?? '-',
+                'to_time' => $safetypermit->time_to ?? '-',
+                'unit_id' => isset($safetypermit->unit_id) ? getUnitname($safetypermit->unit_id) : '-',
+                'exact_location_job' => $safetypermit->exact_location_job ?? '-',
+                'job_location_area' => $safetypermit->job_location_area ?? '-',
+                'created_by' => isset($safetypermit->created_by) ? getUsername($safetypermit->created_by) : '-',
+                'qr_code' => $qrBase64,
+            ];
+
+            return $this->sendResponse($success, 'Safety Permit Qr Code');
+        } catch (Exception $ex) {
+            Log::error('QR Code Generation Error: ' . $ex->getMessage());
+            return $this->sendError('An error occurred.', ['error' => $ex->getMessage()], 500);
         }
     }
 }

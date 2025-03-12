@@ -395,4 +395,20 @@ class SafetyApproveReject extends Model
             $model->update(['uauc_notification_id' => $uniqueId]);
         });
     }
+
+    public function ehsapproval_api($ptw_status, $safetypermit)
+    {
+        $request = request();
+
+        $insert_array = array(
+            'permit_id' =>  $safetypermit->id,
+            'approve_reject_type' => 2,
+            'approve_reject_by' =>$request->approver_name,
+            'date' => DBdatetimeformat($request->date),
+            'remarks' => $request->remarks,
+            'approve_reject_status' => $ptw_status,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
 }
