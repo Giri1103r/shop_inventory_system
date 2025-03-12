@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LeftMenu;
 use App\Models\UserPermission;
+use App\Models\Master\UserRole;
 
 class RoleMiddleware
 {
@@ -25,11 +26,14 @@ class RoleMiddleware
             $menuDetails = LeftMenu::where('namekey', $module)->first();
             if ($menuDetails != null) {
                 $menuId = $menuDetails->id;
-
-                $whereArray = [
-                    'menu_id' => $menuId,
-                    'role_id' => Auth::user()->role,
-                ];
+                $roleIds = string_to_array(Auth::user()->role);
+                $userRoles =  UserRole::whereIn('id', $roleIds)->get();
+                foreach ($userRoles as $role) {
+                    $whereArray = [
+                        'menu_id' => $menuId,
+                        'role_id' => $role,
+                    ];
+                }
 
                 $permissionList = UserPermission::where($whereArray)->first();
 

@@ -238,7 +238,6 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                   
                 }
             }
 
@@ -251,16 +250,6 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('sort_order', 'asc')
                 ->get();
 
-                $sql = $menu->toSql();
-                $bindings = $menu->getBindings();
-    
-                // Use vsprintf to replace the placeholders with the bindings
-                $fullSql = vsprintf(str_replace('?', '%s', $sql), array_map(function ($binding) {
-                    return is_numeric($binding) ? $binding : "'$binding'";
-                }, $bindings));
-    
-                dd($fullSql);
-                // dd($menu);
             $menu_lsit = get_admin_menu($menu);
 
             View::share('left_menu', $menu_lsit);
