@@ -1096,4 +1096,14 @@ class SafetyPermit extends Model
         });
     }
 
+    public function reassignto_api($reassignto, $id)
+    {
+
+        $reassignto = [
+            'reassign_to' => $reassignto,
+        ];
+
+        return $this->where('id', $id)->update($reassignto);
+    }
+
 }

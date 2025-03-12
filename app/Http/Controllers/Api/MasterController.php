@@ -30,6 +30,7 @@ class MasterController extends BaseController
                 $employeeList = Employee::select(
                     'masters_employee.id',
                     'masters_employee.emp_name',
+                    'masters_employee.login_id',
                     'masters_employee.emp_id',
                     'masters_department.id as department_id',
                     'masters_department.department_name'
@@ -42,6 +43,7 @@ class MasterController extends BaseController
                             'id' => $employee->id,
                             'emp_name' => $employee->emp_name,
                             'emp_id' => $employee->emp_id,
+                            'login_id' => $employee->login_id,
                             'department' => [
                                 'id' => $employee->department_id,
                                 'department_name' => $employee->department_name

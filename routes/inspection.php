@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
+use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 
 
-Route::group(['prefix' => 'inspection/master'], function () {
+Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
         Route::GET('/list', [ChecklistTypeController::class, 'Index']);
         Route::POST('/list', [ChecklistTypeController::class, 'Index']);
@@ -23,25 +24,22 @@ Route::group(['prefix' => 'inspection/master'], function () {
         Route::GET('/sampledownload', [ChecklistTypeController::class, 'DownloadSample']);
         Route::POST('/lists', [ChecklistTypeController::class, 'Checklists']);
     });
-    
+
+    Route::group(['prefix' => 'checklist-sub-type-data/'], function () {
+        Route::get('list', [ChecklistSubTypeDataController::class, 'index']);
+        Route::post('list', [ChecklistSubTypeDataController::class, 'index']);
+        Route::get('add', [ChecklistSubTypeDataController::class, 'add']);
+        Route::post('add/submit', [ChecklistSubTypeDataController::class, 'store']);
+        Route::get('edit/{id}', [ChecklistSubTypeDataController::class, 'edit']);
+        Route::post('edit/submit', [ChecklistSubTypeDataController::class, 'update']);
+        Route::get('view/{id}', [ChecklistSubTypeDataController::class, 'view']);
+        Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
+        Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
+        Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
+        Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
+        Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
+        Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
+        Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
+        Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
+    });
 });
-
-
-  //CheckList Category Master Routes
-
-  // CheckList Subcategory Master Routes
-//   Route::GET('master/check_sub_cat/list', [TestChecklistSubCategoryController::class, 'Index']);
-//   Route::POST('master/check_sub_cat/list', [TestChecklistSubCategoryController::class, 'Index']);
-//   Route::GET('master/check_sub_cat/add', [TestChecklistSubCategoryController::class, 'Add']);
-//   Route::POST('master/check_sub_cat/add/submit', [TestChecklistSubCategoryController::class, 'Store']);
-//   Route::POST('master/check_sub_cat/unique', [TestChecklistSubCategoryController::class, 'Uniquecheck']);
-//   Route::GET('master/check_sub_cat/edit/{id}', [TestChecklistSubCategoryController::class, 'Edit']);
-//   Route::POST('master/check_sub_cat/edit/submit', [TestChecklistSubCategoryController::class, 'Update']);
-//   Route::GET('master/check_sub_cat/view/{id}', [TestChecklistSubCategoryController::class, 'View']);
-//   Route::POST('master/check_sub_cat/delete', [TestChecklistSubCategoryController::class, 'Delete']);
-//   Route::POST('master/check_sub_cat/status', [TestChecklistSubCategoryController::class, 'StatusChange']);
-//   Route::GET('master/check_sub_cat/export/excel', [TestChecklistSubCategoryController::class, 'ExportExcel']);
-//   Route::GET('master/check_sub_cat/export/pdf', [TestChecklistSubCategoryController::class, 'ExportPDF']);
-//   Route::GET('master/check_sub_cat/import', [TestChecklistSubCategoryController::class, 'Import']);
-//   Route::POST('master/check_sub_cat/import/submit', [TestChecklistSubCategoryController::class, 'ImportSubmit']);
-//   Route::GET('master/check_sub_cat/sampledownload', [TestChecklistSubCategoryController::class, 'DownloadSample']);
