@@ -170,7 +170,7 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
         defined('EHS_VERIFY') or define('EHS_VERIFY', 2);
         defined('EHS_APPROVAL') or define('EHS_APPROVAL', 3);
-        
+
         // IMS Incident
 
         defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
@@ -186,13 +186,20 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_ACCIDENT_CLOSED') or define('STATUS_ACCIDENT_CLOSED', 9);
         defined('STATUS_INCIDENT_CLOSED') or define('STATUS_INCIDENT_CLOSED', 9);
 
+
+
+
+        //Incident
+        defined('CHECKLIST_TYPE') or define('CHECKLIST_TYPE', 1);
+        defined('CHECKLIST_SUB_TYPE') or define('CHECKLIST_SUB_TYPE', 2);
+
         View::composer('*', function ($view) {
 
             /**
              * Left Menu Function
              */
 
-            $mymenu = range(1, 150);
+            $mymenu = range(1, 300);
 
             if (Auth::check()) {
 
@@ -209,7 +216,7 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu = array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                    $mymenu = range(1, 150);
+                    $mymenu = range(1, 300);
                 } else {
 
                     $roleIds = string_to_array(Auth::user()->role);

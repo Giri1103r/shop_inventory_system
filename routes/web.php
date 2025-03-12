@@ -162,7 +162,6 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
         Route::middleware(['islogin', 'language'])->group(function () {
-
             Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
             Route::get('home', [AdminController::class, 'index'])->name('home');
             Route::get('profile', [AdminController::class, 'profileView']);
@@ -753,7 +752,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/deleteworkmaninvolved/{rowId}', [SafetyPermitController::class, 'deleteworkmaninvolved']);
             });
             Route::group(['prefix' => 'ppe_exemption'], function () {
-
                 Route::get('/list', [PpeExemptionController::class, 'index']);
                 Route::post('/list', [PpeExemptionController::class, 'index']);
                 Route::get('/add', [PpeExemptionController::class, 'add']);
@@ -786,6 +784,15 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc'], function () {
                 Route::get('/dashboard', [OhcDashboardController::class, 'index']);
             });
+
+
+            $routesFile = base_path("routes/inspection.php");
+            Route::middleware(['web'])
+                ->namespace('App\\Http\\Controllers')
+                ->group(function () use ($routesFile) {
+                    require $routesFile;
+                });
+
 
             Route::group(['prefix' => 'ohc/medicine'], function () {
                 Route::get('/list', [MedicineController::class, 'index']);
