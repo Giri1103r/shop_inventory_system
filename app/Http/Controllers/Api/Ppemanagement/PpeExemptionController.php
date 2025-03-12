@@ -73,12 +73,13 @@ class PpeExemptionController extends BaseController
             }
 
             if (!empty($search)) {
-                $ppe_exemption_array->where(function ($query) use ($search) {
+                $searchDate = DBdateformat($search);
+                $ppe_exemption_array->where(function ($query) use ($search,$searchDate) {
                     $query->orWhere('ppe_ppeexemption.emp_id', 'LIKE', "%{$search}%")
+                    ->orWhereDate('ppe_ppeexemption.created_at', 'LIKE', "%{$searchDate}%")
                         ->orWhere('ppe_ppeexemption.emp_name', 'LIKE', "%{$search}%");
                 });
             }
-
 
             $ppe_exemption_array = $ppe_exemption_array->orderBy('ppe_ppeexemption.id', 'DESC')->paginate($request->input('per_page', 10));
 
@@ -230,14 +231,14 @@ class PpeExemptionController extends BaseController
 
                 // mobile push notification
 
-                $notifydata = [
-                    'title' => $message,
-                    'message' =>  $ppeexemption->emp_name . ' has a PPE Exemption at ' . ' created by ' . getUsername($ppeexemption->created_by),
-                    'module_id' => $ppeexemption->id,
-                    'module_type' => 1,
-                    'module_sub_type' => 1,
-                ];
-                mobilePushNotification(array_to_string($assigned_user), $notifydata);
+                // $notifydata = [
+                //     'title' => $message,
+                //     'message' =>  $ppeexemption->emp_name . ' has a PPE Exemption at ' . ' created by ' . getUsername($ppeexemption->created_by),
+                //     'module_id' => $ppeexemption->id,
+                //     'module_type' => 1,
+                //     'module_sub_type' => 1,
+                // ];
+                // mobilePushNotification(array_to_string($assigned_user), $notifydata);
                 $success = [
                     'ppe_exemption' => $ppeexemption->id
                 ];
@@ -247,7 +248,7 @@ class PpeExemptionController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -414,14 +415,14 @@ class PpeExemptionController extends BaseController
                     notificationSave($notificationData);
 
                     // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $emp_details->emp_name . ' has had their PPE Exemption Approved by ' . getUsername(Auth::id()),
-                        'module_id' => $emp_details->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification(array_to_string($assigned_user), $notifydata);
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $emp_details->emp_name . ' has had their PPE Exemption Approved by ' . getUsername(Auth::id()),
+                    //     'module_id' => $emp_details->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification(array_to_string($assigned_user), $notifydata);
                 } elseif ($request->status == "reject") {
                     $id = $request->ppeexemption_id;
                     $emp_details = $this->ppeexemption->find($id);
@@ -485,15 +486,15 @@ class PpeExemptionController extends BaseController
 
                     notificationSave($notificationData);
 
-                    // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $emp_details->emp_name . ' has had their PPE Exemption Rejected by ' . getUsername(Auth::id()),
-                        'module_id' => $emp_details->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification(array_to_string($assigned_user), $notifydata);
+                    // // Mobile push notification
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $emp_details->emp_name . ' has had their PPE Exemption Rejected by ' . getUsername(Auth::id()),
+                    //     'module_id' => $emp_details->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification(array_to_string($assigned_user), $notifydata);
                 }
 
 

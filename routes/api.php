@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
+use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -76,7 +77,19 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/list', [SafetyPermitController::class, 'list']);
             Route::post('/store', [SafetyPermitController::class, 'store']);
             Route::post('/view', [SafetyPermitController::class, 'view']);
-            Route::post('/approval', [SafetyPermitController::class, 'approvereject']);
+            Route::post('/approval', [SafetyPermitController::class, 'ehsapproval']);
+            Route::post('/qrcode', [SafetyPermitController::class, 'qrcode']);
+
+
+        });
+        Route::group(['prefix' => 'trainng/master/dropdown/'], function () {
+            Route::post('/topiclist', [TrainingSheducleController::class, 'topiclist']);
+            Route::post('/venulist', [TrainingSheducleController::class, 'venulist']);
+
+        });
+        Route::group(['prefix' => 'trainng/training-schedule'], function () {
+            Route::post('/list', [TrainingSheducleController::class, 'list']);
+            Route::post('/view', [TrainingSheducleController::class, 'view']);
 
         });
     });

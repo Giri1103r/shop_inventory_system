@@ -77,8 +77,10 @@ class PperequestController extends BaseController
             }
 
             if (!empty($search)) {
-                $ppe_request_array->where(function ($query) use ($search) {
+                $searchDate = DBdateformat($search);
+                $ppe_request_array->where(function ($query) use ($search,$searchDate) {
                     $query->orWhere('ppe_pperequest.emp_id', 'LIKE', "%{$search}%")
+                    ->orWhereDate('ppe_pperequest.created_at', 'LIKE', "%{$searchDate}%")
                         ->orWhere('ppe_pperequest.emp_name', 'LIKE', "%{$search}%");
                 });
             }
@@ -456,14 +458,14 @@ class PperequestController extends BaseController
 
                     notificationSave($notificationData);
                     // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $emp_details->emp_name . ' has had their PPE Request Approved by ' . getUsername(Auth::id()),
-                        'module_id' => $emp_details->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification(array_to_string($EhsId), $notifydata);
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $emp_details->emp_name . ' has had their PPE Request Approved by ' . getUsername(Auth::id()),
+                    //     'module_id' => $emp_details->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification(array_to_string($EhsId), $notifydata);
                 } elseif ($request->status == "reject") {
                     $id = $request->pperequest_id;
                     $emp_details = $this->pperequest->find($id);
@@ -528,14 +530,14 @@ class PperequestController extends BaseController
 
                     notificationSave($notificationData);
                     // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $emp_details->emp_name . ' has had their PPE Request Rejected by ' . getUsername(Auth::id()),
-                        'module_id' => $emp_details->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification( $emp_details->created_by, $notifydata);
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $emp_details->emp_name . ' has had their PPE Request Rejected by ' . getUsername(Auth::id()),
+                    //     'module_id' => $emp_details->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification( $emp_details->created_by, $notifydata);
                 }
 
 
@@ -549,7 +551,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -669,15 +671,15 @@ class PperequestController extends BaseController
                     notificationSave($notificationData);
 
 
-                    // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $empDetails->emp_name . ' has had their PPE Request Approved by ' . getUsername(Auth::id()),
-                        'module_id' => $empDetails->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification($assignedUserString, $notifydata);
+                    // // Mobile push notification
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $empDetails->emp_name . ' has had their PPE Request Approved by ' . getUsername(Auth::id()),
+                    //     'module_id' => $empDetails->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification($assignedUserString, $notifydata);
 
                 } elseif ($request->status == "reject") {
                     $id = $request->pperequest_id;
@@ -735,14 +737,14 @@ class PperequestController extends BaseController
 
                     notificationSave($notificationData);
                     // Mobile push notification
-                    $notifydata = [
-                        'title' => $message,
-                        'message' => $empDetails->emp_name . ' has had their PPE Request Rejected by ' . getUsername(Auth::id()),
-                        'module_id' => $empDetails->id,
-                        'module_type' => 1,
-                        'module_sub_type' => 1,
-                    ];
-                    mobilePushNotification(array_to_string($requestorId), $notifydata);
+                    // $notifydata = [
+                    //     'title' => $message,
+                    //     'message' => $empDetails->emp_name . ' has had their PPE Request Rejected by ' . getUsername(Auth::id()),
+                    //     'module_id' => $empDetails->id,
+                    //     'module_type' => 1,
+                    //     'module_sub_type' => 1,
+                    // ];
+                    // mobilePushNotification(array_to_string($requestorId), $notifydata);
                 }
 
 
