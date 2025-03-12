@@ -146,7 +146,7 @@
                 <td width="50%" style="padding:5px;"><b>Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($medicinefitness->date) ? $medicinefitness->date : '' }}</td>
+                    {{ displayDateformat(isset($medicinefitness->date) ? $medicinefitness->date : '') }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
