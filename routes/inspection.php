@@ -4,23 +4,26 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 
 
-Route::group(['prefix' => 'inspection'], function(){
-    Route::GET('checklist-type/list', [ChecklistTypeController::class, 'Index']);
-    Route::POST('checklist-type/list', [ChecklistTypeController::class, 'Index']);
-    Route::GET('checklist-type/add', [ChecklistTypeController::class, 'Add']);
-    Route::POST('checklist-type/add/submit', [ChecklistTypeController::class, 'Store']);
-    Route::POST('checklist-type/unique', [ChecklistTypeController::class, 'UniqueCheck']);
-    Route::GET('checklist-type/edit/{id}', [ChecklistTypeController::class, 'Edit']);
-    Route::POST('checklist-type/edit/submit', [ChecklistTypeController::class, 'Update']);
-    Route::GET('checklist-type/view/{id}', [ChecklistTypeController::class, 'View']);
-    Route::POST('checklist-type/delete', [ChecklistTypeController::class, 'Delete']);
-    Route::POST('checklist-type/status', [ChecklistTypeController::class, 'StatusChange']);
-    Route::GET('checklist-type/export/excel', [ChecklistTypeController::class, 'ExportExcel']);
-    Route::GET('checklist-type/export/pdf', [ChecklistTypeController::class, 'ExportPDF']);
-    Route::GET('checklist-type/import', [ChecklistTypeController::class, 'Import']);
-    Route::POST('checklist-type/import/submit', [ChecklistTypeController::class, 'ImportSubmit']);
-    Route::GET('checklist-type/sampledownload', [ChecklistTypeController::class, 'DownloadSample']);
-    Route::POST('checklist-type/lists', [ChecklistTypeController::class, 'Checklists']);
+Route::group(['prefix' => 'inspection/master'], function () {
+    Route::group(['prefix' => 'checklist-type'], function () {
+        Route::GET('/list', [ChecklistTypeController::class, 'Index']);
+        Route::POST('/list', [ChecklistTypeController::class, 'Index']);
+        Route::GET('/add', [ChecklistTypeController::class, 'Add']);
+        Route::POST('/add/submit', [ChecklistTypeController::class, 'Store']);
+        Route::POST('/unique', [ChecklistTypeController::class, 'UniqueCheck']);
+        Route::GET('/edit/{id}', [ChecklistTypeController::class, 'Edit']);
+        Route::POST('/edit/submit', [ChecklistTypeController::class, 'Update']);
+        Route::GET('/view/{id}', [ChecklistTypeController::class, 'View']);
+        Route::POST('/delete', [ChecklistTypeController::class, 'Delete']);
+        Route::POST('/status', [ChecklistTypeController::class, 'StatusChange']);
+        Route::GET('/export/excel', [ChecklistTypeController::class, 'ExportExcel']);
+        Route::GET('/export/pdf', [ChecklistTypeController::class, 'ExportPDF']);
+        Route::GET('/import', [ChecklistTypeController::class, 'Import']);
+        Route::POST('/import/submit', [ChecklistTypeController::class, 'ImportSubmit']);
+        Route::GET('/sampledownload', [ChecklistTypeController::class, 'DownloadSample']);
+        Route::POST('/lists', [ChecklistTypeController::class, 'Checklists']);
+    });
+    
 });
 
 
