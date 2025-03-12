@@ -31,7 +31,7 @@ class RoleMiddleware
                 $userRoles = UserRole::whereIn('id', $roleIds)->pluck('id')->toArray();
                 $permissionList = UserPermission::where('menu_id', $menuId)
                     ->whereIn('role_id', $userRoles)
-                    ->first();
+                    ->get();
                     dd($userRoles,$permissionList );
                 if ($permissionList) {
                     $rolePermissions = [];
