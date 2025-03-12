@@ -27,17 +27,12 @@ class RoleMiddleware
             if ($menuDetails) {
                 $menuId = $menuDetails->id;
 
-                // Convert comma-separated role string to an array
                 $roleIds = string_to_array(Auth::user()->role);
-
-                // Fetch user roles based on role IDs
                 $userRoles = UserRole::whereIn('id', $roleIds)->pluck('id')->toArray();
-
-                // Check permissions for these roles
                 $permissionList = UserPermission::where('menu_id', $menuId)
                     ->whereIn('role_id', $userRoles)
                     ->first();
-
+                    dd($userRoles,$permissionList );
                 if ($permissionList) {
                     $rolePermissions = [];
 
