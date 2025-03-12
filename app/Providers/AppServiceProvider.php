@@ -238,7 +238,7 @@ class AppServiceProvider extends ServiceProvider
                         $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
                     }
 
-                    dd($mymenu);
+                   
                 }
             }
 
@@ -250,7 +250,7 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('parent_id', 'asc')
                 ->orderBy('sort_order', 'asc')
                 ->get();
-
+                dd($menu);
             $menu_lsit = get_admin_menu($menu);
 
             View::share('left_menu', $menu_lsit);
