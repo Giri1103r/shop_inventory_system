@@ -2,6 +2,22 @@
 @section('title', 'Equipment Checklist Show')
 @section('pageurl', admin_url('ptw/checklistmaster/list'))
 
+@push('style')
+    <style>
+        .view_label {
+            display: block;
+
+        }
+
+        .image-wrapper {
+            display: inline-block;
+            margin: 5px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+@endpush
+
 
 @section('content')
     <div class="clearfix"></div>
@@ -50,11 +66,7 @@
                                             {{ isset($checklist_type->category_name) ? $checklist_type->category_name : '' }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label
-                                            class="form-label view_label">{{ __('inspection.image') }}</label>
-                                        
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -66,6 +78,15 @@
                                         <div class="view_data">
                                             {{ displayDateformat($checklist_type->created_at) }}
                                         </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input custom-image-container">
+                                        <label class="form-label view_label">{{ __('inspection.image') }}</label>
+                                        @foreach ($checklist_images as $checklist_image)
+                                            <div class="image-wrapper">
+                                                <img src="{{ admin_url('public/' . $checklist_image->file_path) }}"
+                                                    alt="Checklist Type" class="img-fluid custom-image" />
+                                            </div>
+                                        @endforeach
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>

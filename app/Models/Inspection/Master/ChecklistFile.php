@@ -39,7 +39,7 @@ class ChecklistFile extends Model
         $request = Request();
         if ($request->has('checklist_file')) {
             $image = $request->file('checklist_file');
-            $upload_path = 'uploads/issues';
+            $upload_path = 'uploads/inspection/master/checklist';
 
             if (!File::exists(public_path($upload_path))) {
                 File::makeDirectory(public_path($upload_path), 0777, true, true);
@@ -65,6 +65,6 @@ class ChecklistFile extends Model
     }
 
     public function selectChecklistTypeImage($id){
-        return $this->where('checklist_id', $id)->first();
+        return $this->where('checklist_id', $id)->get();
     }
 }

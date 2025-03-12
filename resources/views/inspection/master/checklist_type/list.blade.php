@@ -14,11 +14,11 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/checklist-type/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import>
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/checklist-type/add') }}">Add</x-button-add>
+                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -61,8 +61,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('incident.checklist_type_id')}}</th>
-                                        <th>{{__('incident.checklist_type_name')}}</th>
+                                        <th>{{__('inspection.checklist_type_id')}}</th>
+                                        <th>{{__('inspection.checklist_type_name')}}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -113,7 +113,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('inspection/checklist-type/list') }}",
+                        url: "{{ admin_url('inspection/master/checklist-type/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -188,7 +188,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/checklist-type/export/pdf') }}" +
+                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -204,7 +204,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/checklist-type/export/excel') }}" +
+                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -268,7 +268,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/checklist-type/status') }}",
+                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -336,7 +336,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/checklist-type/delete') }}",
+                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

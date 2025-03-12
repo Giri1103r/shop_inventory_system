@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Checklist Type')
-@section('pageurl', admin_url('inspection/checklist-type/list'))
+@section('pageurl', admin_url('inspection/master/checklist-type/list'))
 
 
 @section('content')
@@ -42,7 +42,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('inspection/checklist-type/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -50,7 +51,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="checklistadd"
-                                        action="{{ admin_url('inspection/checklist-type/add/submit') }}" autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('inspection/master/checklist-type/add/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -66,22 +68,24 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Category Name</label>
-                                                    <input type="text" name="checklist_category" id = "checklist_category"
-                                                        class="form-control" placeholder="Enter Category Name">
+                                                    <input type="text" name="checklist_category"
+                                                        id = "checklist_category" class="form-control"
+                                                        placeholder="Enter Category Name">
                                                 </div>
                                             </div>
 
                                             <div class="form-group form-input col-md-4 mb-2">
                                                 <label class="form-label">Image</label>
                                                 <input type="file" name="checklist_file" id="checklist_file"
-                                                    class="form-control form-control-sm"
-                                                    accept="image/png, image/jpeg, image/jpg" placeholder="Enter the image">
-                                                <small>Allowed file types: png, jpeg , jpg</small>
+                                                    class="form-control form-control-sm" accept="image/jpeg"
+                                                    placeholder="Enter the image">
+                                                <small>Allowed file types: jpg</small>
                                                 <div id="checklist_file_error" class="text-danger"></div>
                                                 @error('checklist_file')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
                                             </div>
+
 
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label for="work_station_id"
@@ -102,7 +106,7 @@
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
                                     <x-button-cancel
-                                        href="{{ admin_url('inspection/checklist-type/list') }}"></x-button-cancel>
+                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>
@@ -128,61 +132,86 @@
                 location.reload();
             });
         });
-        // $(function() {
-        //     $('#checklistadd').validate({
-        //         rules: {
-        //             checklist: {
-        //                 required: true,
-        //                 minlength: 3,
-        //                 maxlength: 2000,
+        $(function() {
 
-        //                 remote: {
-        //                     url: '{{ admin_url('inspection/checklist-type/unique') }}',
-        //                     type: 'post',
-        //                     data: {
-        //                         checklist: function() {
-        //                             return $('#checklist').val();
-        //                         }
-        //                     }
-        //                 }
-        //             },
+            $.validator.addMethod("noSpaces", function(value, element) {
+                return this.optional(element) || value.trim().length > 0;
+            }, "This field cannot contain only spaces");
 
-        //         },
-        //         messages: {
-        //             checklist: {
-        //                 required: "{{ __('Name is Required') }}",
-        //                 minlength: "Minimum Characters should be 3",
-        //                 maxlength: "Maximum Characters should not exceed 2000",
-        //                 remote: "{{ __('Name should be unique') }}",
+            $.validator.addMethod("filesize", function(value, element, param) {
+                if (this.optional(element)) {
+                    return true;
+                }
+                var fileSize = element.files[0].size / 1024;
+                return fileSize >= param[0] && fileSize <= param[
+                    1];
+            }, "File size must be between 50KB and 5MB");
 
-        //             },
+            $('#checklistadd').validate({
+                rules: {
+                    checklist_category: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                        remote: {
+                            url: '{{ admin_url('inspection/master/checklist-type/unique') }}',
+                            type: 'post',
+                            data: {
+                                checklist: function() {
+                                    return $('#checklist').val();
+                                }
+                            }
+                        }
+                    },
+                    questionary_id: {
+                        required: true,
+                    },
+                    checklist_file: {
+                        required: true,
+                        extension: "jpg",
+                        filesize: [50, 5120],
+                    },
+                },
+                messages: {
+                    checklist_category: {
+                        required: "{{ __('Name is Required') }}",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                        // remote: "{{ __('Name should be unique') }}",
+                    },
+                    questionary_id: {
+                        required: "{{ __('inspection.questionary_required') }}",
+                    },
+                    checklist_file: {
+                        extension: "Only .jpg files are allowed. Please upload a valid image file.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    console.log('test');
+                    form.submit();
 
-        //         },
-        //         errorElement: 'span',
-        //         errorPlacement: function(error, element) {
-        //             error.addClass('invalid-feedback');
-        //             element.closest('.form-input').append(error);
-        //         },
-        //         highlight: function(element, errorClass, validClass) {
-        //             $(element).addClass('is-invalid');
-        //         },
-        //         unhighlight: function(element, errorClass, validClass) {
-        //             $(element).removeClass('is-invalid');
-        //         },
-        //         submitHandler: function(form) {
-        //             console.log('test');
-        //             form.submit();
-
-        //         },
-        //         invalidHandler: function(event, validator) {
-        //             var errors = validator.numberOfInvalids();
-        //             console.log(errors + " field(s) are invalid");
-        //             validator.errorList.forEach(function(error) {
-        //                 console.log("Field: " + error.element.name + ", Error: " + error
-        //                     .message);
-        //             });
-        //         }
-        //     });
-        // });
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+        });
     </script>
 @endpush

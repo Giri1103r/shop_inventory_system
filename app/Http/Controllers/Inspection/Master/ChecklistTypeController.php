@@ -54,9 +54,9 @@ class ChecklistTypeController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('inspection/checklist-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('inspection/master/checklist-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                $btn .= '<a href="' . admin_url('inspection/checklist-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('inspection/master/checklist-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                                 $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             }
                             return $btn;
@@ -105,7 +105,6 @@ class ChecklistTypeController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             try {
-
                 $checklist_type = $this->checklist_type->store();
                 $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
                 Session::flash('success', __('inspection.check_list_type_success'));
@@ -114,10 +113,10 @@ class ChecklistTypeController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 
@@ -158,17 +157,18 @@ class ChecklistTypeController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $checklist_type = $this->checklist_type->selectOne($id);
-                $checklist_image = $this->checklist_file->selectChecklistTypeImage($id);
+                $checklist_images = $this->checklist_file->selectChecklistTypeImage($id);
 
                 $data = array(
                     'checklist_type' => $checklist_type,
+                    'checklist_images' => $checklist_images,
                 );
             }
             return view('inspection.master.checklist_type.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 
@@ -221,11 +221,11 @@ class ChecklistTypeController extends Controller
             $this->checklist_type->updates($id);
 
             Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 
@@ -416,11 +416,11 @@ class ChecklistTypeController extends Controller
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
             Session::flash('success', 'Permit Checklist Category Upload Successfull');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Permit Checklist Category failed!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 }
