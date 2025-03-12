@@ -61,7 +61,7 @@
                                             <div class="col-md-4 employecode mb-2" style="display: none">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee code</label>
-                                                    <input type="text" name="emp_id" id="emp_id"
+                                                    <input type="text" name="outside_emp_id" id="outside_emp_id"
                                                         value="{{ $opdpatient->emp_id }}" class="form-control">
                                                 </div>
                                             </div>
@@ -90,7 +90,8 @@
                                             <div class="col-md-4 mb-2 unit">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
-                                                    <input type="text" name="unit_id" id="unit_id" class="form-control" value="{{getUnitname($opdpatient->unit_id) }}">
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        value="{{ getUnitname($opdpatient->unit_id) }}">
                                                     {{-- <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
@@ -531,77 +532,7 @@
 
         });
 
-        // getting the employee/worker details
-        $(document).ready(function() {
-            if (!$('#is_outside_worker').is(':checked')) {
-                $('#emp_id').select2({
-                    ajax: {
-                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        id: item.id,
-                                        text: item.text
-                                    };
-                                })
-                            };
-                        }
-                    },
-                    minimumInputLength: 1,
-                    dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
-                });
 
-                // Set selected value if available
-                var empId = '{{ $opdpatient->emp_id ?? '' }}';
-                var empName = '{{ $opdpatient->emp_id ?? '' }}';
-                var phoneNum = '{{ $opdpatient->mobile_no ?? '' }}'
-                if (empId && empName) {
-                    var newOption = new Option(empName, empId, true, true);
-                    $('#emp_id').append(newOption).trigger('change');
-                }
-            }
-        });
-
-
-        // department and number & emp name
-
-        $(document).on('change', '#emp_id', function() {
-            var empId = $(this).val();
-
-            // Check if 'is_outside_worker' is NOT checked before making AJAX request
-            if (!$('#is_outside_worker').is(':checked')) {
-                if (empId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.employee) {
-                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-                                $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
-                                $('#unit_id').val(response.units.unit_name).prop('readonly', true);
-                            } else {
-                                alert("No employee details found.");
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching employee details. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
-                }
-            }
-        });
 
 
 
@@ -641,31 +572,54 @@
 
 
         });
+
+
         $(document).ready(function() {
-            // Ensure validation is initialized
             let formValidator = $("#opdpatient").validate();
 
-            // Custom validation method for regex
             $.validator.addMethod("regex", function(value, element, regexp) {
                 let re = new RegExp(regexp);
                 return this.optional(element) || re.test(value);
             }, "Invalid format.");
 
-
+            function fetchEmployeeDetails(empId) {
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+                                $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
+                                $('#unit_id').val(response.units.unit_name).prop('readonly', true);
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function() {
+                            alert('Error fetching employee details. Please try again.');
+                        }
+                    });
+                }
+            }
 
             function toggleWorkerFields() {
                 if ($("#is_outside_worker").is(":checked")) {
+                    // Show outside worker fields and hide emp_id
                     $(".unit").hide();
-                    $('#emp_id').val(null).trigger('change');
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
-                   
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
+                    // $("#outside_emp_id").val("").prop("readonly", false);
+                    // $("#emp_name").val("").prop("readonly", false);
+                    // $("#mobile_no").val("").prop("readonly", false);
 
+                    $("#emp_id").val("").trigger("change").hide(); // Clear and hide emp_id field
 
                     if (formValidator) {
                         $("select[name='emp_id']").rules("remove");
-                        $("input[name='emp_id']").rules("add", {
+                        $("input[name='outside_emp_id']").rules("add", {
                             required: true,
                             minlength: 3,
                             maxlength: 30,
@@ -678,37 +632,82 @@
                             }
                         });
                     }
-
                 } else {
+                    // Show employee ID field and hide outside worker fields
                     $(".unit").show();
                     $(".department, .company_name, .employecode").hide();
-                    $(".employee-id").show(); // Show dropdown
+                    $(".employee-id").show();
 
-
-
-                    if (formValidator) {
-                        $("input[name='emp_id']").rules("remove");
-                        $("select[name='emp_id']").rules("add", {
-                            required: true,
-                            messages: {
-                                required: "Please select an Employee code"
-                            }
-                        });
+                    if ($.fn.select2 && $("#emp_id").hasClass("select2-hidden-accessible")) {
+                        $("#emp_id").select2("destroy");
                     }
+                    $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
+                    $("#outside_emp_id").val(""); // Clear outside worker ID
+                    // $("#emp_name").val("").prop("readonly", true);
+                    // $("#mobile_no").val("").prop("readonly", true);
+
+                    // $("#emp_id").val("").show(); // Show emp_id field
+                    initializeSelect2(); // Reinitialize Select2
+
+                    // Do NOT restore previously stored emp_id from opdpatient
                 }
 
-                // Reset validation errors after toggling
                 formValidator.resetForm();
             }
 
-            // Initial check on page load
+            function initializeSelect2() {
+                $('#emp_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+
+                // Do NOT restore previously stored emp_id
+            }
+
             toggleWorkerFields();
 
-            // Event handler for is_outside_worker checkbox
             $("#is_outside_worker").change(function() {
                 toggleWorkerFields();
             });
+
+            if (!$('#is_outside_worker').is(':checked')) {
+                initializeSelect2();
+            }
+
+            $(document).on('change', '#emp_id', function() {
+                var empId = $(this).val();
+
+                if (!$('#is_outside_worker').is(':checked') && empId) {
+                    fetchEmployeeDetails(empId);
+                } else {
+                    $('#emp_name').val('').prop('readonly', false);
+                    $('#mobile_no').val('').prop('readonly', false);
+                    $('#unit_id').val('').prop('readonly', false);
+                }
+            });
         });
+
 
 
         $(document).ready(function() {

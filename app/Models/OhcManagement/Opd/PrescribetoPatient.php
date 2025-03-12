@@ -165,14 +165,19 @@ class PrescribetoPatient extends Model
     public function updates($id, $unit)
     {
         $request = request();
-        $department = Department::where('department_name', $request->department_id)->first();
+
+        if( $request->has('is_outside_worker') == 1){
+            $employeeId =  $request->outside_emp_id;
+         }else{
+             $employeeId =   $request->emp_id;
+         }
 
         $update_array = array(
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
-            'unit_id' =>  $unit->id,
-            'department_id' => isset($department) ? $department->id : null,
+            'unit_id' =>  $unit->id ?? null,
+            'department_id' =>$request->department_id ,
             'company_name' => $request->company_name,
-            'emp_id' => $request->emp_id,
+            'emp_id' =>   $employeeId,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
             'mobile_no' => $request->mobile_no,

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', 'Checklist Sub Type')
+@section('pageurl', admin_url('inspection/master/checklist-sub-type/list'))
 
 
 @section('content')
@@ -14,11 +14,11 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/checklist-type/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type/import') }}"></x-button-import>
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/checklist-type/add') }}">Add</x-button-add>
+                                href="{{ admin_url('inspection/master/checklist-sub-type/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -61,8 +61,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('incident.checklist_type_id')}}</th>
-                                        <th>{{__('incident.checklist_type_name')}}</th>
+                                        <th>Checklist Sub-Type  ID</th>
+                                        <th>Checklist Type Name</th>
+                                        <th>Checklist Sub-Type Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -113,7 +114,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('inspection/checklist-type/list') }}",
+                        url: "{{ admin_url('inspection/master/checklist-sub-type/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -137,6 +138,10 @@
                             searchable: true,
                         },
 
+                        {
+                            data: 'subcategory_id',
+                            name: 'subcategory_id'
+                        },
                         {
                             data: 'category_id',
                             name: 'category_id'
