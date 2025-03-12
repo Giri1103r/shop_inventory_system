@@ -147,7 +147,7 @@ $.validator.addMethod("multiImageFormat", function (value, element) {
 
     // Check if all file extensions are in the allowed formats
     return extensions.every(function (extension) {
-        return ['png', 'jpg', 'jpeg'].includes(extension);
+        return ['png', 'jpg', 'jpeg','pdf','doc','mp4'].includes(extension);
     });
 }, "Please upload images in PNG, JPG, or JPEG format.");
 
@@ -513,7 +513,7 @@ $.validator.addMethod("talpnum", function (value, element) {
 // Add a custom jQuery validation rule for file input with accepted file types
 $.validator.addMethod("validateFileType", function (value, element) {
     // Get the accepted file types from the options
-    params = ".jpeg,.jpg,.png";
+    params = ".jpeg,.jpg,.png,.pdf,.doc,.mp4" ;
     var acceptedTypes = params.split(',');
     // Get the file extension of the selected file
     var fileExtension = value.split('.').pop().toLowerCase();

@@ -33,11 +33,9 @@ class ChecklistController extends Controller
 
     public function index(Request $request)
     {
-
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-
                     $data =  $this->checklist->list();
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()

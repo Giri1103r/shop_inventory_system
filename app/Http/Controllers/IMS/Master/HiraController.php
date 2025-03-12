@@ -126,8 +126,17 @@ class HiraController extends Controller
     {
 
         try {
-
-            $data = array();
+            
+            $accident_id = null;
+            $incidentId = null;
+            $fire_id = null;
+            $hiramoc = null;
+            $data = array(
+                'incident_id' => $incidentId,
+                'accident_id' => $accident_id,
+                'fire_id' => $fire_id,
+                'hiramoc_id' => $hiramoc,
+            );
             return view('ims.master.hira.add', $data);
         } catch (Exception $ex) {
             report($ex);
