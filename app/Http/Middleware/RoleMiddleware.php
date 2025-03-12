@@ -9,6 +9,7 @@ use App\Models\LeftMenu;
 use App\Models\UserPermission;
 
 use App\Models\Master\UserRole;
+
 class RoleMiddleware
 {
     /**
@@ -26,30 +27,32 @@ class RoleMiddleware
             $menuDetails = LeftMenu::where('namekey', $module)->first();
             if ($menuDetails) {
                 $menuId = $menuDetails->id;
-
                 $roleIds = string_to_array(Auth::user()->role);
                 $userRoles = UserRole::whereIn('id', $roleIds)->pluck('id')->toArray();
                 $permissionList = UserPermission::where('menu_id', $menuId)
                     ->whereIn('role_id', $userRoles)
                     ->get();
-                    dd($userRoles,$permissionList );
-                if ($permissionList) {
+                if ($permissionList->isNotEmpty()) {
                     $rolePermissions = [];
+                    foreach ($permissionList as $permissionItem) {
+                        $decodedPermissions = [];
 
-                    if (is_string($permissionList->role_permissions)) {
-                        $decodedPermissions = json_decode($permissionList->role_permissions, true);
-                        if (json_last_error() === JSON_ERROR_NONE) {
-                            $rolePermissions = $decodedPermissions;
-                        } else {
-                            return response()->json(['error' => 'Invalid permissions format'], 500);
+                        if (is_string($permissionItem->role_permissions)) {
+                            $decodedPermissions = json_decode($permissionItem->role_permissions, true);
+                            if (json_last_error() !== JSON_ERROR_NONE) {
+                                return response()->json(['error' => 'Invalid permissions format'], 500);
+                            }
+                        } elseif (is_array($permissionItem->role_permissions)) {
+                            $decodedPermissions = $permissionItem->role_permissions;
                         }
-                    } elseif (is_array($permissionList->role_permissions)) {
-                        $rolePermissions = $permissionList->role_permissions;
-                    } else {
-                        return response()->json(['error' => 'Invalid permissions format'], 500);
+
+                        foreach ($decodedPermissions as $key => $value) {
+                            if (!isset($rolePermissions[$key]) || $value == 1) {
+                                $rolePermissions[$key] = $value;
+                            }
+                        }
                     }
 
-                    // Check if the required permission exists and is set to 1
                     if (!empty($rolePermissions[$permission]) && $rolePermissions[$permission] == 1) {
                         return $next($request);
                     }
