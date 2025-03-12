@@ -31,7 +31,7 @@ use App\Models\IMS\Incident\InitialFireIncident;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
-
+use App\Models\Inspection\Master\ChecklistSubType;
 /*
  * Menu bar start
  */
@@ -231,6 +231,11 @@ if (!function_exists('getsequence')) {
                 $count = ChecklistType::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'CAT-' . getautogen($count);
+                break;
+            case 'incident_checklist_subtype':
+                $count = ChecklistSubType::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'SUBCAT-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

@@ -237,6 +237,8 @@ class AppServiceProvider extends ServiceProvider
 
                         $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
                     }
+
+                    dd($mymenu);
                 }
             }
 

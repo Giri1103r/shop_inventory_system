@@ -11,12 +11,14 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
 
 class ChecklistSubTypeController extends Controller
 {
 
     private $checklist_type;
+    private $checklist_subtype;
     private $checklist_file;
     private $upload_log;
     private $checklist_option;
@@ -24,6 +26,7 @@ class ChecklistSubTypeController extends Controller
     public function __construct()
     {
         $this->checklist_type = new ChecklistType();
+        $this->checklist_subtype = new ChecklistSubType();
         $this->checklist_file = new ChecklistFile();
         $this->checklist_option = new ChecklistOptionType();
     }
@@ -32,7 +35,7 @@ class ChecklistSubTypeController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->checklist_type->list();
+                    $data =    $this->checklist_subtype->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -83,8 +86,10 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $checklist_options = $this->checklist_option->Getall();
+            $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $data = array(
                 'checklist_options' => $checklist_options,
+                'checklist_types' => $checklist_types,
             );
             return view('inspection.master.checklist_subtype.add', $data);
         } catch (Exception $ex) {
@@ -106,7 +111,7 @@ class ChecklistSubTypeController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $checklist_type = $this->checklist_type->store();
+                $checklist_type =   $this->checklist_subtype->store();
                 $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
                 Session::flash('success', __('inspection.check_list_type_success'));
             } catch (Exception $ex) {
@@ -136,7 +141,7 @@ class ChecklistSubTypeController extends Controller
                     'permit_type_id' => $permit_type_id,
                 ];
 
-                $isUnique = $this->checklist_type->UniqueCheck($data);
+                $isUnique =   $this->checklist_subtype->UniqueCheck($data);
                 return response()->json($isUnique);
             } else {
                 $data = [
@@ -146,7 +151,7 @@ class ChecklistSubTypeController extends Controller
                     'id' => $id,
                 ];
 
-                $isUnique = $this->checklist_type->existUniqueCheck($data);
+                $isUnique =   $this->checklist_subtype->existUniqueCheck($data);
                 return response()->json($isUnique);
             }
         }
@@ -157,7 +162,7 @@ class ChecklistSubTypeController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_type = $this->checklist_type->selectOne($id);
+                $checklist_type =   $this->checklist_subtype->selectOne($id);
                 $checklist_image = $this->checklist_file->selectChecklistTypeImage($id);
 
                 $data = array(
@@ -177,7 +182,7 @@ class ChecklistSubTypeController extends Controller
         try {
             $id = decryptId($id);
             $permit_type = $this->permit_type->get();
-            $check_list_category = $this->checklist_type->find($id);
+            $check_list_category =   $this->checklist_subtype->find($id);
 
             $data = array(
                 'check_list_category' => $check_list_category,
@@ -218,7 +223,7 @@ class ChecklistSubTypeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->checklist_type->updates($id);
+              $this->checklist_subtype->updates($id);
 
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/checklist-type/list'));
@@ -233,7 +238,7 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_type->deleterecord($id);
+              $this->checklist_subtype->deleterecord($id);
             $this->ptw_sub_cat->delete_all($id);
             return response()->json(['status' => 'success', 'msg' => 'Checklist Category Successfully Deleted'], 200);
         } catch (Exception $ex) {
@@ -245,7 +250,7 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_type->statuschange($id);
+              $this->checklist_subtype->statuschange($id);
             $this->ptw_sub_cat->statuschange_all($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
@@ -259,7 +264,7 @@ class ChecklistSubTypeController extends Controller
     {
         try {
 
-            $allData = $this->checklist_type->exportdata();
+            $allData =   $this->checklist_subtype->exportdata();
             $header = [
                 __("common.sno"),
                 __("ptw.permit_to_work_type"),
@@ -301,7 +306,7 @@ class ChecklistSubTypeController extends Controller
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData = $this->checklist_type->exportdata();
+            $allData =   $this->checklist_subtype->exportdata();
 
             $header = [
                 __("common.sno"),

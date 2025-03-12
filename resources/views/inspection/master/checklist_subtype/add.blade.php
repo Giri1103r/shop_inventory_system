@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type')
-@section('pageurl', admin_url('inspection/checklist-type/list'))
+@section('title', 'Checklist Sub Type')
+@section('pageurl', admin_url('inspection/master/checklist-sub-type/list'))
 
 
 @section('content')
@@ -49,27 +49,44 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="checklistadd"
-                                        action="{{ admin_url('inspection/checklist-type/add/submit') }}" autocomplete="off" enctype="multipart/form-data">
+                                    <form method="POST" id="subchecklistadd"
+                                        action="{{ admin_url('inspection/checklist-type/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Category Id</label>
-                                                    <input type="text" name="checklist_type_category_id" id = "checklist"
+                                                    <label class="form-label require">Checklist Sub-Type  ID</label>
+                                                    <input type="text" name="checklist_subtype_category_id" id = "checklist_subtype_category_id"
                                                         class="form-control" readonly
-                                                        value="{{ getSequence('incident_checklist_type') }}">
+                                                        value="{{ getSequence('incident_checklist_subtype') }}">
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Checklist Type Name</label>
+                                                    <select name="category_id" id="category_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Questionary</option>
+                                                        @foreach ($checklist_types as $checklist_type)
+                                                            <option value="{{ encryptId($checklist_type->id) }}">
+                                                                {{ $checklist_type->category_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Category Name</label>
-                                                    <input type="text" name="checklist_category" id = "checklist_category"
-                                                        class="form-control" placeholder="Enter Category Name">
+                                                    <label class="form-label require">Checklist Sub-Type Name</label>
+                                                    <input type="text" name="subcategory_name"
+                                                        id = "subcategory_name" class="form-control"
+                                                        placeholder="Enter Category Name">
                                                 </div>
                                             </div>
+
 
                                             <div class="form-group form-input col-md-4 mb-2">
                                                 <label class="form-label">Image</label>
@@ -81,19 +98,6 @@
                                                 @error('checklist_file')
                                                     <div class="text-danger">{{ $message }}</div>
                                                 @enderror
-                                            </div>
-
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label for="work_station_id"
-                                                    class="col-sm-5 form-label  required">Questionary</label>
-                                                <select name="questionary_id" id="questionary_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Questionary</option>
-                                                    @foreach ($checklist_options as $checklist_option)
-                                                        <option value="{{ encryptId($checklist_option->id) }}">
-                                                            {{ $checklist_option->type }}</option>
-                                                    @endforeach
-                                                </select>
                                             </div>
                                         </div>
                                 </div>
@@ -128,61 +132,61 @@
                 location.reload();
             });
         });
-        // $(function() {
-        //     $('#checklistadd').validate({
-        //         rules: {
-        //             checklist: {
-        //                 required: true,
-        //                 minlength: 3,
-        //                 maxlength: 2000,
+        $(function() {
+            $('#subchecklistadd').validate({
+                rules: {
+                    checklist: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 2000,
 
-        //                 remote: {
-        //                     url: '{{ admin_url('inspection/checklist-type/unique') }}',
-        //                     type: 'post',
-        //                     data: {
-        //                         checklist: function() {
-        //                             return $('#checklist').val();
-        //                         }
-        //                     }
-        //                 }
-        //             },
+                        remote: {
+                            url: '{{ admin_url('inspection/checklist-type/unique') }}',
+                            type: 'post',
+                            data: {
+                                checklist: function() {
+                                    return $('#checklist').val();
+                                }
+                            }
+                        }
+                    },
 
-        //         },
-        //         messages: {
-        //             checklist: {
-        //                 required: "{{ __('Name is Required') }}",
-        //                 minlength: "Minimum Characters should be 3",
-        //                 maxlength: "Maximum Characters should not exceed 2000",
-        //                 remote: "{{ __('Name should be unique') }}",
+                },
+                messages: {
+                    checklist: {
+                        required: "{{ __('Name is Required') }}",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 2000",
+                        remote: "{{ __('Name should be unique') }}",
 
-        //             },
+                    },
 
-        //         },
-        //         errorElement: 'span',
-        //         errorPlacement: function(error, element) {
-        //             error.addClass('invalid-feedback');
-        //             element.closest('.form-input').append(error);
-        //         },
-        //         highlight: function(element, errorClass, validClass) {
-        //             $(element).addClass('is-invalid');
-        //         },
-        //         unhighlight: function(element, errorClass, validClass) {
-        //             $(element).removeClass('is-invalid');
-        //         },
-        //         submitHandler: function(form) {
-        //             console.log('test');
-        //             form.submit();
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    console.log('test');
+                    form.submit();
 
-        //         },
-        //         invalidHandler: function(event, validator) {
-        //             var errors = validator.numberOfInvalids();
-        //             console.log(errors + " field(s) are invalid");
-        //             validator.errorList.forEach(function(error) {
-        //                 console.log("Field: " + error.element.name + ", Error: " + error
-        //                     .message);
-        //             });
-        //         }
-        //     });
-        // });
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+        });
     </script>
 @endpush
