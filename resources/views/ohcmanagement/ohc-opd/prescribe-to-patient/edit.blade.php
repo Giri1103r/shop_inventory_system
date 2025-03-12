@@ -573,12 +573,35 @@
 
         });
 
-
         $(document).ready(function() {
-            let formValidator = $("#opdpatient").validate();
+            let formValidator = $("#opdpatient").validate({
+                errorClass: "text-danger",
+                rules: {
+                    emp_name: {
+                        required: true,
+                        minlength: 3,
+                        regex: /^[a-zA-Z\s]+$/
+                    },
+                    mobile_no: {
+                        required: true,
+                        regex: /^[0-9]{10}$/
+                    }
+                },
+                messages: {
+                    emp_name: {
+                        required: "Employee name is required",
+                        minlength: "Employee name must be at least 3 characters",
+                        regex: "Only alphabets and spaces are allowed"
+                    },
+                    mobile_no: {
+                        required: "Mobile number is required",
+                        regex: "Enter a valid 10-digit mobile number"
+                    }
+                }
+            });
 
             $.validator.addMethod("regex", function(value, element, regexp) {
-                let re = new RegExp(regexp);
+                let re = (regexp instanceof RegExp) ? regexp : new RegExp(regexp);
                 return this.optional(element) || re.test(value);
             }, "Invalid format.");
 
@@ -606,16 +629,11 @@
 
             function toggleWorkerFields() {
                 if ($("#is_outside_worker").is(":checked")) {
-                    // Show outside worker fields and hide emp_id
                     $(".unit").hide();
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
-                    // $("#outside_emp_id").val("").prop("readonly", false);
-                    // $("#emp_name").val("").prop("readonly", false);
-                    // $("#mobile_no").val("").prop("readonly", false);
-
-                    $("#emp_id").val("").trigger("change").hide(); // Clear and hide emp_id field
+                    $("#emp_id").val("").trigger("change").hide();
 
                     if (formValidator) {
                         $("select[name='emp_id']").rules("remove");
@@ -623,17 +641,16 @@
                             required: true,
                             minlength: 3,
                             maxlength: 30,
-                            regex: "^[a-zA-Z0-9_-]+$",
+                            regex: /^[a-zA-Z0-9_-]+$/,
                             messages: {
                                 required: "Employee code is required",
                                 minlength: "Employee code must be at least 3 characters",
                                 maxlength: "Employee code must not exceed 30 characters",
-                                regex: "Employee code has invalid characters (only letters, numbers, underscores, and hyphens allowed)"
+                                regex: "Employee code has invalid characters"
                             }
                         });
                     }
                 } else {
-                    // Show employee ID field and hide outside worker fields
                     $(".unit").show();
                     $(".department, .company_name, .employecode").hide();
                     $(".employee-id").show();
@@ -642,14 +659,8 @@
                         $("#emp_id").select2("destroy");
                     }
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
-                    $("#outside_emp_id").val(""); // Clear outside worker ID
-                    // $("#emp_name").val("").prop("readonly", true);
-                    // $("#mobile_no").val("").prop("readonly", true);
-
-                    // $("#emp_id").val("").show(); // Show emp_id field
-                    initializeSelect2(); // Reinitialize Select2
-
-                    // Do NOT restore previously stored emp_id from opdpatient
+                    $("#outside_emp_id").val("");
+                    initializeSelect2();
                 }
 
                 formValidator.resetForm();
@@ -681,8 +692,6 @@
                     dropdownCssClass: 'form-control',
                     selectionCssClass: 'form-control'
                 });
-
-                // Do NOT restore previously stored emp_id
             }
 
             toggleWorkerFields();
@@ -697,7 +706,6 @@
 
             $(document).on('change', '#emp_id', function() {
                 var empId = $(this).val();
-
                 if (!$('#is_outside_worker').is(':checked') && empId) {
                     fetchEmployeeDetails(empId);
                 } else {
