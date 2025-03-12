@@ -106,7 +106,7 @@ class TrainingMatrixController extends Controller
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-        $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
 
         $data = array(
             'unitList' => $unitList,
@@ -123,7 +123,7 @@ class TrainingMatrixController extends Controller
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
 
             $data = array(
                 'unitList' => $unitList,
@@ -242,7 +242,7 @@ class TrainingMatrixController extends Controller
             $id = decryptId($request->id);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
-            $employeeList  = $this->employee->select('id', 'emp_name')->where('user_role', ROLE_TRAINER)->where('status', '1')->get();
+            $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
             $training_matrix = $this->training_matrix->find($id);
             $training_matrixFiles_target_content  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '1')->where('status', '1')->first();
             $training_matrixFiles_questionnaire  = $this->training_matrix_file->where('training_matrix_id', $id)->where('file_type', '2')->where('status', '1')->first();
@@ -486,7 +486,7 @@ class TrainingMatrixController extends Controller
         try {
 
             $allData = $this->training_matrix->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
