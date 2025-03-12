@@ -451,7 +451,7 @@ class PrescribetoPatientController extends Controller
                 $firstaid = $this->opd_firstaid->updates($id);
             }
             $isreffered = $this->isreffered->updates($id);
-            Session::flash('success', __('Your data has been created successfully'));
+            Session::flash('success', __('Your data has been updated successfully'));
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
