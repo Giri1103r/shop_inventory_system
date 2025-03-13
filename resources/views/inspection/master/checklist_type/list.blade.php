@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Checklist Type')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('pageurl', admin_url('inspection/master/checklist-type/list'))
 
 
 @section('content')
@@ -14,7 +14,7 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import>
+                            {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
@@ -27,8 +27,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="checklist" class="form-label ">{{__('inspection.checklist_type_name')}}</label>
+                                            <input type="text" name="category_name" id="category_name"
                                                 class="form-control">
                                         </div>
 
@@ -120,7 +120,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.category_name = $('#category_name').val();
                             d.status = $('#status').val();
 
                         },
@@ -182,7 +182,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        checklist = $('#category_name').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -190,7 +190,7 @@
                                         window.location.href =
                                             "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&category_name=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -199,14 +199,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        checklist = $('#category_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&category_name=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -243,12 +243,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('inspection.inactive_msg') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('inspection.active_msg') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -264,13 +264,10 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
-
                         if (result.value) {
                             $.ajax({
                                 url: "{{ admin_url('inspection/master/checklist-type/status') }}",
                                 type: 'post',
-
                                 data: {
                                     id: id,
                                     types: types

@@ -10,24 +10,24 @@ use App\Http\Controllers\Inspection\Ohc\WeaklyAmbulanceController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
-    Route::group(['prefix' => 'checklist-type'], function () {
-        Route::GET('/list', [ChecklistTypeController::class, 'Index']);
-        Route::POST('/list', [ChecklistTypeController::class, 'Index']);
-        Route::GET('/add', [ChecklistTypeController::class, 'Add']);
-        Route::POST('/add/submit', [ChecklistTypeController::class, 'Store']);
-        Route::POST('/unique', [ChecklistTypeController::class, 'UniqueCheck']);
-        Route::GET('/edit/{id}', [ChecklistTypeController::class, 'Edit']);
-        Route::POST('/edit/submit', [ChecklistTypeController::class, 'Update']);
-        Route::GET('/view/{id}', [ChecklistTypeController::class, 'View']);
-        Route::POST('/delete', [ChecklistTypeController::class, 'Delete']);
-        Route::POST('/status', [ChecklistTypeController::class, 'StatusChange']);
-        Route::GET('/export/excel', [ChecklistTypeController::class, 'ExportExcel']);
-        Route::GET('/export/pdf', [ChecklistTypeController::class, 'ExportPDF']);
-        Route::GET('/import', [ChecklistTypeController::class, 'Import']);
-        Route::POST('/import/submit', [ChecklistTypeController::class, 'ImportSubmit']);
-        Route::GET('/sampledownload', [ChecklistTypeController::class, 'DownloadSample']);
-        Route::POST('/lists', [ChecklistTypeController::class, 'Checklists']);
-    });
+  Route::group(['prefix' => 'checklist-type'], function () {
+    Route::GET('/list', [ChecklistTypeController::class, 'Index']);
+    Route::POST('/list', [ChecklistTypeController::class, 'Index']);
+    Route::GET('/add', [ChecklistTypeController::class, 'Add']);
+    Route::POST('/add/submit', [ChecklistTypeController::class, 'Store']);
+    Route::POST('/unique', [ChecklistTypeController::class, 'UniqueCheck']);
+    Route::GET('/edit/{id}', [ChecklistTypeController::class, 'Edit']);
+    Route::POST('/edit/submit', [ChecklistTypeController::class, 'Update']);
+    Route::GET('/view/{id}', [ChecklistTypeController::class, 'View']);
+    Route::POST('/delete', [ChecklistTypeController::class, 'Delete']);
+    Route::POST('/status', [ChecklistTypeController::class, 'StatusChange']);
+    Route::GET('/export/excel', [ChecklistTypeController::class, 'ExportExcel']);
+    Route::GET('/export/pdf', [ChecklistTypeController::class, 'ExportPDF']);
+    Route::GET('/import', [ChecklistTypeController::class, 'Import']);
+    Route::POST('/import/Submit', [ChecklistTypeController::class, 'ImportSubmit']);
+    Route::GET('/sample_download', [ChecklistTypeController::class, 'DownloadSample']);
+    Route::POST('/lists', [ChecklistTypeController::class, 'Checklists']);
+  });
 
     Route::group(['prefix' => 'checklist-sub-type'], function () {
         Route::GET('/list', [ChecklistSubTypeController::class, 'index']);
@@ -66,6 +66,5 @@ Route::group(['prefix' => 'inspection/master/'], function () {
         Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
     });
 });
-
 
 

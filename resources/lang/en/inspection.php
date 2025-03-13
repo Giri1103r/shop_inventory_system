@@ -9,4 +9,6 @@ return [
     'check_list_type_success' => 'Checklist type created successfully!',
     'checklist_type_id' => 'Checklist Type Id',
     'checklist_type_name' => 'Checklist Type Name',
+    'inactive_msg' => 'Do you want to Inactive the checklist type?',
+    'active_msg' => 'Do you want to Activate the checklist type?',
 ];
