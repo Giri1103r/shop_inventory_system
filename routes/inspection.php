@@ -5,6 +5,7 @@ use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -90,7 +91,7 @@ Route::group(['prefix' => 'audit/'], function () {
 
 Route::group(['prefix' => 'safety/'], function () {
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
-        Route::get('list', [ChecklistSubTypeDataController::class, 'index']);
-        Route::post('list', [ChecklistSubTypeDataController::class, 'index']);
+        Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
+        Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
     });
 });
