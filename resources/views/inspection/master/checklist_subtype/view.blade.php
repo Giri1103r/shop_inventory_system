@@ -56,13 +56,20 @@
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Image</label>
-                                        <div>
-                                            <a href="{{ asset($checklist_subtype->file_path) }}" target="_blank">
-                                                <img src="{{ asset($checklist_subtype->file_path) }}" alt="Image"
-                                                    style="max-width: 20%;">
-                                            </a>
-                                        </div>
+
+                                        @if (!empty($checklist_subtype))
+                                            <div>
+                                                <a href="{{ asset($checklist_subtype->file_path) }}" target="_blank">
+                                                    <img src="{{ asset($checklist_subtype->file_path) }}" alt="Image"
+                                                        style="max-width: 20%;">
+                                                </a>
+                                            </div>
+                                        @else
+                                            <p>No Data Available</p>
+                                        @endif
                                     </div>
+
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
