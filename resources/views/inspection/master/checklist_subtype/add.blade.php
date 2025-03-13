@@ -91,10 +91,7 @@
                                                     class="form-control form-control-sm" accept="image/jpeg"
                                                     placeholder="Enter the image">
                                                 <small>Allowed file types: jpg</small>
-                                                <div id="checklist_file_error" class="text-danger"></div>
-                                                @error('checklist_file')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+
                                             </div>
                                         </div>
 
@@ -130,6 +127,19 @@
             });
         });
         $(function() {
+
+            $.validator.addMethod("noSpaces", function(value, element) {
+                return this.optional(element) || value.trim().length > 0;
+            }, "This field cannot contain only spaces");
+
+            $.validator.addMethod("filesize", function(value, element, param) {
+                if (this.optional(element)) {
+                    return true;
+                }
+                var fileSize = element.files[0].size / 1024;
+                return fileSize >= param[0] && fileSize <= param[
+                    1];
+            }, "File size must be between 50KB and 5MB");
             $('#subchecklistadd').validate({
                 rules: {
                     category_id: {
@@ -139,20 +149,22 @@
                         required: true,
                         minlength: 3,
                         maxlength: 2000,
-
+                        noSpaces: true
                         remote: {
-                            url: '{{ admin_url('inspection/checklist-type/unique') }}',
+                            url: '{{ admin_url('inspection/master/checklist-sub-type/unique') }}',
                             type: 'post',
                             data: {
-                                checklist: function() {
-                                    return $('#checklist').val();
-                                }
+                                subcategory_name: function() {
+                                    return $('#subcategory_name').val();
+                                },
+                                category_id: function() {
+                                    return $('#category_id').val();
+                                },
                             }
                         }
                     },
 
                     checklist_file: {
-                        required: true,
                         extension: "jpg",
                         filesize: [50, 5120],
                     },

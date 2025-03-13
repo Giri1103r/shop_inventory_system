@@ -41,11 +41,11 @@ class ChecklistSubTypeController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
-                                }
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                            }
                             // }
                             return $text;
                         })
@@ -77,8 +77,7 @@ class ChecklistSubTypeController extends Controller
             }
         }
 
-        $data = array(
-        );
+        $data = array();
         return view('inspection.master.checklist_subtype.list', $data);
     }
 
@@ -101,59 +100,47 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $rules = [
-                'questionary_id' => 'required',
-                'checklist_category' => 'required',
+                'category_id' => 'required',
+                'subcategory_name' => 'required',
             ];
             $messages = [
-                'checklist_category.required' => __('inspection.category_name'),
-                'questionary_id.requred' => __('inspection.questionary'),
+                'category_id.required' => __('inspection.category_name'),
+                'subcategory_name.requred' => __('inspection.questionary'),
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $checklist_type =   $this->checklist_subtype->store();
-                $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
-                Session::flash('success', __('inspection.check_list_type_success'));
+                $checklist_sub_type =   $this->checklist_subtype->store();
+                $this->checklist_file->store($checklist_sub_type->id, CHECKLIST_SUB_TYPE);
+                Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 
-    public function UniqueCheck(Request $request)
+    public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $permit_type_id = decryptId($request->permit_type_id);
-            $value = $request->value;
-            $type = $request->type;
-            $id = decryptId($request->id);
-
-            if ($request->id == '') {
-                $data = [
-                    'type' => $type,
-                    'value' => $value,
-                    'permit_type_id' => $permit_type_id,
-                ];
-
-                $isUnique =   $this->checklist_subtype->UniqueCheck($data);
-                return response()->json($isUnique);
+            $subcategory_name = $request->subcategory_name;
+            $category_id = decryptId($request->category_id);
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->checklist_subtype->uniqueCheck($subcategory_name, $category_id);
             } else {
-                $data = [
-                    'type' => $type,
-                    'value' => $value,
-                    'permit_type_id' => $permit_type_id,
-                    'id' => $id,
-                ];
-
-                $isUnique =   $this->checklist_subtype->existUniqueCheck($data);
-                return response()->json($isUnique);
+                $id = decryptId($id);
+                $record = $this->checklist_subtype->ExistuniqueCheck($subcategory_name, $category_id, $id);
             }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
@@ -223,7 +210,7 @@ class ChecklistSubTypeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-              $this->checklist_subtype->updates($id);
+            $this->checklist_subtype->updates($id);
 
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/checklist-type/list'));
@@ -238,7 +225,7 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-              $this->checklist_subtype->deleterecord($id);
+            $this->checklist_subtype->deleterecord($id);
             $this->ptw_sub_cat->delete_all($id);
             return response()->json(['status' => 'success', 'msg' => 'Checklist Category Successfully Deleted'], 200);
         } catch (Exception $ex) {
@@ -250,7 +237,7 @@ class ChecklistSubTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-              $this->checklist_subtype->statuschange($id);
+            $this->checklist_subtype->statuschange($id);
             $this->ptw_sub_cat->statuschange_all($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
@@ -429,4 +416,3 @@ class ChecklistSubTypeController extends Controller
         }
     }
 }
-
