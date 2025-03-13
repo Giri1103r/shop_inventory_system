@@ -147,8 +147,8 @@
                             name: 'category_id'
                         },
                         {
-                            data: 'category_name',
-                            name: 'category_name'
+                            data: 'subcategory_name',
+                            name: 'subcategory_name'
                         },
                         {
                             data: 'status',

@@ -14,9 +14,9 @@ class ChecklistSubType extends Model
 
     protected $fillable = [
         'id',
+        'subcategory_id',
         'category_id',
         'subcategory_name',
-        'questionary',
         'status',
         'trash',
         'created_by',
@@ -104,6 +104,20 @@ class ChecklistSubType extends Model
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
+    }
+
+
+    public function updates($id)
+    {
+
+        $request = request();
+
+        $update_array = array(
+            'category_id' => decryptId($request->category_id),
+            'subcategory_name' => $request->subcategory_name,
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
     }
 
     public function selectOne($id)
