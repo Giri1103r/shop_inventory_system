@@ -74,36 +74,32 @@ class ChecklistFile extends Model
         if ($checklist_fileImage) {
             $folderPath = 'public/uploads/inspection/master/checklist/' . $id;
     
-            // Ensure the directory exists
+
             if (!File::exists($folderPath)) {
                 File::makeDirectory($folderPath, 0755, true);
             }
     
-            // Generate unique file name
+
             $filenewname = time() . Str::random(10) . '.' . $checklist_fileImage->getClientOriginalExtension();
             $fileName = $checklist_fileImage->getClientOriginalName();
             $fileSize = $checklist_fileImage->getSize();
             $fileExt = $checklist_fileImage->getClientOriginalExtension();
     
-            // Move file to directory
+
             $checklist_fileImage->move($folderPath, $filenewname);
     
             $filePath = $folderPath . "/" . $filenewname;
             $userId = Auth::id();
     
-            // Find existing file for this checklist
+
             $existingFile = $this->where('checklist_id', $id)->where('type', $type)->first();
 
-            // dd($existingFile);
-    
             if ($existingFile) {
-                // Delete old file if it exists
                 $oldFilePath = $existingFile->file_path;
                 if (File::exists($oldFilePath)) {
                     File::delete($oldFilePath);
                 }
     
-                // Update existing record
                 $existingFile->update([
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -112,9 +108,7 @@ class ChecklistFile extends Model
                     'file_extension' => $fileExt,
                     'updated_by' => $userId,
                 ]);
-                \Log::info("File updated: " . $filenewname);
             } else {
-                // Create new record
                 $this->create([
                     'checklist_id' => $id,
                     'file_name' => $filenewname,
@@ -124,11 +118,8 @@ class ChecklistFile extends Model
                     'file_extension' => $fileExt,
                     'created_by' => $userId,
                 ]);
-                \Log::info("New file added: " . $filenewname);
             }
-        } else {
-            \Log::warning("Invalid file upload attempt.");
-        }
+        } 
     }
     
 
