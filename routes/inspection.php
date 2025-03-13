@@ -21,8 +21,8 @@ Route::group(['prefix' => 'inspection/master/'], function () {
     Route::GET('/export/excel', [ChecklistTypeController::class, 'ExportExcel']);
     Route::GET('/export/pdf', [ChecklistTypeController::class, 'ExportPDF']);
     Route::GET('/import', [ChecklistTypeController::class, 'Import']);
-    Route::POST('/import/submit', [ChecklistTypeController::class, 'ImportSubmit']);
-    Route::GET('/sampledownload', [ChecklistTypeController::class, 'DownloadSample']);
+    Route::POST('/import/Submit', [ChecklistTypeController::class, 'ImportSubmit']);
+    Route::GET('/sample_download', [ChecklistTypeController::class, 'DownloadSample']);
     Route::POST('/lists', [ChecklistTypeController::class, 'Checklists']);
   });
 

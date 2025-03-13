@@ -202,6 +202,9 @@ class AppServiceProvider extends ServiceProvider
         defined('CHECKLIST_TYPE') or define('CHECKLIST_TYPE', 1);
         defined('CHECKLIST_SUB_TYPE') or define('CHECKLIST_SUB_TYPE', 2);
 
+        //Upload
+        defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
+
         View::composer('*', function ($view) {
 
             /**
