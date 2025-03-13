@@ -14,9 +14,9 @@ class ChecklistSubType extends Model
 
     protected $fillable = [
         'id',
+        'subcategory_id',
         'category_id',
         'subcategory_name',
-        'questionary',
         'status',
         'trash',
         'created_by',
@@ -34,67 +34,54 @@ class ChecklistSubType extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_master_checklist_subtype.*');
+        $query = $this->select('inspection_master_checklist_subtype.*', 'inspection_master_checklist_type.category_name');
+        $query = $query->leftJoin('inspection_master_checklist_type', 'inspection_master_checklist_subtype.category_id', '=', 'inspection_master_checklist_type.id');
+        // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+        if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('category_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('subcategory_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('category_id', 'LIKE', '%' . $search . '%');
             });
         }
-
-        if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_master_checklist_subtype.category_name', 'LIKE', '%' . $request->category_name . '%');
+        if (isset($request->subcategory_id) && $request->subcategory_id) {
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_id', 'LIKE', '%' . $request->subcategory_id . '%');
+        }
+        if (isset($request->subcategory_name) && $request->subcategory_name) {
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_name', 'LIKE', '%' . $request->subcategory_name . '%');
         }
         if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_master_checklist_subtype.category_id', 'LIKE', '%' . $request->category_id . '%');
+            $query = $query->where('inspection_master_checklist_subtype.category_id', 'LIKE', '%' . decryptId($request->category_id) . '%');
         }
 
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "category_name":
-                    $query->orderBy('inspection_master_checklist_subtype.category_name', $columnorder);
-                    break;
-                case "category_id":
-                    $query = $query->orderBy('inspection_master_checklist_subtype.category_id', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_master_checklist_subtype.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_master_checklist_subtype.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_master_checklist_subtype.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_master_checklist_subtype.id', 'DESC');
-                    break;
-            }
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_master_checklist_subtype.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
+
 
         $data_count = $query;
         $total_records = $data_count->count();
 
-        if (isset($request->length) && $request->length != -1) {
+        $query->orderBy('inspection_master_checklist_subtype.id', 'DESC');
+
+        if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
 
         $data = $query->get();
+
         $datas = array(
             'data' => $data,
             'total_records' => $org_total_counts,
             'filter_records' => $total_records,
         );
-
         return $datas;
     }
-
     public function store()
     {
         $request = request();
@@ -106,11 +93,67 @@ class ChecklistSubType extends Model
         return self::create($insert_array);
     }
 
-    public function selectOne($id)
+
+    public function updates($id)
     {
-        return $this->where('id', $id)->first();
+
+        $request = request();
+
+        $update_array = array(
+            'category_id' => decryptId($request->category_id),
+            'subcategory_name' => $request->subcategory_name,
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
     }
 
+    public function selectOne($id)
+    {
+
+        $data = $this->select(
+            'inspection_master_checklist_subtype.*',
+            'inspection_checklist_files.file_path',
+            'inspection_master_checklist_type.category_name'
+        )
+            ->where('inspection_master_checklist_subtype.id', $id)->leftjoin('inspection_checklist_files', 'inspection_checklist_files.checklist_id', '=', 'inspection_master_checklist_subtype.id')->leftjoin('inspection_master_checklist_type', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
+            ->first();
+
+        return $data;
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_master_checklist_subtype.*', 'inspection_master_checklist_type.category_name');
+        $query = $this->leftjoin('inspection_master_checklist_type', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id');
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('subcategory_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
+            });
+        }
+        if (isset($request->subcategory_id) && $request->subcategory_id) {
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_id', 'LIKE', '%' . $request->subcategory_id . '%');
+        }
+        if (isset($request->subcategory_name) && $request->subcategory_name) {
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_name', 'LIKE', '%' . $request->subcategory_name . '%');
+        }
+        if (isset($request->category_id) && $request->category_id) {
+            $query = $query->where('inspection_master_checklist_subtype.category_id', 'LIKE', '%' . decryptId($request->category_id) . '%');
+        }
+
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_master_checklist_subtype.status', 'LIKE', '%' . decryptId($request->status) . '%');
+        }
+
+        $query->orderBy('inspection_master_checklist_subtype.id', 'DESC');
+
+        return  $query->get();
+    }
     public function UniqueCheck($subcategory_name, $category_id)
     {
 
@@ -150,6 +193,24 @@ class ChecklistSubType extends Model
         return $list;
     }
 
+
+    public function statuschange($id)
+    {
+        $request = request();
+        // dd($id);
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
 
     protected static function booted()
     {

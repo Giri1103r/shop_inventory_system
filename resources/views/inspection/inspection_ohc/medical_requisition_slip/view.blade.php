@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type Show')
-@section('pageurl', admin_url('inspection/master/checklist-type/list'))
+@section('title', 'Equipment Checklist Show')
+@section('pageurl', admin_url('ptw/checklistmaster/list'))
 
 @push('style')
     <style>
@@ -39,8 +39,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ptw/checklistmaster/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -49,7 +48,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Checklist Type</h4>
+                                        <h4 class="text-white">Equipment Checklist</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -82,17 +81,12 @@
                                     </div>
                                     <div class="mb-3 col-md-4 form-input custom-image-container">
                                         <label class="form-label view_label">{{ __('inspection.image') }}</label>
-
-                                        @if (count($checklist_images) > 0)
-                                            @foreach ($checklist_images as $checklist_image)
-                                                <div class="image-wrapper">
-                                                    <img src="{{ admin_url($checklist_image->file_path) }}"
-                                                        alt="Checklist Type" class="img-fluid custom-image" />
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <div class="view_data">No Image Uploaded</div>
-                                        @endif
+                                        @foreach ($checklist_images as $checklist_image)
+                                            <div class="image-wrapper">
+                                                <img src="{{ admin_url('public/' . $checklist_image->file_path) }}"
+                                                    alt="Checklist Type" class="img-fluid custom-image" />
+                                            </div>
+                                        @endforeach
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>

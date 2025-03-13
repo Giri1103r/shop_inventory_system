@@ -13,12 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type/import') }}"></x-button-import>
-                        {{-- @endif --}}
+
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-sub-type/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('inspection/master/checklist-sub-type/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -27,8 +25,25 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="subcategory_id" class="form-label ">Checklist Sub-Type ID</label>
+                                            <input type="text" name="subcategory_id" id="subcategory_id"
+                                                class="form-control">
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="category_id" class="form-label ">Checklist Type Name</label>
+                                            <select name="category_id" id="category_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Checklist Type Name</option>
+                                                @foreach ($checklist_types as $checklist_type)
+                                                    <option value="{{ encryptId($checklist_type->id) }}">
+                                                        {{ $checklist_type->category_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="subcategory_name" class="form-label ">Checklist Type Name</label>
+                                            <input type="text" name="subcategory_name" id="subcategory_name"
                                                 class="form-control">
                                         </div>
 
@@ -61,7 +76,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Checklist Sub-Type  ID</th>
+                                        <th>Checklist Sub-Type ID</th>
                                         <th>Checklist Type Name</th>
                                         <th>Checklist Sub-Type Name</th>
                                         <th>{{ __('common.status') }}</th>
@@ -121,7 +136,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.subcategory_id = $('#subcategory_id').val();
+                            d.category_id = $('#category_id').val();
+                            d.subcategory_name = $('#subcategory_name').val();
                             d.status = $('#status').val();
 
                         },
@@ -143,12 +160,12 @@
                             name: 'subcategory_id'
                         },
                         {
-                            data: 'category_id',
-                            name: 'category_id'
-                        },
-                        {
                             data: 'category_name',
                             name: 'category_name'
+                        },
+                        {
+                            data: 'subcategory_name',
+                            name: 'subcategory_name'
                         },
                         {
                             data: 'status',
@@ -187,15 +204,19 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        subcategory_id = $('#subcategory_id').val();
+                                        category_id = $('#category_id').val();
+                                        subcategory_name = $('#subcategory_name').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/checklist-type/export/pdf') }}" +
+                                            "{{ admin_url('inspection/master/checklist-sub-type/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&subcategory_id=' + subcategory_id +
+                                            '&category_id=' + category_id +
+                                            '&subcategory_name=' + subcategory_name +
                                             '&status=' + status
                                     }
                                 },
@@ -204,14 +225,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        subcategory_id = $('#subcategory_id').val();
+                                        category_id = $('#category_id').val();
+                                        subcategory_name = $('#subcategory_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/checklist-type/export/excel') }}" +
+                                            "{{ admin_url('inspection/master/checklist-sub-type/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&subcategory_id=' + subcategory_id +
+                                            '&category_id=' + category_id +
+                                            '&subcategory_name=' + subcategory_name +
                                             '&status=' + status
                                     }
                                 },
@@ -244,16 +269,17 @@
                 });
 
                 /* Status Change */
+                /* Status Change */
                 $(document).on('click', '.statusChange', function() {
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Checklist Sub-type') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate Checklist Sub-type') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -273,7 +299,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/checklist-type/status') }}",
+                                url: "{{ admin_url('inspection/master/checklist-sub-type/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -313,7 +339,6 @@
                     })
 
                 });
-
 
                 /* Delete Record */
                 $(document).on('click', '.recordDelete', function() {
