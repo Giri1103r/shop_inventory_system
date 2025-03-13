@@ -66,6 +66,7 @@ Route::group(['prefix' => 'inspection/master/'], function () {
 });
 
 
+<<<<<<< Updated upstream
 Route::group(['prefix' => 'audit/'], function () {
     Route::group(['prefix' => 'assessment/'], function () {
         Route::get('list', [AuditAssessmentController::class, 'index']);
@@ -87,6 +88,8 @@ Route::group(['prefix' => 'audit/'], function () {
 });
 
 
+=======
+>>>>>>> Stashed changes
 Route::group(['prefix' => 'safety/'], function () {
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
         Route::get('list', [ChecklistSubTypeDataController::class, 'index']);
