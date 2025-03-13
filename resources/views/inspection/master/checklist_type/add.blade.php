@@ -56,34 +56,30 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Category Id</label>
-                                                    <input type="text" name="checklist_type_category_id" id = "checklist"
-                                                        class="form-control" readonly
-                                                        value="{{ getSequence('incident_checklist_type') }}">
-                                                </div>
+                                            <div class="form-input col-md-4 mb-2">
+                                                <label class="form-label require">Category Id</label>
+                                                <input type="text" name="checklist_type_category_id" id = "checklist"
+                                                    class="form-control" readonly
+                                                    value="{{ getSequence('incident_checklist_type') }}">
                                             </div>
 
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Category Name</label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
-                                                </div>
+
+                                            <div class="form-input col-md-4 mb-2">
+                                                <label class="form-label require">Category Name</label>
+                                                <input type="text" name="checklist_category" id = "checklist_category"
+                                                    class="form-control" placeholder="Enter Category Name">
                                             </div>
 
-                                            <div class="form-group form-input col-md-4 mb-2">
+                                            <div class="form-input col-md-4 mb-2">
                                                 <label class="form-label">Image</label>
                                                 <input type="file" name="checklist_file" id="checklist_file"
                                                     class="form-control form-control-sm" accept="image/jpeg"
                                                     placeholder="Enter the image">
                                                 <small>Allowed file types: jpg</small>
                                                 <div id="checklist_file_error" class="text-danger"></div>
-                                                @error('checklist_file')
+                                                {{-- @error('checklist_file')
                                                     <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                                @enderror --}}
                                             </div>
 
 
@@ -100,16 +96,17 @@
                                                 </select>
                                             </div>
                                         </div>
-                                </div>
-                                <hr>
-                                <div class="submit-button" style="text-align: right;">
-                                    <x-button-submit class="submit"></x-button-submit>
-                                    <x-button-reset class="submit"></x-button-reset>
-                                    <x-button-cancel
-                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-cancel>
+                                        <hr>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-cancel>
+                                        </div>
+
+                                    </form>
                                 </div>
 
-                                </form>
                             </div>
 
                         </div>
@@ -119,8 +116,7 @@
 
         </div>
     </div>
-    </form>
-    </div>
+
 
 @stop
 
@@ -158,8 +154,8 @@
                             url: '{{ admin_url('inspection/master/checklist-type/unique') }}',
                             type: 'post',
                             data: {
-                                checklist: function() {
-                                    return $('#checklist').val();
+                                checklist_category: function() {
+                                    return $('#checklist_category').val();
                                 }
                             }
                         }
@@ -177,7 +173,7 @@
                         required: "{{ __('Name is Required') }}",
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
-                        // remote: "{{ __('Name should be unique') }}",
+                        remote: "Name should be unique",
                     },
                     questionary_id: {
                         required: "{{ __('inspection.questionary_required') }}",
@@ -186,7 +182,7 @@
                         extension: "Only .jpg files are allowed. Please upload a valid image file.",
                     }
                 },
-                errorElement: 'span',
+                errorElement: 'div',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
@@ -198,17 +194,11 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
+                    validator.errorList.forEach(function(error) {});
                 }
             });
         });
