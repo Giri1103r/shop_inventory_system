@@ -3,18 +3,16 @@
 namespace App\Models\Inspection\Master;
 
 use App\Scopes\TrashScope;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class Shift extends Model
+class Frequency extends Model
 {
-
-    protected $table = 'inspection_shift_option';
+    protected $table = 'inspection_frequency_option';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'shift',
+        'frequency_name',
         'status',
         'trash',
         'created_by',
@@ -27,14 +25,14 @@ class Shift extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
-
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('inspection_shift_option'));
-
-    }
-
-    public function getShiftname(){
+    public function getFrequencyname(){
         return $this->where('status',1)->get();
     }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_frequency_option'));
+
+    }
+
+
 }

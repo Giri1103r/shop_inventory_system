@@ -97,7 +97,7 @@ class WeeklyAmbulance extends Model
             'unit_id'=>$request,
             'next_due_on'=>$request,
             'review_date'=>$request,
-            'date_of_inspection'=>v,
+            'date_of_inspection'=>$request,
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
