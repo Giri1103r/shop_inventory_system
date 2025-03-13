@@ -32,6 +32,7 @@ use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\audit\AuditAssessment;
 /*
  * Menu bar start
  */
@@ -236,6 +237,11 @@ if (!function_exists('getsequence')) {
                 $count = ChecklistSubType::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'SUBCAT-' . getautogen($count);
+                break;
+            case 'audit_assessment':
+                $count = AuditAssessment::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AUDIT-ASSESSMENT-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

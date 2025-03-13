@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Master;
+namespace App\Http\Controllers\Inspection\Audit;
 
 use Exception;
 use Response;
@@ -11,25 +11,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Inspection\Master\ChecklistFile;
+use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
 
-class ChecklistSubTypeController extends Controller
+class AuditAssessmentController extends Controller
 {
 
     private $checklist_type;
     private $checklist_subtype;
-    private $checklist_file;
+    private $audit_assessment;
     private $upload_log;
     private $checklist_option;
 
     public function __construct()
     {
+        $this->audit_assessment = new AuditAssessment();
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
-        $this->checklist_file = new ChecklistFile();
         $this->checklist_option = new ChecklistOptionType();
     }
     public function index(Request $request)
@@ -37,7 +37,7 @@ class ChecklistSubTypeController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =    $this->checklist_subtype->list();
+                    $data =    $this->audit_assessment->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -86,7 +86,7 @@ class ChecklistSubTypeController extends Controller
             'checklist_types' => $checklist_types,
 
         );
-        return view('inspection.master.checklist_subtype.list', $data);
+        return view('inspection.inspection_audit.auditAssessment.list', $data);
     }
 
     public function add(Request $request)
@@ -96,7 +96,7 @@ class ChecklistSubTypeController extends Controller
             $data = array(
                 'checklist_types' => $checklist_types,
             );
-            return view('inspection.master.checklist_subtype.add', $data);
+            return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -165,7 +165,7 @@ class ChecklistSubTypeController extends Controller
                     'checklist_image' => $checklist_image,
                 );
             }
-            return view('inspection.master.checklist_subtype.view', $data);
+            return view('inspection.inspection_audit.auditAssessment.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -187,7 +187,7 @@ class ChecklistSubTypeController extends Controller
                 'checklist_types' => $checklist_types,
                 'checklist_image' => $checklist_image,
             );
-            return view('inspection.master.checklist_subtype.edit', $data);
+            return view('inspection.inspection_audit.auditAssessment.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -323,7 +323,7 @@ class ChecklistSubTypeController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.master.checklist_subtype.pdf', $data);
+            $view = view('inspection.inspection_audit.auditAssessment.pdf', $data);
             $html = $view->render();
 
 
@@ -416,15 +416,5 @@ class ChecklistSubTypeController extends Controller
             Session::flash('error', 'Permit Checklist Category failed!');
             return redirect(admin_url('inspection/checklist-type/list'));
         }
-    }
-
-    public function checklistSubTypeList(Request $request ,$checklistTypeId)
-    {
-
-        $checklistTypeId = decryptId($checklistTypeId);
-        $id = decryptId($request->id);
-        $checklistSubType = $this->checklist_subtype->ajaxList( $id , $checklistTypeId);
-
-        return response()->json($checklistSubType);
     }
 }

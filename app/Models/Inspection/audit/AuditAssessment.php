@@ -1,22 +1,24 @@
 <?php
 
-namespace App\Models\Inspection\Master;
+namespace App\Models\Inspection\audit;
 
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class ChecklistType extends Model
+class AuditAssessment extends Model
 {
 
-    protected $table = 'inspection_master_checklist_type';
+    protected $table = 'inspection_audit';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'category_id',
-        'category_name',
-        'questionary',
+        'audit_id',
+        'floor_name',
+        'audit_date',
+        'shift',
+        'floor_executive',
         'status',
         'trash',
         'created_by',
@@ -34,49 +36,24 @@ class ChecklistType extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_master_checklist_type.*');
+        $query = $this->select('inspection_audit.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('category_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
+                $query->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_master_checklist_type.category_name', 'LIKE', '%' . $request->category_name . '%');
-        }
-        if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_master_checklist_type.category_id', 'LIKE', '%' . $request->category_id . '%');
-        }
+        // if (isset($request->category_name) && $request->category_name) {
+        //     $query = $query->where('inspection_audit.category_name', 'LIKE', '%' . $request->category_name . '%');
+        // }
+        // if (isset($request->category_id) && $request->category_id) {
+        //     $query = $query->where('inspection_audit.category_id', 'LIKE', '%' . $request->category_id . '%');
+        // }
 
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "category_name":
-                    $query->orderBy('inspection_master_checklist_type.category_name', $columnorder);
-                    break;
-                case "category_id":
-                    $query = $query->orderBy('inspection_master_checklist_type.category_id', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_master_checklist_type.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_master_checklist_type.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_master_checklist_type.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_master_checklist_type.id', 'DESC');
-                    break;
-            }
-        }
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -112,26 +89,13 @@ class ChecklistType extends Model
     }
 
 
-    public function updates($id)
-    {
-        $request = request();
-
-        $update_array = array(
-            'category_name' => $request->checklist_category,
-            'questionary' => decryptId($request->questionary_id),
-            'updated_by' => Auth::id()
-        );
-        return $this->where('id', $id)->update($update_array);
-    }
-
-
 
     public function exportdata()
     {
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_master_checklist_type.*');
+        $query = $this->select('inspection_audit.*');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -142,10 +106,10 @@ class ChecklistType extends Model
         }
 
         if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_master_checklist_type.category_name', 'LIKE', '%' . $request->category_name . '%');
+            $query = $query->where('inspection_audit.category_name', 'LIKE', '%' . $request->category_name . '%');
         }
         if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_master_checklist_type.category_id', 'LIKE', '%' . $request->category_id . '%');
+            $query = $query->where('inspection_audit.category_id', 'LIKE', '%' . $request->category_id . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -153,22 +117,22 @@ class ChecklistType extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "category_name":
-                    $query->orderBy('inspection_master_checklist_type.category_name', $columnorder);
+                    $query->orderBy('inspection_audit.category_name', $columnorder);
                     break;
                 case "category_id":
-                    $query = $query->orderBy('inspection_master_checklist_type.category_id', $columnorder);
+                    $query = $query->orderBy('inspection_audit.category_id', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_master_checklist_type.status', $columnorder);
+                    $query = $query->orderBy('inspection_audit.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_master_checklist_type.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_audit.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_master_checklist_type.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_audit.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_master_checklist_type.id', 'DESC');
+                    $query = $query->orderBy('inspection_audit.id', 'DESC');
                     break;
             }
         }
@@ -189,9 +153,8 @@ class ChecklistType extends Model
     public function ExistuniqueCheck($data)
     {
         $unique =  $this->where('category_name',  $data['category_name'])
-            ->where('id', '!=', ($data['id']))
+            ->where('id', '!=', decryptId($data['id']))
             ->get();
-
         if (count($unique) > 0) {
             return false;
         }
@@ -230,7 +193,7 @@ class ChecklistType extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_master_checklist_type'));
+        static::addGlobalScope(new TrashScope('inspection_audit'));
         static::created(function ($model) {
 
             $uniqueId = 'CAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
