@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inspection\Master;
 use Exception;
 use Response;
 use Illuminate\Http\Request;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -42,6 +43,7 @@ class ChecklistSubTypeController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
+
                             if ($row->status == 1) {
                                 $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
@@ -58,10 +60,10 @@ class ChecklistSubTypeController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('inspection/checklist-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('inspection/master/checklist-sub-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                                $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                                
                             }
                             return $btn;
                         })
@@ -72,13 +74,18 @@ class ChecklistSubTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
+                    
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
+        $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
+        $data = array(
+            'checklist_types' => $checklist_types,
 
-        $data = array();
+        );
         return view('inspection.master.checklist_subtype.list', $data);
     }
 
@@ -114,7 +121,7 @@ class ChecklistSubTypeController extends Controller
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
-                dd($ex);
+                
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
@@ -150,18 +157,19 @@ class ChecklistSubTypeController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_type =   $this->checklist_subtype->selectOne($id);
+                $checklist_subtype =   $this->checklist_subtype->selectOne($id);
                 $checklist_image = $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_SUB_TYPE);
 
                 $data = array(
-                    'checklist_type' => $checklist_type,
+                    'checklist_subtype' => $checklist_subtype,
+                    'checklist_image' => $checklist_image,
                 );
             }
             return view('inspection.master.checklist_subtype.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 
@@ -172,6 +180,7 @@ class ChecklistSubTypeController extends Controller
             $checklist_subtype = $this->checklist_subtype->selectOne($id);
             $checklist_sub_type =   $this->checklist_subtype->find($id);
             $checklist_image =   $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_SUB_TYPE);
+
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $data = array(
                 'checklist_sub_type' => $checklist_sub_type,
@@ -230,7 +239,6 @@ class ChecklistSubTypeController extends Controller
         try {
             $id = decryptId($request->id);
             $this->checklist_subtype->statuschange($id);
-            $this->ptw_sub_cat->statuschange_all($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
         } catch (Exception $ex) {
@@ -246,8 +254,9 @@ class ChecklistSubTypeController extends Controller
             $allData =   $this->checklist_subtype->exportdata();
             $header = [
                 __("common.sno"),
-                __("ptw.permit_to_work_type"),
-                __("ptw.check_list_category"),
+                __("Checklist Sub-Type ID"),
+                __("Checklist Type Name"),
+                __("Checklist Sub-Type Name"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -258,8 +267,9 @@ class ChecklistSubTypeController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->permit_type;
-                $export[] =  $data->ptw_checklist_type;
+                $export[] = $data->subcategory_id;
+                $export[] =  $data->category_name;
+                $export[] =  $data->subcategory_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -269,7 +279,7 @@ class ChecklistSubTypeController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Category.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Category.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -286,20 +296,19 @@ class ChecklistSubTypeController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData =   $this->checklist_subtype->exportdata();
-
             $header = [
                 __("common.sno"),
-                __("ptw.permit_to_work_type"),
-                __("ptw.check_list_category"),
+                __("Checklist Sub-Type ID"),
+                __("Checklist Type Name"),
+                __("Checklist Sub-Type Name"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
-
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "CheckList Category",
+                'pagetitle' => "Checklist Sub Type Category",
             );
 
             $property = [
@@ -314,16 +323,17 @@ class ChecklistSubTypeController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.checklist_subtype.pdf', $data);
+            $view = view('inspection.master.checklist_subtype.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "CheckList Category Details.pdf";
+            $filename = "Checklist Sub Type Category.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+
             report($ex);
         }
     }

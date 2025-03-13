@@ -54,6 +54,9 @@ use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
+use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
+use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
+use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
@@ -1321,6 +1324,51 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehs_head_verify/submit', [InitialFireIncidentController::class, 'ehsHeadVerifySubmit']);
                 Route::post('/actiontaken/submit', [InitialFireIncidentController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [InitialFireIncidentController::class, 'ehsApprovalSubmit']);
+            });
+
+            Route::group(['prefix' => 'ohc/'], function () {
+
+
+                Route::group(['prefix' => 'weekly-ambulance/inspection/checklist'], function () {
+                    Route::GET('/list', [WeeklyAmbulanceController::class, 'Index']);
+                    Route::POST('/list', [WeeklyAmbulanceController::class, 'Index']);
+                    Route::GET('/add', [WeeklyAmbulanceController::class, 'Add']);
+                    Route::POST('/add/submit', [WeeklyAmbulanceController::class, 'Store']);
+                    Route::POST('/unique', [WeeklyAmbulanceController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [WeeklyAmbulanceController::class, 'View']);
+                    Route::POST('/status', [WeeklyAmbulanceController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [WeeklyAmbulanceController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [WeeklyAmbulanceController::class, 'ExportPDF']);
+                    Route::POST('/lists', [WeeklyAmbulanceController::class, 'Checklists']);
+                });
+
+
+
+                Route::group(['prefix' => 'medical-requisition-slip'], function () {
+                    Route::GET('/list', [MedicalRequisitionSlipController::class, 'Index']);
+                    Route::POST('/list', [MedicalRequisitionSlipController::class, 'Index']);
+                    Route::GET('/add', [MedicalRequisitionSlipController::class, 'Add']);
+                    Route::POST('/add/submit', [MedicalRequisitionSlipController::class, 'Store']);
+                    Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);
+                    Route::POST('/status', [MedicalRequisitionSlipController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [MedicalRequisitionSlipController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [MedicalRequisitionSlipController::class, 'ExportPDF']);
+                    Route::POST('/lists', [MedicalRequisitionSlipController::class, 'Checklists']);
+                });
+
+                Route::group(['prefix' => 'medical-requisition-slip/fdo-security-gate'], function () {
+                    Route::GET('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
+                    Route::POST('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
+                    Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
+                    Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
+                    Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
+                    Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [MedicalRequisitionSlipSecurityGateController::class, 'ExportPDF']);
+                    Route::POST('/lists', [MedicalRequisitionSlipSecurityGateController::class, 'Checklists']);
+                });
             });
         });
     });
