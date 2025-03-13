@@ -49,6 +49,11 @@ class LoginController extends BaseController
                 $user = Auth::user();
                 $success['token'] =  $user->createToken('karam')->accessToken;
                 $success['name'] =  $user->name;
+                $success['user_details'] = [
+                    'employee_id'   => $user->employee_id,
+                    'role'          => $user->role,
+                    'department_id' => $user->department_id,
+                ];
 
 
                 $token = $request->fcm_token;
