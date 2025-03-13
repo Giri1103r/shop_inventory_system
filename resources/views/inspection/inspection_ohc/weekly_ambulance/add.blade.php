@@ -60,8 +60,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control"
-                                                        >
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -70,8 +69,7 @@
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off"
-                                                           >
+                                                            class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -83,9 +81,10 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="review_date" id="review_date"
-                                                            class="form-control"autocomplete="off"
-                                                           >
+                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
+                                                            name="review_date" id="review_date" class="form-control"
+                                                            autocomplete="off" readonly>
+
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -96,9 +95,14 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
-                                                    <input type="text" name="shift" id = "shift"
-                                                        class="form-control"
-                                                        >
+                                                    <select name="shift" id="shift" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        @foreach ($shift as $list)
+                                                        <option value="">Select the option</option>
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -106,8 +110,7 @@
                                                     <label for="rate" class="form-label require ">Next Due On</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="next_due_on" id="next_due_on"
-                                                            class="form-control"autocomplete="off"
-                                                           >
+                                                            class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -116,16 +119,25 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Date of inspection</label>
+                                                    <label for="rate" class="form-label require ">Date of
+                                                        inspection</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="date_of_inspection" id="date_of_inspection"
-                                                            class="form-control"autocomplete="off">
+                                                        <input type="text" name="date_of_inspection"
+                                                            id="date_of_inspection" class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Weekly Ambulance Inspection Checklist</h4>
+                                            </div>
+                                           
+
                                         </div>
                                 </div>
                                 <hr>
@@ -146,8 +158,7 @@
 
         </div>
     </div>
-    </form>
-    </div>
+
 
 @stop
 
@@ -158,6 +169,22 @@
                 e.preventDefault();
                 location.reload();
             });
+        });
+
+        var IssueDatepicker = flatpickr("#issue_date", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
+        });
+        var Datepicker = flatpickr("#date_of_inspection", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
+        });
+        var dueDate = flatpickr("#next_due_on", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
         });
         $(function() {
 

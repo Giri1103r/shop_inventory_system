@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Ohc\WeeklyAmbulance;
 use App\Models\Inspection\Ohc\WeeklyAmbulanceChecklist;
 use App\Models\Master\Department;
@@ -20,6 +21,7 @@ class WeeklyAmbulanceController extends Controller
     private $weekly_ambulance_inspection_checklist;
     private $upload_log;
     private $unit;
+    private $shift;
     private $department;
 
 
@@ -30,6 +32,8 @@ class WeeklyAmbulanceController extends Controller
         $this->upload_log = new UploadLog();
         $this->unit = new Unit();
         $this->department = new Department();
+        $this->shift = new Shift();
+
 
     }
 
@@ -87,12 +91,14 @@ class WeeklyAmbulanceController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
+            $shift = $this->shift->getShiftname();
             $data = array(
                 'unit' => $unit,
+                'shift' => $shift,
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 

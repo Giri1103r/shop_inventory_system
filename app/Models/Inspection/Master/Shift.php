@@ -30,7 +30,11 @@ class Shift extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_audit'));
-    
+        static::addGlobalScope(new TrashScope('inspection_shift_option'));
+
+    }
+
+    public function getShiftname(){
+        return $this->where('status',1)->get();
     }
 }
