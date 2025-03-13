@@ -43,6 +43,7 @@ Route::group(['prefix' => 'inspection/master/'], function () {
     Route::POST('/import/submit', [ChecklistSubTypeController::class, 'ImportSubmit']);
     Route::GET('/sampledownload', [ChecklistSubTypeController::class, 'DownloadSample']);
     Route::POST('/lists', [ChecklistSubTypeController::class, 'Checklists']);
+    Route::get('/ajax-list/{checklistTypeId}/{id}', [ChecklistSubTypeController::class, 'checklistSubTypeList']);
   });
 
   Route::group(['prefix' => 'checklist-sub-type-data/'], function () {

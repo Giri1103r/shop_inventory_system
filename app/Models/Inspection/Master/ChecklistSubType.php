@@ -124,6 +124,33 @@ class ChecklistSubType extends Model
             ->get();
     }
 
+
+    public function ajaxList($subTypeId , $checklistTypeId = '')
+    {
+        $query = $this->select('id', 'subcategory_name')->where('status', 1);
+
+        if ($checklistTypeId != '') {
+            $query->where('category_id', $checklistTypeId);
+        }
+        if (!empty($checklistTypeId) && !empty($subTypeId)) {
+            $query = $query->where('category_id', $checklistTypeId)->where('status', 1)->orWhere(function ($query) use ($subTypeId, $checklistTypeId) {
+                $query->where('category_id', $checklistTypeId)->where('id', $subTypeId);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->subcategory_name;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_subtype'));

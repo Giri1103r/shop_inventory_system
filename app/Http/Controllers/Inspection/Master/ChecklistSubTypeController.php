@@ -415,4 +415,14 @@ class ChecklistSubTypeController extends Controller
             return redirect(admin_url('inspection/checklist-type/list'));
         }
     }
+
+    public function checklistSubTypeList(Request $request ,$checklistTypeId)
+    {
+
+        $checklistTypeId = decryptId($checklistTypeId);
+        $id = decryptId($request->id);
+        $checklistSubType = $this->checklist_subtype->ajaxList( $id , $checklistTypeId);
+
+        return response()->json($checklistSubType);
+    }
 }
