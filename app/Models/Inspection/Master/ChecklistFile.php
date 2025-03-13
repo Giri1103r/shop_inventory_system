@@ -111,6 +111,7 @@ class ChecklistFile extends Model
             } else {
                 $this->create([
                     'checklist_id' => $id,
+                    'type' => $type,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
                     'file_path' => $filePath,

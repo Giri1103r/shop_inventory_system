@@ -75,7 +75,7 @@ class ChecklistSubTypeController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
+                    
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -180,6 +180,7 @@ class ChecklistSubTypeController extends Controller
             $checklist_subtype = $this->checklist_subtype->selectOne($id);
             $checklist_sub_type =   $this->checklist_subtype->find($id);
             $checklist_image =   $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_SUB_TYPE);
+
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $data = array(
                 'checklist_sub_type' => $checklist_sub_type,

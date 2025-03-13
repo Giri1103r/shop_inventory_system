@@ -32,7 +32,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="subchecklistedit"
-                                        action="{{ admin_url('inspection/master/checklist-sub-type/edit/submit') }}"  autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('inspection/master/checklist-sub-type/edit/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($checklist_sub_type->id) }}">
@@ -75,12 +76,14 @@
                                                 <input type="file" name="checklist_file" id="checklist_file"
                                                     class="form-control form-control-sm" accept="image/jpeg"
                                                     placeholder="Enter the image">
-                                                    <div>
+                                                <div>
+                                                    @if (!empty($checklist_image))
                                                         <a href="{{ asset($checklist_image->file_path) }}" target="_blank">
                                                             <img src="{{ asset($checklist_image->file_path) }}"
                                                                 alt="Image" style="max-width: 50%;">
                                                         </a>
-                                                    </div>
+                                                </div>
+                                                @endif
                                                 <small>Allowed file types: jpg</small>
 
                                             </div>
