@@ -41,11 +41,11 @@ class ChecklistFile extends Model
             $image = $request->file('checklist_file');
             $upload_path = 'public/uploads/inspection/master/checklist';
 
-            if (!File::exists(public_path($upload_path))) {
-                File::makeDirectory(public_path($upload_path), 0777, true, true);
+            if (!File::exists($upload_path)) {
+                File::makeDirectory($upload_path, 0777, true, true);
             }
             $file_name = time() . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path($upload_path), $file_name);
+            $image->move($upload_path, $file_name);
             $url = $upload_path . '/' . $file_name;
 
             $OriginalfileName = $image->getClientOriginalName();
