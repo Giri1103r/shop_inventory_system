@@ -120,7 +120,6 @@ class ChecklistTypeController extends Controller
 
             return redirect(admin_url('inspection/master/checklist-type/list'));
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('inspection/master/checklist-type/list'));
         }
@@ -151,7 +150,7 @@ class ChecklistTypeController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $checklist_type = $this->checklist_type->selectOne($id);
-                $checklist_images = $this->checklist_file->selectChecklistTypeImage($id);
+                $checklist_images = $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_TYPE);
 
                 $data = array(
                     'checklist_type' => $checklist_type,
@@ -170,56 +169,47 @@ class ChecklistTypeController extends Controller
     {
         try {
             $id = decryptId($id);
-            $permit_type = $this->permit_type->get();
-            $check_list_category = $this->checklist_type->find($id);
+            $checklist_type = $this->checklist_type->selectOne($id);
+            $checklist_images = $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_TYPE);
+            $checklist_options = $this->checklist_option->Getall();
 
             $data = array(
-                'check_list_category' => $check_list_category,
-                'permit_type' => $permit_type,
+                'checklist_type' => $checklist_type,
+                'checklist_images' => $checklist_images,
+                'checklist_options' => $checklist_options,
             );
-            return view('master.checklist_type.edit', $data);
+            return view('inspection.master.checklist_type.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
     }
 
-    public function Update(Request $request)
+    public function update(Request $request)
     {
         try {
             $id = decryptId($request->id);
 
             $rules = [
-                'ptw_checklist_type' => 'required',
-                'permit_type_id' => 'required',
-
+                'category_id' => 'required',
+                'subcategory_name' => 'required',
             ];
-
             $messages = [
-                'ptw_checklist_type.required' => __('ptw.check_list_category_require'),
-                'ptw_checklist_type.required' => __('ptw.check_list_category_require'),
-                'permit_type_id.requred' => __('ptw.ptw_require'),
+                'category_id.required' => 'Please enter Category',
+                'subcategory_name.requred' => 'Please enter Sub category name',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                if ($validator->errors()->has('ptw_checklist_type')) {
-                    $errorMessage = $validator->errors()->first('ptw_checklist_type');
-                    if (str_contains($errorMessage, 'Checklist category cannot contain special characters')) {
-                        Session::flash('error', 'Checklist category cannot contain special characters');
-                    } else {
-                        Session::flash('error', 'Checklist category is required');
-                    }
-                }
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            $this->checklist_type->updates($id);
+            $this->checklist_subtype->updates($id);
+            $this->checklist_file->updates($id, CHECKLIST_SUB_TYPE);
 
             Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('inspection/master/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('inspection/master/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 
