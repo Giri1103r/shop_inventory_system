@@ -136,8 +136,47 @@
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Weekly Ambulance Inspection Checklist</h4>
                                             </div>
-                                           
+                                        </div>
 
+                                        <div class="table-responsive">
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered ">
+
+                                                    <thead class="bg-secondary" style="color: #ffff">
+                                                        <tr>
+                                                            <th>Check Item</th>
+                                                            <th>Status</th>
+                                                            <th>Remarks</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="medicine-tbody">
+                                                        <tr>
+                                                            <td>
+
+                                                            </td>
+                                                            <td>
+
+                                                            </td>
+
+                                                            <td>
+                                                                
+                                                            </td>
+
+                                                            <td>
+
+
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </div>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                 </div>
                                 <hr>
