@@ -12,16 +12,13 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import>
-                        {{-- @endif --}}
+
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
-                    <div id="search" class="collapse">
+                    {{-- <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
@@ -51,7 +48,7 @@
                             </div>
                         </form>
                         <hr>
-                    </div>
+                    </div> --}}
 
 
                     <div class="card-body">
@@ -60,9 +57,9 @@
                                 class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
-                                        <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('inspection.checklist_type_id')}}</th>
-                                        <th>{{__('inspection.checklist_type_name')}}</th>
+                                        <th>Doc.NO</th>
+                                        <th>Issue Date</th>
+                                        <th>Rev.Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -113,7 +110,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist') }}",
+                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -138,12 +135,16 @@
                         },
 
                         {
-                            data: 'category_id',
-                            name: 'category_id'
+                            data: 'document_no',
+                            name: 'document_no'
                         },
                         {
-                            data: 'category_name',
-                            name: 'category_name'
+                            data: 'issue_date',
+                            name: 'issue_date'
+                        },
+                        {
+                            data: 'review_date',
+                            name: 'review_date'
                         },
                         {
                             data: 'status',
