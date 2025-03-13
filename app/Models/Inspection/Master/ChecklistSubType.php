@@ -186,6 +186,25 @@ class ChecklistSubType extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    public function statuschange_all($id)
+    {
+        $request = request();
+        $datas = $this->where('category_id', $id)->get();
+        $type = $request->types;
+        foreach($datas as $data){
+            if ($type == 1) {
+                $update_data = array(
+                    'status' => 0,
+                );
+            } else {
+                $update_data = array(
+                    'status' => 1,
+                );
+            }
+            $data->update($update_data);
+        }
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_subtype'));

@@ -112,6 +112,19 @@ class ChecklistType extends Model
     }
 
 
+    public function updates($id)
+    {
+        $request = request();
+
+        $update_array = array(
+            'category_name' => $request->checklist_category,
+            'questionary' => decryptId($request->questionary_id),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+
 
     public function exportdata()
     {
@@ -176,8 +189,9 @@ class ChecklistType extends Model
     public function ExistuniqueCheck($data)
     {
         $unique =  $this->where('category_name',  $data['category_name'])
-            ->where('id', '!=', decryptId($data['id']))
+            ->where('id', '!=', ($data['id']))
             ->get();
+
         if (count($unique) > 0) {
             return false;
         }

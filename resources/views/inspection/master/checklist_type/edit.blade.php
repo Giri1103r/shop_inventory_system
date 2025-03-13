@@ -51,9 +51,11 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="checklistadd"
-                                        action="{{ admin_url('inspection/master/checklist-type/add/submit') }}"
+                                        action="{{ admin_url('inspection/master/checklist-type/edit/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
+                                        <input type="hidden" value="{{ encryptId($checklist_type->id) }}" name="id"
+                                            id="id" />
 
                                         <div class="row">
                                             <div class="form-input col-md-4 mb-2">
@@ -70,20 +72,6 @@
                                                     class="form-control" placeholder="Enter Category Name"
                                                     value="{{ $checklist_type->category_name }}">
                                             </div>
-
-                                            <div class="form-input col-md-4 mb-2">
-                                                <label class="form-label">Image</label>
-                                                <input type="file" name="checklist_file" id="checklist_file"
-                                                    class="form-control form-control-sm" accept="image/jpeg"
-                                                    placeholder="Enter the image">
-                                                <small>Allowed file types: jpg</small>
-                                                <div id="checklist_file_error" class="text-danger"></div>
-                                                {{-- @error('checklist_file')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror --}}
-                                            </div>
-
-
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label for="work_station_id"
                                                     class="col-sm-5 form-label  required">Questionary</label>
@@ -97,6 +85,26 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            <div class="form-input col-md-4 mb-2">
+                                                <label class="form-label">Image</label>
+                                                <input type="file" name="checklist_file" id="checklist_file"
+                                                    class="form-control form-control-sm" accept="image/jpeg"
+                                                    placeholder="Enter the image">
+                                                <small>Allowed file types: jpg</small>
+                                                <div id="checklist_file_error" class="text-danger"></div>
+                                                <div>
+                                                    @if (!empty($checklist_images))
+                                                        <a href="{{ asset($checklist_images->file_path) }}" target="_blank">
+                                                            <img src="{{ asset($checklist_images->file_path) }}"
+                                                                alt="Image" style="max-width: 50%;">
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                                {{-- @error('checklist_file')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror --}}
+                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -158,6 +166,9 @@
                             data: {
                                 checklist_category: function() {
                                     return $('#checklist_category').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
                                 }
                             }
                         }
