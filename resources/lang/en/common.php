@@ -67,5 +67,14 @@ return [
     'remarks'=>'Remarks',
     'rejection_log'=>'Rejection Log',
     'reported_info' =>'Reporting Information',
-    'reported_type'=>'Reported Type'
+    'reported_type'=>'Reported Type',
+
+
+    //Error
+    'page_expired' => 'Your session has expired. Please refresh the page and try again.',
+    'server_error' => 'Server error. Please try again later.',
+    'something_went_wrong' => 'Something went Wrong!',
+    'unauthorized' => 'Access denied. You don\'t have permission to view this page.',
+
+
 ];
