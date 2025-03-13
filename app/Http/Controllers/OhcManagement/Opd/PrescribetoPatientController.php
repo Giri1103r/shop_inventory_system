@@ -300,6 +300,7 @@ class PrescribetoPatientController extends Controller
                 if ($inventory) {
                     $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
+
                 }
             }
 
@@ -383,7 +384,7 @@ class PrescribetoPatientController extends Controller
         }
     }
 
-    //
+   
     public function update(Request $request)
     {
         $id = decryptId($request->id);

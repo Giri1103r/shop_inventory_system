@@ -50,6 +50,7 @@ class LoginController extends BaseController
                 $success['token'] =  $user->createToken('karam')->accessToken;
                 $success['name'] =  $user->name;
 
+
                 $token = $request->fcm_token;
 
                 if ($request->has('device_type')) {
@@ -271,7 +272,10 @@ class LoginController extends BaseController
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
-                'mobile' => $user->mobile,
+                'employee_id' => $user->employee_id,
+                'name' => $user->name,
+                'role' => $user->role,
+                'department' => $user->department_id,
 
             );
 
