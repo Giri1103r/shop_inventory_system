@@ -14,9 +14,9 @@ class ChecklistSubType extends Model
 
     protected $fillable = [
         'id',
+        'subcategory_id',
         'category_id',
         'subcategory_name',
-        'questionary',
         'status',
         'trash',
         'created_by',
@@ -95,23 +95,57 @@ class ChecklistSubType extends Model
         return $datas;
     }
 
-    public function store(){
+    public function store()
+    {
         $request = request();
         $insert_array = [
-            'category_id' => $request->checklist_type_category_id,
-            'category_name' => $request->checklist_category,
-            'questionary' => decryptId($request->questionary_id),
+            'category_id' => decryptId($request->category_id),
+            'subcategory_name' => $request->subcategory_name,
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
     }
 
-    public function selectOne($id){
+
+    public function updates($id)
+    {
+
+        $request = request();
+
+        $update_array = array(
+            'category_id' => decryptId($request->category_id),
+            'subcategory_name' => $request->subcategory_name,
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+    public function selectOne($id)
+    {
         return $this->where('id', $id)->first();
+    }
+
+    public function UniqueCheck($subcategory_name, $category_id)
+    {
+
+        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)->get();
+    }
+
+    public function ExistuniqueCheck($subcategory_name, $category_id, $id)
+    {
+        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_subtype'));
+
+        static::created(function ($model) {
+
+            $uniqueId = 'SUBCAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['subcategory_id' => $uniqueId]);
+        });
     }
 }

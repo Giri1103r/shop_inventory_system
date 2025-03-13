@@ -77,6 +77,9 @@ class PpeExemptionController extends BaseController
                 $ppe_exemption_array->where(function ($query) use ($search,$searchDate) {
                     $query->orWhere('ppe_ppeexemption.emp_id', 'LIKE', "%{$search}%")
                     ->orWhereDate('ppe_ppeexemption.created_at', 'LIKE', "%{$searchDate}%")
+                    ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
+                    ->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
+
                         ->orWhere('ppe_ppeexemption.emp_name', 'LIKE', "%{$search}%");
                 });
             }
