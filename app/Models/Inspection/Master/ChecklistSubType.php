@@ -168,6 +168,32 @@ class ChecklistSubType extends Model
     }
 
 
+    public function ajaxList($subTypeId , $checklistTypeId = '')
+    {
+        $query = $this->select('id', 'subcategory_name')->where('status', 1);
+
+        if ($checklistTypeId != '') {
+            $query->where('category_id', $checklistTypeId);
+        }
+        if (!empty($checklistTypeId) && !empty($subTypeId)) {
+            $query = $query->where('category_id', $checklistTypeId)->where('status', 1)->orWhere(function ($query) use ($subTypeId, $checklistTypeId) {
+                $query->where('category_id', $checklistTypeId)->where('id', $subTypeId);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->subcategory_name;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+
     public function statuschange($id)
     {
         $request = request();
@@ -184,6 +210,25 @@ class ChecklistSubType extends Model
         }
 
         return $this->where('id', $id)->update($update_data);
+    }
+
+    public function statuschange_all($id)
+    {
+        $request = request();
+        $datas = $this->where('category_id', $id)->get();
+        $type = $request->types;
+        foreach($datas as $data){
+            if ($type == 1) {
+                $update_data = array(
+                    'status' => 0,
+                );
+            } else {
+                $update_data = array(
+                    'status' => 1,
+                );
+            }
+            $data->update($update_data);
+        }
     }
 
     protected static function booted()
