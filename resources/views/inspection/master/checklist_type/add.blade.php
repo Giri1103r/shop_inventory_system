@@ -168,7 +168,6 @@
                         required: true,
                     },
                     checklist_file: {
-                        required: true,
                         extension: "jpg",
                         filesize: [50, 5120],
                     },

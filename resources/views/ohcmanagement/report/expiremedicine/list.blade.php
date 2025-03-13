@@ -201,46 +201,7 @@
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]
             ],
-            buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                            extend: 'pdf',
-                            text: '{{ __('common.pdf') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                var medicine_id = $('#medicine_id').val();
-                                var expire_date = $('#expire_date').val();
-
-
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/medicine-expire-report/export/pdf') }}" +
-                                    '?search=' + searchValue +
-                                    '?expire_date=' + expire_date +
-                                    '&medicine_id=' + medicine_id ;
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                var medicine_id = $('#medicine_id').val();
-                                var expire_date = $('#expire_date').val();
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/medicine-expire-report/export/excel') }}" +
-                                    '?search=' + searchValue +
-                                    '?expire_date=' + expire_date +
-                                    '&medicine_id=' + medicine_id ;
-
-                            }
-                        }
-                    ]
-                },
+            buttons: [
                 {
                     extend: 'pageLength',
                     text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
