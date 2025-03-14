@@ -2,6 +2,8 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlyForkLiftInspection extends Model
@@ -38,6 +40,7 @@ class MonthlyForkLiftInspection extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'responses',
     ];
 
     protected $attributes = [
@@ -115,5 +118,39 @@ class MonthlyForkLiftInspection extends Model
         );
 
         return $datas;
+    }
+
+    public function store()
+    {
+        $request = request();
+        $responses = $request->checklist;
+        $respones = json_encode($responses);
+        $insert_array = [
+            'issue_date' => DBdateformat($request->issue_date),
+            'revision_data' => $request->rev_date,
+            'doc_no' => $request->doc_no,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => decryptId($request->location_id),
+            'shift' => decryptId($request->shift_id),
+            'next_due' => DBdateformat($request->next_due),
+            'unit' => decryptId($request->next_due),
+            'frequency' => decryptId($request->frequency_id),
+            'identification_no' => $request->identification_no,
+            'forklift_type' => decryptId($request->forklift_type),
+            'capacity' => $request->capacity,
+            'created_by' => Auth::id(),
+            'responses' => $respones,
+            'inspection_status' => FIRE_ASSOCIATES_INSPECTION_DONE,
+        ];
+        return $this->create($insert_array);
+    }
+
+    public function selectOne($id){
+        return  $this->where('id', $id)->first();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_forklift_inpsection_monthly'));
     }
 }

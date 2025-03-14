@@ -193,7 +193,6 @@
                                                             $rowCount = count($details);
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
-                                                        @dd($checklist);
                                                             <tr>
                                                                 <td
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
@@ -213,9 +212,8 @@
                                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;"
                                                                         class="">
                                                                         <input type="radio"
-                                                                            name="checklist_[{{ $checklist->id }}]"
+                                                                            name="checklist[{{ $checklist->checklist_id }}]"
                                                                             value="{{ trim($option) }}">
-
                                                                     </td>
                                                                 @endforeach
                                                                 @php
