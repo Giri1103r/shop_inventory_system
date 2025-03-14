@@ -1591,7 +1591,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getDocumentReviewDate')) {
         function getDocumentReviewDate($type)
         {
-            return $type . ' ' . now()->format('d-m-Y');
+            return $type . ' - ' . now()->format('d-m-Y');
         }
     }
     if (!function_exists('getCheckListType')) {

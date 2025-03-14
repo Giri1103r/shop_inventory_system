@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Models\Inspection\Master;
+namespace App\Models\Master;
 
 use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 
-class Frequency extends Model
+class ForkLiftType extends Model
 {
-    protected $table = 'inspection_frequency_option';
+    protected $table = 'inspection_forklift_type';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'frequency_name',
+        'forklift',
         'status',
         'trash',
         'created_by',
@@ -25,14 +25,12 @@ class Frequency extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
-    public function getFrequency(){
-        return $this->where('status',1)->get();
+    public function getForkLift()
+    {
+        return $this->where('status', 1)->get();
     }
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_frequency_option'));
-
+        static::addGlobalScope(new TrashScope('inspection_forklift_type'));
     }
-
-
 }
