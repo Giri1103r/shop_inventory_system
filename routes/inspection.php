@@ -6,6 +6,7 @@ use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
+use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
   Route::group(['prefix' => 'checklist-type'], function () {
@@ -95,5 +96,14 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
         Route::get('add', [MonthlyEyeWashInspectionController::class, 'add']);
         Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'store']);
+    });
+});
+
+Route::group(['prefix' => 'safety/'], function () {
+    Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
+        Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
+        Route::post('list', [MonthlyForkLiftInspectionController::class, 'index']);
+        Route::get('add', [MonthlyForkLiftInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyForkLiftInspectionController::class, 'store']);
     });
 });
