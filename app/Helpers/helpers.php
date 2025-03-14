@@ -1620,6 +1620,7 @@ if (!function_exists('getMonth')) {
                     'inspection_master_checklist_sub_type_data.*',
                     'inspection_master_checklist_sub_type_data_name.*',
                     'inspection_master_checklist_sub_type_data_name.id as checklist_id',
+                    'inspection_master_checklist_sub_type_data_name.name as checklist_name',
                     'inspection_master_checklist_option.type',
                 ]);
             $data = $data->groupBy('subcategory_name');
