@@ -143,6 +143,8 @@ class AuditAssessmentController extends Controller
     }
     public function store(Request $request)
     {
+
+        dd($request);
         try {
             $rules = [
                 'category_id' => 'required',

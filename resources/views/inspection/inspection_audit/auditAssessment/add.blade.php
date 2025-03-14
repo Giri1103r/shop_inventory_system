@@ -102,6 +102,11 @@
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
+
+                                                                <input type="hidden"
+                                                                    name="checklist_hidden_{{ $checklist->id }}"
+                                                                    value="{{ $checklist->checklist_id }}">
+
                                                                 @if ($index == 0)
                                                                     <td rowspan="{{ $rowCount }}"
                                                                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
@@ -121,8 +126,8 @@
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                         <input type="radio"
                                                                             name="checklist_{{ $checklist->id }}"
-                                                                            value="{{ trim($option) }}" class = "validate-radio-required">
-
+                                                                            value="{{ trim($option) }}"
+                                                                            class = "validate-radio-required">
                                                                     </td>
                                                                 @endforeach
                                                             </tr>
@@ -222,10 +227,10 @@
                             required: "{{ __('Date Of Audit is required') }}",
                         },
                         shift_id: {
-                            extension: "Shift is required",
+                            required: "Shift is required",
                         },
                         floor_executive: {
-                            extension: "Floor Executive on Duty is required",
+                            required: "Floor Executive on Duty is required",
                         }
                     },
                     errorElement: 'span',
