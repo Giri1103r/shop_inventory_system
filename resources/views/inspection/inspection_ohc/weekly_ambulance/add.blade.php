@@ -43,7 +43,7 @@
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -58,46 +58,124 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Category Id</label>
-                                                    <input type="text" name="checklist_type_category_id" id = "checklist"
-                                                        class="form-control" readonly
-                                                        value="{{ getSequence('incident_checklist_type') }}">
+                                                    <label class="form-label require">Document Number</label>
+                                                    <input type="text" name="document_no" id = "document_no"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Issued
+                                                        Date</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id="issue_date"
+                                                            class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Review
+                                                        Date</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
+                                                            name="review_date" id="review_date" class="form-control"
+                                                            autocomplete="off" readonly>
+
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Category Name</label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
+                                                    <label class="form-label require">Shift</label>
+                                                    <select name="shift" id="shift" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        @foreach ($shift as $list)
+                                                        <option value="">Select the option</option>
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
-
-                                            <div class="form-group form-input col-md-4 mb-2">
-                                                <label class="form-label">Image</label>
-                                                <input type="file" name="checklist_file" id="checklist_file"
-                                                    class="form-control form-control-sm" accept="image/jpeg"
-                                                    placeholder="Enter the image">
-                                                <small>Allowed file types: jpg</small>
-                                                <div id="checklist_file_error" class="text-danger"></div>
-                                                @error('checklist_file')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Next Due On</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due_on" id="next_due_on"
+                                                            class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Date of
+                                                        inspection</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="date_of_inspection"
+                                                            id="date_of_inspection" class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Weekly Ambulance Inspection Checklist</h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered ">
+
+                                                    <thead class="bg-secondary" style="color: #ffff">
+                                                        <tr>
+                                                            <th>Check Item</th>
+                                                            <th>Status</th>
+                                                            <th>Remarks</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="medicine-tbody">
+                                                        <tr>
+                                                            <td>
+
+                                                            </td>
+                                                            <td>
+
+                                                            </td>
+
+                                                            <td>
+                                                                
+                                                            </td>
+
+                                                            <td>
 
 
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label for="work_station_id"
-                                                    class="col-sm-5 form-label  required">Questionary</label>
-                                                <select name="questionary_id" id="questionary_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Questionary</option>
-                                                    @foreach ($checklist_options as $checklist_option)
-                                                        <option value="{{ encryptId($checklist_option->id) }}">
-                                                            {{ $checklist_option->type }}</option>
-                                                    @endforeach
-                                                </select>
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </div>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                 </div>
@@ -119,8 +197,7 @@
 
         </div>
     </div>
-    </form>
-    </div>
+
 
 @stop
 
@@ -131,6 +208,22 @@
                 e.preventDefault();
                 location.reload();
             });
+        });
+
+        var IssueDatepicker = flatpickr("#issue_date", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
+        });
+        var Datepicker = flatpickr("#date_of_inspection", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
+        });
+        var dueDate = flatpickr("#next_due_on", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
+
         });
         $(function() {
 

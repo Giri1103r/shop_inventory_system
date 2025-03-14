@@ -5,10 +5,7 @@ use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
-use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
-use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
-use App\Http\Controllers\Inspection\Ohc\WeaklyAmbulanceController;
-use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
+use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
   Route::group(['prefix' => 'checklist-type'], function () {
@@ -31,22 +28,23 @@ Route::group(['prefix' => 'inspection/master/'], function () {
   });
 
   Route::group(['prefix' => 'checklist-sub-type'], function () {
-    Route::GET('/list', [ChecklistSubTypeController::class, 'index']);
-    Route::POST('/list', [ChecklistSubTypeController::class, 'index']);
-    Route::GET('/add', [ChecklistSubTypeController::class, 'add']);
-    Route::POST('/add/submit', [ChecklistSubTypeController::class, 'store']);
-    Route::POST('/unique', [ChecklistSubTypeController::class, 'uniqueCheck']);
-    Route::GET('/edit/{id}', [ChecklistSubTypeController::class, 'edit']);
-    Route::POST('/edit/submit', [ChecklistSubTypeController::class, 'update']);
-    Route::GET('/view/{id}', [ChecklistSubTypeController::class, 'view']);
-    Route::POST('/delete', [ChecklistSubTypeController::class, 'delete']);
-    Route::POST('/status', [ChecklistSubTypeController::class, 'statusChange']);
-    Route::GET('/export/excel', [ChecklistSubTypeController::class, 'exportExcel']);
-    Route::GET('/export/pdf', [ChecklistSubTypeController::class, 'exportPDF']);
-    Route::GET('/import', [ChecklistSubTypeController::class, 'import']);
-    Route::POST('/import/submit', [ChecklistSubTypeController::class, 'importSubmit']);
-    Route::GET('/sampledownload', [ChecklistSubTypeController::class, 'downloadSample']);
-    Route::POST('/lists', [ChecklistSubTypeController::class, 'checklists']);
+    Route::GET('/list', [ChecklistSubTypeController::class, 'Index']);
+    Route::POST('/list', [ChecklistSubTypeController::class, 'Index']);
+    Route::GET('/add', [ChecklistSubTypeController::class, 'Add']);
+    Route::POST('/add/submit', [ChecklistSubTypeController::class, 'Store']);
+    Route::POST('/unique', [ChecklistSubTypeController::class, 'UniqueCheck']);
+    Route::GET('/edit/{id}', [ChecklistSubTypeController::class, 'Edit']);
+    Route::POST('/edit/submit', [ChecklistSubTypeController::class, 'Update']);
+    Route::GET('/view/{id}', [ChecklistSubTypeController::class, 'View']);
+    Route::POST('/delete', [ChecklistSubTypeController::class, 'Delete']);
+    Route::POST('/status', [ChecklistSubTypeController::class, 'StatusChange']);
+    Route::GET('/export/excel', [ChecklistSubTypeController::class, 'ExportExcel']);
+    Route::GET('/export/pdf', [ChecklistSubTypeController::class, 'ExportPDF']);
+    Route::GET('/import', [ChecklistSubTypeController::class, 'Import']);
+    Route::POST('/import/submit', [ChecklistSubTypeController::class, 'ImportSubmit']);
+    Route::GET('/sampledownload', [ChecklistSubTypeController::class, 'DownloadSample']);
+    Route::POST('/lists', [ChecklistSubTypeController::class, 'Checklists']);
+    Route::get('/ajax-list/{checklistTypeId}/{id}', [ChecklistSubTypeController::class, 'checklistSubTypeList']);
   });
 
   Route::group(['prefix' => 'checklist-sub-type-data/'], function () {
@@ -69,6 +67,7 @@ Route::group(['prefix' => 'inspection/master/'], function () {
 });
 
 
+
 Route::group(['prefix' => 'audit/'], function () {
   Route::group(['prefix' => 'assessment/'], function () {
     Route::get('list', [AuditAssessmentController::class, 'index']);
@@ -87,5 +86,12 @@ Route::group(['prefix' => 'audit/'], function () {
     Route::post('status', [AuditAssessmentController::class, 'statusChange']);
     Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
     Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
+  });
+});
+
+Route::group(['prefix' => 'safety/'], function () {
+  Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
+    Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
+    Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
   });
 });

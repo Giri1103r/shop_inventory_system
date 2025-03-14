@@ -1584,4 +1584,11 @@ if (!function_exists('getMonth')) {
             return $exemption->statusCount($type, $params);
         }
     }
+
+    if (!function_exists('getDocumentReviewDate')) {
+        function getDocumentReviewDate($type) {
+            return $type. ' ' . now()->format('d-m-Y');
+        }
+    }
+
 }
