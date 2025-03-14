@@ -1650,18 +1650,18 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    // if (!function_exists('getLocationname')) {
+    if (!function_exists('getShift')) {
 
-    //     function getLocationname($userid)
-    //     {
+        function getShift($userid)
+        {
 
-    //         $location_name = DB::table('masters_location')->select('location_name')->where('id', $userid)->where('trash', 'NO')->first();
+            $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
 
-    //         if ($location_name == null) {
-    //             return '';
-    //         } else {
-    //             return $location_name->location_name;
-    //         }
-    //     }
-    // }
+            if ($shift == null) {
+                return '';
+            } else {
+                return $shift->shift;
+            }
+        }
+    }
 }

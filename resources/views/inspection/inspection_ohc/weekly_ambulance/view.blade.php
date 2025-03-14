@@ -86,7 +86,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Shift</label>
                                         <div class="view_data">
-                                            {{ getShiftname(isset($weekAmbualance->shift) ? $weekAmbualance->shift : '') }}
+                                            {{ getShift(isset($weekAmbualance->shift) ? $weekAmbualance->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -127,13 +127,22 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Weeky Ambulance Inspection Checklist</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
+
     </div>
 
 @stop
