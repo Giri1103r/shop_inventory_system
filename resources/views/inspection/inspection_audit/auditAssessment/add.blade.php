@@ -80,25 +80,38 @@
                                                 </div>
                                             </div>
 
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="4"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Check Points
+                                                        </th>
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Yes
+                                                        </th>
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            No
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
 
-                                            <table style="width: 100%; border-collapse: collapse;">
-                                                <tr>
-                                                    <th 
-                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: top;">
-                                                        Sort</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Check Points</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Yes</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        No</th>
-                                                </tr>
+                                                    @foreach ($checklist_details as $detail)
+                                                    @dd($detail)
+                                                        <tr>
 
+                                                            <td rowspan=""
+                                                                style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                {{ $detail->subcategory_name }}
+                                                            </td>
+
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
                                             </table>
-
                                         </div>
 
                                         <hr>
