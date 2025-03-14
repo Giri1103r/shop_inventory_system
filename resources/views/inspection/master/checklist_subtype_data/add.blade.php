@@ -37,7 +37,7 @@
 
                                         <div class="row">
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Checklist Type Name</label>
                                                     <select name="checklist_type_id" id="checklist_type_id"
@@ -51,7 +51,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Checklist Sub Type Name</label>
                                                     <select name="checklist_sub_type_id" id="checklist_sub_type_id"

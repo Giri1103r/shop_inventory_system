@@ -28,6 +28,7 @@ class ChecklistSubTypeDataName extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
+
     public function store($checklistSubTypeDataId)
     {
         $request = request();
@@ -35,17 +36,65 @@ class ChecklistSubTypeDataName extends Model
 
         if (!empty($checklistData) && is_array($checklistData)) {
             foreach ($checklistData as $datalist) {
+
                 $data = [
                     'checklist_sub_type_data_id' => $checklistSubTypeDataId,
                     'name' => $datalist['name'],
-                    'description' => $datalist['description'],
-                    'created_by' => Auth::id()
+                    'description' => $datalist['description'] ?? null,
+                    'created_by' => Auth::id(),
                 ];
-
                 $this->create($data);
             }
         }
     }
+    public function updates($checklistSubTypeDataId)
+    {
+        $request = request();
+        $checklistData = $request->input('checklist');
+
+        foreach ($checklistData as $datalist) {
+
+            $data = [
+                'checklist_sub_type_data_id' => $checklistSubTypeDataId,
+                'name' => $datalist['name'],
+                'description' => $datalist['description'] ?? null,
+            ];
+
+            if (!isset($datalist['subTypeDataNameId']) || empty($datalist['subTypeDataNameId'])) {
+                $data['created_by'] = Auth::id();
+                $this->create($data);
+            } else {
+                $this->where('id', $datalist['subTypeDataNameId'])
+                    ->where('checklist_sub_type_data_id', $checklistSubTypeDataId)
+                    ->update(array_merge($data, ['updated_by' => Auth::id()]));
+            }
+        }
+    }
+
+    // public function updates($checklistSubTypeDataId)
+    // {
+    //     $request = request();
+    //     $checklistData = $request->input('checklist');
+
+    //     if (!empty($checklistData) && is_array($checklistData)) {
+    //         foreach ($checklistData as $datalist) {
+    //             ChecklistSubTypeDataName::updateOrInsert(
+    //                 [
+    //                     'id' => $datalist['subTypeDataNameId'] ?? null,
+    //                     'checklist_sub_type_data_id' => $checklistSubTypeDataId
+    //                 ],
+    //                 [
+    //                     'name' => $datalist['name'],
+    //                     'description' => $datalist['description'] ?? null,
+    //                     'updated_by' => Auth::id(),
+    //                     'created_by' => $datalist['subTypeDataNameId'] ? null : Auth::id(),
+    //                 ]
+    //             );
+    //         }
+    //     }
+    // }
+
+
 
     public function selectOne($id)
     {

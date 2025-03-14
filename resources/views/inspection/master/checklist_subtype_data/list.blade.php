@@ -31,7 +31,7 @@
                                             <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
                                             <select name="checklist_type_id" id="checklist_type_id" class=" form-control single-select"
                                                 style="width: 100%">
-                                                <option value="">Select Checklist Type Name/option>
+                                                <option value="">Select Checklist Type Name</option>
                                                 @foreach ($checklistTypeList as $list)
                                                     <option value="{{ encryptId($list->id) }}">
                                                         {{ $list->category_name }}</option>
