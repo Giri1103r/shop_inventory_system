@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Master\Employee;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
+use App\Models\Inspection\Master\Shift;
 
 class AuditAssessmentController extends Controller
 {
@@ -24,6 +26,7 @@ class AuditAssessmentController extends Controller
     private $audit_assessment;
     private $upload_log;
     private $checklist_option;
+    private $shift;
 
     public function __construct()
     {
@@ -31,7 +34,9 @@ class AuditAssessmentController extends Controller
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
         $this->checklist_option = new ChecklistOptionType();
+        $this->shift = new Shift();
     }
+
     public function index(Request $request)
     {
         if (Auth::check()) {
@@ -63,7 +68,6 @@ class AuditAssessmentController extends Controller
                             $btn = '<a href="' . admin_url('inspection/master/checklist-sub-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                                
                             }
                             return $btn;
                         })
@@ -75,7 +79,7 @@ class AuditAssessmentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    
+
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -93,15 +97,38 @@ class AuditAssessmentController extends Controller
     {
         try {
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
+            $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
             $data = array(
                 'checklist_types' => $checklist_types,
+                'shift' => $shift,
             );
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }
 
+    public function employeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->orWhere('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
     public function store(Request $request)
     {
         try {
@@ -117,11 +144,11 @@ class AuditAssessmentController extends Controller
             try {
 
                 $checklist_sub_type =   $this->checklist_subtype->store();
-                $this->checklist_file->store($checklist_sub_type->id, CHECKLIST_SUB_TYPE);
+                
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
-                
+
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
@@ -158,11 +185,10 @@ class AuditAssessmentController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $checklist_subtype =   $this->checklist_subtype->selectOne($id);
-                $checklist_image = $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_SUB_TYPE);
+                
 
                 $data = array(
                     'checklist_subtype' => $checklist_subtype,
-                    'checklist_image' => $checklist_image,
                 );
             }
             return view('inspection.inspection_audit.auditAssessment.view', $data);
@@ -179,13 +205,10 @@ class AuditAssessmentController extends Controller
             $id = decryptId($id);
             $checklist_subtype = $this->checklist_subtype->selectOne($id);
             $checklist_sub_type =   $this->checklist_subtype->find($id);
-            $checklist_image =   $this->checklist_file->selectChecklistTypeImage($id, CHECKLIST_SUB_TYPE);
-
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $data = array(
                 'checklist_sub_type' => $checklist_sub_type,
                 'checklist_types' => $checklist_types,
-                'checklist_image' => $checklist_image,
             );
             return view('inspection.inspection_audit.auditAssessment.edit', $data);
         } catch (Exception $error) {
@@ -211,7 +234,7 @@ class AuditAssessmentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $this->checklist_subtype->updates($id);
-            $this->checklist_file->updates($id, CHECKLIST_SUB_TYPE);
+            
 
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/master/checklist-sub-type/list'));

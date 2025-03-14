@@ -205,6 +205,10 @@ class AppServiceProvider extends ServiceProvider
         //Upload
         defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
 
+        //Checklist
+        defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
+
+
         View::composer('*', function ($view) {
 
             /**
