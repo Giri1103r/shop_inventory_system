@@ -65,7 +65,7 @@ class WeeklyAmbulanceController extends Controller
                     $data = $this->weekly_ambulance_details->list();
 
 
-                    $filteredData = collect($data['data'])->where('ohc_type', 1)->values();
+                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_WEEKLY_AMBULANCE)->values();
 
                     $datatables = DataTables::of($filteredData)
                         ->addIndexColumn()
@@ -112,14 +112,14 @@ class WeeklyAmbulanceController extends Controller
             $shift = $this->shift->getShiftname();
             $checklistQuestions = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
 
-
+// dd(  $checklistQuestions);
             $location = $this->location->getLocation();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'checklistQuestions'=>  $checklistQuestions,
                 'location' => $location,
-               
+
 
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);
