@@ -3,28 +3,31 @@
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Notification;
-use App\Models\Master\Fleet;
-use App\Models\UploadLogType;
-use App\Models\Master\UserRole;
-use App\Models\UserPermission;
+use App\Models\FcmToken;
+use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\LeftMenu;
+use Illuminate\Support\Str;
+use App\Models\Master\Fleet;
+use App\Models\Notification;
+use App\Models\UploadLogType;
+use App\Models\UserPermission;
+use App\Models\Master\UserRole;
+use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
+use App\Models\Master\PpeExemption;
+use App\Models\Permit\SafetyPermit;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+use App\Models\Master\TrainingSchedule;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\FcmToken;
-use App\Models\Master\PpeExemption;
-use App\Models\Master\PpeRequest;
-use App\Models\Permit\SafetyPermit;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Str;
-use App\Models\Master\TrainingSchedule;
+use App\Models\Inspection\Master\ChecklistType;
 
 
 if (!function_exists('get_encryptVal')) {
@@ -1582,6 +1585,68 @@ if (!function_exists('getMonth')) {
         {
             $exemption = new PpeExemption();
             return $exemption->statusCount($type, $params);
+        }
+    }
+
+    if (!function_exists('getDocumentReviewDate')) {
+        function getDocumentReviewDate($type)
+        {
+            return $type . ' ' . now()->format('d-m-Y');
+        }
+    }
+    if (!function_exists('getCheckListType')) {
+        function getCheckListType($type)
+        {
+            $data = ChecklistType::where('category_name', $type)->first();
+            if ($data) {
+                return $data->id;
+            }
+            return false;
+        }
+    }
+    if (!function_exists('getCheckListQuestion')) {
+        function getCheckListQuestion($id)
+        {
+
+            $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
+                ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
+                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+                ->join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->where('inspection_master_checklist_type.id', $id)
+
+                ->get([
+                    'inspection_master_checklist_subtype.*',
+                    'inspection_master_checklist_type.*',
+                    'inspection_master_checklist_sub_type_data.*',
+                    'inspection_master_checklist_sub_type_data_name.*',
+                    'inspection_master_checklist_sub_type_data_name.id as checklist_id',
+                    'inspection_master_checklist_sub_type_data_name.name as checklist_name',
+                    'inspection_master_checklist_option.type',
+                ]);
+            $data = $data->groupBy('subcategory_name');
+
+            if ($data) {
+                return $data;
+            }
+            return false;
+        }
+    }
+
+    if (!function_exists('getoption')) {
+        function getoption($id)
+        {
+
+            $data = ChecklistType::join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->where('inspection_master_checklist_type.id', $id)
+
+                ->first([
+                    'inspection_master_checklist_option.type'
+                ]);
+
+            if ($data) {
+                return $data;
+            }
+            return false;
         }
     }
 }

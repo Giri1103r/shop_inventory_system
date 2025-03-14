@@ -11,4 +11,7 @@ return [
     'checklist_type_name' => 'Checklist Type Name',
     'inactive_msg' => 'Do you want to Inactive the checklist type?',
     'active_msg' => 'Do you want to Activate the checklist type?',
+    'doc_no' => 'Document Number',
+    'issue_date' => 'Issue Date',
+    'rev_date' => 'Revision & Date',
 ];

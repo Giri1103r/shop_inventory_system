@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', '6S Audit Assessment')
+@section('pageurl', admin_url('audit/assessment/list'))
 
 
 @section('content')
@@ -12,13 +12,13 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
 
-
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('audit/assessment/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
-                    {{-- <div id="search" class="collapse">
+                    <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
@@ -48,7 +48,7 @@
                             </div>
                         </form>
                         <hr>
-                    </div> --}}
+                    </div>
 
 
                     <div class="card-body">
@@ -58,11 +58,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>{{__('Audit ID')}}</th>
+                                        <th>{{__('Date of Audit')}}</th>
+                                        <th>{{__('Shop Floor')}}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -111,7 +110,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
+                        url: "{{ admin_url('audit/assessment/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -136,16 +135,20 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'document_no'
+                            data: 'audit_id',
+                            name: 'audit_id'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'audit_date',
+                            name: 'audit_date'
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'floor_name',
+                            name: 'floor_name'
+                        },
+                        {
+                            data: 'floor_executive',
+                            name: 'floor_executive'
                         },
                         {
                             data: 'status',
@@ -190,7 +193,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
+                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -206,7 +209,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
+                                            "{{ admin_url('audit/assessment/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -270,7 +273,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
+                                url: "{{ admin_url('audit/assessment/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -338,7 +341,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
+                                url: "{{ admin_url('audit/assessment/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

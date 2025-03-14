@@ -4,10 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
-use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
-use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
-use App\Http\Controllers\Inspection\Ohc\WeaklyAmbulanceController;
-use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
+use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
+use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
   Route::group(['prefix' => 'checklist-type'], function () {
@@ -70,3 +69,42 @@ Route::group(['prefix' => 'inspection/master/'], function () {
 });
 
 
+
+Route::group(['prefix' => 'audit/'], function () {
+  Route::group(['prefix' => 'assessment/'], function () {
+    Route::get('list', [AuditAssessmentController::class, 'index']);
+    Route::post('list', [AuditAssessmentController::class, 'index']);
+    Route::get('add', [AuditAssessmentController::class, 'add']);
+    Route::post('add/submit', [AuditAssessmentController::class, 'store']);
+    Route::get('edit/{id}', [AuditAssessmentController::class, 'edit']);
+    Route::post('edit/submit', [AuditAssessmentController::class, 'update']);
+    Route::get('view/{id}', [AuditAssessmentController::class, 'view']);
+    Route::post('delete', [AuditAssessmentController::class, 'delete']);
+    Route::get('export/excel', [AuditAssessmentController::class, 'exportExcel']);
+    Route::get('export/pdf', [AuditAssessmentController::class, 'exportPdf']);
+    Route::get('sample_download', [AuditAssessmentController::class, 'DownloadSample']);
+    Route::get('import', [AuditAssessmentController::class, 'import']);
+    Route::post('import/Submit', [AuditAssessmentController::class, 'importSubmit']);
+    Route::post('status', [AuditAssessmentController::class, 'statusChange']);
+    Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
+    Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
+  });
+});
+
+Route::group(['prefix' => 'safety/'], function () {
+    Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
+        Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
+        Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
+        Route::get('add', [MonthlyEyeWashInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'store']);
+    });
+});
+
+Route::group(['prefix' => 'safety/'], function () {
+    Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
+        Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
+        Route::post('list', [MonthlyForkLiftInspectionController::class, 'index']);
+        Route::get('add', [MonthlyForkLiftInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyForkLiftInspectionController::class, 'store']);
+    });
+});
