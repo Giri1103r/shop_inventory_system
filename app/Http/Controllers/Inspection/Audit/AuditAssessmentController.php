@@ -15,6 +15,8 @@ use App\Models\Master\Employee;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\Shift;
 
@@ -23,6 +25,8 @@ class AuditAssessmentController extends Controller
 
     private $checklist_type;
     private $checklist_subtype;
+    private $checklist_subtypedata;
+    private $checklist_subtypename;
     private $audit_assessment;
     private $upload_log;
     private $checklist_option;
@@ -34,6 +38,9 @@ class AuditAssessmentController extends Controller
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
         $this->checklist_option = new ChecklistOptionType();
+        $this->checklist_option = new ChecklistOptionType();
+        $this->checklist_subtypename = new ChecklistSubTypeDataName();
+        $this->checklist_subtypedata = new ChecklistSubTypeData();
         $this->shift = new Shift();
     }
 
@@ -98,9 +105,13 @@ class AuditAssessmentController extends Controller
         try {
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
+
+            $checklist_details = $this->checklist_subtypedata->auditAssessmentChecklist(CHECKLIST_AUDIT_ASSESSMENT);
+            // dd($checklist_details);
             $data = array(
                 'checklist_types' => $checklist_types,
                 'shift' => $shift,
+                'checklist_details' => $checklist_details,
             );
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {

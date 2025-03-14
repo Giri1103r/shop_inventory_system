@@ -65,6 +65,8 @@ class ChecklistSubTypeDataName extends Model
             ->get();
     }
 
+
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_sub_type_data_name'));

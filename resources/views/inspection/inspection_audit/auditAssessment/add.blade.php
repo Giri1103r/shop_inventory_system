@@ -80,25 +80,63 @@
                                                 </div>
                                             </div>
 
-
-                                            <table style="width: 100%; border-collapse: collapse;">
-                                                <tr>
-                                                    <th 
-                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: top;">
-                                                        Sort</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Check Points</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Yes</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        No</th>
-                                                </tr>
-
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="4"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Check Points
+                                                        </th>
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Yes
+                                                        </th>
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            No
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php
+                                                        $last_subcategory = null;
+                                                    @endphp
+                                                    @foreach ($checklist_details as $detail)
+                                                        <tr>
+                                                            @if ($last_subcategory !== $detail->subcategory_name)
+                                                                <td rowspan="{{ $checklist_details->where('subcategory_name', $detail->subcategory_name)->count() }}"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                    {{ $detail->subcategory_name }}
+                                                                </td>
+                                                            @endif
+                                                            <td>
+                                                                <input type="hidden"
+                                                                    name="checklist_id[{{ $detail->checklist_id }}]"
+                                                                    value="{{ $detail->checklist_id }}">
+                                                            </td>
+                                                            <td colspan="2"
+                                                            style="border: 1px solid black; padding: 8px;">
+                                                                {{ $detail->checklist_name }}
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                <input type="radio"
+                                                                    name="audit_assessment[{{ $detail->checklist_id }}]"
+                                                                    value="YES">
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                <input type="radio"
+                                                                    name="audit_assessment[{{ $detail->checklist_id }}]"
+                                                                    value="NO">
+                                                            </td>
+                                                        </tr>
+                                                        @php
+                                                            $last_subcategory = $detail->subcategory_name;
+                                                        @endphp
+                                                    @endforeach
+                                                </tbody>
                                             </table>
-
                                         </div>
 
                                         <hr>

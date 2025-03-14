@@ -91,7 +91,7 @@ class ChecklistSubTypeData extends Model
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
-    }    
+    }
     public function updates($id)
     {
 
@@ -164,7 +164,18 @@ class ChecklistSubTypeData extends Model
             ->where('id', '!=', $id)
             ->get();
     }
+    public function auditAssessmentChecklist($id)
+    {
+        $data = $this->select('inspection_master_checklist_sub_type_data.*', 'inspection_master_checklist_subtype.subcategory_name','inspection_master_checklist_subtype.id as subtype_id', 'inspection_master_checklist_type.category_name','inspection_master_checklist_sub_type_data_name.name as checklist_name','inspection_master_checklist_sub_type_data_name.id as checklist_id')
+            ->where('inspection_master_checklist_sub_type_data.checklist_type_id', $id)
+            ->leftjoin('inspection_master_checklist_type', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_sub_type_data.checklist_type_id')
+            ->leftjoin('inspection_master_checklist_subtype', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
+            ->leftjoin('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id', '=', 'inspection_master_checklist_sub_type_data.id')
+            
+            ->get();
 
+        return $data;
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_sub_type_data'));
