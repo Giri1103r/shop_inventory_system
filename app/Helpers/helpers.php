@@ -1631,4 +1631,22 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+
+    if (!function_exists('getoption')) {
+        function getoption($id)
+        {
+
+            $data = ChecklistType::join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->where('inspection_master_checklist_type.id', $id)
+
+                ->first([
+                    'inspection_master_checklist_option.type'
+                ]);
+
+            if ($data) {
+                return $data;
+            }
+            return false;
+        }
+    }
 }
