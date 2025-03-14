@@ -93,5 +93,7 @@ Route::group(['prefix' => 'safety/'], function () {
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
         Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
         Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
+        Route::get('add', [MonthlyEyeWashInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'store']);
     });
 });
