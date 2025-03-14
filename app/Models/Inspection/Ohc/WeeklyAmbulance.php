@@ -89,18 +89,23 @@ class WeeklyAmbulance extends Model
         $request = request();
 
         $insert_array = [
-            'ohc_type'=>decryptId($request->ohc_type),
-            'doc_no'=>$request->document_no,
-            'issue_date'=>DBdateformat($request->issue_date),
-            'shift'=>decryptId($request->shift),
-            'location'=>decryptId($request->location_id),
-            'unit'=>decryptId($request->unit_id),
-            'next_due'=>DBdateformat($request->next_due_on),
-            'revision_date'=>$request->review_date,
-            'date_of_inspection'=>DBdateformat($request->date_of_inspection),
+            'ohc_type' => decryptId($request->ohc_type),
+            'doc_no' => $request->document_no,
+            'issue_date' => DBdateformat($request->issue_date),
+            'shift' => decryptId($request->shift),
+            'location' => decryptId($request->location_id),
+            'unit' => decryptId($request->unit_id),
+            'next_due' => DBdateformat($request->next_due_on),
+            'revision_date' => $request->review_date,
+            'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'created_by' => Auth::id(),
         ];
-      
+
         return self::create($insert_array);
+    }
+
+    public function WeekambulanceSelectone($id)
+    {
+        return $this->where('ohc_type', OHC_TYPE_WEEKLY_AMBULANCE)->where('id', $id)->first();
     }
 }

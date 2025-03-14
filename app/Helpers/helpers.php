@@ -1649,4 +1649,19 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+
+    if (!function_exists('getLocationname')) {
+
+        function getLocationname($userid)
+        {
+
+            $location_name = DB::table('masters_location')->select('location_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($location_name == null) {
+                return '';
+            } else {
+                return $location_name->location_name;
+            }
+        }
+    }
 }
