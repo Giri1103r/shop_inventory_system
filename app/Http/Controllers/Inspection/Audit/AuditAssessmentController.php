@@ -146,19 +146,10 @@ class AuditAssessmentController extends Controller
 
         dd($request);
         try {
-            $rules = [
-                'category_id' => 'required',
-                'subcategory_name' => 'required',
-            ];
-            $messages = [
-                'category_id.required' => 'Please enter Category',
-                'subcategory_name.requred' => 'Please enter Sub category name',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $checklist_sub_type =   $this->checklist_subtype->store();
-                
+                $checklist_sub_type =   $this->audit_assessment->store();
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
@@ -199,7 +190,7 @@ class AuditAssessmentController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $checklist_subtype =   $this->checklist_subtype->selectOne($id);
-                
+
 
                 $data = array(
                     'checklist_subtype' => $checklist_subtype,
@@ -248,7 +239,7 @@ class AuditAssessmentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $this->checklist_subtype->updates($id);
-            
+
 
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/master/checklist-sub-type/list'));

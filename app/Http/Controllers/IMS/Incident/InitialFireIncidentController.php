@@ -717,21 +717,21 @@ class InitialFireIncidentController extends Controller
     {
         try {
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
-            $fire_id = decryptId($fireincident_id);
-            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fire_id)->where('hiramoc_id', '1')->first();
+            $fireincident_id = decryptId($fireincident_id);
+            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', '1')->first();
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
                 ->select('id', 'hira_id', 'fire_id', 'hiramoc_status')
                 ->where('hiramoc_status', 'T')
-                ->where('fire_id', $fire_id)
+                ->where('fire_id', $fireincident_id)
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fire_id', 'newHiraList'))->render();
+                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fire_id', 'newHiraList'));
+            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -761,21 +761,21 @@ class InitialFireIncidentController extends Controller
     {
         try {
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
-            $fire_id = decryptId($fireincident_id);
-            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fire_id)->where('hiramoc_id', 2)->first();
+            $fireincident_id = decryptId($fireincident_id);
+            $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', 2)->first();
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
                 ->select('id', 'moc_id', 'fire_id', 'hiramoc_status')
                 ->where('hiramoc_status', 'T')
-                ->where('fire_id', $fire_id)
+                ->where('fire_id', $fireincident_id)
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fire_id', 'newHiraList'))->render();
+                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fire_id', 'newHiraList'));
+            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }

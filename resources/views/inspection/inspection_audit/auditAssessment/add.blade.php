@@ -102,9 +102,9 @@
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
-
+                                                                <!-- Hidden input to store checklist_id -->
                                                                 <input type="hidden"
-                                                                    name="checklist_hidden_{{ $checklist->id }}"
+                                                                    name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][checklist_id]"
                                                                     value="{{ $checklist->checklist_id }}">
 
                                                                 @if ($index == 0)
@@ -113,21 +113,19 @@
                                                                         {{ $checklist->subcategory_name }}
                                                                     </td>
                                                                 @endif
+
                                                                 <td colspan="2"
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
-                                                                @php
-                                                                    $options = explode(',', $checklist->type);
-                                                                @endphp
 
                                                                 @foreach ($getoption as $option)
-                                                                    <td class = "form-input"
+                                                                    <td class="form-input"
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                         <input type="radio"
-                                                                            name="checklist_{{ $checklist->id }}"
+                                                                            name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][selected_option]"
                                                                             value="{{ trim($option) }}"
-                                                                            class = "validate-radio-required">
+                                                                            class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
                                                             </tr>
