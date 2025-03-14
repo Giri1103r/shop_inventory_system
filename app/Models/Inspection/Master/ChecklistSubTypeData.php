@@ -91,7 +91,7 @@ class ChecklistSubTypeData extends Model
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
-    }    
+    }
     public function updates($id)
     {
 

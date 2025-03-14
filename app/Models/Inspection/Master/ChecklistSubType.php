@@ -168,7 +168,7 @@ class ChecklistSubType extends Model
     }
 
 
-    public function ajaxList($subTypeId , $checklistTypeId = '')
+    public function ajaxList($subTypeId, $checklistTypeId = '')
     {
         $query = $this->select('id', 'subcategory_name')->where('status', 1);
 
@@ -217,7 +217,7 @@ class ChecklistSubType extends Model
         $request = request();
         $datas = $this->where('category_id', $id)->get();
         $type = $request->types;
-        foreach($datas as $data){
+        foreach ($datas as $data) {
             if ($type == 1) {
                 $update_data = array(
                     'status' => 0,
@@ -230,6 +230,7 @@ class ChecklistSubType extends Model
             $data->update($update_data);
         }
     }
+
 
     protected static function booted()
     {

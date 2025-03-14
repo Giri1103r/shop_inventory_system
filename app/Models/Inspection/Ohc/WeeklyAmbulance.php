@@ -7,26 +7,35 @@ use Illuminate\Support\Facades\Auth;
 
 class WeeklyAmbulance extends Model
 {
-    protected $table = 'inspection_ohc_weekly_ambulance_details';
+    protected $table = 'inspection_ohc_details';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'document_no',
+        'ohc_type',
+        'doc_no',
         'issue_date',
-        'shift',
-        'location_id',
-        'unit_id',
-        'next_due_on',
-        'review_date',
+        'revision_date',
         'date_of_inspection',
-        'status',
-        'trash',
+        'location',
+        'shift',
+        'next_due',
+        'unit',
+        'frequency',
+        'checked_by',
+        'verified_by',
+        'approved_by',
+        'l1_manager_verification',
+        'l2_manager_verification',
         'created_by',
         'updated_by',
+        'status',
+        'trash',
         'created_at',
-        'updated_at',
+        'updated_at'
     ];
+
+
 
     protected $attributes = [
         'status' => 1,
@@ -37,7 +46,7 @@ class WeeklyAmbulance extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_ambulance_details.*');
+        $query = $this->select('inspection_ohc_details.*');
 
         // dd($query);
         $org_total =  $query;
@@ -52,25 +61,13 @@ class WeeklyAmbulance extends Model
                     ->orWhere('category_id', 'LIKE', '%' . $search . '%');
             });
         }
-        if (isset($request->subcategory_id) && $request->subcategory_id) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_details.subcategory_id', 'LIKE', '%' . $request->subcategory_id . '%');
-        }
-        if (isset($request->subcategory_name) && $request->subcategory_name) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_details.subcategory_name', 'LIKE', '%' . $request->subcategory_name . '%');
-        }
-        if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_details.category_id', 'LIKE', '%' . decryptId($request->category_id) . '%');
-        }
 
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_details.status', 'LIKE', '%' . decryptId($request->status) . '%');
-        }
 
 
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('inspection_ohc_weekly_ambulance_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_details.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -88,18 +85,22 @@ class WeeklyAmbulance extends Model
 
     public function store()
     {
+
         $request = request();
+
         $insert_array = [
-            'document_no'=>$request,
-            'issue_date'=>$request,
-            'shift'=>$request,
-            'location_id'=>$request,
-            'unit_id'=>$request,
-            'next_due_on'=>$request,
-            'review_date'=>$request,
-            'date_of_inspection'=>$request,
+            'ohc_type'=>decryptId($request->ohc_type),
+            'doc_no'=>$request->document_no,
+            'issue_date'=>DBdateformat($request->issue_date),
+            'shift'=>decryptId($request->shift),
+            'location'=>decryptId($request->location_id),
+            'unit'=>decryptId($request->unit_id),
+            'next_due'=>DBdateformat($request->next_due_on),
+            'revision_date'=>$request->review_date,
+            'date_of_inspection'=>DBdateformat($request->date_of_inspection),
             'created_by' => Auth::id(),
         ];
+      
         return self::create($insert_array);
     }
 }

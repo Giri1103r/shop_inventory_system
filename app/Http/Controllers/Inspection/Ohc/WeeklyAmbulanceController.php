@@ -3,16 +3,23 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\Master\ChecklistOptionType;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
+use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Ohc\WeeklyAmbulance;
 use App\Models\Inspection\Ohc\WeeklyAmbulanceChecklist;
 use App\Models\Master\Department;
+use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\UploadLog;
 use Exception;
 use Illuminate\Container\Attributes\Database;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class WeeklyAmbulanceController extends Controller
@@ -23,6 +30,14 @@ class WeeklyAmbulanceController extends Controller
     private $unit;
     private $shift;
     private $department;
+    private $checklist_type;
+    private $sub_type_data;
+    private $sub_type_data_name;
+    private $questionery;
+
+    private $location;
+
+
 
 
     public function __construct()
@@ -33,8 +48,12 @@ class WeeklyAmbulanceController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->shift = new Shift();
+        $this->checklist_type = new ChecklistType();
+        $this->sub_type_data = new ChecklistSubTypeData();
+        $this->sub_type_data_name = new ChecklistSubTypeDataName();
+        $this->questionery = new ChecklistOptionType();
 
-
+        $this->location = new Location();
     }
 
     public function Index(Request $request)
@@ -42,18 +61,21 @@ class WeeklyAmbulanceController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->weekly_ambulance_details->list();
-                    $datatables = DataTables::of($data['data'])
+
+                    $data = $this->weekly_ambulance_details->list();
+
+
+                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_WEEKLY_AMBULANCE)->values();
+
+                    $datatables = DataTables::of($filteredData)
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
-                                }
-                            // }
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                            }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
@@ -63,28 +85,24 @@ class WeeklyAmbulanceController extends Controller
                             return getUsername($row->created_by);
                         })
                         ->addColumn('action', function ($row) {
-                            $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-
-                            return $btn;
+                            return '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($data['filter_records'])
+                        ->setFilteredRecords($filteredData->count())
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
+
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = array(
-        );
-        return view('inspection.inspection_ohc.weekly_ambulance.list', $data);
+        return view('inspection.inspection_ohc.weekly_ambulance.list');
     }
+
 
 
     public function Add(Request $request)
@@ -92,9 +110,17 @@ class WeeklyAmbulanceController extends Controller
         try {
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
+            $checklistQuestions = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+
+// dd(  $checklistQuestions);
+            $location = $this->location->getLocation();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
+                'checklistQuestions'=>  $checklistQuestions,
+                'location' => $location,
+
+
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);
         } catch (Exception $ex) {
@@ -116,19 +142,20 @@ class WeeklyAmbulanceController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $checklist_type = $this->checklist_type->store();
-                $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
-                Session::flash('success', __('inspection.check_list_type_success'));
+                $weekly_ambulance_details = $this->weekly_ambulance_details->store();
+                $weekly_ambulance_inspection_checklist = $this->weekly_ambulance_inspection_checklist->store($weekly_ambulance_details);
+
+                Session::flash('success', __('Your data Created Successfully.!'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }
-
 }

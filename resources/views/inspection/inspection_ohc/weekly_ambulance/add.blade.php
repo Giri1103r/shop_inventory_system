@@ -51,10 +51,10 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="checklistadd"
-                                        action="{{ admin_url('inspection/master/checklist-type/add/submit') }}"
+                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-
+                                        <input type="hidden" value="{{encryptId(1)}}" name="ohc_type">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -97,9 +97,37 @@
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift" id="shift" style="width: 100%"
                                                         class="form-control single-select">
-                                                        @foreach ($shift as $list)
                                                         <option value="">Select the option</option>
+                                                        @foreach ($shift as $list)
                                                             <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Location</label>
+                                                    <select name="location_id" id="location_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($location as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->location_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -149,32 +177,64 @@
                                                             <th>Remarks</th>
                                                         </tr>
                                                     </thead>
-
                                                     <tbody id="medicine-tbody">
-                                                        <tr>
-                                                            <td>
+                                                        @if ($checklistQuestions->isNotEmpty())
+                                                            @foreach ($checklistQuestions as $subcategory => $questions)
+                                                                <!-- Subcategory Header -->
+                                                                {{-- <tr>
+                                                                    <td colspan="3" class="text-bold">
+                                                                        <strong>{{ $subcategory }}</strong></td>
+                                                                </tr> --}}
+                                                                @foreach ($questions as $item)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <input type="text" name="sub_type_name[]"
+                                                                                value="{{ $item->checklist_name ?? '' }}"
+                                                                                class="form-control" readonly>
 
-                                                            </td>
-                                                            <td>
+                                                                            <input type="hidden" name="sub_type_id[]"
+                                                                                value="{{ $item->checklist_id ?? '' }}">
+                                                                        </td>
 
-                                                            </td>
+                                                                        <td>
+                                                                            <label class="radio-label">
+                                                                                <input type="radio"
+                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
+                                                                                    value="ok">
+                                                                                <span>OK</span>
+                                                                            </label>
 
-                                                            <td>
-                                                                
-                                                            </td>
+                                                                            <label class="radio-label">
+                                                                                <input type="radio"
+                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
+                                                                                    value="notok">
+                                                                                <span>Not OK</span>
+                                                                            </label>
 
-                                                            <td>
+                                                                            <label class="radio-label">
+                                                                                <input type="radio"
+                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
+                                                                                    value="">
+                                                                                <span>Null</span>
+                                                                            </label>
+                                                                        </td>
 
-
-                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                        style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </div>
-
-
-                                                            </td>
-                                                        </tr>
+                                                                        <td>
+                                                                            <textarea name="remarks[{{ $item->checklist_id ?? '' }}]" cols="5" rows="3" class="form-control"></textarea>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="3" class="text-center">No checklist items
+                                                                    found</td>
+                                                            </tr>
+                                                        @endif
                                                     </tbody>
+
+
+
                                                 </table>
                                             </div>
                                         </div>

@@ -227,7 +227,6 @@ class ChecklistType extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_type'));

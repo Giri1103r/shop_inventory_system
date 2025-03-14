@@ -81,24 +81,57 @@
                                             </div>
 
 
-                                            <table style="width: 100%; border-collapse: collapse;">
-                                                <tr>
-                                                    <th 
-                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: top;">
-                                                        Sort</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Check Points</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        Yes</th>
-                                                    <th
-                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                        No</th>
-                                                </tr>
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="3"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Check Points
+                                                        </th>
 
+                                                        @foreach ($getoption as $option)
+                                                            <th
+                                                                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                                {{ $option }}
+                                                            </th>
+                                                        @endforeach
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($checklist_details as $key => $details)
+                                                        @php
+                                                            $rowCount = count($details);
+                                                        @endphp
+                                                        @foreach ($details as $index => $checklist)
+                                                            <tr>
+                                                                @if ($index == 0)
+                                                                    <td rowspan="{{ $rowCount }}"
+                                                                        style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                        {{ $checklist->subcategory_name }}
+                                                                    </td>
+                                                                @endif
+                                                                <td colspan="2"
+                                                                    style="border: 1px solid black; padding: 8px;">
+                                                                    {{ $checklist->checklist_name }}
+                                                                </td>
+                                                                @php
+                                                                    $options = explode(',', $checklist->type); 
+                                                                @endphp
+
+                                                                @foreach ($getoption as $option)
+                                                                    <td
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                            <input type="radio"
+                                                                                name="checklist_{{ $checklist->id }}"
+                                                                                value="{{ trim($option) }}">
+
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+                                                        @endforeach
+                                                    @endforeach
+                                                </tbody>
                                             </table>
-
                                         </div>
 
                                         <hr>
