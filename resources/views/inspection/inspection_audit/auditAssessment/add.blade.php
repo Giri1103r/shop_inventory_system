@@ -37,7 +37,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Audit ID</label>
-                                                    <input type="text" name="checklist_type_category_id" id = "checklist"
+                                                    <input type="text" name="audit_id" id = "audit_id"
                                                         class="form-control" readonly
                                                         value="{{ getSequence('audit_assessment') }}">
                                                 </div>
@@ -45,36 +45,60 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Name Of The Shop Floor </label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
+                                                    <label class="form-label require">Name Of The Shop Floor</label>
+                                                    <input type="text" name="floor_name" id = "floor_name"
+                                                        class="form-control" placeholder="Name Of The Shop Floor">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date Of Audit</label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
+                                                    <input type="text" name="audit_date" id = "audit_date"
+                                                        class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
+                                                    <select name="shift_id" id="shift_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Shift</option>
+                                                        @foreach ($shift as $shift)
+                                                            <option value="{{ encryptId($shift->id) }}">
+                                                                {{ $shift->shift }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Floor Executive on Duty</label>
-                                                    <input type="text" name="checklist_category"
-                                                        id = "checklist_category" class="form-control"
-                                                        placeholder="Enter Category Name">
+                                                    <select name="floor_executive" id="floor_executive" style="width: 100%"
+                                                        class="form-control floor_executive">
+                                                        <option value="">Select Name</option>
+                                                    </select>
                                                 </div>
                                             </div>
+
+
+                                            <table style="width: 100%; border-collapse: collapse;">
+                                                <tr>
+                                                    <th 
+                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: top;">
+                                                        Sort</th>
+                                                    <th
+                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                        Check Points</th>
+                                                    <th
+                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                        Yes</th>
+                                                    <th
+                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                        No</th>
+                                                </tr>
+
+                                            </table>
+
                                         </div>
 
                                         <hr>
@@ -104,6 +128,37 @@
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
                     location.reload();
+                });
+                flatpickr("#audit_date", {
+                    dateFormat: "d-m-Y",
+                });
+                $('.floor_executive').select2({
+                    ajax: {
+                        url: "{{ admin_url('audit/assessment/employeeName') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.log("Error in AJAX request:", textStatus, errorThrown);
+                        }
+                    },
+                    minimumInputLength: 3,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
                 });
             });
             $(function() {

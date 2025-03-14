@@ -86,5 +86,6 @@ Route::group(['prefix' => 'audit/'], function () {
     Route::post('import/Submit', [AuditAssessmentController::class, 'importSubmit']);
     Route::post('status', [AuditAssessmentController::class, 'statusChange']);
     Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
+    Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
   });
 });

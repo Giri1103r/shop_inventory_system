@@ -17,7 +17,7 @@ class AuditAssessment extends Model
         'audit_id',
         'floor_name',
         'audit_date',
-        'shift',
+        'shift_id',
         'floor_executive',
         'status',
         'trash',
