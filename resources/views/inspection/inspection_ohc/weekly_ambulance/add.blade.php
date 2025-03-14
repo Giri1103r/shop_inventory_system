@@ -54,7 +54,7 @@
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{encryptId(1)}}" name="ohc_type">
+                                        <input type="hidden" value="{{ encryptId(1) }}" name="ohc_type">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -171,66 +171,64 @@
                                                 <table class="table table-bordered ">
 
                                                     <thead class="bg-secondary" style="color: #ffff">
+
                                                         <tr>
-                                                            <th>Check Item</th>
-                                                            <th>Status</th>
-                                                            <th>Remarks</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="medicine-tbody">
-                                                        @if ($checklistQuestions->isNotEmpty())
-                                                            @foreach ($checklistQuestions as $subcategory => $questions)
-                                                                <!-- Subcategory Header -->
-                                                                {{-- <tr>
-                                                                    <td colspan="3" class="text-bold">
-                                                                        <strong>{{ $subcategory }}</strong></td>
-                                                                </tr> --}}
-                                                                @foreach ($questions as $item)
-                                                                    <tr>
-                                                                        <td>
-                                                                            <input type="text" name="sub_type_name[]"
-                                                                                value="{{ $item->checklist_name ?? '' }}"
-                                                                                class="form-control" readonly>
+                                                            <th colspan="3">
+                                                                Check Points
+                                                            </th>
 
-                                                                            <input type="hidden" name="sub_type_id[]"
-                                                                                value="{{ $item->checklist_id ?? '' }}">
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <label class="radio-label">
-                                                                                <input type="radio"
-                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
-                                                                                    value="ok">
-                                                                                <span>OK</span>
-                                                                            </label>
-
-                                                                            <label class="radio-label">
-                                                                                <input type="radio"
-                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
-                                                                                    value="notok">
-                                                                                <span>Not OK</span>
-                                                                            </label>
-
-                                                                            <label class="radio-label">
-                                                                                <input type="radio"
-                                                                                    name="checklist_type_status[{{ $item->checklist_id ?? '' }}]"
-                                                                                    value="">
-                                                                                <span>Null</span>
-                                                                            </label>
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <textarea name="remarks[{{ $item->checklist_id ?? '' }}]" cols="5" rows="3" class="form-control"></textarea>
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
+                                                            @foreach ($getoption as $option)
+                                                                <th>
+                                                                    {{ $option }}
+                                                                </th>
                                                             @endforeach
-                                                        @else
-                                                            <tr>
-                                                                <td colspan="3" class="text-center">No checklist items
-                                                                    found</td>
-                                                            </tr>
-                                                        @endif
+                                                            <th colspan="3" \>
+                                                                Remarks
+                                                            </th>
+                                                        </tr>
+
+                                                    </thead>
+                                                    <tbody>
+
+                                                        @foreach ($checklist_details as $key => $details)
+                                                            @php
+                                                                $rowCount = count($details);
+                                                            @endphp
+                                                            @foreach ($details as $index => $checklist)
+                                                                <tr>
+                                                                    <input type="hidden"
+                                                                        name="sub_type_id[{{ $checklist->checklist_sub_type_id }}][]"
+                                                                        value="{{ $checklist->checklist_id }}">
+
+                                                                    @if ($index == 0)
+                                                                        <td rowspan="{{ $rowCount }}"
+                                                                            style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                            {{ $checklist->subcategory_name }}
+                                                                        </td>
+                                                                    @endif
+                                                                    <td colspan="2"
+                                                                        style="border: 1px solid black; padding: 8px;">
+                                                                        {{ $checklist->checklist_name }}
+
+                                                                    </td>
+                                                                    @php
+                                                                        $options = explode(',', $checklist->type);
+                                                                    @endphp
+
+                                                                    @foreach ($getoption as $option)
+                                                                        <td
+                                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                            <input type="radio"
+                                                                                name="checklist_type_status[{{ $checklist->checklist_id }}]"
+                                                                                value="{{ trim($option) }}">
+                                                                        </td>
+                                                                    @endforeach
+                                                                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                        <textarea name="remarks[{{ $checklist->checklist_id ?? '' }}]" cols="5" rows="3" class="form-control"></textarea>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endforeach
                                                     </tbody>
 
 

@@ -1649,4 +1649,19 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+
+    if (!function_exists('getShift')) {
+
+        function getShift($userid)
+        {
+
+            $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($shift == null) {
+                return '';
+            } else {
+                return $shift->shift;
+            }
+        }
+    }
 }

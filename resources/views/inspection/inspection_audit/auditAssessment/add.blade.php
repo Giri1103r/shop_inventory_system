@@ -79,8 +79,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
-
                                             <table>
                                                 <thead>
                                                     <tr>
@@ -104,27 +102,30 @@
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
+                                                                <!-- Hidden input to store checklist_id -->
+                                                                <input type="hidden"
+                                                                    name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][checklist_id]"
+                                                                    value="{{ $checklist->checklist_id }}">
+
                                                                 @if ($index == 0)
                                                                     <td rowspan="{{ $rowCount }}"
                                                                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                         {{ $checklist->subcategory_name }}
                                                                     </td>
                                                                 @endif
+
                                                                 <td colspan="2"
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
-                                                                @php
-                                                                    $options = explode(',', $checklist->type); 
-                                                                @endphp
 
                                                                 @foreach ($getoption as $option)
-                                                                    <td
+                                                                    <td class="form-input"
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                                            <input type="radio"
-                                                                                name="checklist_{{ $checklist->id }}"
-                                                                                value="{{ trim($option) }}">
-
+                                                                        <input type="radio"
+                                                                            name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][selected_option]"
+                                                                            value="{{ trim($option) }}"
+                                                                            class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
                                                             </tr>
@@ -191,35 +192,43 @@
                     },
                     minimumInputLength: 3,
                     dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
+                    selectionCssClass: 'form-control',
+
                 });
             });
             $(function() {
                 $('#auditAssessmentAdd').validate({
                     rules: {
-                        checklist_category: {
+                        floor_name: {
                             required: true,
                             minlength: 3,
                             maxlength: 100,
-                            noSpaces: true,
                         },
-                        questionary_id: {
+                        audit_date: {
+                            required: true,
+                        },
+                        shift_id: {
+                            required: true,
+                        },
+                        floor_executive: {
                             required: true,
                         },
 
                     },
                     messages: {
-                        checklist_category: {
-                            required: "{{ __('Name is Required') }}",
+                        floor_name: {
+                            required: "{{ __('Name Of The Shop Floor  is Required') }}",
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
-                            // remote: "{{ __('Name should be unique') }}",
                         },
-                        questionary_id: {
-                            required: "{{ __('inspection.questionary_required') }}",
+                        audit_date: {
+                            required: "{{ __('Date Of Audit is required') }}",
                         },
-                        checklist_file: {
-                            extension: "Only .jpg files are allowed. Please upload a valid image file.",
+                        shift_id: {
+                            required: "Shift is required",
+                        },
+                        floor_executive: {
+                            required: "Floor Executive on Duty is required",
                         }
                     },
                     errorElement: 'span',

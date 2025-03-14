@@ -25,18 +25,12 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_id }}
+                            {{ $value->category_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->company_name }}
+                            {{ $value->subcategory_name }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->location_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name}}
-                        </td>
-                      
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
