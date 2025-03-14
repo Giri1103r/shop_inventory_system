@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Sub Type Data')
-@section('pageurl', admin_url('inspection/master/checklist-sub-type-data/list'))
+@section('title', 'Forklift Inspection')
+@section('pageurl', admin_url('safety/forklift-inspection/monthly/list'))
 
 
 @section('content')
@@ -13,12 +13,9 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type-data/import') }}"></x-button-import>
-                        {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-sub-type-data/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('safety/forklift-inspection/monthly/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -26,27 +23,22 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                            
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
-                                            <select name="checklist_type_id" id="checklist_type_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Checklist Type Name</option>
-                                                @foreach ($checklistTypeList as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->category_name }}</option>
-                                                @endforeach
-                                            </select>
+                                            <label for="document_number"
+                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <input type="text" name="document_number" id="document_number"
+                                                class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name </label>
-                                            <select name="checklist_sub_type_id" id="checklist_sub_type_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Checklist Sub Type Name</option>
-
-                                            </select>
+                                            <label for="issue_date"
+                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                       
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="rev_date"
+                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -77,11 +69,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Checklist Type Name</th>
-                                        <th>Checklist Sub Type Name</th>
+                                        <th>{{ __('inspection.doc_no') }}</th>
+                                        <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -97,33 +88,12 @@
     @stop
 
     @push('script')
-        <script type="text/javascript" nonce="projectcab">
-            $(document).on('change', '#checklist_type_id', function() {
-                let checklistTypeId = $(this).val();
-
-                if (checklistTypeId) {
-                    $.ajax({
-                        url: "{{ admin_url('inspection/master/checklist-sub-type/ajax-list') }}/" + checklistTypeId + "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
-                            $.each(data, function(key, value) {
-                                $('#checklist_sub_type_id').append('<option value="' + value.id + '">' + value
-                                    .name + '</option>');
-                            });
-                            $('#checklist_sub_type_id').trigger('change.');
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching Checklist Sub Type Name. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
-                    $('#checklist_sub_type_id').trigger('change.');
-                }
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var firstTh = $('.datatable-list thead th:first');
+                firstTh.removeClass('sorting_asc');
             });
-    
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -150,49 +120,46 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('inspection/master/checklist-sub-type-data/list') }}",
+                        url: "{{ admin_url('safety/forklift-inspection/monthly/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist_type_id = $('#checklist_type_id').val();
-                            d.checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                            d.document_number = $('#document_number').val();
+                            d.issue_date = $('#issue_date').val();
+                            d.rev_date = $('#rev_date').val();
                             d.status = $('#status').val();
-
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
                                 alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
+                                window.location.href = "{{ url('') }}";
                             }
                         }
                     },
                     columns: [{
                             data: 'DT_RowIndex',
                             orderable: false,
-                            searchable: false
+                            searchable: true,
+                        },
+
+                        {
+                            data: 'doc_no',
+                            name: 'doc_no',
                         },
                         {
-                            data: 'category_name',
-                            name: 'category_name'
+                            data: 'issue_date',
+                            name: 'issue_date',
                         },
                         {
-                            data: 'subcategory_name',
-                            name: 'subcategory_name'
+                            data: 'revision_date',
+                            name: 'revision_date',
                         },
                         {
                             data: 'status',
-                            name: 'status'
-                        },
-                        {
-                            data: 'created_by',
-                            name: 'created_by'
-                        },
-                        {
-                            data: 'created_at',
-                            name: 'created_at'
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -223,17 +190,19 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist_type_id = $('#checklist_type_id').val();
-                                        checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-sub-type-data/export/pdf') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/monthly/list/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist_type_id=' + checklist_type_id +
-                                            '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -242,16 +211,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist_type_id = $('#checklist_type_id').val();
-                                        checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-sub-type-data/export/excel') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/monthly/list/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist_type_id=' + checklist_type_id +
-                                            '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -272,7 +243,6 @@
                 });
 
                 $(document).on('click', '#searchform', function() {
-                    console.log('test');
                     table.draw();
                 });
 
@@ -289,12 +259,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Details') }}';
+                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Details') }}';
+                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -314,7 +284,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-sub-type-data/status') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -362,7 +332,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Details') }}';
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -382,7 +352,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-sub-type-data/delete') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -421,7 +391,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
-                                            text: 'Deletion Failed: Module Dependencies Exist.',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
                                         });
                                     } else {
                                         $.notify(data.responseJSON.msg, "error");

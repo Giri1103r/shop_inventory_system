@@ -8,20 +8,17 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Inspection\Master\ChecklistFile;
-use App\Models\Inspection\Master\ChecklistType;
-use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
+use App\Models\Inspection\Safety\MonthlyForkLiftInspection;
 
-class MonthlyEyeWashInspectionController extends Controller
+class MonthlyForkLiftInspectionController extends Controller
 {
-    private $eye_wash_details;
+    private $forklift;
     private $checklist_file;
     private $upload_log;
 
     public function __construct()
     {
-        $this->eye_wash_details = new MonthlyEyeWashInspection();
-        $this->checklist_file = new ChecklistFile();
+        $this->forklift = new MonthlyForkLiftInspection();
         $this->upload_log = new UploadLog();
     }
 
@@ -30,7 +27,7 @@ class MonthlyEyeWashInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->eye_wash_details->list();
+                    $data =  $this->forklift->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -73,17 +70,18 @@ class MonthlyEyeWashInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Safety.eye_wash_inspection.list', $data);
+        return view('inspection.Safety.forklift_inspection_monthly.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-        //    $checklistQuestions = getCheckListQuestion(EYE_WASH_INSPECTION_CHECKLIST);
+            $checklistQuestions = getCheckListQuestion(FORKLIFT_INSPECTION_MONTHLY_CHECKLIST);
             $data = array(
-                // 'checklistQuestions' => $checklistQuestions,
+                'checklistQuestions' => $checklistQuestions,
             );
-            return view('inspection.Safety.eye_wash_inspection.add', $data);
+            dd($data     );
+            return view('inspection.Safety.forklift_inspection_monthly.add', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
