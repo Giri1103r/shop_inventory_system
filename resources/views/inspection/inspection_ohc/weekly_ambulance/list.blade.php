@@ -57,6 +57,7 @@
                                 class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
+                                        <th>{{ __('common.sno') }}</th>
                                         <th>Doc.NO</th>
                                         <th>Issue Date</th>
                                         <th>Rev.Date</th>
@@ -135,7 +136,7 @@
                         },
 
                         {
-                            data: 'document_no',
+                            data: 'doc_no',
                             name: 'document_no'
                         },
                         {
@@ -143,8 +144,8 @@
                             name: 'issue_date'
                         },
                         {
-                            data: 'review_date',
-                            name: 'review_date'
+                            data: 'revision_date',
+                            name: 'revision_date'
                         },
                         {
                             data: 'status',
