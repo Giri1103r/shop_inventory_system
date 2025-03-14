@@ -98,42 +98,17 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @php
-                                                        $last_subcategory = null;
-                                                    @endphp
+
                                                     @foreach ($checklist_details as $detail)
+                                                    @dd($detail)
                                                         <tr>
-                                                            @if ($last_subcategory !== $detail->subcategory_name)
-                                                                <td rowspan="{{ $checklist_details->where('subcategory_name', $detail->subcategory_name)->count() }}"
-                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
-                                                                    {{ $detail->subcategory_name }}
-                                                                </td>
-                                                            @endif
-                                                            <td>
-                                                                <input type="hidden"
-                                                                    name="checklist_id[{{ $detail->checklist_id }}]"
-                                                                    value="{{ $detail->checklist_id }}">
+
+                                                            <td rowspan=""
+                                                                style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                {{ $detail->subcategory_name }}
                                                             </td>
-                                                            <td colspan="2"
-                                                            style="border: 1px solid black; padding: 8px;">
-                                                                {{ $detail->checklist_name }}
-                                                            </td>
-                                                            <td
-                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                                <input type="radio"
-                                                                    name="audit_assessment[{{ $detail->checklist_id }}]"
-                                                                    value="YES">
-                                                            </td>
-                                                            <td
-                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                                <input type="radio"
-                                                                    name="audit_assessment[{{ $detail->checklist_id }}]"
-                                                                    value="NO">
-                                                            </td>
+
                                                         </tr>
-                                                        @php
-                                                            $last_subcategory = $detail->subcategory_name;
-                                                        @endphp
                                                     @endforeach
                                                 </tbody>
                                             </table>
