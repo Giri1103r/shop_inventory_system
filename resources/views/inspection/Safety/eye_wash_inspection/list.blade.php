@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/eye-wash-inspection/monthly/list/add') }}">Add</x-button-add>
+                            href="{{ admin_url('safety/eye-wash-inspection/monthly/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">

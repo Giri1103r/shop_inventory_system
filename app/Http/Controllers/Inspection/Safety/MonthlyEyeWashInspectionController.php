@@ -73,6 +73,20 @@ class MonthlyEyeWashInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Safety.list', $data);
+        return view('inspection.Safety.eye_wash_inspection.list', $data);
+    }
+
+    public function add(Request $request)
+    {
+        try {
+           $checklistQuestions = getCheckListQuestion(EYE_WASH_INSPECTION_CHECKLIST);
+            $data = array(
+                // 'checklistQuestions' => $checklistQuestions,
+            );
+            return view('inspection.Safety.eye_wash_inspection.add', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
     }
 }
