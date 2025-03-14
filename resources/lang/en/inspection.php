@@ -14,4 +14,13 @@ return [
     'doc_no' => 'Document Number',
     'issue_date' => 'Issue Date',
     'rev_date' => 'Revision & Date',
+    'inspection_date' => 'Date of Inspection',
+    'location' => 'Location',
+    'next_due' => 'Next Due on',
+    'unit' => 'Unit',
+    'frequency' => 'Frequency',
+    'identification_no' => 'Identification Number',
+    'forklift_type' => 'Forklift Type',
+    'capacity' => 'Capacity',
+
 ];

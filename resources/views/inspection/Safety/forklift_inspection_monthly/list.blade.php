@@ -154,8 +154,8 @@
                             name: 'issue_date',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date',
+                            data: 'revision_data',
+                            name: 'revision_data',
                         },
                         {
                             data: 'status',
