@@ -207,7 +207,7 @@ class AppServiceProvider extends ServiceProvider
 
         //Checklist
         defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
-
+        defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
 
         View::composer('*', function ($view) {
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Master\ChecklistType;
@@ -32,6 +33,8 @@ class WeeklyAmbulanceController extends Controller
     private $checklist_type;
     private $sub_type_data;
     private $sub_type_data_name;
+    private $questionery;
+
     private $location;
 
 
@@ -48,6 +51,8 @@ class WeeklyAmbulanceController extends Controller
         $this->checklist_type = new ChecklistType();
         $this->sub_type_data = new ChecklistSubTypeData();
         $this->sub_type_data_name = new ChecklistSubTypeDataName();
+        $this->questionery = new ChecklistOptionType();
+
         $this->location = new Location();
     }
 
@@ -105,16 +110,16 @@ class WeeklyAmbulanceController extends Controller
         try {
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
-
+            $checklistQuestions = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+            $questionery = $this->questionery->getQuestionery();
 
             $location = $this->location->getLocation();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
-              
+                'checklistQuestions'=>  $checklistQuestions,
                 'location' => $location,
-
-
+                'questionery' => $questionery,
 
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);

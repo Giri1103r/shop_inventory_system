@@ -180,7 +180,7 @@
                                                     </thead>
 
                                                     <tbody id="medicine-tbody">
-                                                        @foreach ($sub_type_data_name as $item)
+                                                        @foreach ($checklistQuestions as $item)
                                                             <tr>
                                                                 <td>
                                                                     <input type="text" name="sub_type_name[]"
