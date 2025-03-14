@@ -172,8 +172,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVED') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVED', 3);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
-
-
+        // inspection ohc
+        defined('OHC_TYPE_WEEKLY_AMBULANCE') or define('OHC_TYPE_WEEKLY_AMBULANCE', 1);
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -205,8 +205,8 @@ class AppServiceProvider extends ServiceProvider
         //Upload
         defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
 
-        
         //Checklist
+        defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
         defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
         defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
         defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
@@ -246,7 +246,6 @@ class AppServiceProvider extends ServiceProvider
 
                         $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
                     }
-
                 }
             }
 
