@@ -90,7 +90,7 @@ class ChecklistSubTypeData extends Model
             'checklist_sub_type_id' => decryptId($request->checklist_sub_type_id),
             'created_by' => Auth::id(),
         ];
-        return self::create($insert_array);
+        return $this->create($insert_array);
     }
     public function updates($id)
     {
@@ -112,19 +112,7 @@ class ChecklistSubTypeData extends Model
         $query = $query->leftJoin('inspection_master_checklist_type', 'inspection_master_checklist_sub_type_data.checklist_type_id', '=', 'inspection_master_checklist_type.id');
         $query = $query->leftJoin('inspection_master_checklist_subtype', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id', '=', 'inspection_master_checklist_subtype.id');
         // dd($query);
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
-
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('inspection_master_checklist_type.category_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_master_checklist_subtype.subcategory_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+     
         if ($request->has('checklist_type_id') && $request->checklist_type_id) {
             $query = $query->where('inspection_master_checklist_sub_type_data.checklist_type_id', decryptId($request->checklist_type_id));
         }
@@ -152,6 +140,26 @@ class ChecklistSubTypeData extends Model
 
         return $data;
     }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+
     public function UniqueCheck($subcategory_name, $category_id)
     {
 
