@@ -68,13 +68,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issued Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->issue_date) ? $weekAmbualance->issue_date : '' )}}
+                                            {{ DisplaydateFormat(isset($weekAmbualance->issue_date) ? $weekAmbualance->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Next Due On</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->next_due) ? $weekAmbualance->next_due : '' )}}
+                                            {{ DisplaydateFormat(isset($weekAmbualance->next_due) ? $weekAmbualance->next_due : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -133,16 +133,82 @@
                                         <h4 class="text-white">Weeky Ambulance Inspection Checklist</h4>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    
+
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead class="bg-secondary text-white">
+                                                <tr>
+                                                    <th colspan="3">Check Points</th>
+                                                    @foreach ($getoption as $option)
+                                                        <th>{{ $option }}</th>
+                                                    @endforeach
+                                                    <th colspan="3">Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $decodedData = json_decode($inspectionCkeclist->checklist, true);
+                                                    $checkItems = $decodedData['check_item'] ?? [];
+                                                    $statuses = $decodedData['status'] ?? [];
+                                                    $remarks = $decodedData['remarks'] ?? [];
+                                                @endphp
+
+                                                @foreach ($checkItems as $groupId => $checkPoints)
+                                                    @php $rowCount = count($checkPoints); @endphp
+
+                                                    @foreach ($checkPoints as $index => $checkPoint)
+                                                        <tr>
+                                                            @if ($index == 0)
+                                                                <td rowspan="{{ $rowCount }}">
+                                                                    {{ getSubcategoryname($groupId) }}
+                                                                </td>
+                                                            @endif
+
+                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            </td>
+
+                                                            @foreach ($getoption as $option)
+                                                            <td style="text-align: center;">
+                                                                @if ($option == 'Ok')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
+                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i> <!-- Green check for Ok -->
+                                                                    @else
+                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i> <!-- Red cross if Ok is not selected -->
+                                                                    @endif
+                                                                @elseif ($option == 'Not-Ok')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i> <!-- Red check for Not-Ok -->
+                                                                    @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i> <!-- Red cross if Ok is not selected -->
+                                                                @endif
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
+
+
+
+                                                            <td colspan="3">
+                                                                {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endforeach
+                                            </tbody>
+
+
+
+                                        </table>
+                                    </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
-
-@stop
+    @stop

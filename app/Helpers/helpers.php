@@ -1664,4 +1664,33 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getSubcategoryname')) {
+
+        function getSubcategoryname($userid)
+        {
+
+            $subcategory_name = DB::table('inspection_master_checklist_subtype')->select('subcategory_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($subcategory_name == null) {
+                return '';
+            } else {
+                return $subcategory_name->subcategory_name;
+            }
+        }
+    }
+    if (!function_exists('getSubcategoryDataname')) {
+
+        function getSubcategoryDataname($userid)
+        {
+
+            $name = DB::table('inspection_master_checklist_sub_type_data_name')->select('name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return '';
+            } else {
+                return $name->name;
+            }
+        }
+    }
 }

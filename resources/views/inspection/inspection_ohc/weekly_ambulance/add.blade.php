@@ -218,12 +218,18 @@
                                                                     @foreach ($getoption as $option)
                                                                         <td
                                                                             style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                                            <input type="radio"
-                                                                                name="checklist_type_status[{{ $checklist->checklist_id }}]"
-                                                                                value="{{ trim($option) }}">
+                                                                            <label class="radio-label">
+                                                                                <input type="radio"
+                                                                                    name="checklist_type_status[{{ $checklist->checklist_id }}]"
+                                                                                    value="{{ $option }}">
+                                                                                {{ $option }}
+                                                                            </label>
                                                                         </td>
                                                                     @endforeach
-                                                                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+
+
+                                                                    <td
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                         <textarea name="remarks[{{ $checklist->checklist_id ?? '' }}]" cols="5" rows="3" class="form-control"></textarea>
                                                                     </td>
                                                                 </tr>
