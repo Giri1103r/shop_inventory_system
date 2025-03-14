@@ -111,7 +111,7 @@ class WeeklyAmbulanceController extends Controller
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
             $checklistQuestions = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
-            $questionery = $this->questionery->getQuestionery();
+
 
             $location = $this->location->getLocation();
             $data = array(
@@ -119,7 +119,7 @@ class WeeklyAmbulanceController extends Controller
                 'shift' => $shift,
                 'checklistQuestions'=>  $checklistQuestions,
                 'location' => $location,
-                'questionery' => $questionery,
+               
 
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);
