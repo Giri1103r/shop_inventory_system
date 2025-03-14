@@ -106,8 +106,10 @@ class AuditAssessmentController extends Controller
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
 
-            $checklist_details = $this->checklist_subtypedata->auditAssessmentChecklist(CHECKLIST_AUDIT_ASSESSMENT);
-            // dd($checklist_details);
+            // $checklist_details = $this->checklist_subtypedata->auditAssessmentChecklist(CHECKLIST_AUDIT_ASSESSMENT);
+
+            $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
+
             $data = array(
                 'checklist_types' => $checklist_types,
                 'shift' => $shift,
