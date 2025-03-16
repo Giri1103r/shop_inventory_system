@@ -77,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_CERTIFIED_FIRST_AIDER') or define('ROLE_CERTIFIED_FIRST_AIDER', 15);
         defined('ROLE_DOCTOR') or define('ROLE_DOCTOR', 16);
         defined('ROLE_NURSE') or define('ROLE_NURSE', 17);
+        defined('ROLE_FIRE_ASSOCIATES') or define('ROLE_FIRE_ASSOCIATES', 18);
+        defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
+        defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
@@ -213,7 +216,15 @@ class AppServiceProvider extends ServiceProvider
 
 
         //Safety
-        defined('FIRE_ASSOCIATES_INSPECTION_DONE') or define('FIRE_ASSOCIATES_INSPECTION_DONE', 1);
+        defined('WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('WAITING_FOR_EHS_OFFICER_VERIFICATION', 1);
+        defined('WAITING_FOR_CAPA_ACTION') or define('WAITING_FOR_CAPA_ACTION', 2);
+        defined('WAITING_FOR_CAPA_VERIFICATION') or define('WAITING_FOR_CAPA_VERIFICATION', 3);
+        defined('WAITING_FOR_L1_VERIFICATION') or define('WAITING_FOR_L1_VERIFICATION', 4);
+        defined('WAITING_FOR_L2_VERIFICATION') or define('WAITING_FOR_L2_VERIFICATION', 5);
+        defined('INSPECTION_APPROVED') or define('INSPECTION_APPROVED', 6);
+
+        //Notification Type
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
 
         View::composer('*', function ($view) {
 

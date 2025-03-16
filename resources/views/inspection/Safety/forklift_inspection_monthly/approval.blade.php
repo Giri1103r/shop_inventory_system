@@ -1,0 +1,477 @@
+@extends('admin.layouts.admin')
+@section('title', 'Monthly ForkLift Inspection')
+@section('pageurl', admin_url('ohc/medicine-requisition/list'))
+
+
+@section('content')
+    <div class="clearfix">
+    </div>
+    <div class="page-titles">
+        <div class="d-flex align-items-center">
+
+        </div>
+
+    </div>
+
+    <div class="content-body  default-height">
+        <div class="container-fluid main-content">
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="align-back-btc">
+                                    <x-button-back
+                                        href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-back>
+
+                                </div>
+                            </div>
+
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{ __('inspection.monthly_forklift_inspection') }}</h4>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->revision_data) ? $inspection_details->revision_data : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.location') }}</label>
+                                            <div class="view_data">
+                                                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Shift</label>
+                                            <div class="view_data">
+                                                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.next_due') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->next_due) ? $inspection_details->next_due : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.unit') }}</label>
+                                            <div class="view_data">
+                                                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.frequency') }}</label>
+                                            <div class="view_data">
+                                                {{ GetFrequency(isset($inspection_details->frequency) ? $inspection_details->frequency : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.identification_no') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->identification_no) ? $inspection_details->identification_no : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.forklift_type') }}</label>
+                                            <div class="view_data">
+                                                {{ GetForkLiftType(isset($inspection_details->forklift_type) ? $inspection_details->forklift_type : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.capacity') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->capacity) ? $inspection_details->capacity : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @php
+                                        $user_response = json_decode($inspection_details->responses, true);
+                                    @endphp
+                                    <table class="container p-5">
+                                        <thead>
+                                            <tr>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Sr. No</th>
+                                                <th colspan="3"
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Check Points</th>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Reports</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php $srNo = 1; @endphp
+                                            @foreach ($user_response as $subcategory => $questions)
+                                                @php
+                                                    $rowCount = count($questions);
+                                                    $firstRow = true;
+                                                @endphp
+                                                @foreach ($questions as $questionId => $answer)
+                                                    <tr>
+                                                        @if ($firstRow)
+                                                            <td rowspan="{{ $rowCount }}"
+                                                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                                                {{ $srNo }}</td>
+                                                            <td rowspan="{{ $rowCount }}"
+                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                                                {{ GetSubChecklistTypeName($subcategory) }}
+                                                            </td>
+                                                            @php
+                                                                $srNo++;
+                                                                $firstRow = false;
+                                                            @endphp
+                                                        @endif
+                                                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                                                            {{ GetChecklistTypeDate($questionId) }}
+                                                        </td>
+                                                        <td
+                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                            @if ($answer == 'YES')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($answer == 'NO' || $answer == 'N/A')
+                                                                <span style="color: red; font-size: 20px;">X</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                        </div>
+                                    </div>
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('safety/forklift-inspection/monthly/ehsofficer/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                            name="id">
+                                        <div class="row">
+                                            <div class="col-md-12 ">
+                                                <label class="form-label required">Whether the Inspection has been
+                                                    passed Without the CAPA
+                                                    ?</label>
+                                                <div class="mb-3 form-input">
+                                                    <input type="radio" id="yes" name="is_passed"
+                                                        value="{{ 1 }}">
+                                                    <label for="yes">YES</label>
+
+                                                    <input type="radio" id="no" name="is_passed"
+                                                        value="{{ 0 }}">
+                                                    <label for="no">NO</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                                    name="capa_recomendation"></textarea>
+                                            </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            </div>
+                                        </div>
+                                    </form>
+                                @else
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.safety_inspection') }}</h4>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.inspection_status') }}</label>
+                                                <div class="view_data">
+                                                    {!! getInspectionStatus($inspection_details->inspection_status) !!}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (isset($inspection_details->verified_by))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($inspection_details->verified_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if ($inspection_details->approved_by)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername($inspection_details->approved_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset($inspection_details->capa_recomendation))
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->capa_recomendation }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset($inspection_details->capa_remarks))
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->capa_remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset($inspection_details->level_one_manager_remarks))
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->level_one_manager_remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset($inspection_details->level_two_manager_remarks))
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->level_two_manager_remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION)
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
+                                        </div>
+                                    </div>
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                            name="id">
+                                        <div class="row">
+                                            <div class="col-md-12 mb-2" id="capa_remarks">
+                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                    name="capa_remarks"></textarea>
+                                            </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            </div>
+                                        </div>
+                                    </form>
+                                @endif
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/reverify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <p class="form-label">
+                                                {{ __('inspection.capa_verification_text') }}
+                                            </p>
+                                            <div class="mb-3 form-input">
+                                                <input type="radio" id="yes" name="is_passed"
+                                                    value="{{ 1 }}">
+                                                <label for="yes">YES</label>
+
+                                                <input type="radio" id="no" name="is_passed"
+                                                    value="{{ 0 }}">
+                                                <label for="no">NO</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                                name="capa_recomendation"></textarea>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-cancel
+                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                        </div>
+                                    </form>
+                                @endif
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-one/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <p class="form-label">
+                                                {{ __('inspection.capa_verification_text') }}
+                                            </p>
+                                            <div class="mb-3 form-input">
+                                                <input type="radio" id="yes" name="is_passed"
+                                                    value="{{ 1 }}">
+                                                <label for="yes">YES</label>
+
+                                                <input type="radio" id="no" name="is_passed"
+                                                    value="{{ 0 }}">
+                                                <label for="no">NO</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                                name="level_one_manager"></textarea>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-cancel
+                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                        </div>
+                                    </form>
+                                @endif
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-two/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <p class="form-label">
+                                                {{ __('inspection.capa_verification_text') }}
+                                            </p>
+                                            <div class="mb-3 form-input">
+                                                <input type="radio" id="yes" name="is_passed"
+                                                    value="{{ 1 }}">
+                                                <label for="yes">YES</label>
+
+                                                <input type="radio" id="no" name="is_passed"
+                                                    value="{{ 0 }}">
+                                                <label for="no">NO</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                                name="level_two_manager"></textarea>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-cancel
+                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                        </div>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        @stop
+        @push('script')
+            <script>
+                $(document).ready(function() {
+                    $('input[name="is_passed"]').change(function() {
+                        if ($('#no').is(':checked')) {
+                            $('#capa_recomendation').show();
+                        } else {
+                            $('#capa_recomendation').hide();
+                        }
+                    });
+                });
+            </script>
+        @endpush
