@@ -34,7 +34,7 @@ use App\Models\IMS\Incident\RiskAnalysis;
 use App\Models\IMS\Incident\WhyWhyAnalysis;
 use App\Models\IMS\Incident\FishboneAnalysis;
 use App\Models\IMS\Incident\Statuslog;
-use App\Models\IMS\Incident\IMSStatus;
+use App\Models\IMS\Incident\Incidentstatus;
 use App\Mail\AccidentEmail;
 
 class AccidentReportController extends Controller
@@ -173,7 +173,7 @@ class AccidentReportController extends Controller
             }
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-        $accidentStatusList  = IMSStatus::select('id', 'status_name')->where('status', '1')->get();   
+        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();   
         $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
 
         $data = array(
