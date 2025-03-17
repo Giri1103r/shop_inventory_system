@@ -706,6 +706,7 @@ class AccidentReportController extends Controller
     {
         try {
 
+          
             $incident_id = null;
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
@@ -1324,7 +1325,7 @@ class AccidentReportController extends Controller
             if (Auth::check()) {
                 $accident_report = $this->accident_report->selectOne($id);
                 $getEHSVerify = $this->accident_report->getEHSVerifyAccident($id);
-                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);  
+                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);
                 $getInvestigation = $this->accident_report->getInvestigation($id);
                 $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
                 $getwhywhy = $this->accident_report->getwhywhy($id);

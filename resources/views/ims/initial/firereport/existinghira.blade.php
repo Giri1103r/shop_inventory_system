@@ -155,7 +155,7 @@
 
                         if (data.hira) {
                             $('#likelihood').text(data.hira.likelihood);
-                            $('#riskLevel').text(data.hira.risk_levels);
+                            $('#riskLevel').text(data.risk_levels);
                             $('#hiraDetails').show(); // Show the details table
                         } else {
                             $('#hiraDetails').hide(); // Hide if no data

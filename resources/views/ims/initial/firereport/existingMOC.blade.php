@@ -158,7 +158,7 @@
 
                         if (data.hira) {
                             $('#moclikelihood').text(data.hira.likelihood);
-                            $('#mocriskLevel').text(data.hira.risk_levels);
+                            $('#mocriskLevel').text(data.risk_levels);
                             $('#hiramocDetails').show(); // Show the details table
                         } else {
                             $('#hiramocDetails').hide(); // Hide if no data

@@ -44,13 +44,13 @@ class WhyWhyAnalysis extends Model
         'trash' => 'NO',
     ];
 
-    public function store($accident_id ,$incident_id, $fire_id , $investigation_id)
+    public function store($accident_id, $incident_id, $fire_id, $investigation_id)
     {
         $request = request();
-    
+        $inserted = false;
+
         if ($request->filled('whywhyanalysis') && is_array($request->whywhyanalysis)) {
             foreach ($request->whywhyanalysis as $analysis) {
-                // Trim and filter out empty values
                 $filteredAnalysis = array_filter(array_map('trim', [
                     'why_1' => $analysis['whywhyanalysis_first'] ?? null,
                     'why_2' => $analysis['whywhyanalysis_second'] ?? null,
@@ -58,8 +58,6 @@ class WhyWhyAnalysis extends Model
                     'why_4' => $analysis['whywhyanalysis_forth'] ?? null,
                     'why_5' => $analysis['whywhyanalysis_fifth'] ?? null,
                 ]));
-    
-                // Only insert if at least one field has a value
                 if (!empty($filteredAnalysis)) {
                     $filteredAnalysis['incident_id'] = $incident_id;
                     $filteredAnalysis['accident_id'] = $accident_id;
@@ -68,17 +66,15 @@ class WhyWhyAnalysis extends Model
                     $filteredAnalysis['created_at'] = now();
                     $filteredAnalysis['updated_at'] = now();
                     $filteredAnalysis['created_by'] = Auth::id();
-                    return $this->create($filteredAnalysis);
-                    if (!$inserted) {
-                        return false; // If any insert fails, return false
-                    }
+
+                    $this->create($filteredAnalysis); 
+                    $inserted = true;
                 }
             }
-    
-            return true; // Return true if at least one row was inserted
+
+            return $inserted; 
         }
-    
-        return false; // Return false if no valid data was provided
+
+        return false; 
     }
-    
 }

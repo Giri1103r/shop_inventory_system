@@ -241,7 +241,7 @@
                 } else {
                     //  Reset all fields if no Employee Code is selected
                     $('#designation').val('');
-                    $('#unit_id').val('').prop('disabled', false); // ✅ Reset & Enable Unit
+                    $('#unit_id').val('').prop('disabled', false); 
                     $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
                         false);
                 }
