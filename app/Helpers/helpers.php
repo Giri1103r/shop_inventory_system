@@ -32,6 +32,9 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\MSDSCheckList;
+use App\Models\Inspection\RRAACheckList;
+
 
 
 if (!function_exists('get_encryptVal')) {
@@ -1389,6 +1392,24 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getMSDSCount')) {
+
+        function getMSDSCount()
+        {
+            $data = MSDSCheckList::get()->count();
+            return $data;
+        }
+    }
+   
+    if (!function_exists('getRRAACount')) {
+
+        function getRRAACount()
+        {
+            $data = RRAACheckList::get()->count();
+            return $data;
+        }
+    }
+
 
     if (!function_exists('getUnitname')) {
 
