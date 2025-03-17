@@ -8,6 +8,8 @@ use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 
+use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
         Route::GET('/list', [ChecklistTypeController::class, 'Index']);
@@ -48,24 +50,24 @@ Route::group(['prefix' => 'inspection/master/'], function () {
         Route::get('/ajax-list/{checklistTypeId}/{id}', [ChecklistSubTypeController::class, 'checklistSubTypeList']);
     });
 
-    Route::group(['prefix' => 'checklist-sub-type-data/'], function () {
-        Route::get('list', [ChecklistSubTypeDataController::class, 'index']);
-        Route::post('list', [ChecklistSubTypeDataController::class, 'index']);
-        Route::get('add', [ChecklistSubTypeDataController::class, 'add']);
-        Route::post('add/submit', [ChecklistSubTypeDataController::class, 'store']);
-        Route::get('edit/{id}', [ChecklistSubTypeDataController::class, 'edit']);
-        Route::post('edit/submit', [ChecklistSubTypeDataController::class, 'update']);
-        Route::get('view/{id}', [ChecklistSubTypeDataController::class, 'view']);
-        Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
-        Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
-        Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
-        Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
-        Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
-        Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
-        Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
-        Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
-        Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
-    });
+  Route::group(['prefix' => 'checklist-sub-type-data/'], function () {
+    Route::get('list', [ChecklistSubTypeDataController::class, 'index']);
+    Route::post('list', [ChecklistSubTypeDataController::class, 'index']);
+    Route::get('add', [ChecklistSubTypeDataController::class, 'add']);
+    Route::post('add/submit', [ChecklistSubTypeDataController::class, 'store']);
+    Route::get('edit/{id}', [ChecklistSubTypeDataController::class, 'edit']);
+    Route::post('edit/submit', [ChecklistSubTypeDataController::class, 'update']);
+    Route::get('view/{id}', [ChecklistSubTypeDataController::class, 'view']);
+    Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
+    Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
+    Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
+    Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
+    Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
+    Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
+    Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
+    Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
+    Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
+  });
 });
 
 
@@ -90,6 +92,29 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
     });
 });
+
+
+Route::group(['prefix' => 'environment/'], function () {
+  Route::group(['prefix' => 'ambient-noise/'], function () {
+    Route::get('list', [AmbientNoiseMonitoringController::class, 'index']);
+    Route::post('list', [AmbientNoiseMonitoringController::class, 'index']);
+    Route::get('add', [AmbientNoiseMonitoringController::class, 'add']);
+    Route::post('add/submit', [AmbientNoiseMonitoringController::class, 'store']);
+    Route::get('edit/{id}', [AmbientNoiseMonitoringController::class, 'edit']);
+    Route::post('edit/submit', [AmbientNoiseMonitoringController::class, 'update']);
+    Route::get('view/{id}', [AmbientNoiseMonitoringController::class, 'view']);
+    Route::post('delete', [AmbientNoiseMonitoringController::class, 'delete']);
+    Route::get('export/excel', [AmbientNoiseMonitoringController::class, 'exportExcel']);
+    Route::get('export/pdf', [AmbientNoiseMonitoringController::class, 'exportPdf']);
+    Route::get('sample_download', [AmbientNoiseMonitoringController::class, 'DownloadSample']);
+    Route::get('import', [AmbientNoiseMonitoringController::class, 'import']);
+    Route::post('import/Submit', [AmbientNoiseMonitoringController::class, 'importSubmit']);
+    Route::post('status', [AmbientNoiseMonitoringController::class, 'statusChange']);
+    Route::post('unique', [AmbientNoiseMonitoringController::class, 'Uniquecheck']);
+    Route::get('employeeName', [AmbientNoiseMonitoringController::class, 'employeename']);
+  });
+});
+
 
 Route::group(['prefix' => 'safety/'], function () {
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
