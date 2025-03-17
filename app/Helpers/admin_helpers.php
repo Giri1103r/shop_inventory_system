@@ -28,6 +28,8 @@ use App\Models\OhcManagement\Master\Medicine;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\IMS\Incident\InitialFireIncident;
+use App\Models\Inspection\GembaWalk;
+use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
@@ -232,6 +234,13 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'CAT-' . getautogen($count);
                 break;
+            
+            case 'gembaWalk':
+                $count = GembaWalk::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'GMB-' . getautogen($count);
+                break;
+                
             default:
                 $sequence = Str::random(5);
                 break;

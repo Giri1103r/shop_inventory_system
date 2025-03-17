@@ -247,6 +247,12 @@ class Location extends Model
         }
         return $list;
     }
+    public function getLocationName(){
+        $data = $this->select('id','location_name')->where('status',1)->get();
+
+        return $data;
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_location'));
