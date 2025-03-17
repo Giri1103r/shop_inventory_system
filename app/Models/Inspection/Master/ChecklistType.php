@@ -95,10 +95,10 @@ class ChecklistType extends Model
         return $datas;
     }
 
-    public function store(){
+    public function store()
+    {
         $request = request();
         $insert_array = [
-            'category_id' => $request->checklist_type_category_id,
             'category_name' => $request->checklist_category,
             'questionary' => decryptId($request->questionary_id),
             'created_by' => Auth::id(),
@@ -106,12 +106,134 @@ class ChecklistType extends Model
         return self::create($insert_array);
     }
 
-    public function selectOne($id){
+    public function selectOne($id)
+    {
         return $this->where('id', $id)->first();
+    }
+
+
+    public function updates($id)
+    {
+        $request = request();
+
+        $update_array = array(
+            'category_name' => $request->checklist_category,
+            'questionary' => decryptId($request->questionary_id),
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_master_checklist_type.*');
+
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('category_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->category_name) && $request->category_name) {
+            $query = $query->where('inspection_master_checklist_type.category_name', 'LIKE', '%' . $request->category_name . '%');
+        }
+        if (isset($request->category_id) && $request->category_id) {
+            $query = $query->where('inspection_master_checklist_type.category_id', 'LIKE', '%' . $request->category_id . '%');
+        }
+
+        if (isset($request->order) && count($request->order) > 0) {
+            $columnName = $request->order[0]['column'];
+            $columnorder = $request->order[0]['dir'];
+            switch ($columnName) {
+                case "category_name":
+                    $query->orderBy('inspection_master_checklist_type.category_name', $columnorder);
+                    break;
+                case "category_id":
+                    $query = $query->orderBy('inspection_master_checklist_type.category_id', $columnorder);
+                    break;
+                case "status":
+                    $query = $query->orderBy('inspection_master_checklist_type.status', $columnorder);
+                    break;
+                case "created_by":
+                    $query = $query->orderBy('inspection_master_checklist_type.created_by', $columnorder);
+                    break;
+                case "created_date":
+                    $query = $query->orderBy('inspection_master_checklist_type.created_at', $columnorder);
+                    break;
+                default:
+                    $query = $query->orderBy('inspection_master_checklist_type.id', 'DESC');
+                    break;
+            }
+        }
+
+        return $query->orderBy('id', 'desc')->get();
+    }
+
+
+    public function UniqueCheck($data)
+    {
+        $unique =  $this->where('category_name',  $data)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        $unique =  $this->where('category_name',  $data['category_name'])
+            ->where('id', '!=', ($data['id']))
+            ->get();
+
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
     }
 
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_master_checklist_type'));
+        static::created(function ($model) {
+
+            $uniqueId = 'CAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['category_id' => $uniqueId]);
+        });
     }
 }

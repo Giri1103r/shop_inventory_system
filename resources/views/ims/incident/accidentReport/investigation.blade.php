@@ -1952,22 +1952,22 @@
                 }
                 console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
-            <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
-                <td>
-                    <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
-                     <i class="fa-solid fa-trash text-danger"></i>
-                    </button>
-                </td>
-            </tr>`;
+                <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
+                    <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
+                    <td><i class="fas fa-arrow-right text-primary"></i></td>
+                    <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
+                    <td><i class="fas fa-arrow-right text-primary"></i></td>
+                    <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
+                    <td><i class="fas fa-arrow-right text-primary"></i></td>
+                    <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
+                    <td><i class="fas fa-arrow-right text-primary"></i></td>
+                    <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
+                    <td>
+                        <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
+                        <i class="fa-solid fa-trash text-danger"></i>
+                        </button>
+                    </td>
+                </tr>`;
 
                 $("#whywhyanalysisBody").append(newRow);
                 whywhyanalysisIndex++;

@@ -112,7 +112,7 @@ class HiraController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -126,7 +126,7 @@ class HiraController extends Controller
     {
 
         try {
-            
+
             $accident_id = null;
             $incidentId = null;
             $fire_id = null;
@@ -142,7 +142,7 @@ class HiraController extends Controller
             report($ex);
         }
     }
-    public function addNewHiraIncident(Request $request, $incidentId ,$hiramoc)
+    public function addNewHiraIncident(Request $request, $incidentId, $hiramoc)
     {
         try {
             $accident_id = null;
@@ -158,7 +158,7 @@ class HiraController extends Controller
             dd($ex);
         }
     }
-    public function addNewHiraAccident(Request $request, $accidentId ,$hiramoc)
+    public function addNewHiraAccident(Request $request, $accidentId, $hiramoc)
     {
         try {
             $incident_id = null;
@@ -174,7 +174,7 @@ class HiraController extends Controller
             dd($ex);
         }
     }
-    public function addNewHiraFire(Request $request, $fireId ,$hiramoc)
+    public function addNewHiraFire(Request $request, $fireId, $hiramoc)
     {
         try {
             $incident_id = null;
@@ -190,7 +190,7 @@ class HiraController extends Controller
             dd($ex);
         }
     }
- 
+
     public function Store(Request $request)
     {
         try {
@@ -506,6 +506,7 @@ class HiraController extends Controller
                 'Sr. No',
                 'Source, Situation, Act,Activity, Product,Services',
                 'Type of Hazard',
+                'Hira Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -519,13 +520,22 @@ class HiraController extends Controller
                 $export[] =  $data->sr_no;
                 $export[] =  $data->services;
                 if ($data->hazard_type == 1) {
-                    $export[] = 'P - Physical Hazard';
+                    $export[] = "P - Physical Hazard";
                 } elseif ($data->hazard_type == 2) {
-                    $export[] = 'C - Chemical Hazard';
+                    $export[] = "C - Chemical Hazard";
                 } elseif ($data->hazard_type == 3) {
-                    $export[] = 'B - Behavioral Hazard';
+                    $export[] = "B - Behavioral Hazard";
                 } elseif ($data->hazard_type == 4) {
-                    $export[] = 'O - Other Hazard';
+                    $export[] = "O - Other Hazard";
+                }
+                if ($data->hira_status == 1) {
+                    $export[] = "EHS Head Approval Pending";
+                } elseif ($data->hira_status == 2) {
+                    $export[] = "Approved";
+                } elseif ($data->hira_status == 3) {
+                    $export[] = "EHS Head Approval Rejected";
+                } else {
+                    $export[] = "";
                 }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -563,6 +573,7 @@ class HiraController extends Controller
                 'Sr. No',
                 'Source, Situation, Act,Activity, Product,Services',
                 'Type of Hazard',
+                'Hira Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),

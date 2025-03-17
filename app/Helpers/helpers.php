@@ -3,30 +3,39 @@
 
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Notification;
-use App\Models\Master\Fleet;
-use App\Models\UploadLogType;
-use App\Models\Master\UserRole;
-use App\Models\UserPermission;
+use App\Models\FcmToken;
 use App\Models\LeftMenu;
+use Illuminate\Support\Str;
+use App\Models\Master\Fleet;
+use App\Models\Notification;
+use App\Models\UploadLogType;
+use App\Models\UserPermission;
+use App\Models\Master\Employee;
+use App\Models\Master\UserRole;
+use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
+use App\Models\Master\ForkLiftType;
+use App\Models\Master\PpeExemption;
+use App\Models\Permit\SafetyPermit;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
+use App\Models\Master\TrainingSchedule;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\FcmToken;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Master\PpeExemption;
-use App\Models\Master\PpeRequest;
-use App\Models\Permit\SafetyPermit;
+use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Str;
-use App\Models\Master\TrainingSchedule;
+use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
+use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\MSDSCheckList;
 use App\Models\Inspection\RRAACheckList;
+
+
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1417,6 +1426,37 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetForkLiftType')) {
+
+        function GetForkLiftType($id)
+        {
+
+            $forklift_type = ForkLiftType::where('id', $id)->where('trash', 'NO')->first();
+
+            if ($forklift_type == null) {
+                return '';
+            } else {
+                return $forklift_type->forklift;
+            }
+        }
+    }
+
+
+    if (!function_exists('GetFrequency')) {
+
+        function GetFrequency($id)
+        {
+
+            $forklift_type = Frequency::where('id', $id)->where('trash', 'NO')->first();
+
+            if ($forklift_type == null) {
+                return '';
+            } else {
+                return $forklift_type->frequency_name;
+            }
+        }
+    }
+
     if (!function_exists('getItemCode')) {
 
         function getItemCode($userid)
@@ -1601,6 +1641,218 @@ if (!function_exists('getMonth')) {
         {
             $exemption = new PpeExemption();
             return $exemption->statusCount($type, $params);
+        }
+    }
+
+    if (!function_exists('getDocumentReviewDate')) {
+        function getDocumentReviewDate($type)
+        {
+            return $type . ' - ' . now()->format('d-m-Y');
+        }
+    }
+    if (!function_exists('getCheckListType')) {
+        function getCheckListType($type)
+        {
+            $data = ChecklistType::where('category_name', $type)->first();
+            if ($data) {
+                return $data->id;
+            }
+            return 0;
+        }
+    }
+
+    if (!function_exists('GetSubChecklistTypeName')) {
+        function GetSubChecklistTypeName($id)
+        {
+            $data = ChecklistSubType::where('id', $id)->first();
+            if ($data) {
+                return $data->subcategory_name;
+            }
+            return false;
+        }
+    }
+    if (!function_exists('GetChecklistTypeDate')) {
+        function GetChecklistTypeDate($id)
+        {
+            $data = ChecklistSubTypeDataName::where('id', $id)->first();
+            if ($data) {
+                return $data->name;
+            }
+            return false;
+        }
+    }
+
+
+    if (!function_exists('GetEHSOfficer')) {
+        function GetEHSOfficer()
+        {
+            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_EHS_OFFICER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+    if (!function_exists('GetLevelOneManager')) {
+        function GetLevelOneManager()
+        {
+            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+    if (!function_exists('GetLevelTwoManager')) {
+        function GetLevelTwoManager()
+        {
+            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+    if (!function_exists('GetSuperAdmin')) {
+        function GetSuperAdmin()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_SUPERADMIN . ', role)')->pluck('id')->toArray();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+    if (!function_exists('getCheckListQuestion')) {
+        function getCheckListQuestion($id)
+        {
+
+            $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
+                ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
+                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+                ->join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->where('inspection_master_checklist_type.id', $id)
+
+                ->get([
+                    'inspection_master_checklist_subtype.*',
+                    'inspection_master_checklist_type.*',
+                    'inspection_master_checklist_sub_type_data.*',
+                    'inspection_master_checklist_subtype.id as sub_type_id',
+                    'inspection_master_checklist_sub_type_data_name.*',
+                    'inspection_master_checklist_sub_type_data_name.id as checklist_id',
+                    'inspection_master_checklist_sub_type_data_name.name as checklist_name',
+                    'inspection_master_checklist_option.type',
+                ]);
+            $data = $data->groupBy('subcategory_name');
+
+            if ($data) {
+                return $data;
+            }
+            return false;
+        }
+    }
+
+    if (!function_exists('getoption')) {
+        function getoption($id)
+        {
+
+            $data = ChecklistType::join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->where('inspection_master_checklist_type.id', $id)
+
+                ->first([
+                    'inspection_master_checklist_option.type'
+                ]);
+
+            if ($data) {
+                return $data;
+            }
+            return false;
+        }
+    }
+
+    if (!function_exists('getShift')) {
+
+        function getShift($userid)
+        {
+
+            $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($shift == null) {
+                return '';
+            } else {
+                return $shift->shift;
+            }
+        }
+    }
+
+    if (!function_exists('getSubcategoryname')) {
+
+        function getSubcategoryname($userid)
+        {
+
+            $subcategory_name = DB::table('inspection_master_checklist_subtype')->select('subcategory_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($subcategory_name == null) {
+                return '';
+            } else {
+                return $subcategory_name->subcategory_name;
+            }
+        }
+    }
+    if (!function_exists('getSubcategoryDataname')) {
+
+        function getSubcategoryDataname($userid)
+        {
+
+            $name = DB::table('inspection_master_checklist_sub_type_data_name')->select('name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return '';
+            } else {
+                return $name->name;
+            }
+        }
+    }
+
+    if (!function_exists('getInspectionStatus')) {
+        function getInspectionStatus($id)
+        {
+            $status = '';
+            $badgeClass = 'badge';
+
+            if ($id == WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+                $status = 'Waiting For EHS Officer Verification';
+                $badgeClass = 'badge bg-primary';
+            } else if ($id == WAITING_FOR_CAPA_ACTION) {
+                $status = 'Waiting for CAPA Action';
+                $badgeClass = 'badge bg-danger';
+            } else if ($id == WAITING_FOR_CAPA_VERIFICATION) {
+                $status = 'Waiting For CAPA Verification';
+                $badgeClass = 'badge bg-warning';
+            } else if ($id == WAITING_FOR_L1_VERIFICATION) {
+                $status = 'Waiting for L1 Manager Verification';
+                $badgeClass = 'badge bg-info';
+            } else if ($id == WAITING_FOR_L2_VERIFICATION) {
+                $status = 'Waiting for L2 Manager Verification';
+                $badgeClass = 'badge bg-info';
+            } else if ($id == INSPECTION_APPROVED) {
+                $status = 'Inspection Approved';
+                $badgeClass = 'badge bg-success';
+            }
+
+            return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }
     }
 }

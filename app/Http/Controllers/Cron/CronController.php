@@ -525,33 +525,38 @@ class CronController extends Controller
 
             $ids = $medicinestock->pluck('medicine_id')->toArray();
 
+
+            $receivedMedicineIds = MedicineReceiving::whereIn('medicine_id', $ids)->orderByDesc('id')->pluck('medicine_id')->toArray();
+            $filteredIds = array_diff($ids, $receivedMedicineIds);
+
             $mailsubject = 'Medicine Stock Request';
             $user_role = ROLE_PARAMEDICS;
-
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
-            if (count($users) > 0) {
+            if ($users->isNotEmpty() && !empty($filteredIds)) {
                 foreach ($users as $user) {
                     $email_id = $user->email;
 
                     if (!empty($email_id)) {
-                        foreach ($ids as $medicineId) {
+                        foreach ($filteredIds as $medicineId) { // Only iterate over unreceived medicines
                             $medicinedetails = $this->medicine->selectone($medicineId);
                             $dataArray = Inventory::where('unit_id', 1)->where('medicine_id', $medicineId)->first();
-                            $data =  $dataArray->toArray();
-                            $details  = $medicinedetails->toArray();
 
-                            $details['name'] = $user->name;
-                            $details['email_id'] =  $email_id;
-                            $details['mail_subject'] = $mailsubject;
-                            // $details['request_link'] = admin_url('ohc/medicine-stock-inventory/list');
+                            if ($dataArray) {
+                                $data = $dataArray->toArray();
+                                $details  = $medicinedetails->toArray();
 
-                            Mail::to($details['email_id'])->queue(new MedicineStockEmail($details, $data));
+                                $details['name'] = $user->name;
+                                $details['email_id'] =  $email_id;
+                                $details['mail_subject'] = $mailsubject;
+
+                                Mail::to($details['email_id'])->queue(new MedicineStockEmail($details, $data));
+                            }
                         }
                     }
                 }
             }
+
             $notificationData = array(
                 'notification_type' => 4,
                 'module_type' => 1,
@@ -560,7 +565,7 @@ class CronController extends Controller
                     'title' => $mailsubject,
                     'message' => 'Medicine has less than the Threshold Limit',
                     'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $medicineId,
+                    'id' => $medicineId ?? null,
                     'module' => 1,
                 )),
                 'web_link' => admin_url('ohc/inventory-tabular-view/list'),
@@ -578,6 +583,7 @@ class CronController extends Controller
             ]);
         }
     }
+
 
     public function stockupdate()
     {
