@@ -61,6 +61,7 @@
                                         <th>{{__('Audit ID')}}</th>
                                         <th>{{__('Date of Audit')}}</th>
                                         <th>{{__('Shop Floor')}}</th>
+                                        <th>{{__('Floor Executive')}}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -153,10 +154,6 @@
                         {
                             data: 'status',
                             name: 'status'
-                        },
-                        {
-                            data: 'created_date',
-                            name: 'created_date'
                         },
                         {
                             data: 'action',
