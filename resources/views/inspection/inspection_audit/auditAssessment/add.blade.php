@@ -79,29 +79,36 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <table>
+                                            <table class="container p-5">
                                                 <thead>
                                                     <tr>
+
+
                                                         <th colspan="3"
                                                             style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                                                             Check Points
                                                         </th>
 
                                                         @foreach ($getoption as $option)
-                                                            <th
-                                                                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                                                                class="require">
                                                                 {{ $option }}
                                                             </th>
                                                         @endforeach
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @php
+                                                        $i = 1;
+
+                                                    @endphp
                                                     @foreach ($checklist_details as $key => $details)
                                                         @php
                                                             $rowCount = count($details);
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
+
                                                                 @if ($index == 0)
                                                                     <td rowspan="{{ $rowCount }}"
                                                                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
@@ -112,19 +119,25 @@
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
-                                                                @php
-                                                                    $options = explode(',', $checklist->type);
-                                                                @endphp
-
                                                                 @foreach ($getoption as $option)
-                                                                    <td class = "form-input"
-                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                    {{-- <td style="border: 1px solid black; padding: 8px; text-align: center;"
+                                                                        class="form-input">
                                                                         <input type="radio"
-                                                                            name="checklist_{{ $checklist->id }}"
-                                                                            value="{{ trim($option) }}" class = "validate-radio-required">
+                                                                            name="checklist[{{ $checklist->subcategory_name }}][{{ $checklist->checklist_name }}]"
+                                                                            value="{{ trim($option) }}" class="validate-radio-required">
+                                                                    </td> --}}
 
-                                                                    </td>
+                                                                    <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                    <input type="radio"
+                                                                        name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][selected_option]"
+                                                                        value="{{ trim($option) }}"
+                                                                        class="validate-radio-required">
+                                                                </td>
                                                                 @endforeach
+                                                                @php
+                                                                    $i++;
+                                                                @endphp
                                                             </tr>
                                                         @endforeach
                                                     @endforeach
@@ -222,10 +235,10 @@
                             required: "{{ __('Date Of Audit is required') }}",
                         },
                         shift_id: {
-                            extension: "Shift is required",
+                            required: "Shift is required",
                         },
                         floor_executive: {
-                            extension: "Floor Executive on Duty is required",
+                            required: "Floor Executive on Duty is required",
                         }
                     },
                     errorElement: 'span',

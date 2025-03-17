@@ -65,9 +65,9 @@ class WeeklyAmbulanceController extends Controller
                     $data = $this->weekly_ambulance_details->list();
 
 
-                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_WEEKLY_AMBULANCE)->values();
 
-                    $datatables = DataTables::of($filteredData)
+
+                    $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
@@ -88,7 +88,7 @@ class WeeklyAmbulanceController extends Controller
                             return '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
-                        ->setFilteredRecords($filteredData->count())
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -110,15 +110,16 @@ class WeeklyAmbulanceController extends Controller
         try {
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
-            $checklistQuestions = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
-
-// dd(  $checklistQuestions);
+            $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+            $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+            $getoption = string_to_array($options->type);
             $location = $this->location->getLocation();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
-                'checklistQuestions'=>  $checklistQuestions,
+                'checklist_details' =>  $checklist_details,
                 'location' => $location,
+                'getoption' => $getoption,
 
 
             );
@@ -142,8 +143,14 @@ class WeeklyAmbulanceController extends Controller
             $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $weekly_ambulance_details = $this->weekly_ambulance_details->store();
-                $weekly_ambulance_inspection_checklist = $this->weekly_ambulance_inspection_checklist->store($weekly_ambulance_details);
+
+                $responses = [
+                    'check_item' => ($request->sub_type_id),
+                    'status' => ($request->checklist_type_status),
+                    'remarks' => ($request->remarks),
+                ];
+
+                $weekly_ambulance_details = $this->weekly_ambulance_details->store( $responses);
 
                 Session::flash('success', __('Your data Created Successfully.!'));
             } catch (Exception $ex) {
@@ -156,6 +163,32 @@ class WeeklyAmbulanceController extends Controller
             dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
+        }
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $weekAmbualance = $this->weekly_ambulance_details->WeekambulanceSelectone($id);
+
+                $inspectionCkeclist = json_decode($weekAmbualance);
+                $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+                $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+                $getoption = string_to_array($options->type);
+                $data = array(
+                    'weekAmbualance' => $weekAmbualance,
+                    'inspectionCkeclist' => $inspectionCkeclist,
+
+                    'checklist_details' =>  $checklist_details,
+                    'getoption' => $getoption,
+                );
+
+            }
+            return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
         }
     }
 }

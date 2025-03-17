@@ -23,21 +23,21 @@ class WeeklyAmbulanceChecklist extends Model
         'updated_at'
     ];
 
-    public function store($weekly_ambulance_details)
+    public function store($weekly_ambulance_details, $data)
     {
-        $request = request();
+        $insert_array = [
+            'weekly_ambulance_id' => $weekly_ambulance_details->id,
+            'checklist_sub_type_data_name_id' => json_encode($data),
 
+            'created_by' => Auth::id(),
+        ];
 
-            $insert_array = [
-                'weekly_ambulance_id'=>$weekly_ambulance_details->id,
-                'checklist_sub_type_data_name_id'=>json_encode($request->sub_type_id),
-                'weekly_ambulance_status'=>json_encode($request->checklist_type_status),
-                'remarks'=>json_encode($request->remarks),
-                'created_by'=>Auth::id(),
-            ];
-
-            return   $this->create($insert_array);
-
+        return $this->create($insert_array);
     }
+
+    public function WeekambulanceSelectone($id){
+        return $this->where('weekly_ambulance_id',$id)->first();
+    }
+
 
 }

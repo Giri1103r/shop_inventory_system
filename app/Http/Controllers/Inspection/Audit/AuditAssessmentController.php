@@ -72,10 +72,10 @@ class AuditAssessmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('inspection/master/checklist-sub-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
+                                // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -143,20 +143,13 @@ class AuditAssessmentController extends Controller
     }
     public function store(Request $request)
     {
+
+        // dd($request);
         try {
-            $rules = [
-                'category_id' => 'required',
-                'subcategory_name' => 'required',
-            ];
-            $messages = [
-                'category_id.required' => 'Please enter Category',
-                'subcategory_name.requred' => 'Please enter Sub category name',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
             try {
 
-                $checklist_sub_type =   $this->checklist_subtype->store();
-                
+                $this->audit_assessment->store();
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
@@ -165,39 +158,19 @@ class AuditAssessmentController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
+            return redirect(admin_url('audit/assessment/list'));
         } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
-
-    public function uniqueCheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $subcategory_name = $request->subcategory_name;
-            $category_id = decryptId($request->category_id);
-            $id = $request->id;
-            if ($id == '') {
-                $record = $this->checklist_subtype->uniqueCheck($subcategory_name, $category_id);
-            } else {
-                $id = decryptId($id);
-                $record = $this->checklist_subtype->ExistuniqueCheck($subcategory_name, $category_id, $id);
-            }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
-        }
-    }
-
     public function view($id)
     {
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_subtype =   $this->checklist_subtype->selectOne($id);
-                
+                $checklist_subtype =   $this->audit_assessment->selectOne($id);
+
 
                 $data = array(
                     'checklist_subtype' => $checklist_subtype,
@@ -207,7 +180,7 @@ class AuditAssessmentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 
@@ -246,14 +219,14 @@ class AuditAssessmentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $this->checklist_subtype->updates($id);
-            
+
 
             Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
+            return redirect(admin_url('audit/assessment/list'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 

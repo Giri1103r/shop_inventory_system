@@ -2,6 +2,8 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlyForkLiftInspection extends Model
@@ -26,7 +28,10 @@ class MonthlyForkLiftInspection extends Model
         'sr_no',
         'description',
         'inspection_status',
-        'remarks',
+        'capa_recomendation',
+        'capa_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
         'checked_by',
         'verified_by',
         'approved_by',
@@ -38,6 +43,7 @@ class MonthlyForkLiftInspection extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'responses',
     ];
 
     protected $attributes = [
@@ -115,5 +121,136 @@ class MonthlyForkLiftInspection extends Model
         );
 
         return $datas;
+    }
+
+    public function store()
+    {
+        $request = request();
+        $responses = $request->checklist;
+        $respones = json_encode($responses);
+        $insert_array = [
+            'issue_date' => DBdateformat($request->issue_date),
+            'revision_data' => $request->rev_date,
+            'doc_no' => $request->doc_no,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => decryptId($request->location_id),
+            'shift' => decryptId($request->shift_id),
+            'next_due' => DBdateformat($request->next_due),
+            'unit' => decryptId($request->unit_id),
+            'frequency' => decryptId($request->frequency_id),
+            'identification_no' => $request->identification_no,
+            'forklift_type' => decryptId($request->forklift_type),
+            'capacity' => $request->capacity,
+            'created_by' => Auth::id(),
+            'responses' => $respones,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+        ];
+        return $this->create($insert_array);
+    }
+
+    public function selectOne($id)
+    {
+        return  $this->where('id', $id)->first();
+    }
+
+    public function EHSOfficerUpdate($id)
+    {
+
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->capa_recomendation,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'capa_recomendation' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_forklift_inpsection_monthly'));
     }
 }
