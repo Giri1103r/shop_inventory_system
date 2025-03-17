@@ -149,7 +149,6 @@
                 </div>
             </div>
         </div>
-        </form>
     </div>
 
 @stop
@@ -239,7 +238,6 @@
                         }
                     });
                 } else {
-                    //  Reset all fields if no Employee Code is selected
                     $('#designation').val('');
                     $('#unit_id').val('').prop('disabled', false); 
                     $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
@@ -275,90 +273,6 @@
             $('#unit_id').change(unitChangeHandler);
 
 
-            // $('#emp_code').change(function() {
-            //     var emp_code = $(this).val();
-
-            //     if (emp_code) {
-            //         $.ajax({
-            //             url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" + emp_code,
-            //             type: "GET",
-            //             dataType: "json",
-            //             success: function(response) {
-            //                 if (response.employee) {
-            //                     $('#designation').val(response.employee.designation);
-
-            //                     if (response.employee.unit_id) {
-
-            //                         $('#unit_id').html('<option value="' + response
-            //                             .employee.unit_id + '">' + response.employee
-            //                             .unit_name + '</option>');
-            //                         $('#unit_id').prop('disabled', true);
-            //                     } else {
-            //                         $('#unit_id').prop('disabled', false);
-            //                         $('#unit_id').html(
-            //                             '<option value="">Select Unit</option>@foreach ($unitList as $unit)<option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>@endforeach');
-            //                     }
-
-            //                     if (response.employee.department_id) {
-            //                         $('#department_id').html('<option value="' + response
-            //                             .employee.department_id + '">' + response.employee
-            //                             .department_name + '</option>');
-            //                         $('#department_id').prop('disabled', true);
-            //                     } else {
-            //                         $('#department_id').prop('disabled', false);
-            //                         $('#department_id').html(
-            //                             '<option value="">Select Department</option>');
-            //                     }
-            //                 } else {
-            //                     Swal.fire({
-            //                         icon: "error",
-            //                         title: "Error",
-            //                         text: "Employee data could not be fetched."
-            //                     });
-            //                 }
-            //             },
-            //             error: function() {
-            //                 Swal.fire({
-            //                     icon: "error",
-            //                     title: "Error",
-            //                     text: "An error occurred while fetching employee details."
-            //                 });
-            //             }
-            //         });
-            //     } else {
-            //         $('#designation').val('');
-            //         $('#unit_id').html('<option value="">Select Unit</option>').prop('disabled',
-            //             false);
-            //         $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
-            //             false);
-            //     }
-            // });
-
-            // $('#unit_id').change(function() {
-            //     var unitId = $(this).val();
-            //     if (unitId) {
-            //         $.ajax({
-            //             url: "{{ url('department/ajax-list') }}/" + unitId + "/0",
-            //             type: 'GET',
-            //             dataType: 'json',
-            //             success: function(data) {
-            //                 $('#department_id').empty().append(
-            //                     '<option value="">Select Department</option>');
-            //                 $.each(data, function(key, value) {
-            //                     $('#department_id').append('<option value="' + value
-            //                         .id + '">' + value.name + '</option>');
-            //                 });
-            //                 $('#department_id').prop('disabled', false);
-            //             },
-            //             error: function(xhr) {
-            //                 alert('Error fetching department. Please try again.');
-            //             }
-            //         });
-            //     } else {
-            //         $('#department_id').empty().append('<option value="">Select Department</option>').prop(
-            //             'disabled', true);
-            //     }
-            // });
             $(function() {
                 $('#accidentReportAdd').validate({
                     rules: {
@@ -370,7 +284,7 @@
                         },
                         shift: {
                             required: true,
-                            pattern: /^[a-zA-Z\s\-\_\'\"()\n\r]+$/,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                         },
                         exact_location: {
                             pattern: /^[a-zA-Z0-9\s\-\_\'\"()\n\r]+$/,

@@ -1,130 +1,80 @@
 @extends('admin.layouts.admin')
-@section('title', 'Accident Report')
-@section('pageurl', admin_url('accidentReport/list'))
-
+@section('title', 'Gemba Walk ')
+@section('pageurl', admin_url('gemba-walk/list'))
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
 
-                <div class="card">
-                    <h4 class="card-title"></h4>
-                    <div class="d-flex justify-content-end p-2">
+            <div class="card">
+                <h4 class="card-title"></h4>
+                <div class="d-flex justify-content-end p-2">
 
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
-                        {{-- @if (CheckUserPermission('add')) --}}
+                    {{-- <x-button-filter dataId="" class="search me-1" href=""></x-button-filter> --}}
+                    {{-- @if (CheckUserPermission('import')) --}}
+                        {{-- <x-button-import href="{{ admin_url('inspection/checklist-type/import') }}"></x-button-import> --}}
+                    {{-- @endif --}}
+                    {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('accidentReport/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+                            href="{{ admin_url('inspection/gemba-walk/add') }}">Add</x-button-add>
+                    {{-- @endif --}}
+                </div>
 
-                    </div>
-
-                    <div id="search" class="collapse">
-                        <form action="" id="formsearch">
-                            <div class="card-body">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label">From Date</label>
-                                            <input type="text" name="from_date" id="from_date_datepicker"
-                                                class="form-control" placeholder="From Date">
-                                        </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="to_date" class="form-label">To Date</label>
-                                            <input type="text" name="to_date" id="to_date_datepicker"
-                                                class="form-control" placeholder="To Date">
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Sr. No</label>
-                                                <input type="text" name="accident_report_no" id="accident_report_no"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_code" class="form-label ">Employee Code</label>
-                                            <select name="emp_code" id="emp_code" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Employee Code</option>
-                                                @foreach ($employeeList as $emp)
-                                                    <option value="{{ encryptId($emp->emp_id) }}">
-                                                        {{ $emp->emp_id }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="department_id" class="form-label ">Department</label>
-                                            <select name="department_id" id="department_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Department</option>
-                                                @foreach ($departmentList as $department)
-                                                    <option value="{{ encryptId($department->id) }}">
-                                                        {{ $department->department_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="accident_status" class="form-label ">Approve Status</label>
-                                            <select name="accident_status" id="accident_status" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Approve Status</option>
-                                                @foreach ($accidentStatusList as $statusList)
-                                                    <option value="{{ encryptId($statusList->id) }}">
-                                                        {{ $statusList->status_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
-                                            <x-button-search class="me-2"></x-button-search>
-                                            <x-button-reset class="ms-1"></x-button-reset>
-                                        </div>
+                {{-- <div id="search" class="collapse">
+                    <form action="" id="formsearch">
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="checklist" class="form-label ">Work Name</label>
+                                        <input type="text" name="checklist" id="checklist"
+                                            class="form-control">
                                     </div>
 
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                        <select name="status" id="status" style="width: 100%"
+                                            class="form-control single-select">
+                                            <option value="">Select Status</option>
+                                            <option value="{{ encryptId(1) }}">Active</option>
+                                            <option value="{{ encryptId(0) }}">In-Active</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <x-button-search></x-button-search>
+                                        <x-button-reset></x-button-reset>
+
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-                        <hr>
-                    </div>
-
-
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="datatable-list"
-                                class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
-                                <thead class="thead-primary">
-                                    <tr>
-                                        <th>{{ __('common.sno') }}</th>
-                                        <th>Sr. No</th>
-                                        <th>Date and Time</th>
-                                        <th>Employee Code</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
-                                        <th>Approve Status</th>
-                                        <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
-                                        <th data-priority = '1'>{{ __('common.action') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
                         </div>
-                    </div>
+                    </form>
+                    <hr>
+                </div> --}}
 
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable-list"
+                            class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
+                            <thead class="thead-primary">
+                                <tr>
+                                    <th>{{ __('common.sno') }}</th>
+                                    <th>Doc.No</th>
+                                    <th>Issue Date</th>
+                                    <th>Rev. Date</th>
+                                    <th>{{ __('common.status') }}</th>
+                                    <th>{{ __('common.created_by') }}</th>
+                                    <th>{{ __('common.created_date') }}</th>
+                                    <th>{{ __('common.action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -132,24 +82,28 @@
 
 @stop
 
+
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
-
-            flatpickr("#from_date_datepicker", {
+        });
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
-                onChange: function(selectedDates, dateStr) {
-                    const toDatePicker = document.getElementById("to_date_datepicker")._flatpickr;
-                    if (toDatePicker) {
-                        toDatePicker.set("minDate", dateStr);
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
                     }
-                },
+                }
             });
 
-            flatpickr("#to_date_datepicker", {
+            var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
+                minDate: "today"
             });
         });
 
@@ -179,19 +133,17 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('accidentReport/list') }}",
+                    url: "{{ admin_url('inspection/gemba-walk/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
                     data: function(d) {
-                        d.accident_report_no = $('#accident_report_no').val();
-                        d.accident_status = $('#accident_status').val();
-                        d.emp_code = $('#emp_code').val();
-                        d.from_date_datepicker = $('#from_date_datepicker').val();
-                        d.to_date_datepicker = $('#to_date_datepicker').val();
-                        d.department_id = $('#department_id').val();
+                        d.sr_no = $('#sr_no').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
 
                     },
@@ -208,29 +160,18 @@
                         searchable: true,
                     },
                     {
-                        data: 'accident_report_no',
-                        name: 'accident_report_no'
+                        data: 'document_no',
+                        name: 'document_no'
                     },
                     {
-                        data: 'date_and_time',
-                        name: 'date_and_time'
+                        data: 'issue_date',
+                        name: 'issue_date'
                     },
                     {
-                        data: 'emp_code',
-                        name: 'emp_code'
+                        data: 'revision_date',
+                        name: 'revision_date'
                     },
-                    {
-                        data: 'unit_name',
-                        name: 'unit_name'
-                    },
-                    {
-                        data: 'department_name',
-                        name: 'department_name'
-                    },
-                    {
-                        data: 'status_batch',
-                        name: 'status_batch'
-                    },
+                   
                     {
                         data: 'status',
                         name: 'status'
@@ -272,52 +213,44 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var accident_report_no = $('#accident_report_no').val();
-                                    var accident_status = $('#accident_status').val();
-                                    var emp_code = $('#emp_code').val();
-                                    var from_date_datepicker = $('#from_date_datepicker').val();
-                                    var to_date_datepicker = $('#to_date_datepicker').val();
-                                    var department_id = $('#department_id').val();
+                                    var sr_no = $('#sr_no').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('accidentReport/export/pdf') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&accident_report_no=' + accident_report_no +
-                                        '&accident_status=' + accident_status +
-                                        '&emp_code=' + emp_code +
-                                        '&from_date_datepicker=' + from_date_datepicker +
-                                        '&to_date_datepicker=' + to_date_datepicker +
-                                        '&department_id=' + department_id +
+                                        '&sr_no=' + sr_no +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
-                            { 
+                            {
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
 
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var accident_report_no = $('#accident_report_no').val();
-                                    var accident_status = $('#accident_status').val();
-                                    var emp_code = $('#emp_code').val();
-                                    var from_date_datepicker = $('#from_date_datepicker').val();
-                                    var to_date_datepicker = $('#to_date_datepicker').val();
-                                    var department_id = $('#department_id').val();
+                                    var sr_no = $('#sr_no').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('accidentReport/export/excel') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&accident_report_no=' + accident_report_no +
-                                        '&accident_status=' + accident_status +
-                                        '&emp_code=' + emp_code +
-                                        '&from_date_datepicker=' + from_date_datepicker +
-                                        '&to_date_datepicker=' + to_date_datepicker +
-                                        '&department_id=' + department_id +
+                                        '&sr_no=' + sr_no +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&status=' + status
                                 }
                             },
@@ -354,12 +287,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate') }}';
+                    var title = '{{ __('Do You want to In-Activate HIRA') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate') }}';
+                    var title = '{{ __('Do You want to Activate HIRA') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -379,7 +312,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('accidentReport/status') }}",
+                            url: "{{ admin_url('incident/initial-incident/status') }}",
                             type: 'post',
 
                             data: {
@@ -427,7 +360,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Delete the Details') }}';
+                var title = '{{ __('Do You want to Delete Company Details') }}';
                 var text = '{{ __('common.delete') }}';
                 var btncolor = '#dc3545'
 
@@ -447,7 +380,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('accidentReport/delete') }}",
+                            url: "{{ admin_url('incident/initial-incident/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -486,7 +419,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: 'Deletion Failed: Module Dependencies Exist.',
+                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
                                     });
                                 } else {
                                     $.notify(data.responseJSON.msg, "error");
@@ -504,3 +437,6 @@
         });
     </script>
 @endpush
+
+
+

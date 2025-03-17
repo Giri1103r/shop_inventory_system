@@ -34,6 +34,7 @@ use App\Models\IMS\Incident\RiskAnalysis;
 use App\Models\IMS\Incident\WhyWhyAnalysis;
 use App\Models\IMS\Incident\FishboneAnalysis;
 use App\Models\IMS\Incident\Statuslog;
+use App\Models\IMS\Incident\Incidentstatus;
 use App\Mail\AccidentEmail;
 
 class AccidentReportController extends Controller
@@ -172,12 +173,12 @@ class AccidentReportController extends Controller
             }
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-        // $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();   
         $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
 
         $data = array(
             'departmentList' => $departmentList,
-            // 'unitList' => $unitList,
+            'accidentStatusList' => $accidentStatusList,
             'employeeList' => $employeeList,
         );
 
@@ -240,21 +241,17 @@ class AccidentReportController extends Controller
 
             $rules = [
                 'date_and_time' => 'required',
-                'unit_id' => 'required',
                 'shift' => 'required',
                 'location_id' => 'required',
                 'designation' => 'required',
-                'department_id' => 'required',
                 'emp_code' => 'required',
                 'address_of_the_injuredperson' => 'required',
             ];
             $messages = [
                 'date_and_time.required' => 'Please enter the date and time of the accident.',
-                'unit_id.required' => 'Unit is required.',
                 'shift.required' => 'Shift is required.',
                 'location_id.required' => 'Location is required.',
                 'designation.required' => 'Designation is required.',
-                'department_id.required' => 'Department is required.',
                 'emp_code.required' => 'Employee Code is required.',
                 'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
             ];

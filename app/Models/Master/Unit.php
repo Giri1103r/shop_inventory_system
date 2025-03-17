@@ -284,4 +284,8 @@ class Unit extends Model
     public function getUnitcount(){
         return $this->where('status', 1)->where('trash', 'NO')->pluck('id');
     }
+
+    public function getUnitList(){
+        return $this->select('id','unit_name')->where('status',1)->get();
+    }
 }
