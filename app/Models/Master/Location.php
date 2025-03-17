@@ -226,7 +226,7 @@ class Location extends Model
 
         return $list;
     }
-  
+
     public function ajaxallList($companyId = '')
     {
         $query = $this->select('id', 'location_name')->where('status', 1);
@@ -263,4 +263,5 @@ class Location extends Model
             $model->update(['location_id' => $uniqueId]);
         });
     }
+
 }

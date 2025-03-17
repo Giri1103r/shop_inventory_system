@@ -126,6 +126,10 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
         });
 
         $(document).ready(function() {

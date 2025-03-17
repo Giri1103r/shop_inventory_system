@@ -77,6 +77,9 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_CERTIFIED_FIRST_AIDER') or define('ROLE_CERTIFIED_FIRST_AIDER', 15);
         defined('ROLE_DOCTOR') or define('ROLE_DOCTOR', 16);
         defined('ROLE_NURSE') or define('ROLE_NURSE', 17);
+        defined('ROLE_FIRE_ASSOCIATES') or define('ROLE_FIRE_ASSOCIATES', 18);
+        defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
+        defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
@@ -172,8 +175,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVED') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVED', 3);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
-
-
+        // inspection ohc
+        defined('OHC_TYPE_WEEKLY_AMBULANCE') or define('OHC_TYPE_WEEKLY_AMBULANCE', 1);
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -201,6 +204,27 @@ class AppServiceProvider extends ServiceProvider
         //Incident
         defined('CHECKLIST_TYPE') or define('CHECKLIST_TYPE', 1);
         defined('CHECKLIST_SUB_TYPE') or define('CHECKLIST_SUB_TYPE', 2);
+
+        //Upload
+        defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
+
+        //Checklist
+        defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
+        defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
+        defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
+        defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
+
+
+        //Safety
+        defined('WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('WAITING_FOR_EHS_OFFICER_VERIFICATION', 1);
+        defined('WAITING_FOR_CAPA_ACTION') or define('WAITING_FOR_CAPA_ACTION', 2);
+        defined('WAITING_FOR_CAPA_VERIFICATION') or define('WAITING_FOR_CAPA_VERIFICATION', 3);
+        defined('WAITING_FOR_L1_VERIFICATION') or define('WAITING_FOR_L1_VERIFICATION', 4);
+        defined('WAITING_FOR_L2_VERIFICATION') or define('WAITING_FOR_L2_VERIFICATION', 5);
+        defined('INSPECTION_APPROVED') or define('INSPECTION_APPROVED', 6);
+
+        //Notification Type
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
 
         View::composer('*', function ($view) {
 

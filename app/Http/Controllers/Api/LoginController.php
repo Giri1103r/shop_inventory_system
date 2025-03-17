@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Master\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,6 +50,17 @@ class LoginController extends BaseController
                 $user = Auth::user();
                 $success['token'] =  $user->createToken('karam')->accessToken;
                 $success['name'] =  $user->name;
+                $department = Department::where('id', $user->department_id)->first();
+
+                $success['user_details'] = [
+                    'employee_id'   => $user->employee_id,
+                    'role'          => $user->role,
+                    'department'    => [
+                        'id'   => $user->department_id,
+                        'department_name' => $department ? $department->department_name : null,
+                    ],
+                ];
+
 
                 $token = $request->fcm_token;
 
@@ -271,7 +283,10 @@ class LoginController extends BaseController
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'email' => $user->email,
-                'mobile' => $user->mobile,
+                'employee_id' => $user->employee_id,
+                'name' => $user->name,
+                'role' => $user->role,
+                'department' => $user->department_id,
 
             );
 

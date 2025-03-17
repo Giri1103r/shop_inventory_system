@@ -8,13 +8,13 @@
         <div class="modal-body m-3">
             @if ($newHiraList == null)
                 <div class="d-flex justify-content-left my-3">
-                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(2)) }}"
+                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fireincident_id . '/' . encryptId(2)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
                     <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
                 </div>
             @endif
 
-            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
+            <input type="hidden" name="fireincident_id" value="{{ $fireincident_id }}">
 
             <div class="row" id="existingMOCdiv" style="display: none;">
                 <label for="moc_id" class="form-label require">MOC</label>

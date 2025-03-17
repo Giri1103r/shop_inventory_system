@@ -90,7 +90,6 @@
 
         $('#savemoc').on('click', function() {
             var mocId = $('#moc_id').val(); // Get selected HIRA ID
-            var incidentId = "{{ $incident_id }}"; // Get incident ID
             var accidentId = "{{ $accident_id }}"; // Get incident ID
 
             if (!mocId) {

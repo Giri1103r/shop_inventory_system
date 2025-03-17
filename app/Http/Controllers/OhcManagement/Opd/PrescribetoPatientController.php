@@ -300,6 +300,7 @@ class PrescribetoPatientController extends Controller
                 if ($inventory) {
                     $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
+
                 }
             }
 
@@ -383,7 +384,7 @@ class PrescribetoPatientController extends Controller
         }
     }
 
-    //
+   
     public function update(Request $request)
     {
         $id = decryptId($request->id);
@@ -451,7 +452,7 @@ class PrescribetoPatientController extends Controller
                 $firstaid = $this->opd_firstaid->updates($id);
             }
             $isreffered = $this->isreffered->updates($id);
-            Session::flash('success', __('Your data has been created successfully'));
+            Session::flash('success', __('Your data has been updated successfully'));
 
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {

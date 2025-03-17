@@ -168,11 +168,11 @@
                                                                 <td>
 
 
-                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
-                                                                            style="width: 30px; height: 30px;">
-                                                                            <i class="fa-solid fa-trash"></i>
-                                                                        </div>
-                                                                   
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </div>
+
 
                                                                 </td>
                                                             </tr>
@@ -213,10 +213,21 @@
         //     });
         // });
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevents the form from submitting
+            event.preventDefault(); // Prevents form submission
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
+            var totalRows = $(".medicinedetails").length; // Count existing rows
+
+            if (totalRows <= 1) {
+                Swal.fire({
+                    title: 'Cannot delete!',
+                    text: 'At least one row is required.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
 
             if (rowId) {
                 Swal.fire({
@@ -229,8 +240,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ url('ohc/medicine-first-aid/delete') }}/" +
-                                rowId,
+                            url: "{{ url('ohc/medicine-first-aid/delete') }}/" + rowId,
                             type: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
@@ -247,16 +257,17 @@
                             },
                             error: function() {
                                 Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.',
-                                    'error');
+                                    'Something went wrong. Please try again later.', 'error'
+                                    );
                             }
                         });
                     }
                 });
             } else {
-                $(this).closest("tr").remove();
+                row.remove();
             }
         });
+
         $(document).ready(function() {
             $(document).on('input', '#hidden_unit_id', function() {
                 var unitId = $(this).val();

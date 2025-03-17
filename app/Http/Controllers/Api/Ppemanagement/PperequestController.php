@@ -77,13 +77,17 @@ class PperequestController extends BaseController
             }
 
             if (!empty($search)) {
+
                 $searchDate = DBdateformat($search);
-                $ppe_request_array->where(function ($query) use ($search,$searchDate) {
+                $ppe_request_array->where(function ($query) use ($search, $searchDate) {
                     $query->orWhere('ppe_pperequest.emp_id', 'LIKE', "%{$search}%")
-                    ->orWhereDate('ppe_pperequest.created_at', 'LIKE', "%{$searchDate}%")
+                        ->orWhereRaw("DATE_FORMAT(ppe_pperequest.created_at, '%Y-%m-%d') LIKE ?", ["%{$searchDate}%"])
+                        ->orWhere('ppe_pperequest.ppe_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
                         ->orWhere('ppe_pperequest.emp_name', 'LIKE', "%{$search}%");
                 });
             }
+
 
 
             $ppe_request_array = $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC')->paginate($request->input('per_page', 10));
