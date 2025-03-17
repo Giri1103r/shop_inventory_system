@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlyEyeWashInspection extends Model
@@ -108,5 +109,11 @@ class MonthlyEyeWashInspection extends Model
         );
 
         return $datas;
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_details'));
+
     }
 }

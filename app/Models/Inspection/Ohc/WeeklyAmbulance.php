@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Auth;
 
 class WeeklyAmbulance extends Model
 {
-    protected $table = 'inspection_ohc_details';
+    protected $table = 'inspection_ohc_weekly_ambulance_inspection_checklist';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'ohc_type',
+        'checklist',
         'doc_no',
         'issue_date',
         'revision_date',
@@ -46,7 +46,7 @@ class WeeklyAmbulance extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_details.*');
+        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*');
 
         // dd($query);
         $org_total =  $query;
@@ -67,7 +67,7 @@ class WeeklyAmbulance extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('inspection_ohc_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_weekly_ambulance_inspection_checklist.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -83,13 +83,13 @@ class WeeklyAmbulance extends Model
         return $datas;
     }
 
-    public function store()
+    public function store( $responses)
     {
 
         $request = request();
 
         $insert_array = [
-            'ohc_type' => decryptId($request->ohc_type),
+            'checklist' => json_encode($responses),
             'doc_no' => $request->document_no,
             'issue_date' => DBdateformat($request->issue_date),
             'shift' => decryptId($request->shift),
@@ -106,6 +106,6 @@ class WeeklyAmbulance extends Model
 
     public function WeekambulanceSelectone($id)
     {
-        return $this->where('ohc_type', OHC_TYPE_WEEKLY_AMBULANCE)->where('id', $id)->first();
+        return $this->where('id', $id)->first();
     }
 }
