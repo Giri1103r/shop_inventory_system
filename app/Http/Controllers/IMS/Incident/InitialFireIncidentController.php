@@ -150,7 +150,7 @@ class InitialFireIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
 
-                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
+                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -178,7 +178,6 @@ class InitialFireIncidentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -813,7 +812,7 @@ class InitialFireIncidentController extends Controller
             $getEHSReview = $this->initialfireincident->getEHSReviewincident($fire_id);
 
             $teamMemberIds = explode(',', $getEHSReview->team_member);
-            
+
             $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
             // dd($employees);
             // Extract login IDs into an array for notification
@@ -1395,17 +1394,29 @@ class InitialFireIncidentController extends Controller
         }
     }
 
+
     public function gethiradetails($hira_id)
     {
         $hira_id = decryptId($hira_id);
+
         $hira = Hira::select('services', 'likelihood', 'risk_levels')
             ->where('id', $hira_id)
             ->first();
-        if ($hira) {
-            return response()->json([
-                'hira' => $hira,
-            ]);
+        $risk_levels = '';
+        if ($hira->risk_levels == 1) {
+            $risk_levels = '1 to 9';
+        } elseif ($hira->risk_levels == 2) {
+            $risk_levels = '10 to 16';
+        } elseif ($hira->risk_levels == 3) {
+            $risk_levels = '17 to 25';
+        } elseif ($hira->risk_levels == 4) {
+            $risk_levels = 'Legal';
         }
+
+        return response()->json([
+            'hira' => $hira,
+            'risk_levels' => $risk_levels,
+        ]);
     }
 
     public function Uniquecheck(Request $request)
@@ -1432,7 +1443,7 @@ class InitialFireIncidentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->hira->statuschange($id);
+            $this->initialfireincident->statuschange($id);
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);

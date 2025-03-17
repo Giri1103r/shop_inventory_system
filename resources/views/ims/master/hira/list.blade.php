@@ -28,7 +28,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Incident Type ID</label>
+                                                <label class="form-label ">Hira Type ID</label>
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>

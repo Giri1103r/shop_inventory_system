@@ -95,9 +95,6 @@ class MonthlyForkLiftInspectionController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('safety/forklift-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-info"></i></a> ';
                             }
@@ -253,7 +250,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -319,7 +316,7 @@ class MonthlyForkLiftInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $status = $request->is_passed;
-            $remarks = $request->capa_recomendation;
+            $remarks = $request->remarks;
             $forklift_inspection = $this->forklift->capaVerifySubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
@@ -367,7 +364,7 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $status = $request->is_passed;
+            $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->forklift->levelOneManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);
@@ -416,7 +413,7 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $status = $request->is_passed;
+            $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->forklift->levelTwoManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);

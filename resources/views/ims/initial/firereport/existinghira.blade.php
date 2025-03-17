@@ -8,13 +8,13 @@
         <div class="modal-body m-3">
             @if ($newHiraList == null)
                 <div class="d-flex justify-content-left my-3">
-                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fire_id . '/' . encryptId(1)) }}"
+                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fireincident_id . '/' . encryptId(1)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
                     <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
                 </div>
             @endif
 
-            <input type="hidden" name="fireincident_id" value="{{ $fire_id }}">
+            <input type="hidden" name="fireincident_id" value="{{ $fireincident_id }}">
 
             <div class="row" id="existingdiv">
                 <label for="hira_id" class="form-label require">HIRA</label>
@@ -155,7 +155,7 @@
 
                         if (data.hira) {
                             $('#likelihood').text(data.hira.likelihood);
-                            $('#riskLevel').text(data.hira.risk_levels);
+                            $('#riskLevel').text(data.risk_levels);
                             $('#hiraDetails').show(); // Show the details table
                         } else {
                             $('#hiraDetails').hide(); // Hide if no data

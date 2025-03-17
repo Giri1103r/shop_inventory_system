@@ -71,9 +71,9 @@ class Hira extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('services', 'LIKE', '%' . $search . '%')
-                    ->orWhere('hazard_type', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ims_master_hira.sr_no', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ims_master_hira.services', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ims_master_hira.hazard_type', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('sr_no') && $request->sr_no) {
@@ -85,20 +85,18 @@ class Hira extends Model
         if ($request->has('hazard_type') && $request->hazard_type) {
             $query = $query->where('hazard_type', 'LIKE', $request->hazard_type);
         }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+        if ($request->has('from_date') && $request->from_date) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $query = $query->where('ims_master_hira.created_at', '>=', $fromDate);
+        }
+
+        if ($request->has('to_date') && $request->to_date) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query = $query->where('ims_master_hira.created_at', '<=', $toDate);
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('ims_master_hira.status', decryptId($request->status));
         }
 
 
@@ -264,20 +262,18 @@ class Hira extends Model
         if ($request->has('hazard_type') && $request->hazard_type) {
             $query = $query->where('hazard_type', 'LIKE', $request->hazard_type);
         }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('created_at', '<=', $endDate);
+        if ($request->has('from_date') && $request->from_date) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+            $query = $query->where('ims_master_hira.created_at', '>=', $fromDate);
+        }
+
+        if ($request->has('to_date') && $request->to_date) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+            $query = $query->where('ims_master_hira.created_at', '<=', $toDate);
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('ims_master_hira.status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');

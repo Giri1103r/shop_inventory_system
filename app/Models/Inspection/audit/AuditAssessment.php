@@ -19,6 +19,7 @@ class AuditAssessment extends Model
         'audit_date',
         'shift_id',
         'floor_executive',
+        'checklist',
         'status',
         'trash',
         'created_by',
@@ -76,8 +77,11 @@ class AuditAssessment extends Model
     {
         $request = request();
         $insert_array = [
-            'category_name' => $request->checklist_category,
-            'questionary' => decryptId($request->questionary_id),
+            'floor_name' => $request->floor_name,
+            'audit_date' => DBdateformat($request->audit_date),
+            'shift_id' => decryptId($request->shift_id),
+            'floor_executive' => decryptId($request->floor_executive),
+            'checklist' => json_encode($request->checklist, true),
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
@@ -85,7 +89,13 @@ class AuditAssessment extends Model
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->first();
+        $data = $this->select('inspection_audit.*')->where('id', $id)->first();
+
+        if ($data && isset($data->checklist)) {
+            $data->checklist = json_decode($data->checklist, true);
+        }
+
+        return $data;
     }
 
 
@@ -196,8 +206,8 @@ class AuditAssessment extends Model
         static::addGlobalScope(new TrashScope('inspection_audit'));
         static::created(function ($model) {
 
-            $uniqueId = 'CAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['category_id' => $uniqueId]);
+            $uniqueId = 'AUDIT-ASSESSMENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['audit_id' => $uniqueId]);
         });
     }
 }

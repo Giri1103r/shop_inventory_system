@@ -216,13 +216,12 @@
                                                     <label for="no">NO</label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                            <div class="col-md-12 mb-2" id="remarks">
                                                 <label for="remarks" class="form-label">Remarks</label>
-                                                <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
-                                                    name="capa_recomendation"></textarea>
+                                                <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit class="submit"></x-button-submit>
+                                                <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
                                                     href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
                                             </div>
@@ -231,61 +230,154 @@
                                 @else
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.safety_inspection') }}</h4>
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
-
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.inspection_status') }}</label>
-                                                <div class="view_data">
-                                                    {!! getInspectionStatus($inspection_details->inspection_status) !!}
+                                        <div class="row mb-2">
+                                            @if (isset($inspection_details->verified_by))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($inspection_details->verified_by) }}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
+                                            @if (isset($inspection_details->created_at))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @if ($inspection_details->approved_by)
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUsername($inspection_details->approved_by) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @if (isset($inspection_details->capa_recomendation))
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->capa_recomendation }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">{{ __('inspection.remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
-                                        @if (isset($inspection_details->verified_by))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($inspection_details->verified_by) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        @if ($inspection_details->approved_by)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUsername($inspection_details->approved_by) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        @if (isset($inspection_details->capa_recomendation))
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label">{{ __('inspection.capa_recomendation') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->capa_recomendation }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
                                         @if (isset($inspection_details->capa_remarks))
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->capa_remarks }}
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($inspection_details->created_by) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->capa_remarks }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        @if (isset($inspection_details->level_one_manager_remarks))
+                                        @if ($inspection_details->capa_ehs_remarks)
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+                                                </h4>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($inspection_details->verified_by) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->capa_ehs_remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    @if (isset($inspection_details->level_one_manager_remarks))
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($inspection_details->l1_manager_verified_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection_details->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -295,8 +387,30 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
-                                        @if (isset($inspection_details->level_two_manager_remarks))
+                                        </div>
+                                    @endif
+                                    @if (isset($inspection_details->level_two_manager_remarks))
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($inspection_details->l2_one_manager_verified_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection_details->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -306,8 +420,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @endif
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION)
@@ -363,13 +477,12 @@
                                                 <label for="no">NO</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                        <div class="col-md-12 mb-2" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
-                                                name="capa_recomendation"></textarea>
+                                            <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                         </div>
                                         <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
+                                            <button class="btn btn-success">Verify</button>
                                             <x-button-cancel
                                                 href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
                                         </div>
@@ -389,29 +502,15 @@
                                                     {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
                                             </div>
                                         </div>
-                                        <div class="mt-3">
-                                            <p class="form-label">
-                                                {{ __('inspection.capa_verification_text') }}
-                                            </p>
-                                            <div class="mb-3 form-input">
-                                                <input type="radio" id="yes" name="is_passed"
-                                                    value="{{ 1 }}">
-                                                <label for="yes">YES</label>
 
-                                                <input type="radio" id="no" name="is_passed"
-                                                    value="{{ 0 }}">
-                                                <label for="no">NO</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                        <div class="col-md-12 mb-2" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
                                         </div>
                                         <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
                                         </div>
                                     </form>
                                 @endif
@@ -429,29 +528,14 @@
                                                     {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
                                             </div>
                                         </div>
-                                        <div class="mt-3">
-                                            <p class="form-label">
-                                                {{ __('inspection.capa_verification_text') }}
-                                            </p>
-                                            <div class="mb-3 form-input">
-                                                <input type="radio" id="yes" name="is_passed"
-                                                    value="{{ 1 }}">
-                                                <label for="yes">YES</label>
-
-                                                <input type="radio" id="no" name="is_passed"
-                                                    value="{{ 0 }}">
-                                                <label for="no">NO</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 mb-2" id="capa_recomendation" style="display: none;">
+                                        <div class="col-md-12 mb-2" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please provide Recomendataion..."
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>
                                         </div>
                                         <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
                                         </div>
                                     </form>
                                 @endif
@@ -464,14 +548,6 @@
         @stop
         @push('script')
             <script>
-                $(document).ready(function() {
-                    $('input[name="is_passed"]').change(function() {
-                        if ($('#no').is(':checked')) {
-                            $('#capa_recomendation').show();
-                        } else {
-                            $('#capa_recomendation').hide();
-                        }
-                    });
-                });
+                $(document).ready(function() {});
             </script>
         @endpush

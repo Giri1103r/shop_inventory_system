@@ -467,6 +467,7 @@ class EmployeecumPatientController extends Controller
             })
         );
     }
+    
     public function employeename(Request $request)
     {
         $emp_id = $request->input('empId');

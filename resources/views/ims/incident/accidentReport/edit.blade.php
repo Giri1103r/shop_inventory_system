@@ -48,7 +48,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date and Time</label>
                                                     <input type="text" name="date_and_time" id="date_and_time"
-                                                        class="form-control" value = "{{ Displaydatetimeformat($accident_report->date_and_time) }}" >
+                                                        class="form-control"
+                                                        value = "{{ Displaydatetimeformat($accident_report->date_and_time) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
@@ -58,7 +59,8 @@
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select Employee Code</option>
                                                         @foreach ($employeeList as $emp)
-                                                            <option @if ($accident_report->emp_code == $emp->emp_id) selected @endif value="{{ $emp->emp_id }}">
+                                                            <option @if ($accident_report->emp_code == $emp->emp_id) selected @endif
+                                                                value="{{ $emp->emp_id }}">
                                                                 {{ $emp->emp_id }}</option>
                                                         @endforeach
                                                     </select>
@@ -71,7 +73,8 @@
                                                         style="width: 100%" required>
                                                         <option value="">Select Unit</option>
                                                         @foreach ($unitList as $unit)
-                                                            <option  @if ($accident_report->unit_id == $unit->id) selected @endif value="{{ encryptId($unit->id) }}">
+                                                            <option @if ($accident_report->unit_id == $unit->id) selected @endif
+                                                                value="{{ encryptId($unit->id) }}">
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -82,7 +85,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Designation</label>
                                                     <input type="text" name="designation" id="designation"
-                                                        class="form-control" placeholder="Designation" value = "{{ $accident_report->designation }}"> 
+                                                        class="form-control" placeholder="Designation"
+                                                        value = "{{ $accident_report->designation }}">
                                                 </div>
                                             </div>
 
@@ -115,7 +119,8 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Accident Location</option>
                                                         @foreach ($locationList as $loc)
-                                                            <option @if ($accident_report->location_id == $loc->id) selected @endif value="{{ encryptId($loc->id) }}">
+                                                            <option @if ($accident_report->location_id == $loc->id) selected @endif
+                                                                value="{{ encryptId($loc->id) }}">
                                                                 {{ $loc->location_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -126,7 +131,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Exact Location</label>
                                                     <input type="text" name="exact_location" id="exact_location"
-                                                        class="form-control" placeholder="Exact Location" value = "{{ $accident_report->exact_location }}">
+                                                        class="form-control" placeholder="Exact Location"
+                                                        value = "{{ $accident_report->exact_location }}">
                                                 </div>
                                             </div>
 
@@ -241,7 +247,7 @@
                     var department_id = preselectedDepartmentId;
 
                 });
-             
+
             }
 
             $('#unit_id').on('change', function() {
@@ -286,12 +292,17 @@
                         },
                         shift: {
                             required: true,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        exact_location: {
+                            pattern: /^[a-zA-Z0-9\s\-\_\'\"()\n\r]+$/,
                         },
                         location_id: {
                             required: true,
                         },
                         designation: {
                             required: true,
+                            pattern: /^[a-zA-Z\s\-\_\'\"()\n\r]+$/,
                         },
                         department_id: {
                             required: true,
@@ -313,14 +324,19 @@
                         unit_id: {
                             required: "Unit is required.",
                         },
+                        exact_location: {
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
                         shift: {
                             required: "Shift is required.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
                         location_id: {
                             required: "Accident Location is required.",
                         },
                         designation: {
                             required: "Designation is required.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                         },
                         department_id: {
                             required: "Department is required.",

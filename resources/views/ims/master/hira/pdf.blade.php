@@ -28,18 +28,28 @@
                             {{ $value->sr_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->services}}
+                            {{ $value->services }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if($value->hazard_type == 1)
-                                {{'P - Physical Hazard'}} 
+                            @if ($value->hazard_type == 1)
+                                {{ 'P - Physical Hazard' }}
                             @elseif($value->hazard_type == 2)
-                               {{'C - Chemical Hazard'}}
+                                {{ 'C - Chemical Hazard' }}
                             @elseif($value->hazard_type == 3)
-                                {{'B - Behavioral Hazard'}}
+                                {{ 'B - Behavioral Hazard' }}
                             @elseif($value->hazard_type == 4)
-                                {{'O - Other Hazard'}}
+                                {{ 'O - Other Hazard' }}
                             @endif
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @if ($value->hira_status == 1)
+                                <p>EHS Head Approval Pending</p>
+                            @elseif($value->hira_status == 2)
+                            <p>Approved</p>
+                            @elseif($value->hira_status == 3)
+                            <p>EHS Head Approval Rejected</p>
+                            @endif
+                          
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
