@@ -212,7 +212,7 @@
                                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;"
                                                                         class="">
                                                                         <input type="radio"
-                                                                            name="checklist[{{ $checklist->checklist_id }}]"
+                                                                            name="checklist[{{$checklist->sub_type_id}}][{{ $checklist->checklist_id }}]"
                                                                             value="{{ trim($option) }}">
                                                                     </td>
                                                                 @endforeach

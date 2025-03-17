@@ -104,6 +104,11 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('add', [MonthlyForkLiftInspectionController::class, 'add']);
         Route::post('add/submit', [MonthlyForkLiftInspectionController::class, 'store']);
         Route::get('view/{id}', [MonthlyForkLiftInspectionController::class, 'view']);
-
+        Route::get('verification/{id}/{employee_type}', [MonthlyForkLiftInspectionController::class, 'approvals']);
+        Route::post('ehsofficer/verify/submit', [MonthlyForkLiftInspectionController::class, 'EHSOfficerSubmit']);
+        Route::post('capa/submit', [MonthlyForkLiftInspectionController::class, 'CAPASubmit']);
+        Route::post('capa/reverify/submit', [MonthlyForkLiftInspectionController::class, 'CAPAVerifySubmit']);
+        Route::post('level-one/verify/submit', [MonthlyForkLiftInspectionController::class, 'levelOneManagerSubmit']);
+        Route::post('level-two/verify/submit', [MonthlyForkLiftInspectionController::class, 'levelTwoManagerSubmit']);
     });
 });

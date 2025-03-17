@@ -158,8 +158,8 @@
                             name: 'revision_data',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',

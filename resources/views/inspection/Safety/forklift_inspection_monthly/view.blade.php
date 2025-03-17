@@ -1,6 +1,5 @@
-
 @extends('admin.layouts.admin')
-@section('title', 'Medicine First Aid Show')
+@section('title', 'Monthly ForkLift Inspection')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
@@ -23,7 +22,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medicine-first-aid/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -31,79 +31,243 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine First Aid</h4>
+                                        <h4 class="text-white">{{ __('inspection.monthly_forklift_inspection') }}</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
-                                        <div class="view_data">
-                                            {{ getUnitname(isset($user_medicine_first_aid->unit_id) ? $user_medicine_first_aid->unit_id : '') }}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
-                                        <div class="view_data">
-                                            {{ getDepartment(isset($user_medicine_first_aid->department_id) ? $user_medicine_first_aid->department_id : '') }}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Issued date') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($user_medicine_first_aid->issue_date) ? $user_medicine_first_aid->issue_date : '') }}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->revision_data) ? $inspection_details->revision_data : '' }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created at') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($user_medicine_first_aid->created_by) ? $user_medicine_first_aid->created_by : '') }}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($user_medicine_first_aid->created_at) ? $user_medicine_first_aid->created_at : '') }}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.location') }}</label>
+                                            <div class="view_data">
+                                                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered ">
-
-                                            <thead class="bg-secondary" style="color: #ffff">
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Shift</label>
+                                            <div class="view_data">
+                                                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.next_due') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($inspection_details->next_due) ? $inspection_details->next_due : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.unit') }}</label>
+                                            <div class="view_data">
+                                                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.frequency') }}</label>
+                                            <div class="view_data">
+                                                {{ GetFrequency(isset($inspection_details->frequency) ? $inspection_details->frequency : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.identification_no') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->identification_no) ? $inspection_details->identification_no : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.forklift_type') }}</label>
+                                            <div class="view_data">
+                                                {{ GetForkLiftType(isset($inspection_details->forklift_type) ? $inspection_details->forklift_type : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.capacity') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->capacity) ? $inspection_details->capacity : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @php
+                                        $user_response = json_decode($inspection_details->responses, true);
+                                    @endphp
+                                    <table class="container p-5">
+                                        <thead>
                                             <tr>
-                                                <th>S.No</th>
-                                                <th>Medicine Name</th>
-                                                <th>Available Quantity</th>
-                                                <th>Quantity</th>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Sr. No</th>
+                                                <th colspan="3"
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Check Points</th>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Reports</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if ($medicine_first_aid->isEmpty())
-                                                <tr>
-                                                    <td colspan="4" class="text-center">No data is available</td>
-                                                </tr>
-                                            @else
-                                                @foreach ($medicine_first_aid as $data)
+                                            @php $srNo = 1; @endphp
+                                            @foreach ($user_response as $subcategory => $questions)
+                                                @php
+                                                    $rowCount = count($questions);
+                                                    $firstRow = true;
+                                                @endphp
+                                                @foreach ($questions as $questionId => $answer)
                                                     <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                        <td>{{$data->available_quantity}}</td>
-                                                        <td>{{$data->quantity}}</td>
+                                                        @if ($firstRow)
+                                                            <td rowspan="{{ $rowCount }}"
+                                                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                                                {{ $srNo }}</td>
+                                                            <td rowspan="{{ $rowCount }}"
+                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                                                {{ GetSubChecklistTypeName($subcategory) }}
+                                                            </td>
+                                                            @php
+                                                                $srNo++;
+                                                                $firstRow = false;
+                                                            @endphp
+                                                        @endif
+                                                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                                                            {{ GetChecklistTypeDate($questionId) }}
+                                                        </td>
+                                                        <td
+                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                            @if ($answer == 'YES')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($answer == 'NO' || $answer == 'N/A')
+                                                                <span style="color: red; font-size: 20px;">X</span>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                 @endforeach
-                                            @endif
+                                            @endforeach
                                         </tbody>
                                     </table>
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.safety_inspection') }}</h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.inspection_status') }}</label>
+                                            <div class="view_data">
+                                                {!! getInspectionStatus($inspection_details->inspection_status) !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (isset($inspection_details->verified_by))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUserName($inspection_details->verified_by) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if ($inspection_details->approved_by)
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername($inspection_details->approved_by) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if (isset($inspection_details->capa_recomendation))
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection_details->capa_recomendation }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if (isset($inspection_details->capa_remarks))
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection_details->capa_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if (isset($inspection_details->level_one_manager_remarks))
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection_details->level_one_manager_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if (isset($inspection_details->level_two_manager_remarks))
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection_details->level_two_manager_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    @stop
+        @stop
