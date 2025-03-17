@@ -202,21 +202,21 @@
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
                                             name="id">
                                         <div class="row">
-                                            <div class="col-md-12 ">
+                                            <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
                                                     passed Without the CAPA
                                                     ?</label>
                                                 <div class="mb-3 form-input">
                                                     <input type="radio" id="yes" name="is_passed"
-                                                        value="{{ 1 }}">
+                                                        class="validate-radio-required" value="{{ 1 }}">
                                                     <label for="yes">YES</label>
 
                                                     <input type="radio" id="no" name="is_passed"
-                                                        value="{{ 0 }}">
+                                                        class="validate-radio-required" value="{{ 0 }}">
                                                     <label for="no">NO</label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mb-2" id="remarks">
+                                            <div class="col-md-12 mb-2 form-input" id="remarks">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
@@ -359,7 +359,8 @@
                                     @if (isset($inspection_details->level_one_manager_remarks))
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}</h4>
+                                                <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}
+                                                </h4>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -392,7 +393,8 @@
                                     @if (isset($inspection_details->level_two_manager_remarks))
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}</h4>
+                                                <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
+                                                </h4>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -430,14 +432,14 @@
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
                                         </div>
                                     </div>
-                                    <form method="POST" id="forklistassessmentAdd"
+                                    <form method="POST" id="capaAction"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/capa/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
                                             name="id">
                                         <div class="row">
-                                            <div class="col-md-12 mb-2" id="capa_remarks">
+                                            <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                     name="capa_remarks"></textarea>
@@ -469,15 +471,15 @@
                                             </p>
                                             <div class="mb-3 form-input">
                                                 <input type="radio" id="yes" name="is_passed"
-                                                    value="{{ 1 }}">
+                                                    value="{{ 1 }}" class="validate-radio-required">
                                                 <label for="yes">YES</label>
 
                                                 <input type="radio" id="no" name="is_passed"
-                                                    value="{{ 0 }}">
+                                                    value="{{ 0 }}" class="validate-radio-required">
                                                 <label for="no">NO</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 mb-2" id="capa_recomendation">
+                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                         </div>
@@ -490,7 +492,7 @@
                                 @endif
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
-                                    <form method="POST" id="forklistassessmentAdd"
+                                    <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -503,7 +505,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 mb-2" id="capa_recomendation">
+                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
@@ -516,7 +518,7 @@
                                 @endif
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
-                                    <form method="POST" id="forklistassessmentAdd"
+                                    <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -528,7 +530,7 @@
                                                     {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 mb-2" id="capa_recomendation">
+                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>
@@ -548,6 +550,156 @@
         @stop
         @push('script')
             <script>
-                $(document).ready(function() {});
+                $('#forklistassessmentAdd').validate({
+                    rules: {
+                        remarks: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                    },
+                    messages: {
+                        remarks: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $.validator.addMethod("noSpaces", function(value) {
+                    return value.trim().length > 0;
+                }, "Spaces are not allowed");
+
+                $('#capaAction').validate({
+                    rules: {
+                        capa_remarks: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                    },
+                    messages: {
+                        capa_remarks: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $('#levelOneManager').validate({
+                    rules: {
+                        level_one_manager: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                    },
+                    messages: {
+                        level_one_manager: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $('#levelTwoManager').validate({
+                    rules: {
+                        level_two_manager: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                    },
+                    messages: {
+                        level_two_manager: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
             </script>
         @endpush
