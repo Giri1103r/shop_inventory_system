@@ -210,10 +210,11 @@
                                                                 </td>
                                                                 @foreach ($getoption as $option)
                                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;"
-                                                                        class="">
+                                                                        class="form-input">
                                                                         <input type="radio"
-                                                                            name="checklist[{{$checklist->sub_type_id}}][{{ $checklist->checklist_id }}]"
-                                                                            value="{{ trim($option) }}">
+                                                                            name="checklist[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                            value="{{ trim($option) }}"
+                                                                            class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
                                                                 @php
@@ -263,6 +264,7 @@
                 });
                 flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
+                    minDate: new Date(),
                 });
                 $('.floor_executive').select2({
                     ajax: {
@@ -294,57 +296,127 @@
                 });
             });
             $(function() {
-                $('#forklistassessmentAdd').validate({
-                    rules: {
-                        checklist_category: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            noSpaces: true,
-                        },
-                        questionary_id: {
-                            required: true,
-                        },
+                $(function() {
+                    $.validator.addMethod("noSpaces", function(value, element) {
+                        return this.optional(element) || value.trim().length > 0;
+                    }, "This field cannot contain only spaces");
 
-                    },
-                    messages: {
-                        checklist_category: {
-                            required: "{{ __('Name is Required') }}",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
-                            // remote: "{{ __('Name should be unique') }}",
+                    $('#forklistassessmentAdd').validate({
+                        rules: {
+                            doc_no: {
+                                required: true,
+                                minlength: 3,
+                                maxlength: 100,
+                                noSpaces: true,
+                            },
+                            issue_date: {
+                                required: true,
+                            },
+                            inspection_date: {
+                                required: true,
+                            },
+                            location_id: {
+                                required: true,
+                            },
+                            shift_id: {
+                                required: true,
+                            },
+                            next_due: {
+                                required: true,
+                            },
+                            unit_id: {
+                                required: true,
+                            },
+                            frequency_id: {
+                                required: true,
+                            },
+                            identification_no: {
+                                required: true,
+                                minlength: 3,
+                                maxlength: 100,
+                                noSpaces: true,
+                            },
+                            forklift_type: {
+                                required: true,
+                            },
+                            capacity: {
+                                required: true,
+                                minlength: 3,
+                                maxlength: 100,
+                                noSpaces: true,
+                            },
+
                         },
-                        questionary_id: {
-                            required: "{{ __('inspection.questionary_required') }}",
+                        messages: {
+                            doc_no: {
+                                required: "{{ __('Document Number is Required') }}",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
+                            },
+                            issue_date: {
+                                required: "{{ __('Date Of Audit is required') }}",
+                            },
+                            rev_date: {
+                                required: "Revision Date required",
+                            },
+                            inspection_date: {
+                                required: "Inspeciton Date is required",
+                            },
+                            location_id: {
+                                required: "Location is required",
+                            },
+                            shift_id: {
+                                required: "Shift is required",
+                            },
+                            next_due: {
+                                required: "Next due is required",
+                            },
+                            unit_id: {
+                                required: "Unit is required",
+                            },
+                            frequency_id: {
+                                required: "Frequency is required",
+                            },
+                            identification_no: {
+                                required: "{{ __('Identification Number is Required') }}",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
+                            },
+                            forklift_type: {
+                                required: "Floor Executive on Duty is required",
+                            },
+                            capacity: {
+                                required: "{{ __('Capacity is Required') }}",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
+                            }
                         },
-                        checklist_file: {
-                            extension: "Only .jpg files are allowed. Please upload a valid image file.",
+                        errorElement: 'span',
+                        errorPlacement: function(error, element) {
+                            error.addClass('invalid-feedback');
+                            element.closest('.form-input').append(error);
+                        },
+                        highlight: function(element, errorClass, validClass) {
+                            $(element).addClass('is-invalid');
+                        },
+                        unhighlight: function(element, errorClass, validClass) {
+                            $(element).removeClass('is-invalid');
+                        },
+                        submitHandler: function(form) {
+                            console.log('test');
+                            form.submit();
+
+                        },
+                        invalidHandler: function(event, validator) {
+                            var errors = validator.numberOfInvalids();
+                            console.log(errors + " field(s) are invalid");
+                            validator.errorList.forEach(function(error) {
+                                console.log("Field: " + error.element.name + ", Error: " +
+                                    error
+                                    .message);
+                            });
                         }
-                    },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        console.log('test');
-                        form.submit();
-
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        console.log(errors + " field(s) are invalid");
-                        validator.errorList.forEach(function(error) {
-                            console.log("Field: " + error.element.name + ", Error: " + error
-                                .message);
-                        });
-                    }
+                    });
                 });
             });
         </script>

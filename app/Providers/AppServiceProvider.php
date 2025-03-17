@@ -224,7 +224,7 @@ class AppServiceProvider extends ServiceProvider
         defined('INSPECTION_APPROVED') or define('INSPECTION_APPROVED', 6);
 
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
 
         View::composer('*', function ($view) {
 
