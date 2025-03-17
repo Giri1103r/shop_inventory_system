@@ -150,7 +150,7 @@
                 <td width="50%" style="padding:5px;"><b>Unit</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUnitname($accident_report->unit_name) }}
+                    {{ getUnitname($accident_report->unit_id) }}
                 </td>
             </tr>
             <tr>
@@ -714,7 +714,7 @@
             </table>
         @endif
 
-        @if ($accident_report->accident_status >= STATUS_ACCIDENT_REPORT)
+        @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
