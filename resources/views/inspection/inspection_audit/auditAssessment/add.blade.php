@@ -120,20 +120,14 @@
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
                                                                 @foreach ($getoption as $option)
-                                                                    {{-- <td style="border: 1px solid black; padding: 8px; text-align: center;"
-                                                                        class="form-input">
-                                                                        <input type="radio"
-                                                                            name="checklist[{{ $checklist->subcategory_name }}][{{ $checklist->checklist_name }}]"
-                                                                            value="{{ trim($option) }}" class="validate-radio-required">
-                                                                    </td> --}}
 
                                                                     <td class="form-input"
-                                                                    style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                                    <input type="radio"
-                                                                        name="checklist[{{ $checklist->checklist_sub_type_id }}][{{ $checklist->id }}][selected_option]"
-                                                                        value="{{ trim($option) }}"
-                                                                        class="validate-radio-required">
-                                                                </td>
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                        <input type="radio"
+                                                                            name="checklist[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                            value="{{ trim($option) }}"
+                                                                            class="validate-radio-required">
+                                                                    </td>
                                                                 @endforeach
                                                                 @php
                                                                     $i++;

@@ -213,6 +213,7 @@ class AccidentReport extends Model
                 ->toArray();
             $data->team_member_names = implode(', ', $employees);
         }
+        
         return $data;
     }
     public function investigationassigned($accident_Id)

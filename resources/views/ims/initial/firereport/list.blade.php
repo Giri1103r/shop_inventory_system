@@ -182,11 +182,10 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
-                        // d.services = $('#services').val();
-                        // d.hazard_type = $('#hazard_type').val();
-                        // d.from_date = $('#from_date').val();
-                        // d.to_date = $('#to_date').val();
-                        // d.status = $('#status').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {

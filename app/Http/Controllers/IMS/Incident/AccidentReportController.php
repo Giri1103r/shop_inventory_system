@@ -706,31 +706,6 @@ class AccidentReportController extends Controller
     {
         try {
 
-            // $rules = [
-            //     'date_and_time' => 'required',
-            //     'unit_id' => 'required',
-            //     'shift' => 'required',
-            //     'location_id' => 'required',
-            //     'designation' => 'required',
-            //     'department_id' => 'required',
-            //     'emp_code' => 'required',
-            //     'address_of_the_injuredperson' => 'required',
-            // ];
-            // $messages = [
-            //     'date_and_time.required' => 'Please enter the date and time of the accident.',
-            //     'unit_id.required' => 'Unit is required.',
-            //     'shift.required' => 'Shift is required.',
-            //     'location_id.required' => 'Location is required.',
-            //     'designation.required' => 'Designation is required.',
-            //     'department_id.required' => 'Department is required.',
-            //     'emp_code.required' => 'Employee Code is required.',
-            //     'address_of_the_injuredperson.required' => 'Address of the injured person is required.',
-            // ];
-
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
             $incident_id = null;
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
@@ -1349,7 +1324,7 @@ class AccidentReportController extends Controller
             if (Auth::check()) {
                 $accident_report = $this->accident_report->selectOne($id);
                 $getEHSVerify = $this->accident_report->getEHSVerifyAccident($id);
-                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);
+                $getEHSReview = $this->accident_report->getEHSReviewaccident($id);  
                 $getInvestigation = $this->accident_report->getInvestigation($id);
                 $accident_investigation_injury = $this->accident_investigation_injury->getBodypartsInjuryPerson($getInvestigation->id);
                 $getwhywhy = $this->accident_report->getwhywhy($id);
