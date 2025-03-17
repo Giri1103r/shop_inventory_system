@@ -54,6 +54,7 @@ use App\Http\Controllers\IMS\Master\HiraController;
 use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
+use App\Http\Controllers\Inspection\Ohc\DailyDepartmentFirstAidBoxController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
@@ -170,6 +171,8 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('home', [AdminController::class, 'index'])->name('home');
             Route::get('profile', [AdminController::class, 'profileView']);
             Route::post('profile/image/update', [AdminController::class, 'profileUpdate']);
+            Route::post('profile/signature-upload/update', [AdminController::class, 'signatureUpload']);
+
             Route::post('profile/update', [AdminController::class, 'Update']);
             Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
@@ -873,6 +876,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [FirstAidLocationController::class, 'statusChange']);
                 Route::post('/unique', [FirstAidLocationController::class, 'Uniquecheck']);
                 Route::post('/station-number-unique', [FirstAidLocationController::class, 'StationNumberUniquecheck']);
+                Route::post('/first-aid-box', [FirstAidLocationController::class, 'FirstAidUniquecheck']);
+
                 Route::get('/employeename', [FirstAidLocationController::class, 'employeename']);
             });
 
@@ -1368,6 +1373,19 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipSecurityGateController::class, 'ExportPDF']);
                     Route::POST('/lists', [MedicalRequisitionSlipSecurityGateController::class, 'Checklists']);
+                });
+
+                Route::group(['prefix' => 'first-aid-box/daily-departmental'], function () {
+                    Route::GET('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
+                    Route::POST('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
+                    Route::GET('/add', [DailyDepartmentFirstAidBoxController::class, 'Add']);
+                    Route::POST('/add/submit', [DailyDepartmentFirstAidBoxController::class, 'Store']);
+                    Route::POST('/unique', [DailyDepartmentFirstAidBoxController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'View']);
+                    Route::POST('/status', [DailyDepartmentFirstAidBoxController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [DailyDepartmentFirstAidBoxController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [DailyDepartmentFirstAidBoxController::class, 'ExportPDF']);
+                    Route::POST('/lists', [DailyDepartmentFirstAidBoxController::class, 'Checklists']);
                 });
             });
         });

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', '  Occupation Health Inspection ' )
+@section('pageurl', admin_url('ohc/inspection/list'))
 
 
 @section('content')
@@ -11,11 +11,12 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
+
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('ohc/inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -82,6 +83,7 @@
                         </div>
                     </div>
 
+
                 </div>
             </div>
         </div>
@@ -122,7 +124,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
+                        url: "{{ admin_url('ohc/inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -149,7 +151,7 @@
 
                         {
                             data: 'doc_no',
-                            name: 'document_no'
+                            name: 'doc_no'
                         },
                         {
                             data: 'issue_date',
@@ -159,6 +161,8 @@
                             data: 'revision_date',
                             name: 'revision_date'
                         },
+
+
                         {
                             data: 'status',
                             name: 'status'
@@ -195,6 +199,7 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
+                                        va
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -204,8 +209,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
-                                          '?search=' + searchValue +
+                                            "{{ admin_url('ohc/inspection/export/pdf') }}" +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -224,8 +228,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
-                                          '?search=' + searchValue +
+                                            "{{ admin_url('ohc/inspection/export/excel') }}" +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -265,12 +268,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -290,7 +293,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/status') }}",
+                                url: "{{ admin_url('ohc/inspection/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -328,87 +331,6 @@
                             Swal.fire('Something went wrong', '', 'info');
                         }
                     })
-
-                });
-
-
-                /* Delete Record */
-                $(document).on('click', '.recordDelete', function() {
-
-                    var id = $(this).data('id');
-                    var login_id = $(this).data('login_id');
-
-                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
-                    var text = '{{ __('common.delete') }}';
-                    var btncolor = '#dc3545'
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        denyButtonColor: '#28a745',
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
-                                type: 'post',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                        .attr('content')
-                                },
-                                data: {
-                                    id: id,
-                                    login_id: login_id
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    if (data.status === 406 && data.responseJSON.msg ===
-                                        'module_exits') {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                        });
-                                    } else {
-                                        $.notify(data.responseJSON.msg, "error");
-                                    }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
 
                 });
 

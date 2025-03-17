@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Floor ')
-@section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
+@section('title', '  Daily Departmental First Aid Box ')
+@section('pageurl', admin_url('ohc/first-aid-box/daily-departmental/list'))
 
 @push('style')
     <style>
@@ -39,7 +39,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/medical-requisition-slip/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/first-aid-box/daily-departmental/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -48,7 +48,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medical Requisition Slip- Floor </h4>
+                                        <h4 class="text-white">Daily Departmental First Aid Box</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -88,7 +88,24 @@
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Shift</label>
+                                        <div class="view_data">
+                                            {{ getShift(isset($medicinerequisition->shift) ? $medicinerequisition->shift : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">First Aid Box No</label>
+                                        <div class="view_data">
+                                            {{ (isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">First Aider</label>
+                                        <div class="view_data">
+                                            {{ (isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -123,24 +140,27 @@
                                                 <tr>
                                                     <th>S.No</th>
                                                     <th>Medicine Name</th>
+                                                    <th>Available Quantity</th>
                                                     <th>Freeze Quantity</th>
-                                                    <th>Quantity</th>
+                                                    <th>Material Expiry</th>
                                                     <th>Remarks</th>
 
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if ($medicine_requisition_floor_checklist->isEmpty())
+                                                @if ($daily_department_first_aid_box->isEmpty())
                                                     <tr>
                                                         <td colspan="4" class="text-center">No data is available</td>
                                                     </tr>
                                                 @else
-                                                    @foreach ($medicine_requisition_floor_checklist as $data)
+                                                    @foreach ($daily_department_first_aid_box as $data)
                                                         <tr>
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                            <td>{{ $data->quantity }}</td>
+                                                            <td>{{ $data->available_quantity }}</td>
                                                             <td>{{ $data->freeze_quantity }}</td>
+                                                            <td>{{ Displaydateformat($data->material_expiry) }}</td>
+
                                                             <td>{{ $data->remarks }}</td>
 
                                                         </tr>

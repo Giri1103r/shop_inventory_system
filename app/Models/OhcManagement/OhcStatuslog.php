@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,11 +31,15 @@ class OhcStatuslog extends Model
     public function medicinelog($id)
     {
         $request = request();
+        $user = User::where('status', 1)->first();
+        $approveStatus = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
+            ? STATUS_OHC_EHS_HEAD_APPROVED
+            : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_MEDICINE_REQUEST,
-            'to_status' => STATUS_OHC_EHS_HEAD_APPROVAL_PENDING,
+            'to_status' =>   $approveStatus,
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
         ];
@@ -318,8 +323,9 @@ class OhcStatuslog extends Model
     {
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->get();
     }
-    public function doctorapprovalview($id){
-        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->where('from_status',STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)->first();
+    public function doctorapprovalview($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->where('from_status', STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)->first();
     }
     // EHS Verification
     public function ehsverifydata($id)

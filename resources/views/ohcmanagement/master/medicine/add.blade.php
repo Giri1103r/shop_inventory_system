@@ -56,16 +56,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">HSN Number</label>
-                                                    <input type="text" name="hsn" id="hsn" class="form-control"
-                                                        placeholder="Enter the HSN Number">
-                                                    @error('hsn')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Threshold Limit</label>
@@ -76,22 +67,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Expire Date</label>
-
-                                                    <div class="input-group date form-input">
-                                                        <input type="text" name="expire_date" id="expire_date"
-                                                            class="form-control" placeholder="Select the Expire Date">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
-                                                    @error('expire_date')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">Remarks</label>

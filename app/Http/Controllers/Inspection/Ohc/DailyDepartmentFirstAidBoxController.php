@@ -9,8 +9,9 @@ use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Inspection\Master\Shift;
 
-use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
+use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Ohc\OhcDetails;
+use App\Models\OhcManagement\Master\FirstAidLocation;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\UploadLog;
 use App\Models\User;
@@ -21,16 +22,16 @@ use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 
-class MedicalRequisitionSlipController extends Controller
+class DailyDepartmentFirstAidBoxController extends Controller
 {
-
     private $upload_log;
     private $unit;
     private $shift;
     private $department;
     private $OhcDetails;
     private $user;
-    private $medicine_requisition_floor_checklist;
+    private $daily_department_first_aid_box;
+    private $First_aid;
 
     private $inventory;
 
@@ -45,7 +46,8 @@ class MedicalRequisitionSlipController extends Controller
         $this->shift = new Shift();
         $this->location = new Location();
         $this->OhcDetails = new OhcDetails();
-        $this->medicine_requisition_floor_checklist = new MedicineRequisitionSlipFloor();
+        $this->First_aid = new FirstAidLocation();
+        $this->daily_department_first_aid_box = new DailyDepartmentFirstAidBox();
         $this->inventory = new Inventory();
         $this->user = new User();
 
@@ -55,10 +57,11 @@ class MedicalRequisitionSlipController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-
                     $data = $this->OhcDetails->list();
-                    $datatables = DataTables::of($data['data']);
-                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_MEDICINE_REQUISTION_FLOOR)->values();
+
+                   
+                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX)->values();
+
 
                     $filteredCount = $filteredData->count();
                     $totalCount = count($data['data']);
@@ -85,24 +88,23 @@ class MedicalRequisitionSlipController extends Controller
                             return getUsername($row->created_by);
                         })
                         ->addColumn('action', function ($row) {
-                            return '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            return '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status','issue_date'])
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'status'])
                         ->setFilteredRecords($filteredCount)
-                        ->setTotalRecords($data['total_records'])
+                        ->setTotalRecords($totalCount)
                         ->skipPaging()
                         ->make(true);
 
-                    return $datatables;
                 } catch (Exception $ex) {
-                    dd( $ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        return view('inspection.inspection_ohc.medical_requisition_slip.list');
+        return view('inspection.inspection_ohc.daily_department_first_aid_box.list');
     }
+
 
     public function Add(Request $request)
     {
@@ -111,15 +113,19 @@ class MedicalRequisitionSlipController extends Controller
             $shift = $this->shift->getShiftname();
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
+            $First_aid = $this->First_aid->getFirsaid();
+
             $location = $this->location->getLocation();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
                 'signature_upload' => $signature_upload,
+                'First_aid' => $First_aid,
+
 
             );
-            return view('inspection.inspection_ohc.medical_requisition_slip.add', $data);
+            return view('inspection.inspection_ohc.daily_department_first_aid_box.add', $data);
         } catch (Exception $ex) {
             dd($ex);
         }
@@ -145,9 +151,11 @@ class MedicalRequisitionSlipController extends Controller
             }
 
             try {
+
                 // Store user medicine requisition
                 $OhcDetails = $this->OhcDetails->store();
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store(  $OhcDetails);
+
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->store($OhcDetails);
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -156,12 +164,12 @@ class MedicalRequisitionSlipController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('ohc/medical-requisition-slip/list'));
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         } catch (Exception $ex) {
 
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medical-requisition-slip/list'));
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
@@ -171,14 +179,14 @@ class MedicalRequisitionSlipController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $medicinerequisition = $this->OhcDetails->Selectone($id);
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
 
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
-                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+                    'daily_department_first_aid_box' => $daily_department_first_aid_box,
                 );
             }
-            return view('inspection.inspection_ohc.medical_requisition_slip.view', $data);
+            return view('inspection.inspection_ohc.daily_department_first_aid_box.view', $data);
         } catch (Exception $ex) {
             dd($ex);
         }

@@ -50,7 +50,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="checklistadd"
+                                    <form method="POST" id="weeklyambulance"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -227,7 +227,6 @@
                                                                         </td>
                                                                     @endforeach
 
-
                                                                     <td
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                         <textarea name="remarks[{{ $checklist->checklist_id ?? '' }}]" cols="5" rows="3" class="form-control"></textarea>
@@ -290,63 +289,73 @@
 
         });
         $(function() {
-
-            $.validator.addMethod("noSpaces", function(value, element) {
-                return this.optional(element) || value.trim().length > 0;
-            }, "This field cannot contain only spaces");
-
-            $.validator.addMethod("filesize", function(value, element, param) {
-                if (this.optional(element)) {
-                    return true;
-                }
-                var fileSize = element.files[0].size / 1024;
-                return fileSize >= param[0] && fileSize <= param[
-                    1];
-            }, "File size must be between 50KB and 5MB");
-
-            $('#checklistadd').validate({
+            $('#weeklyambulance').validate({
                 rules: {
-                    checklist_category: {
+                    document_no: {
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        noSpaces: true,
-                        remote: {
-                            url: '{{ admin_url('inspection/master/checklist-type/unique') }}',
-                            type: 'post',
-                            data: {
-                                checklist: function() {
-                                    return $('#checklist').val();
-                                }
-                            }
-                        }
                     },
-                    questionary_id: {
+                    issue_date: {
                         required: true,
                     },
-                    checklist_file: {
-                        extension: "jpg",
-                        filesize: [50, 5120],
+                    shift: {
+                        required: true,
                     },
+                    review_date: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    date_of_inspection: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
+                    next_due_on: {
+                        required: true,
+                    }
                 },
                 messages: {
-                    checklist_category: {
-                        required: "{{ __('Name is Required') }}",
+                    document_no: {
+                        required: "Document Number is Required",
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
-                        // remote: "{{ __('Name should be unique') }}",
                     },
-                    questionary_id: {
-                        required: "{{ __('inspection.questionary_required') }}",
+                    issue_date: {
+                        required: "Issue date is required",
                     },
-                    checklist_file: {
-                        extension: "Only .jpg files are allowed. Please upload a valid image file.",
+                    shift: {
+                        required: "Shift is required",
+                    },
+                    date_of_inspection: {
+                        required: "Date Of Inspection is required",
+                    },
+                    review_date: {
+                        required: "Review Date is required",
+                    },
+                    next_due_on: {
+                        required: "Next Due date is required",
+                    },
+                    location_id: {
+                        required: "Location is required",
+                    },
+                    unit_id: {
+                        required: "Unit is required",
                     }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
+                    if (element.is(':radio')) {
+                        element.closest('td').append(error);
+                    } else if (element.is('textarea')) {
+                        element.closest('td').append(error);
+                    } else {
+                        element.closest('.form-input').append(error);
+                    }
                 },
                 highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -355,9 +364,8 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
+                    console.log('Form submitted');
                     form.submit();
-
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
@@ -367,6 +375,40 @@
                             .message);
                     });
                 }
+            });
+
+
+            $.validator.addMethod("radioRequired", function(value, element, param) {
+                return $('input[name="' + param + '"]:checked').length > 0;
+            }, "Please select an option");
+
+            $.validator.addMethod("remarksRequired", function(value, element) {
+                var checklistId = $(element).attr('name').match(/\d+/)[
+                    0];
+                return $('input[name="checklist_type_status[' + checklistId + ']"]:checked').length > 0 ? $
+                    .trim(value).length > 0 : true;
+            }, "Please provide remarks ");
+
+
+            $('input[type="radio"]').each(function() {
+                var name = $(this).attr("name");
+                $('#weeklyambulance').validate().settings.rules[name] = {
+                    radioRequired: name
+                };
+            });
+
+            $('textarea[name^="remarks"]').each(function() {
+                var name = $(this).attr("name");
+                $('#weeklyambulance').validate().settings.rules[name] = {
+                    remarksRequired: true,
+                    minlength: 3,
+                    maxlength: 600
+                };
+                $('#weeklyambulance').validate().settings.messages[name] = {
+                    remarksRequired: "Remarks are required if an option is selected",
+                    minlength: "Remarks must be at least 3 characters",
+                    maxlength: "Remarks must not exceed 600 characters"
+                };
             });
         });
     </script>

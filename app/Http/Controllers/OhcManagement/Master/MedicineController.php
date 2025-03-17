@@ -95,9 +95,9 @@ class MedicineController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                             $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
+                            }
                             if (CheckUserPermission('edit') && $row->status == 0) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
@@ -149,17 +149,17 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-                'hsn' => 'required',
+
                 'threshold_limit' => 'required',
-                'expire_date' => 'required',
+
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
-                'hsn.required' => 'Please enter the HSN code.',
+
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-                'expire_date.required' => 'Please select the expiry date.',
+
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -219,14 +219,14 @@ class MedicineController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine/list'));
         }
@@ -395,19 +395,17 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-                'hsn' => 'required',
+                // 'hsn' => 'required',
                 // 'unit_id' => 'required',
                 'threshold_limit' => 'required',
-                'expire_date' => 'required',
+                // 'expire_date' => 'required',
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
-                'hsn.required' => 'Please enter the HSN code.',
-                // 'unit_id.required' => 'Please select a unit.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-                'expire_date.required' => 'Please select the expiry date.',
+
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);

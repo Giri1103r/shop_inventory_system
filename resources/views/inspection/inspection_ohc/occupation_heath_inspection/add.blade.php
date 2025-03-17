@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Floor ')
-@section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
+@section('title', ' Occupation Health Inspection ')
+@section('pageurl', admin_url('ohc/inspection/list'))
 
 
 @section('content')
@@ -43,7 +43,7 @@
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/medical-requisition-slip/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -51,10 +51,10 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="medicineRequisitionFloor"
-                                        action="{{ admin_url('ohc/medical-requisition-slip/add/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="2" name="ohc_type">
+                                        <input type="hidden" value="3" name="ohc_type">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -106,6 +106,46 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Shift</label>
+                                                    <select name="shift" id="shift" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($shift as $list)
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">First Aid Box Number</label>
+                                                    <input type="text" name="first_aid_box_no" id = "first_aid_box_no"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">First Aider</label>
+                                                    <input type="text" name="first_aider" id = "first_aider"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            {{-- <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">First Aid Box Number</label>
+                                                    <select name="first_aid_box_no" id="first_aid_box_no" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($First_aid as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->first_aid_box_no }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div> --}}
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -136,8 +176,8 @@
                                             </div>
                                             <div
                                                 class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                <button class="btn btn-primary add-row me-3" type="button" id="add-row"
-                                                    style="width: 84px;">
+                                                <button class="btn btn-primary add-row me-3" type="button"
+                                                    id="add-row" style="width: 84px;">
                                                     Add
                                                 </button>
 
@@ -153,9 +193,9 @@
                                                     <thead class="bg-secondary" style="color: #ffff">
                                                         <tr>
                                                             <th>Medicine</th>
+                                                            <th>Available Quantity</th>
                                                             <th>Freeze Quantity</th>
-
-                                                            <th>Quantity</th>
+                                                            <th>Material Expiry</th>
                                                             <th>Remarks</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -181,7 +221,7 @@
                                                                     </select>
                                                                 </div>
                                                             </td>
-                                                            {{-- <td>
+                                                            <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="available_quantity"
                                                                         class="require">Available
@@ -189,27 +229,28 @@
                                                                     <input type="text" name="available_quantity[0]"
                                                                         id="available_quantity" value=""
                                                                         placeholder="Available quantity"
-                                                                        class="form-control" readonly>
+                                                                        class="form-control" >
                                                                 </div>
-                                                            </td> --}}
+                                                            </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Freeze Quantity</label>
+                                                                    <label for="quantity" class="require">Freeze
+                                                                        Quantity</label>
                                                                     <input type="text" name="freeze_quantity[0]"
-                                                                        id="freeze_quantity" placeholder="Enter the Freeze quantity"
+                                                                        id="freeze_quantity"
+                                                                        placeholder="Enter the Freeze quantity"
                                                                         class="form-control">
 
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]"
-                                                                        id="quantity" placeholder="Enter the quantity"
+                                                                    <label for="quantity" class="require">Material
+                                                                        Expiry</label>
+                                                                    <input type="text" name="material_expiry[0]"
+                                                                        id="material_expiry" placeholder=""
                                                                         class="form-control">
-                                                                    <span id="quantity-error" style=" display:none;"
-                                                                        class="text-danger">Quantity must be less
-                                                                        than available quantity.</span>
+
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -238,7 +279,7 @@
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
                                     <x-button-cancel
-                                        href="{{ admin_url('ohc/medical-requisition-slip/list') }}"></x-button-cancel>
+                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>
@@ -265,61 +306,66 @@
             });
         });
         var IssueDatepicker = flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-                minDate: new Date()
+            dateFormat: "d-m-Y",
+            minDate: new Date()
 
-            });
-            var Datepicker = flatpickr("#date_of_inspection", {
-                dateFormat: "d-m-Y",
-                minDate: new Date()
+        });
+        var Datepicker = flatpickr("#date_of_inspection", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
 
-            });
-            var dueDate = flatpickr("#next_due_on", {
-                dateFormat: "d-m-Y",
-                minDate: new Date()
+        });
+        var dueDate = flatpickr("#next_due_on", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
 
-            });
-            var dueDate = flatpickr("#date", {
-                dateFormat: "d-m-Y",
-                minDate: new Date()
+        });
+        var dueDate = flatpickr("#date", {
+            dateFormat: "d-m-Y",
+            minDate: new Date()
 
-            });
-            $(document).on('change', '#unit_id', function() {
-                var unitId = $(this).val();
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#department_id').empty().append(
-                                '<option value="">Select Department</option>');
-                            $.each(data, function(key, value) {
-                                $('#department_id').append('<option value="' + value
-                                    .id + '">' + value.name + '</option>');
-                            });
-                            $('#department_id').trigger('change.');
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching department. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#department_id').empty().append('<option value="">Select Department</option>');
-                    $('#department_id').trigger('change.');
-                }
-            });
-            $(document).ready(function() {
-
-                let medicine_requisition_row_count = 1;
+        });
+        var materialExpiryDatepicker = flatpickr("#material_expiry", {
+            dateFormat: "d-m-Y",
 
 
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+        $(document).ready(function() {
 
-                $(".add-row").click(function() {
-                    var rowCount = $('#medicine-tbody tr').length;
+            let medicine_requisition_row_count = 1;
 
 
-                    var newRow = `
+
+            $(".add-row").click(function() {
+                var rowCount = $('#medicine-tbody tr').length;
+
+
+                var newRow = `
             <tr>
                 <td>
                     <div class="form-group form-input">
@@ -334,9 +380,18 @@
                         </select>
                     </div>
                 </td>
+                <td>
+                    <div class="form-group form-input">
+                        <label for="quantity" class="require">Available Quantity</label>
+                        <input type="text" name="available_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+
+
+                    </div>
+                </td>
   <td>
                     <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
+                        <label for="quantity" class="require">Freeze Quantity</label>
                         <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
@@ -345,9 +400,9 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                        <label for="quantity" class="require">Material Expiry</label>
+                        <input type="text" name="material_expiry[${medicine_requisition_row_count}]"  id="material_expiry"   class="form-control">
+
 
 
                     </div>
@@ -365,272 +420,285 @@
                 </td>
             </tr>`;
 
-                    $('#medicine-tbody').append(newRow);
+                $('#medicine-tbody').append(newRow);
 
 
-                    $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').select2({
-                        placeholder: "Select the Medicine Name",
-                        width: '100%'
-                    });
+                $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').select2({
+                    placeholder: "Select the Medicine Name",
+                    width: '100%'
+                });
 
 
-                    $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'This Medicine name is required'
+                $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Medicine name is required'
+                    }
+                });
+                $('input[name="available_quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    required: true,
+                    digits: true,
+                    messages: {
+                        required: 'Available Quantity is required',
+                        digits: 'Available Quantity must be numeric',
+                    }
+                });
+                $('input[name="material_expiry[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    required: true,
+
+                    messages: {
+                        required: 'material_expiry is required',
+
+                    }
+                });
+                $('input[name="freeze_quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    required: true,
+                    digits: true,
+                    messages: {
+                        required: 'Freeze Quantity is required',
+                        digits: 'Freeze Quantity must be numeric',
+                    }
+                });
+
+                $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 600,
+                    messages: {
+                        required: 'Remarks are required',
+                        minlength: 'Minimum 3 characters are required',
+                        maxlength: 'Remarks should not exceed 600 characters',
+                    }
+                });
+                filterMedicineOptions();
+                medicine_requisition_row_count++;
+                var materialExpiryDatepicker = flatpickr("#material_expiry", {
+                    dateFormat: "d-m-Y",
+
+
+                });
+            });
+
+            function filterMedicineOptions() {
+                let selectedValues = [];
+
+                // Collect all selected values
+                $('select[name^="medicine_id"]').each(function() {
+                    let selectedVal = $(this).val();
+                    if (selectedVal) {
+                        selectedValues.push(selectedVal);
+                    }
+                });
+
+                $('select[name^="medicine_id"]').each(function() {
+                    let currentSelect = $(this);
+                    let currentValue = currentSelect.val();
+
+                    currentSelect.find('option').each(function() {
+                        let optionValue = $(this).val();
+
+                        // Always enable all options first
+                        $(this).prop('disabled', false);
+
+                        // Disable option if it's selected in another dropdown
+                        if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
+                            $(this).prop('disabled', true);
                         }
                     });
+                });
+            }
 
-                    $('input[name="quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
+
+            $(document).on('change', 'select[name^="medicine_id"]', function() {
+                var selectedMedicineId = $(this).val();
+                var row = $(this).closest('tr');
+                var duplicateFound = false;
+
+
+                $('select[name^="medicine_id"]').not(this).each(function() {
+                    if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
+                        duplicateFound = true;
+                    }
+                });
+
+                if (duplicateFound) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Duplicate Medicine Selected',
+                        text: 'This medicine is already selected. Please choose a different one.',
+                        confirmButtonColor: '#3085d6'
+                    });
+
+                    $(this).val('').trigger('change');
+                    row.find('input[name^="available_quantity"]').val('');
+                    row.find('input[name^="freeze_quantity"]').val('');
+
+                    row.find('input[name^="quantity"]').val('');
+                }
+            });
+
+
+
+
+
+            $(document).on("click", ".delete-row", function() {
+                var rowCount = $('#medicine-tbody tr').length;
+
+                if (rowCount > 1) {
+                    $(this).closest("tr").remove();
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning',
+                        text: 'At least one row is required.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                }
+            });
+        });
+
+        $(function() {
+
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#medicineRequisitionFloor').validate({
+                rules: {
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
+                        required: true,
+                    },
+                    issue_date: {
+                        required: true,
+                    },
+                    document_no: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                    },
+                    first_aider: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                    },
+                    first_aid_box_no: {
                         required: true,
                         digits: true,
-                        messages: {
-                            required: 'Quantity is required',
-                            digits: 'Quantity must be numeric',
-                        }
-                    });
-                    $('input[name="freeze_quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    },
+                    shift: {
+                        required: true,
+                    },
+                    review_date: {
+                        required: true,
+                    },
+                    date: {
+                        required: true,
+                    },
+                    'medicine_id[0]': {
+                        required: true,
+                    },
+                    'material_expiry[0]': {
+                        required: true,
+
+                    },
+                    'available_quantity[0]': {
                         required: true,
                         digits: true,
-                        messages: {
-                            required: 'Freeze Quantity is required',
-                            digits: 'Freeze Quantity must be numeric',
-                        }
-                    });
-
-                    $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
+                    },
+                    'freeze_quantity[0]': {
+                        required: true,
+                        digits: true,
+                    },
+                    'remarks[0]': {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
-                        messages: {
-                            required: 'Remarks are required',
-                            minlength: 'Minimum 3 characters are required',
-                            maxlength: 'Remarks should not exceed 600 characters',
-                        }
-                    });
-                    filterMedicineOptions();
-                    medicine_requisition_row_count++;
-
-                });
-
-                function filterMedicineOptions() {
-                    let selectedValues = [];
-
-                    // Collect all selected values
-                    $('select[name^="medicine_id"]').each(function() {
-                        let selectedVal = $(this).val();
-                        if (selectedVal) {
-                            selectedValues.push(selectedVal);
-                        }
-                    });
-
-                    $('select[name^="medicine_id"]').each(function() {
-                        let currentSelect = $(this);
-                        let currentValue = currentSelect.val();
-
-                        currentSelect.find('option').each(function() {
-                            let optionValue = $(this).val();
-
-                            // Always enable all options first
-                            $(this).prop('disabled', false);
-
-                            // Disable option if it's selected in another dropdown
-                            if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
-                                $(this).prop('disabled', true);
-                            }
-                        });
-                    });
-                }
-
-
-                $(document).on('change', 'select[name^="medicine_id"]', function() {
-                    var selectedMedicineId = $(this).val();
-                    var row = $(this).closest('tr');
-                    var duplicateFound = false;
-
-
-                    $('select[name^="medicine_id"]').not(this).each(function() {
-                        if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
-                            duplicateFound = true;
-                        }
-                    });
-
-                    if (duplicateFound) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Duplicate Medicine Selected',
-                            text: 'This medicine is already selected. Please choose a different one.',
-                            confirmButtonColor: '#3085d6'
-                        });
-
-                        $(this).val('').trigger('change');
-                        row.find('input[name^="available_quantity"]').val('');
-                        row.find('input[name^="quantity"]').val('');
-                    } else {
-
-                        if (selectedMedicineId) {
-                            $.ajax({
-                                url: "{{ admin_url('ohc/medicine-requisition/quantity') }}/" +
-                                    selectedMedicineId,
-                                type: 'get',
-                                dataType: 'json',
-                                success: function(data) {
-                                    row.find('input[name^="available_quantity"]').val(data
-                                        .available_quantity);
-                                },
-                                error: function() {
-                                    Swal.fire('Error', 'Something went wrong. Please try again.',
-                                        'error');
-                                }
-                            });
-                        } else {
-                            row.find('input[name^="available_quantity"]').val('');
-                        }
                     }
-                });
 
+                },
+                messages: {
+                    unit_id: {
+                        required: "Please select the Unit name.",
+                    },
+                    department_id: {
+                        required: "Please select the Department Name.",
+                    },
+                    issue_date: {
+                        required: "Please select the issue date.",
+                    },
+                    shift: {
+                        required: "Shift is required",
+                    },
+                    date: {
+                        required: "Please select the  date.",
+                    },
+                    document_no: {
+                        required: "Document Number is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    first_aider: {
+                        required: "First Aider is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    first_aid_box_no: {
+                        required: 'First Aid Box Number is required',
+                        digits: 'First Aid Box Number should be numeric',
+                    },
+                    review_date: {
+                        required: "Please select the request date.",
+                    },
+                    'medicine_id[0]': {
+                        required: 'Medicine Name is required',
+                    },
+                    'freeze_quantity[0]': {
+                        required: 'Freeze Quantity is required',
+                        digits: 'Freeze Quantity should be numeric',
+                    },
+                    'available_quantity[0]': {
+                        required: 'Available Quantity is required',
+                        digits: 'Available Quantity should be numeric',
+                    },
+                    'material_expiry[0]': {
+                        required: 'material expiry is required',
 
-                // Quantity validation
-                $(document).on("input", 'input[name^="quantity"]', function() {
-                    var row = $(this).closest('tr'); // Get the row of the current input
-                    var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
-                    var quantity = parseInt($(this).val());
+                    },
+                    'remarks[0]': {
+                        required: 'Remarks is required',
+                        minlength: 'Minimum 3 character is required',
+                        maxlength: 'Remarks should not exceed more than the 600 characters',
 
-                    if (quantity > availableQuantity) {
-                        row.find('.quantity-error').show();
-                        $(this).val(availableQuantity);
-                    } else {
-                        row.find('.quantity-error').hide();
                     }
-                });
-
-
-                $(document).on("click", ".delete-row", function() {
-                    var rowCount = $('#medicine-tbody tr').length;
-
-                    if (rowCount > 1) {
-                        $(this).closest("tr").remove();
-                    } else {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Warning',
-                            text: 'At least one row is required.',
-                            confirmButtonColor: '#3085d6'
-                        });
-                    }
-                });
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
             });
 
-            $(function() {
 
-                $.validator.addMethod(
-                    "regex",
-                    function(value, element, regex) {
-                        return this.optional(element) || regex.test(value);
-                    },
-                    "Invalid format."
-                );
-
-                $('#medicineRequisitionFloor').validate({
-                    rules: {
-                        unit_id: {
-                            required: true,
-                        },
-                        department_id: {
-                            required: true,
-                        },
-                        issue_date: {
-                            required: true,
-                        },
-                        document_no: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                        },
-                        review_date: {
-                            required: true,
-                        },
-                        date: {
-                            required: true,
-                        },
-                        'medicine_id[0]': {
-                            required: true,
-                        },
-                        'quantity[0]': {
-                            required: true,
-                            digits: true,
-                        },
-                        'freeze_quantity[0]': {
-                            required: true,
-                            digits: true,
-                        },
-                        'remarks[0]': {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 600,
-                        }
-
-                    },
-                    messages: {
-                        unit_id: {
-                            required: "Please select the Unit name.",
-                        },
-                        department_id: {
-                            required: "Please select the Department Name.",
-                        },
-                        issue_date: {
-                            required: "Please select the issue date.",
-                        },
-                        date: {
-                            required: "Please select the  date.",
-                        },
-                        document_no: {
-                            required: "Document Number is Required",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
-                        },
-                        review_date: {
-                            required: "Please select the request date.",
-                        },
-                        'medicine_id[0]': {
-                            required: 'Medicine Name is required',
-                        },
-                        'freeze_quantity[0]': {
-                            required: 'Freeze Quantity is required',
-                            digits: 'Freeze Quantity should be numeric',
-                        },
-                        'quantity[0]': {
-                            required: 'Quantity is required',
-                            digits: 'Quantity should be numeric',
-                        },
-                        'remarks[0]': {
-                            required: 'Remarks is required',
-                            minlength: 'Minimum 3 character is required',
-                            maxlength: 'Remarks should not exceed more than the 600 characters',
-
-                        }
-                    },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element, errorClass, validClass) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element, errorClass, validClass) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        form.submit();
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        console.log("Form has " + errors + " invalid fields.");
-                    },
-                });
-
-
-            });
+        });
     </script>
 @endpush
