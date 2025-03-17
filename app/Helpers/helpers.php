@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Models\FcmToken;
+use App\Models\Inspection\MSDSCheckList;
 use App\Models\Master\PpeExemption;
 use App\Models\Master\PpeRequest;
 use App\Models\Permit\SafetyPermit;
@@ -25,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 use App\Models\Master\TrainingSchedule;
-
+use App\Models\Inspection\RRAACheckList;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1382,6 +1383,24 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getMSDSCount')) {
+
+        function getMSDSCount()
+        {
+            $data = MSDSCheckList::get()->count();
+            return $data;
+        }
+    }
+   
+    if (!function_exists('getRRAACount')) {
+
+        function getRRAACount()
+        {
+            $data = RRAACheckList::get()->count();
+            return $data;
+        }
+    }
+
 
     if (!function_exists('getUnitname')) {
 
