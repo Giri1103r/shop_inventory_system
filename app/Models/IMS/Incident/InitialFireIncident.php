@@ -91,12 +91,15 @@ class InitialFireIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->incident_status));
         }
 
+        if ($request->has('status') && $request->status) {
 
+            $query = $query->where('ims_initial_fireincident.status', decryptId($request->status));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 

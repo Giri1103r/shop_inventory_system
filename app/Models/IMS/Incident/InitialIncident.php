@@ -92,9 +92,14 @@ class InitialIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_incident.created_at', '<=', $endDate);
         }
+        if ($request->has('incident_status') && $request->incident_status) {
+
+            $query = $query->where('incident_status', decryptId($request->incident_status));
+        }
+
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('ims_initial_incident.status', decryptId($request->status));
         }
 
 

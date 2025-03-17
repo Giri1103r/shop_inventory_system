@@ -1035,10 +1035,11 @@
             });
 
 
+
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
+                minDate: "today"
             });
-
 
             $('#resetform').on('click', function(e) {
                 e.preventDefault();

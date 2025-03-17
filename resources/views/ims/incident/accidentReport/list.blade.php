@@ -67,6 +67,17 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
+                                            <label for="accident_status" class="form-label ">Approve Status</label>
+                                            <select name="accident_status" id="accident_status" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Approve Status</option>
+                                                @foreach ($accidentStatusList as $statusList)
+                                                    <option value="{{ encryptId($statusList->id) }}">
+                                                        {{ $statusList->status_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -176,6 +187,7 @@
                     },
                     data: function(d) {
                         d.accident_report_no = $('#accident_report_no').val();
+                        d.accident_status = $('#accident_status').val();
                         d.emp_code = $('#emp_code').val();
                         d.from_date_datepicker = $('#from_date_datepicker').val();
                         d.to_date_datepicker = $('#to_date_datepicker').val();
@@ -261,6 +273,7 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var accident_report_no = $('#accident_report_no').val();
+                                    var accident_status = $('#accident_status').val();
                                     var emp_code = $('#emp_code').val();
                                     var from_date_datepicker = $('#from_date_datepicker').val();
                                     var to_date_datepicker = $('#to_date_datepicker').val();
@@ -273,6 +286,7 @@
                                         "{{ admin_url('accidentReport/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&accident_report_no=' + accident_report_no +
+                                        '&accident_status=' + accident_status +
                                         '&emp_code=' + emp_code +
                                         '&from_date_datepicker=' + from_date_datepicker +
                                         '&to_date_datepicker=' + to_date_datepicker +
@@ -287,6 +301,7 @@
 
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var accident_report_no = $('#accident_report_no').val();
+                                    var accident_status = $('#accident_status').val();
                                     var emp_code = $('#emp_code').val();
                                     var from_date_datepicker = $('#from_date_datepicker').val();
                                     var to_date_datepicker = $('#to_date_datepicker').val();
@@ -298,6 +313,7 @@
                                         "{{ admin_url('accidentReport/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&accident_report_no=' + accident_report_no +
+                                        '&accident_status=' + accident_status +
                                         '&emp_code=' + emp_code +
                                         '&from_date_datepicker=' + from_date_datepicker +
                                         '&to_date_datepicker=' + to_date_datepicker +

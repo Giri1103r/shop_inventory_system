@@ -32,7 +32,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="incidentAdd"
-                                        action="{{ admin_url('incident/initial-incident/add/submit') }}"  enctype="multipart/form-data">
+                                        action="{{ admin_url('incident/initial-incident/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -223,7 +224,7 @@
                                                         class="form-control validate-file-accept validate-file-required"
                                                         name="evidence[0][]" id="evidence_0" multiple>
                                                     <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, mp4</small>
+                                                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, docx, mp4</small>
                                                     <div class="preview-container mt-2 d-flex flex-wrap gap-2"
                                                         id="preview-container-0"></div>
                                                 </div>
@@ -298,7 +299,7 @@
                     <input type="file" class="form-control validate-file-accept validate-file-required"
                         name="evidence[${currentFileUploads}][]" id="evidence_${currentFileUploads}" multiple>
                     <div class="text-danger"></div>
-                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, mp4</small>
+                    <small>Allowed file types: png, jpeg , jpg, pdf, doc,docx, mp4</small>
                     <button type="button" class="btn btn-danger btn-sm remove-upload-block">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -312,10 +313,10 @@
             // Revalidate the new file input after it's added
             $('#evidence_' + currentFileUploads).rules("add", {
                 required: true,
-                extension: "png|jpeg|jpg|pdf|doc|mp4",
+                extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
                 messages: {
                     required: "This field is required.",
-                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc, mp4",
+                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc,docx, mp4",
                 }
             });
         });

@@ -130,7 +130,7 @@ class InitialIncidentController extends Controller
                             }
                             // }
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) ) && ($row->incident_status == 1 || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 7)) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 1 || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 7)) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
@@ -153,13 +153,13 @@ class InitialIncidentController extends Controller
                             // $getEHSVerify = $this->initialincident->getEHSVerifyincident($row->id);
 
                             // $employees = Employee::select('id','login_id')->where('id',  $getEHSVerify->team_member)->first();
-                          
 
-                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
+
+                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN)) ) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
-                            if ($row->incident_status == 6 ) {
+                            if ($row->incident_status == 6) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) .  '" 
                                             class="edit-icon" 
                                             title="' . __('Corrective Action') . '">';
@@ -182,8 +182,6 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -1409,14 +1407,25 @@ class InitialIncidentController extends Controller
     public function gethiradetails($hira_id)
     {
         $hira_id = decryptId($hira_id);
+
         $hira = Hira::select('services', 'likelihood', 'risk_levels')
             ->where('id', $hira_id)
             ->first();
-        if ($hira) {
-            return response()->json([
-                'hira' => $hira,
-            ]);
+        $risk_levels = '';
+        if ($hira->risk_levels == 1) {
+            $risk_levels = '1 to 9';
+        } elseif ($hira->risk_levels == 2) {
+            $risk_levels = '10 to 16';
+        } elseif ($hira->risk_levels == 3) {
+            $risk_levels = '17 to 25';
+        } elseif ($hira->risk_levels == 4) {
+            $risk_levels = 'Legal';
         }
+
+        return response()->json([
+            'hira' => $hira,
+            'risk_levels' => $risk_levels,
+        ]);
     }
 
     public function Uniquecheck(Request $request)
@@ -1443,7 +1452,7 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->hira->statuschange($id);
+            $this->initialincident->statuschange($id);
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
