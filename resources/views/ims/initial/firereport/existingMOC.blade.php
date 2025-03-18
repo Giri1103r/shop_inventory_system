@@ -10,7 +10,7 @@
                 <div class="d-flex justify-content-left my-3">
                     <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fireincident_id . '/' . encryptId(2)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
-                    <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
+                    <button type="button" class="btn btn-secondary mx-2" id="existingMOC">Existing</button>
                 </div>
             @endif
 
@@ -80,7 +80,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             @if ($newHiraList == null)
-                <button type="button" class="btn btn-primary" id="saveHira">Save HIRA</button>
+                <button type="button" class="btn btn-primary" id="saveHira">Save MOC</button>
             @endif
         </div>
     </form>

@@ -479,7 +479,7 @@
                                                     </div>
 
                                                     <!-- Department Dropdown for Others -->
-                                                    <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
+                                                    {{-- <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
                                                         <label class="form-label require">Injury Person Department</label>
                                                         <select alt="0" class="form-control single-select"
                                                             name="injury_person[0][injury_person_department_id]"
@@ -490,7 +490,7 @@
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="col-md-4">
                                                         <div class="form-group form-input">
                                                             <label for="nature_of_injury" class="form-label">Nature of
@@ -499,7 +499,7 @@
                                                                 name="injury_person[0][nature_of_injury]"
                                                                 id="nature_of_injury_0" style="width: 100%"
                                                                 class="form-control single-select">
-                                                                <option value="">Nature of Injury</option>
+                                                                <option value="">Select Nature of Injury</option>
                                                                 <option value="{{ encryptId('1') }}">Major</option>
                                                                 <option value="{{ encryptId('2') }}">Minor</option>
                                                             </select>
@@ -2224,6 +2224,8 @@
                             if (person.department_name) {
                                 injuryPersonDeptInput.val(person.department_name).prop(
                                     "readonly", true);
+
+                                    
                             } else {
                                 injuryPersonDeptInput.val("").prop("readonly", false);
                             }

@@ -393,7 +393,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Possible Root Cause  Analysis (PRCA)</b></td>
+                    <td width="50%" style="padding:5px;"><b>Possible Root Cause Analysis (PRCA)</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         @if ($getInvestigation->root_cause_analysis == 1)
@@ -415,21 +415,21 @@
                 </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Was the injured person receiving any
-                        treatment
-                        at present?</b></td>
+                            treatment
+                            at present?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $getInvestigation->is_treatment == 1 ? 'Yes' : 'No' }}
                     </td>
                 </tr>
                 @if ($getInvestigation->is_treatment == 1)
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Details</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->details }}
-                    </td>
-                </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Details</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getInvestigation->details }}
+                        </td>
+                    </tr>
                 @endif
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
@@ -472,7 +472,7 @@
                         <td width="50%" style="padding:5px;"><b>Risk Analysis Remark</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ $getInvestigation->risk_analysis_remark}}
+                            {{ $getInvestigation->risk_analysis_remark }}
                         </td>
                     </tr>
                 @endif
@@ -697,13 +697,7 @@
                         {{ Displaydateformat($getEHSVerify->date) }}
                     </td>
                 </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Choose Assignee</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($accident_report->action_submission_date) }}
-                    </td>
-                </tr>
+
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Action Taken</b></td>
                     <td width="2%" style="padding:5px;">:</td>

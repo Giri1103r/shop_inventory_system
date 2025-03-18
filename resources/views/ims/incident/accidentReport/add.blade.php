@@ -34,7 +34,8 @@
                                     <form method="POST" id="accidentReportAdd"
                                         action="{{ admin_url('accidentReport/add/submit') }}">
                                         @csrf
-
+                                        <input type="hidden" name="unit_id" id="hidden_unit_id">
+                                        <input type="hidden" name="department_id" id="hidden_department_id">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -77,7 +78,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Designation</label>
@@ -180,46 +180,43 @@
                         dataType: "json",
                         success: function(response) {
                             if (response.employee) {
-                                // Set Designation
                                 $('#designation').val(response.employee.designation);
 
-                                //  Reset Unit Dropdown Before Updating
-                                $('#unit_id').val('').prop('disabled',
-                                    false); // Make sure it resets first
-
-                                // Set Unit
+                                // Reset and Set Unit
+                                $('#unit_id').val('').prop('disabled', false);
                                 if (response.employee.unit_id) {
-                                    // If unit exists, check if it's already in the dropdown
+                                    // Check if the unit already exists in the dropdown
                                     if ($('#unit_id option[value="' + response.employee
                                             .unit_id + '"]').length > 0) {
                                         $('#unit_id').val(response.employee.unit_id).prop(
                                             'disabled', true);
                                     } else {
-                                        // Add the unit dynamically and select it
                                         $('#unit_id').append('<option value="' + response
-                                                .employee.unit_id + '">' + response.employee
-                                                .unit_name + '</option>')
+                                                .employee.unit_id + '">' +
+                                                response.employee.unit_name + '</option>')
                                             .val(response.employee.unit_id).prop('disabled',
                                                 true);
                                     }
-                                } else {
-                                    //  If no unit exists, keep dropdown enabled
-                                    $('#unit_id').val('').trigger('change').prop('disabled',
-                                        false);
-                                }
 
-                                // Set Department
+                                    // Store encrypted unit_id in the hidden input (for secure submission)
+                                    $('#hidden_unit_id').val(response.employee
+                                        .encrypted_unit_id);
+                                }
+                                // Reset and Set Department
                                 if (response.employee.department_id) {
                                     $('#department_id').html('<option value="' + response
-                                            .employee.department_id + '">' + response.employee
-                                            .department_name + '</option>')
-                                        .val(response.employee.department_id)
-                                        .prop('disabled', true);
+                                            .employee.department_id + '">' +
+                                            response.employee.department_name + '</option>')
+                                        .val(response.employee.department_id).prop('disabled',
+                                            true);
+
+                                    $('#hidden_department_id').val(response.employee
+                                        .encrypted_department_id);
                                 } else {
-                                    //  Reset department dropdown if no department found
                                     $('#department_id').html(
                                         '<option value="">Select Department</option>').prop(
                                         'disabled', false);
+                                    $('#hidden_department_id').val('');
                                 }
                             } else {
                                 Swal.fire({
@@ -239,9 +236,11 @@
                     });
                 } else {
                     $('#designation').val('');
-                    $('#unit_id').val('').prop('disabled', false); 
+                    $('#unit_id').val('').prop('disabled', false);
                     $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
                         false);
+                    $('#hidden_unit_id').val('');
+                    $('#hidden_department_id').val('');
                 }
             });
 
@@ -284,6 +283,8 @@
                         },
                         shift: {
                             required: true,
+                            minlength: 2,
+                            maxlength: 2000,
                             pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                         },
                         exact_location: {
@@ -321,7 +322,9 @@
                         },
                         shift: {
                             required: "Shift is required.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            minlength: "Shift Required must be exactly 2 characters.",
+                            maxlength: "Brief Description Required must be exactly 2000 characters.",
+                            pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                         },
                         location_id: {
                             required: "Accident Location is required.",
