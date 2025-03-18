@@ -199,7 +199,6 @@ class MonthlyForkLiftInspectionController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-
             Session::flash('success', 'Inspection Completed Successfully!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
@@ -214,11 +213,14 @@ class MonthlyForkLiftInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
+            $status_log = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
             $data = [
                 'inspection_details' => $inspection_details,
+                'status_log' => $status_log,
             ];
             return view('inspection.Safety.forklift_inspection_monthly.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));

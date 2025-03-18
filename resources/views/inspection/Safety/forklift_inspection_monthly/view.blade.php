@@ -399,6 +399,51 @@
                                             </div>
                                         </div>
                                     @endif
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
+
+                                        </div>
+                                        <div class="card">
+                                            @if (isset($status_log) && $status_log->isNotEmpty())
+                                                <div class="card-body">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>S.NO</th>
+                                                                <th>From Status</th>
+                                                                <th>To Status</th>
+                                                                <th>Remarks</th>
+                                                                <th>Approved By</th>
+                                                                <th>Created By</th>
+                                                                <th>Created At</th>
+                                                                <th>Updated At</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($status_log as $log)
+                                                                <tr>
+                                                                    <td>{{ $loop->iteration }}</td>
+                                                                    <td>{{ getInspectionStatus($log->from_status) }}</td>
+                                                                    <td>{{ getInspectionStatus($log->to_status) }}</td>
+                                                                    <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}</td>
+                                                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
+                                                                    <td>{{ displaydateformat($log->created_at) }}</td>
+                                                                    <td>{{ displaydateformat($log->updated_at) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <div class="card-body">
+                                                    <p class="text-white">{{ __('No status logs available.') }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>

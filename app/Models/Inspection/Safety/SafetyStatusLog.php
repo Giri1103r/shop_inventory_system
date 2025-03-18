@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SafetyStatusLog extends Model
 {
-    protected $table = 'safety_status_log';
+    protected $table = 'inspection_safety_status_log';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -21,4 +21,9 @@ class SafetyStatusLog extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function selectOne($id, $type)
+    {
+       return $this->where('inspection_id', $id)->where('type', $type)->get();
+    }
 }
