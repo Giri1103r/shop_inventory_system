@@ -1400,7 +1400,7 @@ if (!function_exists('getMonth')) {
             return $data;
         }
     }
-   
+
     if (!function_exists('getRRAACount')) {
 
         function getRRAACount()
@@ -1857,30 +1857,27 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getInspectionStatus')) {
         function getInspectionStatus($id)
         {
-            $status = '';
-            $badgeClass = 'badge';
-
             if ($id == WAITING_FOR_EHS_OFFICER_VERIFICATION) {
-                $status = 'Waiting For EHS Officer Verification';
-                $badgeClass = 'badge bg-primary';
+                return 'Waiting For EHS Officer Verification';
             } else if ($id == WAITING_FOR_CAPA_ACTION) {
-                $status = 'Waiting for CAPA Action';
-                $badgeClass = 'badge bg-danger';
+                return 'Waiting for CAPA Action';
             } else if ($id == WAITING_FOR_CAPA_VERIFICATION) {
-                $status = 'Waiting For CAPA Verification';
-                $badgeClass = 'badge bg-warning';
+                return 'Waiting For CAPA Verification';
             } else if ($id == WAITING_FOR_L1_VERIFICATION) {
-                $status = 'Waiting for L1 Manager Verification';
-                $badgeClass = 'badge bg-info';
+                return 'EHS Officer Approved - Waiting for Level one Manager Verification';
             } else if ($id == WAITING_FOR_L2_VERIFICATION) {
-                $status = 'Waiting for L2 Manager Verification';
-                $badgeClass = 'badge bg-info';
+                return 'Level One Manager Approved - Waiting for Leven two Manager Verification';
             } else if ($id == INSPECTION_APPROVED) {
-                $status = 'Inspection Approved';
-                $badgeClass = 'badge bg-success';
+                return 'Closed';
+            } else if ($id == EHS_OFFICER_REJECTED) {
+                return 'EHS Officer Rejected - Waiting For CAPA Action';
+            } else if ($id == L1_MANAGER_REJECTED) {
+                return 'Level One Manager Rejected - Waiting For CAPA Action';
+            } else if ($id == L2_MANAGER_REJECTED) {
+                return 'Level Two Manager Rejected - Waiting For CAPA Action';
             }
 
-            return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
+            return 'Inspection Creation';
         }
     }
 }

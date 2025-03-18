@@ -433,6 +433,11 @@ class Employee extends Model
     {
         return Employee::all();
     }
+
+    public function getEmployeeList()
+    {
+        return  $this->select('id','emp_name')->where('status',1)->get();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_employee'));

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Inspection\GembaWalkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
@@ -96,6 +97,24 @@ Route::group(['prefix' => 'audit/'], function () {
 });
 
 
+
+Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
+    Route::get('list', [GembaWalkController::class, 'index']);
+    Route::post('list', [GembaWalkController::class, 'index']);
+    Route::get('add', [GembaWalkController::class, 'add']);
+    Route::post('add/submit', [GembaWalkController::class, 'store']);
+    // Route::get('edit/{id}', [ChecklistSubTypeDataController::class, 'edit']);
+    // Route::post('edit/submit', [ChecklistSubTypeDataController::class, 'update']);
+    Route::get('view/{id}', [GembaWalkController::class, 'view']);
+    // Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
+    // Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
+    // Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
+    // Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
+    // Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
+    // Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
+    // Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
+    // Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
+});
 Route::group(['prefix' => 'environment/'], function () {
   Route::group(['prefix' => 'ambient-noise/'], function () {
     Route::get('list', [AmbientNoiseMonitoringController::class, 'index']);

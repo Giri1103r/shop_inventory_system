@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
+use App\Models\Master\Employee;
 use DB;
 use Exception;
 
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\File;
 use App\Models\User;
 
 class AdminController extends Controller
@@ -124,6 +124,47 @@ class AdminController extends Controller
         } catch (Exception $ex) {
             report($ex);
             return "Error";
+        }
+    }
+    public function signatureUpload(Request $request)
+    {
+        try {
+            $id = Auth::id();
+
+            $file = $request->file('signature_image');
+            if ($file != null) {
+              
+                $destinationPath = 'public/uploads/signatureupload';
+
+                if (!File::exists(public_path($destinationPath))) {
+                    File::makeDirectory(public_path($destinationPath), 0777, true, true);
+                }
+        
+                $ppe_file_path = null;
+        
+                if ($request->hasFile('signature_image')) {
+                    $signature_image = $request->file('signature_image');
+        
+                    $signature_image_name = time() . '_' . $signature_image->getClientOriginalName();
+                    $signature_image->move(public_path($destinationPath), $signature_image_name);
+        
+                    $signature_image_path = $destinationPath . '/' . $signature_image_name;
+                }
+        
+                $update_data['signature_upload'] = $signature_image_path;
+
+                User::where('id', $id)->update($update_data);
+                Employee::where('login_id', $id)->update($update_data);
+            }
+
+
+
+            Session::flash('success', 'User Signature is updated successfully!');
+            return redirect(admin_url('profile'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong please try again After some time!');
+            return redirect(admin_url('profile'));
         }
     }
     public function Update(Request $request)

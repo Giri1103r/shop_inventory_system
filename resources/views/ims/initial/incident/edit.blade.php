@@ -281,7 +281,7 @@
                                                     <input type="file" class="form-control " name="evidence[]"
                                                         id="evidence_0" multiple>
                                                     <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+                                                    <small>Allowed file types: png, jpeg, jpg, pdf, doc, docx,mp4</small>
                                                     <div class="preview-container mt-2 d-flex flex-wrap gap-2"
                                                         id="preview-container-0"></div>
                                                 </div>
@@ -355,7 +355,7 @@
             <input type="file" class="form-control "
                 name="evidence[]" id="evidence_${currentFileUploads}" multiple>
             <div class="text-danger"></div>
-            <small>Allowed file types: png, jpeg, jpg, pdf, doc, mp4</small>
+            <small>Allowed file types: png, jpeg, jpg, pdf, doc, docx,mp4</small>
             <button type="button" class="btn btn-danger btn-sm remove-upload-block">
                 <i class="fas fa-trash"></i>
             </button>
@@ -364,6 +364,15 @@
     `;
 
             $('#file-upload-container').append(newFileUploadBlock);
+
+            $('#evidence_' + currentFileUploads).rules("add", {
+                required: true,
+                extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
+                messages: {
+                    required: "This field is required.",
+                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc,docx mp4",
+                }
+            });
         });
 
         // Remove dynamically added file fields
@@ -374,7 +383,7 @@
         // Handle removing existing files
         $(document).on('click', '.remove-existing-file', function() {
             let fileId = $(this).data('id');
-            
+
             let fileBlock = $(this).closest('.file-upload-block');
 
             Swal.fire({

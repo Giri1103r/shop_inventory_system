@@ -132,24 +132,24 @@
                                                     <td>
                                                         @if($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
                                                             <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
-                                                            @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
-                                                        @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>
-                                                        @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
+                                                        @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Ehs Head  Approved</span>
+                                                        @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
                                                         @elseif($log['from_status'] == STATUS_OHC_CLOSE)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approved</span>
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head  Approved</span>
                                                         @endif
                                                     </td>
 
                                                     <td>
-                                                        @if($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
-                                                            <span class='badge bg-danger' style='font-size: 1.0em;'>Paramedics Rejected</span>
+                                                        @if($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Ehs Head  Approved</span>
+                                                        @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                                            <span class='badge bg-danger' style='font-size: 1.0em;'>Ehs Head  Rejected</span>
                                                         @elseif($log['to_status'] == STATUS_OHC_CLOSE)
                                                             <span class='badge bg-success' style='font-size: 1.0em;'>Close</span>
                                                         @endif

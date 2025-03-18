@@ -56,14 +56,13 @@ class AccidentReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name', 'ims_incident_status.status_name', 'ims_incident_status.bg_color','ims_accident_investigation.risk_analysis');
+        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name', 'ims_incident_status.status_name', 'ims_incident_status.bg_color', 'ims_accident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_accident_report.accident_status');
         $query = $query->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id');
         $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
-        // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -93,13 +92,16 @@ class AccidentReport extends Model
         if ($request->has('location_id') && $request->location_id) {
             $query = $query->where('ims_initial_accident_report.location_id', decryptId($request->location_id));
         }
-        if ($request->has('from_date') && $request->from_date) {
-            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+        if ($request->has('accident_status') && $request->accident_status) {
+            $query = $query->where('ims_initial_accident_report.accident_status', decryptId($request->accident_status));
+        }
+        if ($request->has('from_date_datepicker') && $request->from_date_datepicker) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date_datepicker)->startOfDay();
             $query = $query->where('ims_initial_accident_report.created_at', '>=', $fromDate);
         }
 
-        if ($request->has('to_date') && $request->to_date) {
-            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+        if ($request->has('to_date_datepicker') && $request->to_date_datepicker) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date_datepicker)->endOfDay();
             $query = $query->where('ims_initial_accident_report.created_at', '<=', $toDate);
         }
 
@@ -213,7 +215,7 @@ class AccidentReport extends Model
                 ->toArray();
             $data->team_member_names = implode(', ', $employees);
         }
-        
+
         return $data;
     }
     public function investigationassigned($accident_Id)
@@ -288,7 +290,7 @@ class AccidentReport extends Model
 
         return $data;
     }
-  
+
     public function getInvestigation($id)
     {
         $data = $this->select('ims_accident_investigation.*', 'masters_employee.emp_name as responsible_person')
@@ -358,7 +360,6 @@ class AccidentReport extends Model
             }
         }
 
-        // dd($data);
         return $data;
     }
     public function statuschange($id)
@@ -425,13 +426,16 @@ class AccidentReport extends Model
         if ($request->has('location_id') && $request->location_id) {
             $query = $query->where('ims_initial_accident_report.location_id', decryptId($request->location_id));
         }
-        if ($request->has('from_date') && $request->from_date) {
-            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
+        if ($request->has('accident_status') && $request->accident_status) {
+            $query = $query->where('ims_initial_accident_report.accident_status', decryptId($request->accident_status));
+        }
+        if ($request->has('from_date_datepicker') && $request->from_date_datepicker) {
+            $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date_datepicker)->startOfDay();
             $query = $query->where('ims_initial_accident_report.created_at', '>=', $fromDate);
         }
 
-        if ($request->has('to_date') && $request->to_date) {
-            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
+        if ($request->has('to_date_datepicker') && $request->to_date_datepicker) {
+            $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date_datepicker)->endOfDay();
             $query = $query->where('ims_initial_accident_report.created_at', '<=', $toDate);
         }
 

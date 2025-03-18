@@ -328,6 +328,10 @@ class User extends Authenticatable
     {
         return User::where('id', $empId)->pluck('email')->first();
     }
+    public function getSignature()
+    {
+        return User::where('id', Auth::id())->where('status',1)->first();
+    }
     public function exportdata()
     {
         $request = request();

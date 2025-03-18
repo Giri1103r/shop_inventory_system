@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', ' Medical Requisition Slip- Floor' )
+@section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
 
 
 @section('content')
@@ -13,12 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import>
-                        {{-- @endif --}}
+
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
+                                href="{{ admin_url('ohc/medical-requisition-slip/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -27,9 +25,20 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="document_number"
+                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <input type="text" name="document_number" id="document_number"
                                                 class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="issue_date"
+                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="rev_date"
+                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -61,8 +70,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('inspection.checklist_type_id')}}</th>
-                                        <th>{{__('inspection.checklist_type_name')}}</th>
+                                        <th>Doc.NO</th>
+                                        <th>Issue Date</th>
+                                        <th>Rev.Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -72,6 +82,7 @@
                             </table>
                         </div>
                     </div>
+
 
                 </div>
             </div>
@@ -113,16 +124,17 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('inspection/master/checklist-type/list') }}",
+                        url: "{{ admin_url('ohc/medical-requisition-slip/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.document_number = $('#document_number').val();
+                            d.issue_date = $('#issue_date').val();
+                            d.rev_date = $('#rev_date').val();
                             d.status = $('#status').val();
-
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -138,13 +150,19 @@
                         },
 
                         {
-                            data: 'category_id',
-                            name: 'category_id'
+                            data: 'doc_no',
+                            name: 'doc_no'
                         },
                         {
-                            data: 'category_name',
-                            name: 'category_name'
+                            data: 'issue_date',
+                            name: 'issue_date'
                         },
+                        {
+                            data: 'revision_date',
+                            name: 'revision_date'
+                        },
+
+
                         {
                             data: 'status',
                             name: 'status'
@@ -181,16 +199,20 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
+                                        va
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            "{{ admin_url('ohc/medical-requisition-slip/export/pdf') }}" +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -199,14 +221,17 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            "{{ admin_url('ohc/medical-requisition-slip/export/excel') }}" +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -268,7 +293,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
+                                url: "{{ admin_url('ohc/medical-requisition-slip/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -306,87 +331,6 @@
                             Swal.fire('Something went wrong', '', 'info');
                         }
                     })
-
-                });
-
-
-                /* Delete Record */
-                $(document).on('click', '.recordDelete', function() {
-
-                    var id = $(this).data('id');
-                    var login_id = $(this).data('login_id');
-
-                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
-                    var text = '{{ __('common.delete') }}';
-                    var btncolor = '#dc3545'
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        denyButtonColor: '#28a745',
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
-                                type: 'post',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                        .attr('content')
-                                },
-                                data: {
-                                    id: id,
-                                    login_id: login_id
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    if (data.status === 406 && data.responseJSON.msg ===
-                                        'module_exits') {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                        });
-                                    } else {
-                                        $.notify(data.responseJSON.msg, "error");
-                                    }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
 
                 });
 
