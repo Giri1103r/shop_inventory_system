@@ -349,7 +349,7 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $status = $request->is_passed;
+            $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $forklift_inspection = $this->forklift->capaVerifySubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);

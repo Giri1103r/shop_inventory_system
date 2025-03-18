@@ -417,7 +417,6 @@
                                                                 <th>Approved By</th>
                                                                 <th>Created By</th>
                                                                 <th>Created At</th>
-                                                                <th>Updated At</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -430,7 +429,6 @@
                                                                     <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}</td>
                                                                     <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
                                                                     <td>{{ displaydateformat($log->created_at) }}</td>
-                                                                    <td>{{ displaydateformat($log->updated_at) }}</td>
                                                                 </tr>
                                                             @endforeach
                                                         </tbody>

@@ -439,6 +439,16 @@
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
                                             name="id">
                                         <div class="row">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -464,29 +474,25 @@
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                             </div>
-                                        </div>
-                                        <div class="mt-3">
-                                            <p class="form-label">
-                                                {{ __('inspection.capa_verification_text') }}
-                                            </p>
-                                            <div class="mb-3 form-input">
-                                                <input type="radio" id="yes" name="is_passed"
-                                                    value="{{ 1 }}" class="validate-radio-required">
-                                                <label for="yes">YES</label>
 
-                                                <input type="radio" id="no" name="is_passed"
-                                                    value="{{ 0 }}" class="validate-radio-required">
-                                                <label for="no">NO</label>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                             </div>
                                         </div>
-                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
-                                        </div>
                                         <div class="submit-button" style="text-align: right;">
-                                            <button class="btn btn-success">Verify</button>
-                                            <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
                                         </div>
                                     </form>
                                 @endif
@@ -502,6 +508,16 @@
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
                                                     {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
                                             </div>
                                         </div>
 
@@ -528,6 +544,16 @@
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
                                                     {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
