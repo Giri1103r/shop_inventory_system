@@ -341,8 +341,7 @@
                             },
                             capacity: {
                                 required: true,
-                                minlength: 3,
-                                maxlength: 100,
+                                number: true,
                                 noSpaces: true,
                             },
 
@@ -387,8 +386,6 @@
                             },
                             capacity: {
                                 required: "{{ __('Capacity is Required') }}",
-                                minlength: "Minimum Characters should be 3",
-                                maxlength: "Maximum Characters should not exceed 100",
                             }
                         },
                         errorElement: 'span',

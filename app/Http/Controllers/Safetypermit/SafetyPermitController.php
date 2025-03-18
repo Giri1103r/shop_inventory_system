@@ -593,14 +593,9 @@ class SafetyPermitController extends Controller
                 );
                 $this->statuslog->create($insert_array);
             }
-
-
-
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-
-
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -613,12 +608,9 @@ class SafetyPermitController extends Controller
 
         try {
             $id = decryptId($request->id);
-
             $this->safetypermit->statuschange($id);
-
             return response()->json(['status' => 'success', 'msg' => __('Safety Permit status changed sucessfully')], 200);
         } catch (Exception $ex) {
-
             return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
         }
     }
@@ -631,7 +623,6 @@ class SafetyPermitController extends Controller
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
                 $confined_space_entry = json_decode($safetypermit->confined_space_entry);
-
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);

@@ -188,65 +188,68 @@
                                         </tbody>
                                     </table>
                                     <div class="row mt-3">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
-                                        </div>
-                                        <div class="row mb-2">
-                                            @if (isset($inspection_details->verified_by))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUserName($inspection_details->verified_by) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if (isset($inspection_details->created_at))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                            @if (isset($inspection_details->approved_by))
-                                                @if ($inspection_details->verified_by == $inspection_details->approved_by)
+                                        @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                            </div>
+                                            <div class="row mb-2">
+                                                @if (isset($inspection_details->verified_by))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label
-                                                                class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                                class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                             <div class="view_data">
-                                                                {{ getUsername($inspection_details->approved_by) }}
+                                                                {{ getUserName($inspection_details->verified_by) }}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 @endif
-                                            @endif
-                                            @if (isset($inspection_details->capa_recomendation))
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.capa_recomendation') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $inspection_details->capa_recomendation }}
+                                                @if (isset($inspection_details->created_at))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                            <div class="view_data">
+                                                                {{ Displaydateformat($inspection_details->created_at) }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @else
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">{{ __('inspection.remarks') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $inspection_details->remarks }}
+                                                @endif
+                                                @if (isset($inspection_details->approved_by))
+                                                    @if ($inspection_details->verified_by == $inspection_details->approved_by)
+                                                        <div class="col-md-4 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label
+                                                                    class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                                <div class="view_data">
+                                                                    {{ getUsername($inspection_details->approved_by) }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                                @if (isset($inspection_details->capa_recomendation))
+                                                    <div class="col-md-12 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $inspection_details->capa_recomendation }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @endif
-                                        </div>
+                                                @else
+                                                    <div class="col-md-12 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label">{{ __('inspection.remarks') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $inspection_details->remarks }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @endif
                                         @if (isset($inspection_details->capa_remarks))
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
@@ -396,6 +399,51 @@
                                             </div>
                                         </div>
                                     @endif
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
+
+                                        </div>
+                                        <div class="card">
+                                            @if (isset($status_log) && $status_log->isNotEmpty())
+                                                <div class="card-body">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>S.NO</th>
+                                                                <th>From Status</th>
+                                                                <th>To Status</th>
+                                                                <th>Remarks</th>
+                                                                <th>Approved By</th>
+                                                                <th>Created By</th>
+                                                                <th>Created At</th>
+                                                                <th>Updated At</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($status_log as $log)
+                                                                <tr>
+                                                                    <td>{{ $loop->iteration }}</td>
+                                                                    <td>{{ getInspectionStatus($log->from_status) }}</td>
+                                                                    <td>{{ getInspectionStatus($log->to_status) }}</td>
+                                                                    <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}</td>
+                                                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
+                                                                    <td>{{ displaydateformat($log->created_at) }}</td>
+                                                                    <td>{{ displaydateformat($log->updated_at) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <div class="card-body">
+                                                    <p class="text-white">{{ __('No status logs available.') }}</p>
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>

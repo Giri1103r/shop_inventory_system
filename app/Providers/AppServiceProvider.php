@@ -230,6 +230,9 @@ class AppServiceProvider extends ServiceProvider
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
 
+        //Status Log
+        defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
+
         View::composer('*', function ($view) {
 
             /**
