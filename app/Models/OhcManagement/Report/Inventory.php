@@ -170,6 +170,7 @@ class Inventory extends Model
         return $this->where('unit_id', 1)
                     ->where('status', 1)
                     ->whereColumn('balance', '<', 'threshold_limit')
+                    ->where('balance', '>', 0)
                     ->get();
     }
 

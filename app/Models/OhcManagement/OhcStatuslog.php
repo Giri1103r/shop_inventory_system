@@ -201,7 +201,7 @@ class OhcStatuslog extends Model
             'type' => TYPE_OHC_MEDICINE_REQUISITION,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_REQUISITION_STOCK_REQUEST,
-            'to_status' => STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
+            'to_status' => STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING,
             'remarks' =>  $request->stock_remarks,
             'created_by' => Auth::id(),
         ];
@@ -217,7 +217,7 @@ class OhcStatuslog extends Model
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_REQUISITION,
             'reference_id' => $id,
-            'from_status' => STATUS_OHC_PARAMEDICS_APPROVAL_PENDING,
+            'from_status' => STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING,
             'to_status' => $data['approve_status'],
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
