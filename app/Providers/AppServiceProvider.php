@@ -163,9 +163,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Requisition status
         defined('STATUS_OHC_REQUISITION_STOCK_REQUEST') or define('STATUS_OHC_REQUISITION_STOCK_REQUEST', 1);
-        defined('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING') or define('STATUS_OHC_PARAMEDICS_APPROVAL_PENDING', 2);
-        defined('STATUS_OHC_PARAMEDICS_APPROVED') or define('STATUS_OHC_PARAMEDICS_APPROVED', 3);
-        defined('STATUS_OHC_PARAMEDICS_REJECTED') or define('STATUS_OHC_PARAMEDICS_REJECTED', 4);
+        defined('STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING', 2);
+        defined('STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED') or define('STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED', 3);
+        defined('STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED') or define('STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED', 4);
         defined('STATUS_OHC_REQUISITION_OPEN') or define('STATUS_OHC_REQUISITION_OPEN', 5);
         defined('STATUS_OHC_REQUISITION_CLOSE') or define('STATUS_OHC_REQUISITION_CLOSE', 6);
         // Medical Certificate
@@ -176,7 +176,11 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
         // inspection ohc
-        defined('OHC_TYPE_WEEKLY_AMBULANCE') or define('OHC_TYPE_WEEKLY_AMBULANCE', 1);
+        defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
+        defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
+        defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
+        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 6);
+
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -222,9 +226,15 @@ class AppServiceProvider extends ServiceProvider
         defined('WAITING_FOR_L1_VERIFICATION') or define('WAITING_FOR_L1_VERIFICATION', 4);
         defined('WAITING_FOR_L2_VERIFICATION') or define('WAITING_FOR_L2_VERIFICATION', 5);
         defined('INSPECTION_APPROVED') or define('INSPECTION_APPROVED', 6);
+        defined('EHS_OFFICER_REJECTED') or define('EHS_OFFICER_REJECTED', 7);
+        defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
+        defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
+
+        //Status Log
+        defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
 
         View::composer('*', function ($view) {
 

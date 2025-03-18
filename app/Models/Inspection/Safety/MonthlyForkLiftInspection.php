@@ -27,6 +27,7 @@ class MonthlyForkLiftInspection extends Model
         'capacity',
         'sr_no',
         'description',
+        'remarks',
         'inspection_status',
         'capa_recomendation',
         'capa_remarks',
@@ -44,6 +45,7 @@ class MonthlyForkLiftInspection extends Model
         'created_at',
         'updated_at',
         'responses',
+        'capa_ehs_remarks'
     ];
 
     protected $attributes = [
@@ -163,6 +165,7 @@ class MonthlyForkLiftInspection extends Model
                 'approved_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -170,7 +173,7 @@ class MonthlyForkLiftInspection extends Model
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
-                'capa_recomendation' => $request->capa_recomendation,
+                'capa_recomendation' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -189,19 +192,21 @@ class MonthlyForkLiftInspection extends Model
 
     public function capaVerifySubmit($id, $status, $remarks)
     {
+        $request = request();
         if ($status == 1) {
             $update_array = [
                 'verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_L1_VERIFICATION
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
-                'capa_recomendation' => $remarks,
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -213,14 +218,15 @@ class MonthlyForkLiftInspection extends Model
             $update_array = [
                 'l1_manager_verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_L2_VERIFICATION
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
                 'l1_manager_verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -234,14 +240,15 @@ class MonthlyForkLiftInspection extends Model
                 'l2_manager_verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => INSPECTION_APPROVED
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
                 'l2_manager_verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);

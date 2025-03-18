@@ -69,7 +69,12 @@
                                             {{ isset($firstaidlocation->station_number) ? $firstaidlocation->station_number : '' }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('First Aid Box Number') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($firstaidlocation->first_aid_box_no) ? $firstaidlocation->first_aid_box_no : '' }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">

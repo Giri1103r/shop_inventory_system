@@ -82,7 +82,13 @@
                                                         class="form-control" placeholder="Station Number">
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">First Aid Box Number</label>
+                                                    <input type="text" name="first_aid_box_no" id="first_aid_box_no"
+                                                        class="form-control" placeholder="First Aid Box Number">
+                                                </div>
+                                            </div>
 
 
                                         </div>
@@ -193,6 +199,27 @@
                     station_master: {
                         required: true,
                     },
+                    first_aid_box_no: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/first-aid-box') }}',
+                            type: 'POST',
+                            data: function() {
+                                return {
+                                    _token: "{{ csrf_token() }}",
+                                    first_aid_box_no: $('#first_aid_box_no').val(),
+                                    unit_id: $('#unit_id').val(),
+                                    department_id: $('#department_id').val(),
+                                };
+                            }
+                          
+                        }
+
+                    },
+
                     station_number: {
                         required: true,
                         minlength: 3,
@@ -216,7 +243,14 @@
                         minlength: "Location Name must be at least 3 characters long.",
                         maxlength: "Location Name must not exceed 30 characters.",
                         pattern: "Location Name contains invalid characters.",
-                        remote:"Location Name Must Be Unique",
+                        remote: "Location Name Must Be Unique",
+                    },
+                    first_aid_box_no: {
+                        required: "First Aid Box Number is required.",
+                        minlength: "First Aid Box Number must be at least 3 characters long.",
+                        maxlength: "First Aid Box Number must not exceed 30 characters.",
+                        pattern: "First Aid Box Number contains invalid characters.",
+                        remote: "First Aid Box Number Must Be Unique",
                     },
                     department_id: {
                         required: "Department is required.",
@@ -233,7 +267,7 @@
                         minlength: "Station number must be at least 3 characters long.",
                         maxlength: "Station number must not exceed 20 characters.",
                         pattern: "Station number contains invalid characters.",
-                        remote:"Station Number Must Be Unique",
+                        remote: "Station Number Must Be Unique",
                     },
                 },
                 errorElement: 'span',

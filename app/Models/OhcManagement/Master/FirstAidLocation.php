@@ -25,6 +25,7 @@ class FirstAidLocation extends Model
         'location_id',
         'station_master',
         'station_number',
+        'first_aid_box_no',
         'status',
         'trash',
         'created_by',
@@ -132,9 +133,26 @@ class FirstAidLocation extends Model
 
     public function stationnumberexistUniqueCheck($station_number,$id)
     {
-        return $this->where('station_number', $station_number)
+        return $this->where('first_aid_box_no', $station_number)
             ->where('id', '!=', $id)
             ->get();
+    }
+
+    public function firstaidboxuniqueCheck($first_aid_box_no, $unit_id,$department_id)
+    {
+
+        return $this->where('first_aid_box_no', $first_aid_box_no)
+        ->where('unit_id', $unit_id)
+        ->where('department_id', $department_id)
+        ->get();
+    }
+
+    public function firstaidboxexistUniqueCheck($first_aid_box_no, $unit_id,$department_id,$id)
+    { return $this->where('first_aid_box_no', $first_aid_box_no)
+        ->where('unit_id', $unit_id)
+        ->where('department_id', $department_id)
+        ->where('id', '!=', $id)
+        ->get();
     }
 
     public function store()
@@ -147,6 +165,8 @@ class FirstAidLocation extends Model
             'location_id'     =>$request-> location_id,
             'station_master' =>$request->station_master,
             'station_number' =>$request->station_number ,
+            'first_aid_box_no' =>$request->first_aid_box_no ,
+
             'created_by'=>Auth::id(),
 
         );
@@ -164,6 +184,7 @@ class FirstAidLocation extends Model
             'location_id'     =>$request-> location_id,
             'station_master' =>$request->station_master,
             'station_number' =>$request->station_number ,
+            'first_aid_box_no' =>$request->first_aid_box_no ,
             'created_by'=>Auth::id(),
             'updated_by' => Auth::id()
         );
@@ -262,7 +283,15 @@ class FirstAidLocation extends Model
         return $data;
     }
 
+    public function getFirsaid()
+    {
 
+        $data = $this->where('status',1)
+
+            ->first();
+
+        return $data;
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_master_first_aid_location'));

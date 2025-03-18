@@ -45,7 +45,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('HSN Number') }}</label>
                                         <div class="view_data">
-                                            {{ isset($medicine->hsn) ? $medicine->hsn : '' }}
+                                            {{ isset($medicine_receiving->hsn_id) ? $medicine_receiving->hsn_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

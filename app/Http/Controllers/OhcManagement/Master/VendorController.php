@@ -74,12 +74,12 @@ class VendorController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                                 $btn = '<a href="' . admin_url('ohc/vendor/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
+                            }
+                            if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('ohc/vendor/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            }
 
                             return $btn;
                         })

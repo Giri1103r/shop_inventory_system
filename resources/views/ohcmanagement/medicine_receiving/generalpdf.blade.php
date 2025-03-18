@@ -165,7 +165,7 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>HSN Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ gethsn(isset($medicine_receiving->hsn_id) ? $medicine_receiving->hsn_id : '') }}</td>
+            <td width="48%" style="padding:5px;"> {{ (isset($medicine_receiving->hsn_id) ? $medicine_receiving->hsn_id : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Pack Details</b></td>

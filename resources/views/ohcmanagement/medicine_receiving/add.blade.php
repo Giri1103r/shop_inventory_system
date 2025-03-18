@@ -54,9 +54,9 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">HSN Number</label>
-                                                    <input type="text" name="hsn_display" id="hsn_id"
-                                                        class="form-control" readonly>
-                                                    <input type="hidden" name="hsn_id" id="hsn_hidden_id">
+                                                    <input type="text" name="hsn_id" id="hsn_id"
+                                                        class="form-control" >
+                                                 
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -148,40 +148,6 @@
                 minDate: new Date(),
 
             });
-        });
-
-        $('#medicine_id').on('change', function() {
-            var medicineId = $('#medicine_id').val();
-            console.log(medicineId);
-            if (medicineId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/medicine-receiving-form/hsn-number') }}",
-                    type: 'POST',
-                    data: {
-                        medicine_id: medicineId,
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log('Response data:', data);
-
-
-                        if (data && data.id && data.text && data.encrypted_id) {
-                            $('#hsn_id').val(data.text);
-                            $('#hsn_hidden_id').val(data.id);
-                        } else {
-                            alert('HSN data is incomplete or invalid.');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error(xhr);
-                        alert('Error fetching HSN number. Please try again.');
-                    },
-                });
-            } else {
-
-                $('#hsn_id').val('').prop('readonly', true);
-                $('#hsn_hidden_id').val('');
-            }
         });
 
         $('#medicine_id').on('change', function() {
