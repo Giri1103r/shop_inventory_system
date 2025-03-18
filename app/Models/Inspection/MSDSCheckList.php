@@ -113,11 +113,6 @@ class MSDSCheckList extends Model
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_msds_checklist'));
-
-        // static::created(function ($model) {
-        //     $uniqueId = 'MSDS-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-        //     $model->update(['serial_number' => $uniqueId]);
-        // });
     }
 
 }

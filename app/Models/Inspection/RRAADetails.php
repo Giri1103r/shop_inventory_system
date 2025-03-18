@@ -20,6 +20,17 @@ class RRAADetails extends Model
         'document_number',
         'issue_date',
         'revision_date',
+        'inspection_status',
+        'remarks',
+        'capa_recommendation',
+        'capa_remarks',
+        'capa_ehs_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'verified_by',
+        'approved_by',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -97,5 +108,58 @@ class RRAADetails extends Model
         );
       
         return $this->create($insert_array);
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_rraa_details.*');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query =  $query->Where(function ($query) use ($search) { 
+                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
+                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('document_number') && $request->document_number) {
+            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if ($request->has('issue_date') && $request->issue_date) {
+            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if ($request->has('revision_date') && $request->revision_date) {
+            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        }
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', decryptId($request->status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_rraa_details'));
     }
 }

@@ -102,7 +102,10 @@
                                                                 <label class="form-label require">Category</label>
                                                                 <select name="category[1]" class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Category</option>
-                                                                    <option value=""></option>
+                                                                    @foreach ($category as $item)
+                                                                        <option value="{{ encryptId($item->id) }}">
+                                                                            {{ $item->category_name }}</option>
+                                                                    @endforeach
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -119,12 +122,12 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Frequency</label>
-                                                                <select name="rraa_availability_status[1]"
+                                                                <select name="frequency[1]"
                                                                     class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Frequency</option>
-                                                                    @foreach ($businessList as $business)
-                                                                        <option value="{{ encryptId($business->id) }}">
-                                                                            {{ $business->businees_unit_name }}</option>
+                                                                    @foreach ($frequency as $item)
+                                                                        <option value="{{ encryptId($item->id) }}">
+                                                                            {{ $item->frequency_name }}</option>
                                                                     @endforeach
                                                                 </select>
                                                             </div>
@@ -143,7 +146,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Responsibility</label>
                                                                 <select name="emp_id[1]" id="emp_id"
-                                                                    class="form-control single-select" style="width:100%">
+                                                                    class="form-control single-select emp-select" style="width:100%">
                                                                     <option value="">Select Responsibility</option>
                                                                 </select>
                                                             </div>
@@ -216,6 +219,10 @@
             minDate: new Date(),
         });
 
+        $.validator.addMethod("noSpaces", function(value, element) {
+            return this.optional(element) || value.trim().length > 0;
+        }, "This field cannot contain only spaces");
+
         $('#emp_id').select2({
             ajax: {
                 url: '{{ admin_url('rraa/ohc_fire_environment_compliance/employeeid') }}',
@@ -241,11 +248,40 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
+        
+        function initEmployeeSelect2() {
+            $('.emp-select').select2({
+                ajax: {
+                    url: '{{ admin_url('rraa/ohc_fire_environment_compliance/employeeid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+        }
 
         $('#rraa_Add').validate({
             rules: {
                 document_number: {
                     required: true,
+                    noSpaces: true,
                 },
                 issue_date: {
                     required: true,
@@ -258,24 +294,29 @@
                 },
                 'ohs_compliance_index[1]': {
                     required: true,
+                    noSpaces: true,
                 },
                 'frequency[1]': {
                     required: true,
                 },
                 'scope[1]': {
                     required: true,
+                    noSpaces: true,
                 },
-                'responsibility[1]': {
+                'emp_id[1]': {
                     required: true,
                 },
                 'authority[1]': {
                     required: true,
+                    noSpaces: true,
                 },
                 'accountability[1]': {
                     required: true,
+                    noSpaces: true,
                 },
                 'remark[1]': {
                     required: true,
+                    noSpaces: true,
                 },
             },
             messages: {
@@ -300,17 +341,17 @@
                 'scope[1]': {
                     required: "Scope is Required",
                 },
-                'responsibility[1]': {
-                    required: "Scope is Required",
+                'emp_id[1]': {
+                    required: "Responsibility is Required",
                 },
                 'authority[1]': {
-                    required: "Scope is Required",
+                    required: "Authority is Required",
                 },
                 'accountability[1]': {
-                    required: "Scope is Required",
+                    required: "Accountability is Required",
                 },
                 'remark[1]': {
-                    required: "Scope is Required",
+                    required: "Remark is Required",
                 },
             },
             errorElement: 'span',
@@ -376,7 +417,10 @@
                                 <label class="form-label require">Category</label>
                                 <select name="category[${form_set_count}]" class="form-control single-select" style="width: 100%">
                                     <option value="">Select Category</option>
-                                    <option value=""></option>
+                                    @foreach ($category as $item)
+                                        <option value="{{ encryptId($item->id) }}">
+                                            {{ $item->category_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -393,10 +437,13 @@
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
                                 <label class="form-label require">Frequency</label>
-                                <select name="rraa_availability_status[${form_set_count}]"
+                                <select name="frequency[${form_set_count}]"
                                     class="form-control single-select" style="width: 100%">
                                     <option value="">Select Frequency</option>
-                                    <option value=""></option>
+                                    @foreach ($frequency as $item)
+                                        <option value="{{ encryptId($item->id) }}">
+                                            {{ $item->frequency_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -414,7 +461,7 @@
                             <div class="form-group form-input">
                                 <label class="form-label require">Responsibility</label>
                                 <select name="emp_id[${form_set_count}]"
-                                    class="form-control single-select" style="width:100%">
+                                    class="form-control single-select emp-select" style="width:100%">
                                     <option value="">Select Responsibility</option>
                                 </select>
                             </div>
@@ -453,37 +500,96 @@
 
             serial_number++;
 
-            $("input[name='item_code[" + form_set_count + "]']").rules('add', {
+            $('select[name^="emp_id["]').each(function() {
+                $(this).select2({
+                    placeholder: "Select Responsibility",
+                    width: '100%'
+                });
+            });
+
+            $('select[name^="category["]').each(function() {
+                $(this).select2({
+                    placeholder: "Select Category",
+                    width: '100%'
+                });
+            });
+
+            $('select[name^="frequency["]').each(function() {
+                $(this).select2({
+                    placeholder: "Select Frequency",
+                    width: '100%'
+                });
+            });
+
+            $("select[name='category[" + form_set_count + "]']").rules('add', {
                 required: true,
-                uniqueItemCode: true,
                 messages: {
-                    required: 'Item Code is required',
-                    uniqueItemCode: 'Item Code must be unique'
+                    required: 'Category is required',
                 }
             });
 
-            $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
+            $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
                 required: true,
                 messages: {
-                    required: 'Name of Chemical is required',
+                    required: 'Responsibility is required',
                 }
             });
 
-            $("select[name='rraa_availability_status[" + form_set_count + "]']").rules('add', {
+            $("input[name='ohs_compliance_index[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true,
+                messages: {
+                    required: 'OHS Compliance Index is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
+                }
+            });
+
+            $("select[name='frequency[" + form_set_count + "]']").rules('add', {
                 required: true,
                 messages: {
-                    required: 'RRAA Availability Status is required',
+                    required: 'Frequency is required',
+                }
+            });
+
+            $("input[name='scope[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true,
+                messages: {
+                    required: 'Scope is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
+                }
+            });
+
+            $("input[name='authority[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true,
+                messages: {
+                    required: 'Authority is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
+                }
+            });
+
+            $("input[name='accountability[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true,
+                messages: {
+                    required: 'Accountability is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
 
             $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                 required: true,
+                noSpaces: true,
                 messages: {
                     required: 'Remark is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
+
             form_set_count++;
-            updatePageIndices(); 
+            updatePageIndices();
+            initEmployeeSelect2();
         });
 
         $(document).on('click', '.remove-row', function() {
@@ -500,15 +606,21 @@
             }
             $(this).closest('.form-set').remove();
             updatePageIndices();
+          
         });
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
                 $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5)); 
                 
-                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']'); 
-                $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (index + 1) + ']');
-                $(this).find('select[name^="rraa_availability_status"]').attr('name', 'rraa_availability_status[' + (index + 1) + ']'); 
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
+                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']'); 
+                $(this).find('input[name^="ohs_compliance_index"]').attr('name', 'ohs_compliance_index[' + (index + 1) + ']');
+                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']'); 
+                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']'); 
+                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']'); 
+                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']'); 
+                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']'); 
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }
@@ -523,4 +635,3 @@
     });
 </script>
 @endpush
-

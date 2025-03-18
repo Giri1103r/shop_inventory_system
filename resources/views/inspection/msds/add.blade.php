@@ -129,7 +129,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4 mt-2">
+                                                        <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Remark</label>
                                                                 <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
@@ -176,10 +176,15 @@
             minDate: new Date(),
         });
 
+        $.validator.addMethod("noSpaces", function(value, element) {
+            return this.optional(element) || value.trim().length > 0;
+        }, "This field cannot contain only spaces");
+
         $('#msdsAdd').validate({
             rules: {
                 document_number: {
                     required: true,
+                    noSpaces: true,
                 },
                 issue_date: {
                     required: true,
@@ -189,16 +194,19 @@
                 },
                 'item_code[1]': {
                     required: true,
-                    uniqueItemCode: true ,
+                    uniqueItemCode: true,
+                    noSpaces: true,
                 },
                 'name_of_chemical[1]': {
                     required: true,
+                    noSpaces: true,
                 },
                 'msds_availability_status[1]': {
                     required: true,
                 },
                 'remark[1]': {
                     required: true,
+                    noSpaces: true,
                 },
             },
             messages: {
@@ -322,7 +330,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-12 mt-2">
                             <div class="form-group form-input">
                                 <label class="form-label require">Remark</label>
                                 <textarea name="remark[${form_set_count}]" class="form-control" placeholder="Remark" rows="3"></textarea>
@@ -335,19 +343,30 @@
 
             serial_number++;
 
+            $('select[name^="msds_availability_status["]').each(function() {
+                $(this).select2({
+                    placeholder: "Select MSDS Availability Status",
+                    width: '100%'
+                });
+            });
+
             $("input[name='item_code[" + form_set_count + "]']").rules('add', {
                 required: true,
                 uniqueItemCode: true,
+                noSpaces: true,
                 messages: {
                     required: 'Item Code is required',
-                    uniqueItemCode: 'Item Code must be unique'
+                    uniqueItemCode: 'Item Code must be unique',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
 
             $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
                 required: true,
+                noSpaces: true, 
                 messages: {
                     required: 'Name of Chemical is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
 
@@ -360,8 +379,10 @@
 
             $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                 required: true,
+                noSpaces: true,
                 messages: {
                     required: 'Remark is required',
+                    noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
             form_set_count++;
@@ -386,8 +407,9 @@
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(-5)); 
-                
+                $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(-5));
+
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
                 $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']'); 
                 $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (index + 1) + ']');
                 $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']'); 
