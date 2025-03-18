@@ -1410,6 +1410,34 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getCategoryname')) {
+
+        function getCategoryname($id)
+        {
+            $category_name = ChecklistType::where('id', $id)->where('trash', 'NO')->first();
+    
+            if ($category_name === null) {
+                return '';
+            }
+
+            return $category_name->category_name;
+        }
+    }
+
+    if (!function_exists('getFrequencyname')) {
+
+        function getFrequencyname($id)
+        {
+            $frequency_name = Frequency::where('id', $id)->where('trash', 'NO')->first();
+    
+            if ($frequency_name === null) {
+                return '';
+            }
+
+            return $frequency_name->frequency_name;
+        }
+    }
+    
 
     if (!function_exists('getUnitname')) {
 

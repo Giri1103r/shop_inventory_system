@@ -127,12 +127,10 @@ class MSDSController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
@@ -286,7 +284,7 @@ class MSDSController extends Controller
             $id = decryptId($id); 
 
             $msdsDetails = $this->msdsDetails->find($id);
-            // $msdsCheckList = $this->msdsCheckList->where('msds_details_id', $id)->get();
+            
             $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
             $data = [
@@ -335,17 +333,15 @@ class MSDSController extends Controller
                $msds = $this->msdsDetails->updates($id);
                 $msds_details = $this->msdsDetails->selectOne($id);
                $msdsId = $msds_details->id;
-            //    dd($msdsId);
+            
                $this->msdsCheckList->updates($msdsId);
 
                 Session::flash('success', __('Your data has been updated successfully'));
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));

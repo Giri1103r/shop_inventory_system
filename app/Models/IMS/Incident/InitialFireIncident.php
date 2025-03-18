@@ -58,7 +58,7 @@ class InitialFireIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status','ims_incident_status.bg_color','ims_initial_fireincident_investigation.risk_analysis');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
         // dd($query);
@@ -297,7 +297,7 @@ class InitialFireIncident extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
+                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('sr_no') && $request->sr_no) {
@@ -409,47 +409,40 @@ class InitialFireIncident extends Model
                 ->select('hiramoc.hira_id', 'hira.services as hira_name', 'hiramoc.moc_id', 'moc.services as moc_name')
                 ->get();
 
-            $mergedHiraMoc = [];
-            $tempHira = null;
-
+            $lastHira = null;
+            $lastMoc = null;
             foreach ($hiraMocRecords as $record) {
-                if ($record->hira_id != 0 && $record->moc_id == 0) {
-                    $tempHira = [
+
+                if ($record->hira_id) {
+                    $lastHira = [
                         'hira_id' => $record->hira_id,
                         'hira_name' => $record->hira_name,
                         'moc_id' => null,
-                        'moc_name' => null
+                        'moc_name' => null,
                     ];
-                } elseif ($record->hira_id == 0 && $record->moc_id != 0) {
-
-                    if ($tempHira) {
-                        $tempHira['moc_id'] = $record->moc_id;
-                        $tempHira['moc_name'] = $record->moc_name;
-                        $mergedHiraMoc[] = $tempHira;
-                        $tempHira = null;
-                    } else {
-
-                        $mergedHiraMoc[] = [
-                            'hira_id' => null,
-                            'hira_name' => null,
-                            'moc_id' => $record->moc_id,
-                            'moc_name' => $record->moc_name
-                        ];
-                    }
-                } else {
-
-                    $mergedHiraMoc[] = [
-                        'hira_id' => $record->hira_id,
-                        'hira_name' => $record->hira_name,
+                }
+                if ($record->moc_id) {
+                    $lastMoc = [
+                        'hira_id' => null,
+                        'hira_name' => null,
                         'moc_id' => $record->moc_id,
-                        'moc_name' => $record->moc_name
+                        'moc_name' => $record->moc_name,
                     ];
                 }
             }
-            if ($tempHira) {
-                $mergedHiraMoc[] = $tempHira;
+            $mergedHiraMoc = [];
+            if ($lastHira && $lastMoc) {
+                $mergedHiraMoc[] = [
+                    'hira_id' => $lastHira['hira_id'],
+                    'hira_name' => $lastHira['hira_name'],
+                    'moc_id' => $lastMoc['moc_id'],
+                    'moc_name' => $lastMoc['moc_name'],
+                ];
+            } elseif ($lastHira) {
+                $mergedHiraMoc[] = $lastHira;
+            } elseif ($lastMoc) {
+                $mergedHiraMoc[] = $lastMoc;
             }
-
             $data->hira_moc = $mergedHiraMoc;
 
             if (!empty($data->witness_id)) {
@@ -462,7 +455,6 @@ class InitialFireIncident extends Model
             }
         }
 
-        // dd($data);
         return $data;
     }
 

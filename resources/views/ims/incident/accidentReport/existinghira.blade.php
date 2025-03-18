@@ -15,7 +15,7 @@
             @endif
             <input type="hidden" name="accident_id" value="{{ $accident_id }}">
             {{-- @dd($selectedhira) --}}
-            <div class="row" id="existingdiv">
+            <div class="row" id="existingdiv" style="display: none;">
                 <label for="hira_id" class="form-label require">HIRA</label>
                 <div class="col-sm-7 form-input">
                     <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
@@ -156,7 +156,7 @@
 
                         if (data.hira) {
                             $('#likelihood').text(data.hira.likelihood);
-                            $('#riskLevel').text(data.hira.risk_levels);
+                            $('#riskLevel').text(data.risk_levels);
                             $('#hiraDetails').show(); // Show the details table
                         } else {
                             $('#hiraDetails').hide(); // Hide if no data
