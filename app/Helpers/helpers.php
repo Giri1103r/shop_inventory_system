@@ -1836,11 +1836,17 @@ if (!function_exists('getMonth')) {
             } else if ($id == WAITING_FOR_CAPA_VERIFICATION) {
                 return 'Waiting For CAPA Verification';
             } else if ($id == WAITING_FOR_L1_VERIFICATION) {
-                return 'Waiting for L1 Manager Verification';
+                return 'EHS Officer Approved - Waiting for Level one Manager Verification';
             } else if ($id == WAITING_FOR_L2_VERIFICATION) {
-                return 'Waiting for L2 Manager Verification';
+                return 'Level One Manager Approved - Waiting for Leven two Manager Verification';
             } else if ($id == INSPECTION_APPROVED) {
-                return 'Inspection Approved';
+                return 'Closed';
+            } else if ($id == EHS_OFFICER_REJECTED) {
+                return 'EHS Officer Rejected - Waiting For CAPA Action';
+            } else if ($id == L1_MANAGER_REJECTED) {
+                return 'Level One Manager Rejected - Waiting For CAPA Action';
+            } else if ($id == L2_MANAGER_REJECTED) {
+                return 'Level Two Manager Rejected - Waiting For CAPA Action';
             }
 
             return 'Inspection Creation';

@@ -205,7 +205,7 @@ class MonthlyForkLiftInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'inspection_status' => EHS_OFFICER_REJECTED,
                 'capa_ehs_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -226,7 +226,7 @@ class MonthlyForkLiftInspection extends Model
             $update_array = [
                 'l1_manager_verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -248,7 +248,7 @@ class MonthlyForkLiftInspection extends Model
             $update_array = [
                 'l2_manager_verified_by' => Auth::id(),
                 'updated_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);

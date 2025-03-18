@@ -399,9 +399,9 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                        class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection_details->l2_one_manager_verified_by) }}
+                                                        {{ getUserName($inspection_details->l2_manager_verified_by) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -426,7 +426,11 @@
                                     @endif
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION)
+                                @if (
+                                    $inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                        $inspection_details->inspection_status == L2_MANAGER_REJECTED ||
+                                        $inspection_details->inspection_status == EHS_OFFICER_REJECTED ||
+                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>

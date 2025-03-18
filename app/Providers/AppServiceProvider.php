@@ -226,6 +226,9 @@ class AppServiceProvider extends ServiceProvider
         defined('WAITING_FOR_L1_VERIFICATION') or define('WAITING_FOR_L1_VERIFICATION', 4);
         defined('WAITING_FOR_L2_VERIFICATION') or define('WAITING_FOR_L2_VERIFICATION', 5);
         defined('INSPECTION_APPROVED') or define('INSPECTION_APPROVED', 6);
+        defined('EHS_OFFICER_REJECTED') or define('EHS_OFFICER_REJECTED', 7);
+        defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
+        defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
