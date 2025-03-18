@@ -214,6 +214,7 @@ class AppServiceProvider extends ServiceProvider
 
         //Checklist
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
+        defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', getCheckListType('SAFETY_GALLERY_INSPECTION_CHECKLIST'));
         defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
         defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
         defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
@@ -235,6 +236,7 @@ class AppServiceProvider extends ServiceProvider
 
         //Status Log
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
+        defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
 
         View::composer('*', function ($view) {
 

@@ -3,26 +3,19 @@
 namespace App\Http\Controllers\Inspection\Safety;
 
 use Exception;
-use App\Models\UploadLog;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
-use App\Models\Inspection\Master\Frequency;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
-use App\Models\Master\ForkLiftType;
-use App\Models\Master\Location;
-use App\Models\Master\Unit;
-use Spatie\IcalendarGenerator\ValueObjects\RRule;
+use App\Models\Inspection\Safety\SafetyGalleryInspection;
 
-class MonthlyForkLiftInspectionController extends Controller
+class SafetyGalleryInsepctionController extends Controller
 {
-    private $forklift;
-    private $forklift_type;
-    private $upload_log;
+    private $safetygallery;
     private $shift;
     private $location;
     private $unit;
@@ -31,13 +24,9 @@ class MonthlyForkLiftInspectionController extends Controller
 
     public function __construct()
     {
-        $this->forklift = new MonthlyForkLiftInspection();
-        $this->upload_log = new UploadLog();
-        $this->shift = new Shift();
+        $this->safetygallery = new SafetyGalleryInspection();
         $this->location = new Location();
         $this->unit = new Unit();
-        $this->frequency = new Frequency();
-        $this->forklift_type = new ForkLiftType();
         $this->statusLog = new SafetyStatusLog();
     }
 
@@ -46,7 +35,7 @@ class MonthlyForkLiftInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->forklift->list();
+                    $data =  $this->safetygallery->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -106,21 +95,21 @@ class MonthlyForkLiftInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/forklift-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/safety-gallery-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
                         })
@@ -138,42 +127,35 @@ class MonthlyForkLiftInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Safety.forklift_inspection_monthly.list', $data);
+        return view('inspection.Safety.safety_gallery_inspection.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $checklistQuestions = getCheckListQuestion(FORKLIFT_INSPECTION_MONTHLY_CHECKLIST);
-            $options =  getoption(FORKLIFT_INSPECTION_MONTHLY_CHECKLIST);
-            $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
+            $checklistQuestions = getCheckListQuestion(SAFETY_GALLERY_INSPECTION_CHECKLIST);
+            $options =  getoption(SAFETY_GALLERY_INSPECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
-            $frequency = $this->frequency->getFrequency();
-            $forklifts = $this->forklift_type->getForkLift();
             $data = array(
                 'checklist_details' => $checklistQuestions,
-                'shift' => $shift,
                 'getoption' => $getoption,
                 'locations' => $location,
                 'units' => $unit,
-                'frequency' => $frequency,
-                'forklifts' => $forklifts,
             );
-            return view('inspection.Safety.forklift_inspection_monthly.add', $data);
+            return view('inspection.Safety.safety_gallery_inspection.add', $data);
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
     public function store(Request $request)
     {
         try {
-            $forklift_inspection = $this->forklift->store();
+            $safety_gallery_inspection = $this->safetygallery->store();
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $userIds = [
@@ -188,28 +170,28 @@ class MonthlyForkLiftInspectionController extends Controller
                     'title' => $mailsubject,
                     'message' => "Safety Inspection done by Fire Associates",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $forklift_inspection->id,
+                    'id' => $safety_gallery_inspection->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/forklift-inspection/monthly/view/' . encryptId($forklift_inspection->id)),
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
-                'inspection_id' => $forklift_inspection->id,
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $safety_gallery_inspection->id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.created_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -217,17 +199,17 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection_details = $this->forklift->selectOne($id);
-            $status_log = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            $status_log = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
             $data = [
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
             ];
-            return view('inspection.Safety.forklift_inspection_monthly.view', $data);
+            return view('inspection.Safety.safety_gallery_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -235,31 +217,32 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection_details = $this->forklift->selectOne($id);
+            $inspection_details = $this->safetygallery->selectOne($id);
             $data = [
                 'inspection_details' => $inspection_details,
             ];
-            return view('inspection.Safety.forklift_inspection_monthly.approval', $data);
+            return view('inspection.Safety.safety_gallery_inspection.approval', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
     public function EHSOfficerSubmit(Request $request)
     {
+
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->forklift->EHSOfficerUpdate($id);
-            $inspection_details = $this->forklift->selectOne($id);
+            $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
+            $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'ForkLift Inspeciton Approved Successfully';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/view/' . encryptId($inspection_details->id));
+                $message = 'safetygallery Inspeciton Approved Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
@@ -283,7 +266,7 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -292,11 +275,11 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', __('Something Went Wrong!'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -304,8 +287,8 @@ class MonthlyForkLiftInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $forklift_inspection = $this->forklift->capaSubmit($id);
-            $inspection_details = $this->forklift->selectOne($id);
+            $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
+            $inspection_details = $this->safetygallery->selectOne($id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -322,13 +305,13 @@ class MonthlyForkLiftInspectionController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -337,11 +320,11 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/forklift-inspecttion/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -351,17 +334,17 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $forklift_inspection = $this->forklift->capaVerifySubmit($id, $status, $remarks);
-            $inspection_details = $this->forklift->selectOne($id);
+            $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : 1;
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
@@ -386,7 +369,7 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -395,11 +378,11 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -409,17 +392,17 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $forklift_inspection = $this->forklift->levelOneManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->forklift->selectOne($id);
+            $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : 1;
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
@@ -444,7 +427,7 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -453,11 +436,11 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -467,15 +450,15 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $forklift_inspection = $this->forklift->levelTwoManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->forklift->selectOne($id);
+            $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
-                $message = 'ForkLift Inspeciton Approved Successfully!';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/view/' . encryptId($inspection_details->id));
+                $message = 'Safety Gallery Inspeciton Approved Successfully!';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
             $users = $inspection_details->created_by;
@@ -501,7 +484,7 @@ class MonthlyForkLiftInspectionController extends Controller
             notificationSave($notificationData);
             notificationSave($notificationData);
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -510,11 +493,30 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/monthly/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function UniqueCheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $resource_code = $request->resource_code;
+            $id = decryptId($request->id);
+            if ($request->id == '') {
+                $isUnique = $this->safetygallery->UniqueCheck($resource_code);
+                return response()->json($isUnique);
+            } else {
+                $data = [
+                    'category_name' => $resource_code,
+                    'id' => $id,
+                ];
+                $isUnique = $this->safetygallery->existUniqueCheck($data);
+                return response()->json($isUnique);
+            }
         }
     }
 }

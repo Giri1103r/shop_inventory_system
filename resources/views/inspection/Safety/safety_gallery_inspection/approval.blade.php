@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly ForkLift Inspection')
-@section('pageurl', admin_url('safety/forklift-inspection/monthly/list'))
+@section('title', 'Safety Gallery Inspection')
+@section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
 @section('content')
@@ -8,7 +8,9 @@
     </div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
+
         </div>
+
     </div>
 
     <div class="content-body  default-height">
@@ -21,7 +23,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-back>
+                                        href="{{ admin_url('safety/safety-gallery-inspection/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -29,7 +31,7 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.monthly_forklift_inspection') }}</h4>
+                                        <h4 class="text-white">{{ __('inspection.safety_gallery_inspection') }}</h4>
                                     </div>
                                 </div>
 
@@ -187,8 +189,6 @@
                                     </table>
                                 </div>
 
-
-
                                 @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
@@ -196,7 +196,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('safety/safety-gallery-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -223,7 +223,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('safety/safety-gallery-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -437,7 +437,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/submit') }}"
+                                        action="{{ admin_url('safety/safety-gallery-inspection/capa/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -461,7 +461,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('safety/safety-gallery-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -469,7 +469,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/reverify/submit') }}"
+                                        action="{{ admin_url('safety/safety-gallery-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -503,7 +503,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-one/verify/submit') }}"
+                                        action="{{ admin_url('safety/safety-gallery-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -539,7 +539,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-two/verify/submit') }}"
+                                        action="{{ admin_url('safety/safety-gallery-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"

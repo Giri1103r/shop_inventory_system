@@ -6,9 +6,9 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class MonthlyForkLiftInspection extends Model
+class SafetyGalleryInspection extends Model
 {
-    protected $table = 'inspection_forklift_inpsection_monthly';
+    protected $table = 'inspection_safety_gallery';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -18,13 +18,8 @@ class MonthlyForkLiftInspection extends Model
         'revision_data',
         'date_of_inspection',
         'location',
-        'shift',
-        'next_due',
         'unit',
-        'frequency',
-        'identification_no',
-        'forklift_type',
-        'capacity',
+        'resource_code',
         'sr_no',
         'description',
         'remarks',
@@ -57,7 +52,7 @@ class MonthlyForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_forklift_inpsection_monthly.*');
+        $query = $this->select('inspection_safety_gallery.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -71,13 +66,13 @@ class MonthlyForkLiftInspection extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_safety_gallery.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_safety_gallery.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_safety_gallery.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -85,25 +80,25 @@ class MonthlyForkLiftInspection extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_forklift_inpsection_monthly.rev_date', $columnorder);
+                    $query->orderBy('inspection_safety_gallery.rev_date', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_safety_gallery.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.document_number', $columnorder);
+                    $query = $query->orderBy('inspection_safety_gallery.doc_no', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.status', $columnorder);
+                    $query = $query->orderBy('inspection_safety_gallery.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_safety_gallery.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_safety_gallery.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.id', 'DESC');
+                    $query = $query->orderBy('inspection_safety_gallery.id', 'DESC');
                     break;
             }
         }
@@ -136,13 +131,8 @@ class MonthlyForkLiftInspection extends Model
             'doc_no' => $request->doc_no,
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
-            'shift' => decryptId($request->shift_id),
-            'next_due' => DBdateformat($request->next_due),
             'unit' => decryptId($request->unit_id),
-            'frequency' => decryptId($request->frequency_id),
-            'identification_no' => $request->identification_no,
-            'forklift_type' => decryptId($request->forklift_type),
-            'capacity' => $request->capacity,
+            'resource_code' => $request->resource_code,
             'created_by' => Auth::id(),
             'responses' => $respones,
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -255,9 +245,29 @@ class MonthlyForkLiftInspection extends Model
         }
     }
 
+    public function UniqueCheck($data)
+    {
+        $unique =  $this->where('resource_code',  $data)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        $unique =  $this->where('resource_code',  $data['category_name'])
+            ->where('id', '!=', ($data['id']))
+            ->get();
+
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_forklift_inpsection_monthly'));
+        static::addGlobalScope(new TrashScope('inspection_safety_gallery'));
     }
 }

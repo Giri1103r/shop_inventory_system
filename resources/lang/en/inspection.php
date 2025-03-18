@@ -54,4 +54,9 @@ return [
     'capa_reverifcation_remarks' => 'Capa Reverifcation Remarks',
     'ehs_officer_reverification' => 'EHS Officer Reverification',
     'status_log' => 'Status Log',
+    'resource_code' => 'Resource Code',
+    'safety_gallery_inspection' => 'Safety Gallery Inspection',
+
+
+
 ];
