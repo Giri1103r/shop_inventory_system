@@ -462,12 +462,12 @@ class EmployeecumPatientController extends Controller
             $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_id,
-                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                    'text' => $employee->emp_id ,
                 ];
             })
         );
     }
-    
+
     public function employeename(Request $request)
     {
         $emp_id = $request->input('empId');

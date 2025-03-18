@@ -38,25 +38,25 @@
                             {{ displaydateformat($value->request_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if ($value->approve_status ==STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
+                            @if ($value->approve_status ==STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
                             <p>{{ 'Stock Requested' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_REJECTED)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                            <p>{{ 'Ehs Head Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                            <p>{{ 'Ehs Head Approval Pending' }}</p>
                         @elseif($value->approve_status == STATUS_OHC_OPEN)
-                            <p>{{ 'Paramedics Approved' }}</p>
+                            <p>{{ 'Ehs Head Approved' }}</p>
                             @elseif($value->approve_status == STATUS_OHC_CLOSE)
                             <p>{{ 'Open' }}</p>
                         @endif
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if ($value->approve_status ==STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                            <p>{{ 'Paramedics Approval Pending' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)
-                            <p>{{ 'Paramedics Approved' }}</p>
-                        @elseif($value->approve_status == STATUS_OHC_PARAMEDICS_REJECTED)
-                            <p>{{ 'Paramedics Rejected' }}</p>
+                            @if ($value->approve_status ==STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                            <p>{{ 'Ehs Head Approval Pending' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                            <p>{{ 'Ehs Head Approved' }}</p>
+                        @elseif($value->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                            <p>{{ 'Ehs Head Rejected' }}</p>
                             @elseif($value->approve_status == STATUS_OHC_OPEN)
                             <p>{{ 'Open' }}</p>
 

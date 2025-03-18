@@ -46,24 +46,18 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="unit_id" id="unit_id" value="{{getUnitname(Auth::user()->unit_id)}}" class="form-control" readonly>
+
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        class=" form-control "value="{{getDepartment(Auth::user()->department_id)}}" readonly>
 
-                                                    </select>
+
+
                                                 </div>
                                             </div>
 
@@ -171,7 +165,7 @@
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </div>
-                                                               
+
 
                                                             </td>
                                                         </tr>
