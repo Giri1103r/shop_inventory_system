@@ -775,6 +775,58 @@
                                     </div>
                                 </div>
                             @endif
+
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status logs</h4>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Approved By</th>
+                                                    <th>Remarks</th>
+                                                    <th>Date</th>
+
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @if ($status_log->isEmpty())
+                                                    <tr>
+                                                        <td class="text-center" colspan="5">No data is available</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach ($status_log as $status)
+                                                        <tr>
+                                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}
+                                                            </td>
+                                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                @endif
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+
+
+                            </div>
                         </div>
                     </div>
                 </div>

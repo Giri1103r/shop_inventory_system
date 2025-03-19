@@ -349,14 +349,14 @@ class InitialFireIncidentController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+                
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
@@ -394,7 +394,7 @@ class InitialFireIncidentController extends Controller
                 $displayMedia = array_map(function ($media) use ($mediaOptions) {
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
-
+                $status_log = $this->Statuslog->selectOne($id,3);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -406,6 +406,7 @@ class InitialFireIncidentController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalincident' => $getEHSApprovalincident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.initial.firereport.view', $data);
@@ -491,7 +492,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -550,7 +551,7 @@ class InitialFireIncidentController extends Controller
             }
             return view('ims.initial.firereport.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            
         }
     }
 
@@ -647,7 +648,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -657,7 +658,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -868,7 +869,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1052,7 +1053,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1122,7 +1123,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1184,7 +1185,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                   'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1192,7 +1193,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1259,7 +1260,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1327,7 +1328,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                   'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1379,7 +1380,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1388,7 +1389,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1514,7 +1515,7 @@ class InitialFireIncidentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            
             report($ex);
         }
     }
@@ -1623,7 +1624,7 @@ class InitialFireIncidentController extends Controller
             $filename = "Initial Fire Incident.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
         }
     }
