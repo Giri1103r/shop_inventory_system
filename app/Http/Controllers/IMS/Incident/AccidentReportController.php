@@ -613,6 +613,7 @@ class AccidentReportController extends Controller
                 $teamMemberIds = explode(',', $ehsReview->team_member);
 
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
+                $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Investigation Assigned';
 
                 // Fetch incident details once, not inside the loop
@@ -645,7 +646,7 @@ class AccidentReportController extends Controller
                         'module' => 1,
                     )),
                     'web_link' => admin_url('accidentReport/investigation/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => array_to_string($teamMemberIds),
+                    'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);

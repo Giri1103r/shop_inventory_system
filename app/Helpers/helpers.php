@@ -1415,7 +1415,7 @@ if (!function_exists('getMonth')) {
         function getCategoryname($id)
         {
             $category_name = ChecklistType::where('id', $id)->where('trash', 'NO')->first();
-    
+
             if ($category_name === null) {
                 return '';
             }
@@ -1429,7 +1429,7 @@ if (!function_exists('getMonth')) {
         function getFrequencyname($id)
         {
             $frequency_name = Frequency::where('id', $id)->where('trash', 'NO')->first();
-    
+
             if ($frequency_name === null) {
                 return '';
             }
@@ -1437,7 +1437,7 @@ if (!function_exists('getMonth')) {
             return $frequency_name->frequency_name;
         }
     }
-    
+
 
     if (!function_exists('getUnitname')) {
 
@@ -1878,6 +1878,21 @@ if (!function_exists('getMonth')) {
             }
 
             return 'Inspection Creation';
+        }
+    }
+
+    if (!function_exists('getShiftname')) {
+
+        function getShiftname($shift_id)
+        {
+
+            $shift_name = DB::table('inspection_shift_option')->select('shift')->where('id', $shift_id)->where('trash', 'NO')->first();
+
+            if ($shift_name == null) {
+                return '';
+            } else {
+                return $shift_name->shift;
+            }
         }
     }
 }

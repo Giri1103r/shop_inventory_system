@@ -6,6 +6,7 @@ use App\Http\Controllers\Inspection\RRAAController;
 use App\Http\Controllers\Inspection\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
@@ -96,6 +97,25 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAssessmentController::class, 'statusChange']);
         Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
+    });
+
+    Route::group(['prefix' => '6s-analysis/'], function () {
+        Route::get('list', [AuditAnalysisController::class, 'index']);
+        Route::post('list', [AuditAnalysisController::class, 'index']);
+        Route::get('add', [AuditAnalysisController::class, 'add']);
+        Route::post('add/submit', [AuditAnalysisController::class, 'store']);
+        Route::get('edit/{id}', [AuditAnalysisController::class, 'edit']);
+        Route::post('edit/submit', [AuditAnalysisController::class, 'update']);
+        Route::get('view/{id}', [AuditAnalysisController::class, 'view']);
+        Route::post('delete', [AuditAnalysisController::class, 'delete']);
+        Route::get('export/excel', [AuditAnalysisController::class, 'exportExcel']);
+        Route::get('export/pdf', [AuditAnalysisController::class, 'exportPdf']);
+        Route::get('sample_download', [AuditAnalysisController::class, 'DownloadSample']);
+        Route::get('import', [AuditAnalysisController::class, 'import']);
+        Route::post('import/Submit', [AuditAnalysisController::class, 'importSubmit']);
+        Route::post('status', [AuditAnalysisController::class, 'statusChange']);
+        Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
+        Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
     });
 });
 
@@ -232,5 +252,4 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('status', [RRAAController::class, 'statusChange']);
     Route::post('unique', [RRAAController::class, 'Uniquecheck']);
     Route::get('employeeid', [RRAAController::class, 'employeeid']);
-
 });

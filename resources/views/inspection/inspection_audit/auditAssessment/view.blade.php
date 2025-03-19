@@ -1,23 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Checklist Show')
-@section('pageurl', admin_url('ptw/checklistmaster/list'))
-
-@push('style')
-    <style>
-        .view_label {
-            display: block;
-
-        }
-
-        .image-wrapper {
-            display: inline-block;
-            margin: 5px;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-    </style>
-@endpush
-
+@section('title', '6S Audit Assessment Show')
+@section('pageurl', admin_url('audit/assessment/list'))
 
 @section('content')
     <div class="clearfix"></div>
@@ -39,7 +22,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ptw/checklistmaster/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('audit/assessment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -48,57 +31,100 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Equipment Checklist</h4>
+                                        <h4 class="text-white">6S Audit Assessment</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label
-                                            class="form-label view_label">{{ __('inspection.checklist_type_id') }}</label>
+                                        <label class="form-label view_label">Audit ID</label>
                                         <div class="view_data">
-                                            {{ isset($checklist_type->category_id) ? $checklist_type->category_id : '' }}
+                                            {{ isset($audit_assessment->audit_id) ? $audit_assessment->audit_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label
-                                            class="form-label view_label">{{ __('inspection.checklist_type_name') }}</label>
+                                        <label class="form-label view_label">Name Of The Shop Floor</label>
                                         <div class="view_data">
-                                            {{ isset($checklist_type->category_name) ? $checklist_type->category_name : '' }}
+                                            {{ isset($audit_assessment->floor_name) ? $audit_assessment->floor_name : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
+                                        <label class="form-label view_label">Date Of Audit</label>
                                         <div class="view_data">
-                                            {{ getusername($checklist_type->created_by) }}
+                                            {{ displayDateformat($audit_assessment->audit_date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <label class="form-label view_label">Shift</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($checklist_type->created_at) }}
+                                            {{ getShiftname(isset($audit_assessment->shift_id) ? $audit_assessment->shift_id : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input custom-image-container">
-                                        <label class="form-label view_label">{{ __('inspection.image') }}</label>
-                                        @foreach ($checklist_images as $checklist_image)
-                                            <div class="image-wrapper">
-                                                <img src="{{ admin_url('public/' . $checklist_image->file_path) }}"
-                                                    alt="Checklist Type" class="img-fluid custom-image" />
-                                            </div>
-                                        @endforeach
-                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.status') }}</label>
+                                        <label class="form-label view_label">Floor Executive on Duty</label>
                                         <div class="view_data">
-                                            @if ($checklist_type->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
+                                            {{ getUsername(isset($audit_assessment->floor_executive) ? $audit_assessment->floor_executive : '') }}
 
                                         </div>
                                     </div>
+                                    @php
+                                        $user_response = json_decode($audit_assessment->checklist, true);
+                                    @endphp
+                                    <table class="container p-5">
+                                        <thead>
+                                            <tr>
+
+
+                                                <th colspan="5"
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Check Points
+                                                </th>
+
+                                                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                                                    class="require">
+                                                    YES/NO/NA
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php $srNo = 1; @endphp
+                                            @foreach ($user_response as $subcategory => $questions)
+                                                @php
+                                                    $rowCount = count($questions);
+                                                    $firstRow = true;
+                                                @endphp
+                                                @foreach ($questions as $questionId => $answer)
+                                                    <tr>
+                                                        @if ($firstRow)
+                                                            <td rowspan="{{ $rowCount }}"
+                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                                                {{ GetSubChecklistTypeName($subcategory) }}
+                                                            </td>
+                                                            @php
+                                                                $srNo++;
+                                                                $firstRow = false;
+                                                            @endphp
+                                                        @endif
+                                                        <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                                                            {{ GetChecklistTypeDate($questionId) }}
+                                                        </td>
+                                                        <td
+                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                            @if ($answer == 'YES')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($answer == 'NO')
+                                                                <span style="color: red; font-size: 20px;">X</span>
+                                                            @elseif ($answer == 'N/A')
+                                                                <span
+                                                                    style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

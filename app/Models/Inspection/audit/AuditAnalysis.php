@@ -6,7 +6,7 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class AuditAssessment extends Model
+class AuditAnalysis extends Model
 {
 
     protected $table = 'inspection_audit';

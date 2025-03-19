@@ -86,7 +86,7 @@ class AuditAssessmentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-
+dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -168,11 +168,11 @@ class AuditAssessmentController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_subtype =   $this->audit_assessment->selectOne($id);
+                $audit_assessment =   $this->audit_assessment->selectOne($id);
 
 
                 $data = array(
-                    'checklist_subtype' => $checklist_subtype,
+                    'audit_assessment' => $audit_assessment,
                 );
             }
             return view('inspection.inspection_audit.auditAssessment.view', $data);
@@ -226,18 +226,6 @@ class AuditAssessmentController extends Controller
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('audit/assessment/list'));
-        }
-    }
-
-    public function delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $this->checklist_subtype->deleterecord($id);
-            $this->ptw_sub_cat->delete_all($id);
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category Successfully Deleted'], 200);
-        } catch (Exception $ex) {
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
 

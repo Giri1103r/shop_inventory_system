@@ -426,8 +426,10 @@
                                                                     <td>{{ getInspectionStatus($log->from_status) }}</td>
                                                                     <td>{{ getInspectionStatus($log->to_status) }}</td>
                                                                     <td>{{ $log->remarks ?? 'N/A' }}</td>
-                                                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}</td>
-                                                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
+                                                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
+                                                                    </td>
+                                                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
+                                                                    </td>
                                                                     <td>{{ displaydateformat($log->created_at) }}</td>
                                                                 </tr>
                                                             @endforeach
