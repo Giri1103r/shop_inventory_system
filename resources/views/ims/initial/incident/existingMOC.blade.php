@@ -23,7 +23,7 @@
                         @if ($selectedhira != null)
                             @foreach ($hiraList as $hira)
                                 <option value="{{ encryptId($hira->id) }}"
-                                    {{ $selectedhira->hira_id == $hira->id ? 'selected' : '' }}>
+                                    {{ $selectedhira->moc_id == $hira->id ? 'selected' : '' }}>
                                     {{ $hira->services }}
                                 </option>
                             @endforeach
@@ -120,7 +120,7 @@
                         alert("MOC saved successfully!");
                         $('#saved_hira_id').val(response
                             .moc_id); // Update the hidden input
-                        $('#hiraModal').modal('hide');
+                        $('#mocModal').modal('hide');
                     } else {
                         alert("Failed to save MOC: " + response.message);
                     }

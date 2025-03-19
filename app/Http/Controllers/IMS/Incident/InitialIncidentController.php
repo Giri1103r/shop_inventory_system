@@ -182,7 +182,7 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -756,7 +756,7 @@ class InitialIncidentController extends Controller
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', 2)->first();
 
-            // dd($newHiraList,$inc_id);
+           
 
             $selectedhira = $this->hiramoc
                 ->select('id', 'moc_id', 'incident_id', 'hiramoc_status')
@@ -776,7 +776,6 @@ class InitialIncidentController extends Controller
     public function saveHira(Request $request)
     {
         try {
-
 
 
             $HiraMoc = new HiraMoc();
