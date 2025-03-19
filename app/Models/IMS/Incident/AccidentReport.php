@@ -417,18 +417,7 @@ class AccidentReport extends Model
         $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
-        $org_total =  $query;
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('accident_report_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+     
         if ($request->has('accident_report_no') && $request->accident_report_no) {
             $query = $query->where('accident_report_no',  $request->accident_report_no);
         }

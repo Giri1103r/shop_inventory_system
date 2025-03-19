@@ -601,9 +601,9 @@ class InitialFireIncidentController extends Controller
 
 
             if ($ehsReview->team_member) {
+                
                 $teamMemberIds = explode(',', $ehsReview->team_member);
-
-                $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email']);
+                $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
                 $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Investigation Assigned';
 
@@ -1144,7 +1144,6 @@ class InitialFireIncidentController extends Controller
             $incident = $this->initialfireincident->updateStatus($fire_inicdent_report_id, $incident_status);
             if ($ehsReview->team_member) {
                 $teamMemberIds = explode(',', $ehsReview->team_member);
-
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
 
                 // Extract login IDs into an array for notification

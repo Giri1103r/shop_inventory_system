@@ -64,13 +64,23 @@ class AccidentInvestigationInjury extends Model
                 ];
                 $saveinjuryData = $this->create($insert_array);
 
-                $inj_person_arr[] = decryptId($injuryPersonData['injury_person_id']);
+                if (decryptId($injuryPersonData['injury_person_type']) == 1 || decryptId($injuryPersonData['injury_person_type']) == 2) {
+
+                    $inj_person_arr[] = decryptId($injuryPersonData['injury_person_id']);
+                } elseif (decryptId($injuryPersonData['injury_person_type']) == 3) {
+                    $inj_person_arr[] = $injuryPersonData['injury_person_name'];
+                }
 
                 $injdata = [
                     'injury_id' => $saveinjuryData->id,
                     'status' => 'Y',
                 ];
-                $updtinjBody = $IncidentBodyParts->where(['injury_person_id' => $saveinjuryData->injury_person_id, 'status' => 'T'])->update($injdata);
+                if (decryptId($injuryPersonData['injury_person_type']) == 1 || decryptId($injuryPersonData['injury_person_type']) == 2) {
+
+                    $updtinjBody = $IncidentBodyParts->where(['injury_person_id' => $saveinjuryData->injury_person_id, 'status' => 'T'])->update($injdata);
+                } elseif (decryptId($injuryPersonData['injury_person_type']) == 3) {
+                    $updtinjBody = $IncidentBodyParts->where(['injury_person_name' => $saveinjuryData->injury_person_name, 'status' => 'T'])->update($injdata);
+                }
             }
         }
         $IncidentBodyParts->updateStatusForIncident(decryptId($accident_investigationId), $inj_person_arr);
@@ -90,28 +100,25 @@ class AccidentInvestigationInjury extends Model
     public function getBodypartsInjuryPerson($id)
     {
         return $this->select(
-                'ims_accident_investigation_injury.*',
-                DB::raw('COALESCE(masters_employee.emp_name, masters_work.emp_name) as emp_name'),
-                DB::raw('COALESCE(masters_employee.emp_id, masters_work.emp_id) as emp_id'),
-                DB::raw('COALESCE(masters_employee.designation, masters_work.designation) as designation'),
-                'masters_department.department_name',
-                'ims_accident_body_parts.imgMapdata',
-                'ims_accident_body_parts.body_part_image'
-            )
-            ->leftJoin('masters_employee', function($join) {
+            'ims_accident_investigation_injury.*',
+            DB::raw('COALESCE(masters_employee.emp_name, masters_work.emp_name) as emp_name'),
+            DB::raw('COALESCE(masters_employee.emp_id, masters_work.emp_id) as emp_id'),
+            DB::raw('COALESCE(masters_employee.designation, masters_work.designation) as designation'),
+            'masters_department.department_name',
+            'ims_accident_body_parts.imgMapdata',
+            'ims_accident_body_parts.body_part_image'
+        )
+            ->leftJoin('masters_employee', function ($join) {
                 $join->on('ims_accident_investigation_injury.injury_person_id', '=', 'masters_employee.id')
-                     ->where('ims_accident_investigation_injury.injury_person_type', '=', 1);
+                    ->where('ims_accident_investigation_injury.injury_person_type', '=', 1);
             })
-            ->leftJoin('masters_work', function($join) {
+            ->leftJoin('masters_work', function ($join) {
                 $join->on('ims_accident_investigation_injury.injury_person_id', '=', 'masters_work.id')
-                     ->where('ims_accident_investigation_injury.injury_person_type', '=', 2);
+                    ->where('ims_accident_investigation_injury.injury_person_type', '=', 2);
             })
             ->leftJoin('masters_department', 'ims_accident_investigation_injury.injury_person_department_id', '=', 'masters_department.id')
             ->leftJoin('ims_accident_body_parts', 'ims_accident_investigation_injury.id', '=', 'ims_accident_body_parts.injury_id')
             ->where('accident_investigation_id', $id)
             ->get();
     }
-    
-
-   
 }
