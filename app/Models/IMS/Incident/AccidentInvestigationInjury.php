@@ -58,7 +58,7 @@ class AccidentInvestigationInjury extends Model
                     'injury_person_id' => decryptId($injuryPersonData['injury_person_id']),
                     'injury_person_name' => $injuryPersonData['injury_person_name'],
                     'injury_person_designation' => $injuryPersonData['injury_person_designation'],
-                    'injury_person_department_id' => decryptId($injuryPersonData['injury_person_department_id']),
+                    'injury_person_department_id' => $injuryPersonData['injury_person_department_id'],
                     'nature_of_injury' => decryptId($injuryPersonData['nature_of_injury']),
                     'created_by' => Auth::id()
                 ];
@@ -104,7 +104,6 @@ class AccidentInvestigationInjury extends Model
             DB::raw('COALESCE(masters_employee.emp_name, masters_work.emp_name) as emp_name'),
             DB::raw('COALESCE(masters_employee.emp_id, masters_work.emp_id) as emp_id'),
             DB::raw('COALESCE(masters_employee.designation, masters_work.designation) as designation'),
-            'masters_department.department_name',
             'ims_accident_body_parts.imgMapdata',
             'ims_accident_body_parts.body_part_image'
         )
@@ -116,7 +115,6 @@ class AccidentInvestigationInjury extends Model
                 $join->on('ims_accident_investigation_injury.injury_person_id', '=', 'masters_work.id')
                     ->where('ims_accident_investigation_injury.injury_person_type', '=', 2);
             })
-            ->leftJoin('masters_department', 'ims_accident_investigation_injury.injury_person_department_id', '=', 'masters_department.id')
             ->leftJoin('ims_accident_body_parts', 'ims_accident_investigation_injury.id', '=', 'ims_accident_body_parts.injury_id')
             ->where('accident_investigation_id', $id)
             ->get();

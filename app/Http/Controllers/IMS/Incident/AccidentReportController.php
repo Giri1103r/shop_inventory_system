@@ -710,7 +710,6 @@ class AccidentReportController extends Controller
     public function investigationSubmit(Request $request)
     {
         try {
-
             $incident_id = null;
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
