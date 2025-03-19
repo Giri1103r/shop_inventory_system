@@ -234,9 +234,9 @@ class AppServiceProvider extends ServiceProvider
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
 
-        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 6);
+        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
 
-        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 7);
+        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
 
         //Status Log
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
