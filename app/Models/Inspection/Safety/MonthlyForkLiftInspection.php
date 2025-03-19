@@ -93,8 +93,8 @@ class MonthlyForkLiftInspection extends Model
                 case "document_number":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.document_number', $columnorder);
                     break;
-                case "status":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.status', $columnorder);
+                case "inspection_status":
+                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.inspection_status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.created_by', $columnorder);

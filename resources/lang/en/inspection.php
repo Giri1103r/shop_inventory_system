@@ -54,4 +54,12 @@ return [
     'capa_reverifcation_remarks' => 'Capa Reverifcation Remarks',
     'ehs_officer_reverification' => 'EHS Officer Reverification',
     'status_log' => 'Status Log',
+
+    'msds' => 'MSDS',
+    'ser_no' => 'Serial Number',
+    'item_code' => 'Item Code',
+    'name_of_chemical' => 'Name of Chemical',
+    'msds_avl_sts' => 'MSDS Availability Status',
+
+    'rraa' => 'RRAA'
 ];
