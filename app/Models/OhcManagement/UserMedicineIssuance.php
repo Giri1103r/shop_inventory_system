@@ -100,6 +100,19 @@ class UserMedicineIssuance extends Model
 
         return $this->create($insert_array);
     }
+    public function unitstore()
+    {
+        $request = request();
+
+        $insert_array = [
+            'unit_id' =>  1,
+            'department_id' => 1,
+            'issue_date' => DBdateformat($request->issue_date),
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_array);
+    }
     public function issuestore($user_medicine_requisition)
     {
         $request = request();
@@ -112,6 +125,21 @@ class UserMedicineIssuance extends Model
         ];
 
         return $this->create($insert_array);
+
+    }
+    public function unitissuestore($user_medicine_requisition)
+    {
+        $request = request();
+
+        $insert_array = [
+            'unit_id' =>  1,
+            'department_id' => 1,
+            'issue_date' => DBdateformat($request->issue_date),
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_array);
+
     }
     public function updates($id)
     {

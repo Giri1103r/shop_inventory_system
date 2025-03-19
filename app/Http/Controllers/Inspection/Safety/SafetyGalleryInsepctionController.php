@@ -1,0 +1,522 @@
+<?php
+
+namespace App\Http\Controllers\Inspection\Safety;
+
+use Exception;
+use App\Models\Master\Unit;
+use Illuminate\Http\Request;
+use App\Models\Master\Location;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
+use App\Models\Inspection\Safety\SafetyStatusLog;
+use App\Models\Inspection\Safety\SafetyGalleryInspection;
+
+class SafetyGalleryInsepctionController extends Controller
+{
+    private $safetygallery;
+    private $shift;
+    private $location;
+    private $unit;
+    private $frequency;
+    private $statusLog;
+
+    public function __construct()
+    {
+        $this->safetygallery = new SafetyGalleryInspection();
+        $this->location = new Location();
+        $this->unit = new Unit();
+        $this->statusLog = new SafetyStatusLog();
+    }
+
+    public function Index(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+                try {
+                    $data =  $this->safetygallery->list();
+                    $datatables = DataTables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active</span>";
+                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                            }
+                            // }
+                            return $text;
+                        })
+                        ->addColumn('created_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('issue_date', function ($row) {
+                            return Displaydateformat($row->issue_date);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('inspection_status', function ($row) {
+                            $text = '';
+                            switch ($row->inspection_status) {
+                                case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_ACTION:
+                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
+                                    break;
+                                case WAITING_FOR_L1_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
+                                    break;
+                                case WAITING_FOR_L2_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
+                                    break;
+                                case INSPECTION_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
+                                    break;
+                                case L2_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case L1_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case EHS_OFFICER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            $btn = '<a href="' . admin_url('safety/safety-gallery-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'issue_date'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+
+        $data = array();
+        return view('inspection.Safety.safety_gallery_inspection.list', $data);
+    }
+
+    public function add(Request $request)
+    {
+        try {
+            $checklistQuestions = getCheckListQuestion(SAFETY_GALLERY_INSPECTION_CHECKLIST);
+            $options =  getoption(SAFETY_GALLERY_INSPECTION_CHECKLIST);
+            $getoption = string_to_array($options->type);
+            $location = $this->location->getLocationName();
+            $unit = $this->unit->getUnit();
+            $data = array(
+                'checklist_details' => $checklistQuestions,
+                'getoption' => $getoption,
+                'locations' => $location,
+                'units' => $unit,
+            );
+            return view('inspection.Safety.safety_gallery_inspection.add', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $safety_gallery_inspection = $this->safetygallery->store();
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $userIds = [
+                'users' => $ehsOfficers,
+            ];
+            $mailsubject = 'Safety Inspection';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Safety Inspection done by Fire Associates",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $safety_gallery_inspection->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $safety_gallery_inspection->id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.created_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            $status_log = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+            $data = [
+                'inspection_details' => $inspection_details,
+                'status_log' => $status_log,
+            ];
+            return view('inspection.Safety.safety_gallery_inspection.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function approvals(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            $data = [
+                'inspection_details' => $inspection_details,
+            ];
+            return view('inspection.Safety.safety_gallery_inspection.approval', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function EHSOfficerSubmit(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+            $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($request->is_passed == 1) {
+                $message = 'safetygallery Inspeciton Approved Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
+                $to_status = INSPECTION_APPROVED;
+            } else {
+                $message = 'Inspection Recommended for the CAPA Action';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = WAITING_FOR_CAPA_ACTION;
+            }
+            $userIds = [
+                'users' => $inspection_details->created_by,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 2,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('Something Went Wrong!'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function CAPASubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            $ehsOfficers = $inspection_details->verified_by;
+            $userIds = [
+                'users' => $ehsOfficers,
+            ];
+            $mailsubject = 'Safety Inspection';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "CAPA Action done by Fire Associates",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_CAPA_ACTION,
+                'to_status' => WAITING_FOR_CAPA_VERIFICATION,
+                'created_by' => Auth::id(),
+                'remarks' => $request->capa_remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function CAPAVerifySubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->remarks;
+            $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($status == 1) {
+                $message = 'CAPA Action Verified Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $user = GetLevelOneManager();
+                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $to_status = WAITING_FOR_L1_VERIFICATION;
+            } else {
+                $message = 'EHS Officer Rejected the CAPA Action';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $users = $inspection_details->created_by;
+                $to_status = EHS_OFFICER_REJECTED;
+            }
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_CAPA_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function levelOneManagerSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->level_one_manager;
+            $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($status == 1) {
+                $message = 'Level One Manager Verified Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $user = GetLevelTwoManager();
+                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $to_status = WAITING_FOR_L2_VERIFICATION;
+            } else {
+                $message = 'Level One Manager Rejected the CAPA Action';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $users = $inspection_details->created_by;
+                $to_status = L1_MANAGER_REJECTED;
+            }
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_L1_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->level_one_manager,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function levelTwoManagerSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->level_two_manager;
+            $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($status == 1) {
+                $message = 'Safety Gallery Inspeciton Approved Successfully!';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
+                $to_status = INSPECTION_APPROVED;
+            } else {
+                $message = 'Level Two Manager Rejected the CAPA Action';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = L2_MANAGER_REJECTED;
+            }
+            $users = $inspection_details->created_by;
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_L2_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->level_two_manager,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function UniqueCheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $resource_code = $request->resource_code;
+            $id = decryptId($request->id);
+            if ($request->id == '') {
+                $isUnique = $this->safetygallery->UniqueCheck($resource_code);
+                return response()->json($isUnique);
+            } else {
+                $data = [
+                    'category_name' => $resource_code,
+                    'id' => $id,
+                ];
+                $isUnique = $this->safetygallery->existUniqueCheck($data);
+                return response()->json($isUnique);
+            }
+        }
+    }
+}

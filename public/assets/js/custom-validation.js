@@ -147,7 +147,7 @@ $.validator.addMethod("multiImageFormat", function (value, element) {
 
     // Check if all file extensions are in the allowed formats
     return extensions.every(function (extension) {
-        return ['png', 'jpg', 'jpeg','pdf','doc','mp4'].includes(extension);
+        return ['png', 'jpg', 'jpeg', 'pdf', 'doc', 'mp4'].includes(extension);
     });
 }, "Please upload images in PNG, JPG, or JPEG format.");
 
@@ -317,7 +317,7 @@ $.validator.addMethod("customEmployeeID", function (value, element) {
  * Class based range Required Validation
  */
 $.validator.addClassRules("validate-range-required", {
-    iRange: true ,
+    iRange: true,
     iRequired: true// Use the custom range validation
 });
 $.validator.addMethod("iRange", function (value, element) {
@@ -510,25 +510,31 @@ $.validator.addMethod("talpnum", function (value, element) {
 });
 
 
-// Add a custom jQuery validation rule for file input with accepted file types
 $.validator.addMethod("validateFileType", function (value, element) {
-    // Get the accepted file types from the options
-    params = ".jpeg,.jpg,.png,.pdf,.doc,.mp4" ;
-    var acceptedTypes = params.split(',');
-    // Get the file extension of the selected file
-    var fileExtension = value.split('.').pop().toLowerCase();
-    // Check if the file extension matches any of the accepted file types
-    return $.inArray('.' + fileExtension, acceptedTypes) !== -1;
-}, function (params, element) {
-    // Generate custom error message
-    return "Please select a file with .jpeg,.jpg,.png";
-});
+    if (element.files.length === 0) {
+        return false; 
+    }
 
-// Add the custom class rule for file input with required validation
-$.validator.addClassRules("validate-file-accept", {
-    validateFileType: true,
-    required: true // Ensure that the file input is required
-});
+    let acceptedTypes = ["jpeg", "jpg", "png", "pdf", "doc", "docx", "mp4"];
+    let isValid = true;
 
+    $.each(element.files, function (i, file) {
+        let fileExtension = file.name.split('.').pop().toLowerCase();
+        if ($.inArray(fileExtension, acceptedTypes) === -1) {
+            isValid = false;
+            return false; 
+        }
+    });
+
+    return isValid;
+}, "Please select a valid file type: jpeg, jpg, png, pdf, doc, docx, mp4");
+
+
+$(".validate-file-accept").each(function () {
+    $(this).rules("add", {
+        validateFileType: true,
+        required: true
+    });
+});
 
 

@@ -176,27 +176,25 @@ class MonthlyForkLiftInspectionController extends Controller
             $forklift_inspection = $this->forklift->store();
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            foreach ($ehsOfficers as $ehsOfficer) {
-                $userIds = [
-                    'users' => $ehsOfficer,
-                ];
-                $mailsubject = 'Safety Inspection';
-                $notificationData = array(
-                    'notification_type' => SAFETY_INSPECTION,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "Safety Inspection done by Fire Associates",
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $forklift_inspection->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('safety/forklift-inspection/monthly/view/' . encryptId($forklift_inspection->id)),
-                    'assigned_user' => array_to_string($userIds),
-                    'created_by' => Auth::id(),
-                );
-            }
+            $userIds = [
+                'users' => $ehsOfficers,
+            ];
+            $mailsubject = 'Safety Inspection';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Safety Inspection done by Fire Associates",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $forklift_inspection->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/forklift-inspection/monthly/view/' . encryptId($forklift_inspection->id)),
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
             notificationSave($notificationData);
             $insert_array = [
                 'type' => MONTHLY_FORKLIFT_INSPECTION,
@@ -206,7 +204,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', 'Inspection Completed Successfully!');
+            Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -227,7 +225,6 @@ class MonthlyForkLiftInspectionController extends Controller
             ];
             return view('inspection.Safety.forklift_inspection_monthly.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
@@ -263,7 +260,7 @@ class MonthlyForkLiftInspectionController extends Controller
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
-                $to_status = EHS_OFFICER_REJECTED;
+                $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
                 'users' => $inspection_details->created_by,
@@ -294,7 +291,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'remarks' => $request->remarks,
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', __('inspection.verification_success_msg'));
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -339,7 +336,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'remarks' => $request->capa_remarks,
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', __('inspection.capa_action_success_msg'));
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -366,7 +363,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
-                $to_status = L1_MANAGER_REJECTED;
+                $to_status = EHS_OFFICER_REJECTED;
             }
             $userIds = [
                 'users' => $users,
@@ -397,7 +394,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'remarks' => $request->remarks,
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', __('inspection.verification_success_msg'));
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -455,7 +452,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'remarks' => $request->level_one_manager,
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', __('inspection.l1_manager_verification_success_msg'));
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -512,7 +509,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'remarks' => $request->level_two_manager,
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('success', __('inspection.l2_manager_verification_success_msg'));
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);

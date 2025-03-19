@@ -141,7 +141,7 @@ class AccidentReportController extends Controller
                             if ($row->accident_status == 3) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
-                            if ($row->accident_status == 4  && $row->risk_analysis !=2 ) {
+                            if ($row->accident_status == 4  && $row->risk_analysis != 2) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -167,13 +167,13 @@ class AccidentReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
         $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();   
+        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
 
         $data = array(
@@ -209,9 +209,11 @@ class AccidentReportController extends Controller
             'employee' => [
                 'designation' => $employee->designation_name ?? '',
                 'unit_id' => $employee->unit ?? '',
+                'encrypted_unit_id' => encryptId($employee->unit) ?? '',
                 'unit_name' => $employee->unit_name ?? '',
                 'department_name' => $employee->department_name ?? '',
                 'department_id' => $employee->department ?? '',
+                'encrypted_department_id' => encryptId($employee->department) ?? '',
             ],
         ]);
     }
@@ -231,14 +233,13 @@ class AccidentReportController extends Controller
             );
             return view('ims.incident.accidentReport.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
     public function Store(Request $request)
     {
         try {
-
             $rules = [
                 'date_and_time' => 'required',
                 'shift' => 'required',
@@ -246,9 +247,13 @@ class AccidentReportController extends Controller
                 'designation' => 'required',
                 'emp_code' => 'required',
                 'address_of_the_injuredperson' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
             ];
             $messages = [
                 'date_and_time.required' => 'Please enter the date and time of the accident.',
+                'unit_id.required' => 'Please enter Unit',
+                'department_id.required' => 'Please enter Department',
                 'shift.required' => 'Shift is required.',
                 'location_id.required' => 'Location is required.',
                 'designation.required' => 'Designation is required.',
@@ -314,14 +319,14 @@ class AccidentReportController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+                
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -342,7 +347,7 @@ class AccidentReportController extends Controller
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->accident_report->getrisklevel($id);
                 $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
-
+                $status_log = $this->Statuslog->selectOne($id,2);
                 $data = array(
                     'accident_report' => $accident_report,
                     'getEHSVerify' => $getEHSVerify,
@@ -353,6 +358,7 @@ class AccidentReportController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalAccident' => $getEHSApprovalAccident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.incident.accidentReport.view', $data);
@@ -421,7 +427,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -576,7 +582,7 @@ class AccidentReportController extends Controller
             }
             return view('ims.incident.accidentReport.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            
         }
     }
 
@@ -651,7 +657,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -659,7 +665,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -703,7 +709,6 @@ class AccidentReportController extends Controller
     {
         try {
 
-          
             $incident_id = null;
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
@@ -769,7 +774,7 @@ class AccidentReportController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  admin_url('accidentReport/uauc_riskanalysis/' . encryptId($initialaccident->id)),
-                'assigned_user' => $initialaccident->created_by,
+                'assigned_user' => implode(',', $loginIds),
                 'created_by' => Auth::id(),
             );
 
@@ -791,7 +796,7 @@ class AccidentReportController extends Controller
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -957,7 +962,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1026,7 +1031,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1089,7 +1094,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1098,7 +1103,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1165,7 +1170,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1235,7 +1240,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1285,7 +1290,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
             }
@@ -1293,7 +1298,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1359,7 +1364,7 @@ class AccidentReportController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            
             report($ex);
         }
     }
@@ -1495,7 +1500,7 @@ class AccidentReportController extends Controller
             $addInjury = $this->accident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+            
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -1560,14 +1565,25 @@ class AccidentReportController extends Controller
     public function gethiradetails($hira_id)
     {
         $hira_id = decryptId($hira_id);
+
         $hira = Hira::select('services', 'likelihood', 'risk_levels')
             ->where('id', $hira_id)
             ->first();
-        if ($hira) {
-            return response()->json([
-                'hira' => $hira,
-            ]);
+        $risk_levels = '';
+        if ($hira->risk_levels == 1) {
+            $risk_levels = '1 to 9';
+        } elseif ($hira->risk_levels == 2) {
+            $risk_levels = '10 to 16';
+        } elseif ($hira->risk_levels == 3) {
+            $risk_levels = '17 to 25';
+        } elseif ($hira->risk_levels == 4) {
+            $risk_levels = 'Legal';
         }
+
+        return response()->json([
+            'hira' => $hira,
+            'risk_levels' => $risk_levels,
+        ]);
     }
     public function saveHira(Request $request)
     {

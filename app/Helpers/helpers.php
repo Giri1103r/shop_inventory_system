@@ -1681,6 +1681,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListType')) {
         function getCheckListType($type)
         {
+
             $data = ChecklistType::where('category_name', $type)->first();
             if ($data) {
                 return $data->id;
@@ -1766,7 +1767,6 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
-
             $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
                 ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
                 ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')

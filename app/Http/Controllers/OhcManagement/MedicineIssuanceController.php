@@ -196,7 +196,8 @@ class MedicineIssuanceController extends Controller
 
                 $user_medicine_issuance = $this->user_medicine_issuance->store();
                 $medicine_issuance = $this->medicine_issuance->store($user_medicine_issuance);
-
+                $user_medicine_issuance_unit = $this->user_medicine_issuance->unitstore();
+                $medicine_issuance_unit = $this->medicine_issuance->unitstore($user_medicine_issuance_unit);
 
                 foreach ($medicine_issuance as $medicine) {
 
@@ -330,9 +331,12 @@ class MedicineIssuanceController extends Controller
                 $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
                 // issue store
                 $user_medicine_issuance = $this->user_medicine_issuance->issuestore($user_medicine_requisition);
+                $user_medicine_issuance_unit = $this->user_medicine_issuance->unitissuestore($user_medicine_requisition);
                 $medicineissuance =  $user_medicine_issuance->id;
 
                 $issuance =  $this->medicine_issuance->store($user_medicine_issuance);
+                $issuance_unit =  $this->medicine_issuance->unitstore($user_medicine_issuance_unit);
+
                 $medicinedata =  $this->medicine_issuance->where('reference_id', $medicineissuance)->get();
                 // requisition status update
 

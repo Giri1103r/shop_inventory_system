@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Uauc and Riskanalysis')
+@section('title', 'UAUC and Riskanalysis')
 @section('pageurl', admin_url('accidentReport/list'))
 
 

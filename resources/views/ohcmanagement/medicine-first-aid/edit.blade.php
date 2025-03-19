@@ -217,7 +217,7 @@
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
-            var totalRows = $(".medicinedetails").length; // Count existing rows
+            var totalRows = $(".medicinedetails").length; 
 
             if (totalRows <= 1) {
                 Swal.fire({

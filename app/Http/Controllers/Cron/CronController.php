@@ -538,7 +538,7 @@ class CronController extends Controller
                     $email_id = $user->email;
 
                     if (!empty($email_id)) {
-                        foreach ($filteredIds as $medicineId) { // Only iterate over unreceived medicines
+                        foreach ($filteredIds as $medicineId) { 
                             $medicinedetails = $this->medicine->selectone($medicineId);
                             $dataArray = Inventory::where('unit_id', 1)->where('medicine_id', $medicineId)->first();
 

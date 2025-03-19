@@ -35,6 +35,8 @@
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($accident_report->id) }}">
+                                        <input type="hidden" name="unit_id" id="hidden_unit_id">
+                                        <input type="hidden" name="department_id" id="hidden_department_id">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -189,33 +191,48 @@
 
                 if (emp_code) {
                     $.ajax({
-                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" +
-                            emp_code,
+                        url: "{{ url('accidentReport/fetchEmployeeDetails') }}/" + emp_code,
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.employee) {
                                 $('#designation').val(response.employee.designation);
 
-                                if (response.employee.unit_name) {
-                                    $('#unit_id').val(response.employee.unit_name);
-                                    $('#unit_id').prop('disabled', true); // Disable if fetched
-                                } else {
-                                    $('#unit_id').prop('disabled', false); // Enable if empty
-                                }
+                                // Reset and Set Unit
+                                $('#unit_id').val('').prop('disabled', false);
+                                if (response.employee.unit_id) {
+                                    // Check if the unit already exists in the dropdown
+                                    if ($('#unit_id option[value="' + response.employee
+                                            .unit_id + '"]').length > 0) {
+                                        $('#unit_id').val(response.employee.unit_id).prop(
+                                            'disabled', true);
+                                    } else {
+                                        $('#unit_id').append('<option value="' + response
+                                                .employee.unit_id + '">' +
+                                                response.employee.unit_name + '</option>')
+                                            .val(response.employee.unit_id).prop('disabled',
+                                                true);
+                                    }
 
-                                if (response.employee.department_name) {
+                                    // Store encrypted unit_id in the hidden input (for secure submission)
+                                    $('#hidden_unit_id').val(response.employee
+                                        .encrypted_unit_id);
+                                }
+                                // Reset and Set Department
+                                if (response.employee.department_id) {
                                     $('#department_id').html('<option value="' + response
-                                        .employee
-                                        .department_name + '">' + response.employee
-                                        .department_name +
-                                        '</option>');
-                                    $('#department_id').prop('disabled', true);
+                                            .employee.department_id + '">' +
+                                            response.employee.department_name + '</option>')
+                                        .val(response.employee.department_id).prop('disabled',
+                                            true);
+
+                                    $('#hidden_department_id').val(response.employee
+                                        .encrypted_department_id);
                                 } else {
-                                    $('#department_id').prop('disabled', false);
                                     $('#department_id').html(
-                                        '<option value="">Select Department</option>'
-                                    );
+                                        '<option value="">Select Department</option>').prop(
+                                        'disabled', false);
+                                    $('#hidden_department_id').val('');
                                 }
                             } else {
                                 Swal.fire({
@@ -234,8 +251,12 @@
                         }
                     });
                 } else {
-                    $('#designation, #unit_id, #department_id').val('');
-                    $('#unit_id, #department_id').prop('disabled', false);
+                    $('#designation').val('');
+                    $('#unit_id').val('').prop('disabled', false);
+                    $('#department_id').html('<option value="">Select Department</option>').prop('disabled',
+                        false);
+                    $('#hidden_unit_id').val('');
+                    $('#hidden_department_id').val('');
                 }
             });
 
@@ -281,6 +302,9 @@
                     $('#department_id').empty().append('<option value="">Select Department</option>');
                 }
             }
+
+
+
             $(function() {
                 $('#accidentReportedit').validate({
                     rules: {

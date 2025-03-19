@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Monthly ForkLift Inspection')
-@section('pageurl', admin_url('ohc/medicine-requisition/list'))
+@section('pageurl', admin_url('safety/forklift-inspection/monthly/list'))
 
 
 @section('content')
@@ -8,9 +8,7 @@
     </div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-
         </div>
-
     </div>
 
     <div class="content-body  default-height">
@@ -188,6 +186,8 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">

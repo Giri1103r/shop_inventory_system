@@ -10,7 +10,7 @@ use App\Models\Master\Unit;
 use App\Models\Inspection\Master\Shift;
 
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
-use App\Models\Inspection\Ohc\OhcDetails;
+use App\Models\Inspection\Ohc\MedicineRequistionSlipfloordetails;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\UploadLog;
 use App\Models\User;
@@ -28,9 +28,9 @@ class MedicalRequisitionSlipController extends Controller
     private $unit;
     private $shift;
     private $department;
-    private $OhcDetails;
     private $user;
     private $medicine_requisition_floor_checklist;
+    private $medicine_requisition_floor_details;
 
     private $inventory;
 
@@ -44,10 +44,10 @@ class MedicalRequisitionSlipController extends Controller
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
-        $this->OhcDetails = new OhcDetails();
         $this->medicine_requisition_floor_checklist = new MedicineRequisitionSlipFloor();
         $this->inventory = new Inventory();
         $this->user = new User();
+        $this->medicine_requisition_floor_details = new MedicineRequistionSlipfloordetails();
 
     }
     public function Index(Request $request)
@@ -55,16 +55,9 @@ class MedicalRequisitionSlipController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
+                    $data = $this->medicine_requisition_floor_details->list();
 
-                    $data = $this->OhcDetails->list();
-                    $datatables = DataTables::of($data['data']);
-                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_MEDICINE_REQUISTION_FLOOR)->values();
-
-                    $filteredCount = $filteredData->count();
-                    $totalCount = count($data['data']);
-
-
-                    return DataTables::of($filteredData)
+                    $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
@@ -88,7 +81,7 @@ class MedicalRequisitionSlipController extends Controller
                             return '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
                         })
                         ->rawColumns(['action', 'issue_date', 'created_by', 'status','issue_date'])
-                        ->setFilteredRecords($filteredCount)
+                        ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
@@ -146,8 +139,8 @@ class MedicalRequisitionSlipController extends Controller
 
             try {
                 // Store user medicine requisition
-                $OhcDetails = $this->OhcDetails->store();
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store(  $OhcDetails);
+                $medicine_requisition_floor_details = $this->medicine_requisition_floor_details->store();
+                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store(  $medicine_requisition_floor_details);
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -170,7 +163,7 @@ class MedicalRequisitionSlipController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $medicinerequisition = $this->OhcDetails->Selectone($id);
+                $medicinerequisition = $this->medicine_requisition_floor_details->Selectone($id);
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
 
                 $data = array(

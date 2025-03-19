@@ -61,5 +61,10 @@ return [
     'name_of_chemical' => 'Name of Chemical',
     'msds_avl_sts' => 'MSDS Availability Status',
 
-    'rraa' => 'RRAA'
+    'rraa' => 'RRAA',
+    'resource_code' => 'Resource Code',
+    'safety_gallery_inspection' => 'Safety Gallery Inspection',
+
+
+
 ];

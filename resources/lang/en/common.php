@@ -69,6 +69,9 @@ return [
     'reported_info' =>'Reporting Information',
     'reported_type'=>'Reported Type',
 
+    'created_msg' => 'Your Data has been Created Successfully!',
+    'updated_msg' => 'Your Data has been Updated Successfully!',
+
 
     //Error
     'page_expired' => 'Your session has expired. Please refresh the page and try again.',

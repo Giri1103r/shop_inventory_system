@@ -162,7 +162,7 @@ class MedicineRequisitionController extends Controller
                 'medicine' => $medicine,
                 'unit' => $unit
             );
-dd( $medicine);
+
             return view('ohcmanagement.medicine_requisition.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -249,14 +249,14 @@ dd( $medicine);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
