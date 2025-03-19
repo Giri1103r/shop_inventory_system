@@ -97,9 +97,9 @@
                                             <label for="status" class="form-label">Approve Status</label>
                                             <select name="status" id="status" style="width: 100%" class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="2">Paramedics Approval Pending</option>
-                                                <option value="3">Paramedics Approved</option>
-                                                <option value="4">Paramedics Rejected</option>
+                                                <option value="2">EHS Head Approval Pending</option>
+                                                <option value="3">EHS Head Approved</option>
+                                                <option value="4">EHS Head Rejected</option>
                                                 <option value="11">Open</option>
                                                 <option value="12">Close</option>
                                             </select>

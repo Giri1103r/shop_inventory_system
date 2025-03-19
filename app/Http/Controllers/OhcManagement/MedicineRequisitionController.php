@@ -315,7 +315,7 @@ class MedicineRequisitionController extends Controller
                 $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
                 $this->medicine_requisition->updates($id);
 
-                $mailsubject = 'paramedics  Request the Medicine';
+                $mailsubject = 'Paramedics Request the Medicine';
                 $user_role = ROLE_EHS_HEAD;
 
                 // Fetch users with the specified role
@@ -455,7 +455,7 @@ class MedicineRequisitionController extends Controller
             $createdBy = $this->user_medicine_requisition->where('id', $id)->pluck('created_by');
             $user = $this->user->where('id', $createdBy)->where('status', 1)->first();
             if ($request->action == 'approve') {
-                $mailsubject = 'Paramedics Approved the medicine';
+                $mailsubject = 'EHS Head Approved the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {
@@ -488,7 +488,7 @@ class MedicineRequisitionController extends Controller
                 );
                 notificationSave($notificationData);
             } else {
-                $mailsubject = 'Paramedics Rejected the medicine';
+                $mailsubject = 'EHS Head Rejected the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {
