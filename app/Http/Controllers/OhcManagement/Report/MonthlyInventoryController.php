@@ -85,6 +85,7 @@ class MonthlyInventoryController extends Controller
         $medicineIssuing = $this->user_medicine_issuance->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
         $allIssuances = [];
         foreach ($medicineIssuing as $id) {
+            
             $allIssuances[] = $this->medicine_issuance->getissuedDate($selectedYear, $selectedMonth, [$id]);
         }
 
@@ -94,7 +95,7 @@ class MonthlyInventoryController extends Controller
             'receiving' => $receiving,
             'issuing' => $allIssuances,
         ];
-       
+
         if ($request->ajax()) {
             return response()->json($data);
         } else {

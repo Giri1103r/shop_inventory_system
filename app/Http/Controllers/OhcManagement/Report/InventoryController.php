@@ -88,7 +88,7 @@ class InventoryController extends Controller
 
         $data = [];
 
-        if (checkUserRole(ROLE_SUPERADMIN) || Auth::user()->unit_id == 1) {
+        if (checkUserRole(ROLE_SUPERADMIN) || checkUserRole(ROLE_EHS_HEAD) ) {
             return view('ohcmanagement.report.inventory.list', $data);
         } else {
             return view('ohcmanagement.report.inventory.userlist', $data);

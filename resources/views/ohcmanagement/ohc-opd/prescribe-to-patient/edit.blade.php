@@ -92,15 +92,15 @@
                                                     <label class="form-label require">Unit</label>
                                                     <input type="text" name="unit_id" id="unit_id" class="form-control"
                                                         value="{{ getUnitname($opdpatient->unit_id) }}">
-                                                    {{-- <select name="unit_id" id="unit_id" class="form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}"
-                                                                @if ($list->id == $opdpatient->unit_id) selected @endif>
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
-                                                    </select> --}}
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2 departmentEmployee">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control"
+                                                        value="{{ getDepartment($opdpatient->department_id) }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -480,6 +480,326 @@
 
 @stop
 @push('script')
+<script>
+     $(function() {
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || regex.test(value);
+                },
+                "Invalid format."
+            );
+            $.validator.addMethod("notEqual", function(value, element, param) {
+                let otherValue = $(param).val();
+                return this.optional(element) || (otherValue !== undefined && value !== otherValue);
+            }, "Emergency contact and mobile number should not be the same.");
+
+            $('#opdpatient').validate({
+                rules: {
+                    emp_id: {
+                        required: true,
+
+                    },
+                    emp_name: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        remote: {
+                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
+                            type: "post",
+                            data: {
+                                emp_name: function() {
+                                    return $('#emp_name').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
+                    },
+                    unit_id: {
+                        required: true,
+
+                    },
+                    department: {
+                        required: true,
+
+                    },
+                    department_id: {
+                        required: function() {
+                            return $('#is_outside_worker').is(':checked');
+                        },
+
+                    },
+                    // company_name: {
+                    //     required: function() {
+                    //         return $('#is_outside_worker').is(':checked');
+                    //     },
+
+                    // },
+
+                    dob: {
+                        required: true,
+                    },
+                    emergency_contact: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10,
+                        notEqual: "#mobile_no"
+                    },
+                    mobile_no: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10,
+                        notEqual: "#emergency_contact"
+                    },
+                    suggested_by: {
+                        required: true,
+                    },
+                    date: {
+                        required: true,
+                    },
+
+                    time: {
+                        required: true,
+                    },
+                    gender: {
+                        required: true,
+                    },
+                    cheif_complaint: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                    address: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                    treatment: {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        },
+                        minlength: 3,
+                        maxlength: 600
+                    },
+                    'medicine_id[0]': {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        }
+                    },
+                    'quantity[0]': {
+                        required: function() {
+                            return $('#first_aid_treatment').is(':checked');
+                        }
+                    },
+                    // 'remarks[0]': {
+                    //     required: function() {
+                    //         return $('#first_aid_treatment').is(':checked');
+                    //     },
+                    //     minlength: 3,
+                    //     maxlength: 600
+                    // },
+                    details: {
+                        required: function() {
+                            return $('#suggested_by').val() == '3';
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    hospital_name: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    first_aider: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    is_reffered_mobile_no: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        },
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 10
+                    },
+                    vechicle: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    patient_status: {
+                        required: function() {
+                            return $('#is_reffered').is(':checked');
+                        }
+                    },
+                    fitness_certificate: {
+                        required: function() {
+                            return $('#patient_status').val() ==
+                                '2';
+                        }
+                    },
+                    close_description: {
+                        required: function() {
+                            return $('#patient_status').val() ==
+                                '2';
+                        },
+                        minlength: 3,
+                        maxlength: 600
+                    },
+                    other_vechicle: {
+                        required: function() {
+                            return $('#vechicle').val() ==
+                                '3';
+                        },
+                        minlength: 3,
+                        maxlength: 100
+                    }
+                },
+                messages: {
+                    emp_id: {
+                        required: "Please enter employee code.",
+
+                    },
+                    unit_id: {
+                        required: "Please enter unit name.",
+
+                    },
+                    emp_name: {
+                        required: "Please enter employee name.",
+                        minlength: "employee name must be at least 3 characters.",
+                        maxlength: "employee name must not exceed 30 characters.",
+                        remote: "Employee Name Should be Unique"
+                    },
+                    // company_name: {
+                    //     required: "Please enter Company name.",
+                    // },
+                    department: {
+                        required: "Please enter department Name.",
+                    },
+                    department_id: {
+                        required: "Please enter department Name.",
+                    },
+                    dob: {
+                        required: "Please enter the date of birth.",
+                    },
+                    details: {
+                        required: "Please enter the details.",
+                        minlength: "Details must be at least 3 characters.",
+                        maxlength: "Details must not exceed 100 characters.",
+                    },
+                    date: {
+                        required: "Please select the date.",
+                    },
+                    suggested_by: {
+                        required: "Please select the Suggested By.",
+                    },
+                    mobile_no: {
+                        required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                        notEqual: "Mobile number and emergency contact should not be the same."
+                    },
+                    emergency_contact: {
+                        required: "Please enter the Emergency Contact.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "Emergency Contact minimum 10 required",
+                        maxlength: "Emergency Contact maximum 10 required",
+                        notEqual: "Emergency contact and mobile number should not be the same."
+                    },
+                    time: {
+                        required: "Please select the time.",
+                    },
+                    gender: {
+                        required: "Please select the gender.",
+                    },
+                    cheif_complaint: {
+                        required: 'Chief Complaint is required',
+                        minlength: 'Minimum 3 characters are required',
+                        maxlength: 'Chief Complaint should not exceed 600 characters',
+                    },
+                    address: {
+                        required: 'Address is required',
+                        minlength: 'Minimum 3 characters are required',
+                        maxlength: 'Address should not exceed 600 characters',
+                    },
+                    treatment: {
+                        required: "Please enter treatment details .",
+                        minlength: "Treatment must be at least 3 characters.",
+                        maxlength: "Treatment must not exceed 600 characters.",
+                    },
+                    'medicine_id[0]': {
+                        required: "Please select a medicine .",
+                    },
+                    'quantity[0]': {
+                        required: "Please enter the quantity .",
+                    },
+                    'remarks[0]': {
+                        required: "Please enter remarks .",
+                        minlength: "remarks must be at least 3 characters.",
+                        maxlength: "remarks must not exceed 100 characters.",
+                    },
+                    hospital_name: {
+                        required: "Hospital name is required .",
+                        minlength: "Hospital name must be at least 3 characters.",
+                        maxlength: "Hospital name must not exceed 100 characters.",
+
+                    },
+                    first_aider: {
+                        required: "Please Select the First aider.",
+
+                    },
+                    is_reffered_mobile_no: {
+                        required: "Please enter the Mobile Number.",
+                        digits: "The Moblie contains only the numeric",
+                        minlength: "mobile number minimum 10 required",
+                        maxlength: "mobile number maximum 10 required",
+                    },
+                    vechicle: {
+                        required: "vechicle is required ",
+                    },
+                    fitness_certificate: {
+                        required: "Fitness Certificate is required .",
+                    },
+                    close_description: {
+                        required: "Close Description is required .",
+                        minlength: "Close Description must be at least 3 characters.",
+                        maxlength: "Close Description must not exceed 600 characters.",
+                    },
+                    other_vechicle: {
+                        required: "Other Vechicle is required .",
+                        minlength: "Other Vechicle must be at least 3 characters.",
+                        maxlength: "Other Vechicle must not exceed 100 characters.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
+            });
+        });
+</script>
     <script>
         // company name
 
@@ -616,6 +936,8 @@
                                 $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
                                 $('#mobile_no').val(response.employee.mobile_no).prop('readonly', true);
                                 $('#unit_id').val(response.units.unit_name).prop('readonly', true);
+                                $('#department').val(response.departments.department_name).prop(
+                                    'readonly', true);
                             } else {
                                 alert("No employee details found.");
                             }
@@ -630,6 +952,7 @@
             function toggleWorkerFields() {
                 if ($("#is_outside_worker").is(":checked")) {
                     $(".unit").hide();
+                    $(".departmentEmployee").hide();
                     $(".department, .company_name, .employecode").show();
                     $(".employee-id").hide();
                     $("#emp_name").val("{{ $opdpatient->emp_name ?? '' }}").prop("readonly", false);
@@ -654,6 +977,7 @@
                     $(".unit").show();
                     $(".department, .company_name, .employecode").hide();
                     $(".employee-id").show();
+                    $(".departmentEmployee").show();
 
                     if ($.fn.select2 && $("#emp_id").hasClass("select2-hidden-accessible")) {
                         $("#emp_id").select2("destroy");
@@ -712,6 +1036,7 @@
                     $('#emp_name').val('').prop('readonly', false);
                     $('#mobile_no').val('').prop('readonly', false);
                     $('#unit_id').val('').prop('readonly', false);
+                    $('#department').val('').prop('readonly', false);
                 }
             });
         });
@@ -828,11 +1153,24 @@
 
 
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevents the form from submitting
+            event.preventDefault(); // Prevent form submission
 
-            var row = $(this).closest(".medicinedetails");
-            var rowId = row.find("input[name='encryptid']").val();
+            var row = $(this).closest("tr"); // Ensure it selects the correct row
+            var rowId = row.find("input[name='encryptid']").val(); // Get the encrypted ID
+            var totalRows = $("#medicine-tbody tr").length; // Count total rows
 
+            // Prevent deletion if only one row is left
+            if (totalRows <= 1) {
+                Swal.fire({
+                    title: 'Cannot delete!',
+                    text: 'At least one row is required.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            // If row ID exists, proceed with AJAX delete
             if (rowId) {
                 Swal.fire({
                     title: 'Are you sure?',
@@ -844,36 +1182,33 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: "{{ url('ohc/prescribe-to-patient/delete') }}/" +
-                                rowId,
-                            type: 'POST', // Use POST instead of DELETE
+                            url: "{{ url('ohc/prescribe-to-patient/delete') }}/" + rowId,
+                            type: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
-                                _method: 'POST', // Simulate DELETE method
+                                _method: 'DELETE', // Use DELETE method
                                 id: rowId
                             },
                             success: function(response) {
                                 if (response.status === 'success') {
-                                    row.remove();
+                                    row.remove(); // Remove row after successful deletion
                                     Swal.fire('Deleted!', response.msg, 'success');
                                 } else {
                                     Swal.fire('Error!', response.msg, 'error');
                                 }
                             },
-                            error: function() {
-                                Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.',
+                            error: function(xhr, status, error) {
+                                Swal.fire('Error!', 'Something went wrong: ' + xhr.responseText,
                                     'error');
                             }
                         });
                     }
                 });
             } else {
-                $(this).closest("tr").remove();
+                // If no rowId (new row), remove without AJAX
+                row.remove();
             }
         });
-
-        // add more for the medicine
 
 
         $('#medicine_id').on('change', function() {
@@ -912,7 +1247,7 @@
             <tr>
                 <td>
                     <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
+                        <label for="medicine_id">Medicine Name <span class="text-danger">*</span></label>
                         <select name="medicine_id[${rowcount}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                                     @foreach ($medicine as $list)
@@ -921,6 +1256,7 @@
                                                                         </option>
                                                                     @endforeach
                         </select>
+
                     </div>
                 </td>
                 <td>
@@ -938,7 +1274,7 @@
 
                     </div>
                 </td>
-                <td>
+                 <td>
                     <div class="form-group form-input">
                         <label for="remarks" class="">Remarks</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
@@ -960,7 +1296,7 @@
                 });
 
 
-                $('select[name="medicine_id[' + rowcount + ']"]').rules('add', {
+           $('select[name="medicine_id[' + rowcount + ']"]').rules('add', {
                     required: true,
                     messages: {
                         required: 'This Medicine name is required'
@@ -1043,319 +1379,6 @@
         });
         // validation
 
-        $(function() {
-            $.validator.addMethod(
-                "regex",
-                function(value, element, regex) {
-                    return this.optional(element) || regex.test(value);
-                },
-                "Invalid format."
-            );
-            $.validator.addMethod("notEqual", function(value, element, param) {
-                let otherValue = $(param).val();
-                return this.optional(element) || (otherValue !== undefined && value !== otherValue);
-            }, "Emergency contact and mobile number should not be the same.");
 
-            $('#opdpatient').validate({
-                rules: {
-                    emp_id: {
-                        required: true,
-
-                    },
-                    emp_name: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        remote: {
-                            url: "{{ url('admin/ohc/prescribe-to-patient/unique') }}", // Ensure correct route
-                            type: "POST",
-                            data: {
-                                emp_name: function() {
-                                    return $("#emp_name").val();
-                                },
-                                id: function() {
-                                    return $("#id").val();
-                                },
-                                _token: "{{ csrf_token() }}" // CSRF token for Laravel POST requests
-                            }
-                        },
-
-                    },
-                    unit_id: {
-                        required: true,
-
-                    },
-                    department_id: {
-                        required: function() {
-                            return $('#is_outside_worker').is(':checked');
-                        },
-
-                    },
-                    // company_name: {
-                    //     required: function() {
-                    //         return $('#is_outside_worker').is(':checked');
-                    //     },
-
-                    // },
-
-                    dob: {
-                        required: true,
-                    },
-                    emergency_contact: {
-                        required: true,
-                        digits: true,
-                        minlength: 10,
-                        maxlength: 10,
-                        notEqual: "#mobile_no"
-                    },
-                    mobile_no: {
-                        required: true,
-                        digits: true,
-                        minlength: 10,
-                        maxlength: 10,
-                        notEqual: "#emergency_contact"
-                    },
-                    suggested_by: {
-                        required: true,
-                    },
-                    date: {
-                        required: true,
-                    },
-                    time: {
-                        required: true,
-                    },
-                    gender: {
-                        required: true,
-                    },
-                    cheif_complaint: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
-                    address: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
-                    treatment: {
-                        required: function() {
-                            return $('#first_aid_treatment').is(':checked');
-                        },
-                        minlength: 3,
-                        maxlength: 100
-                    },
-                    'medicine_id[0]': {
-                        required: function() {
-                            return $('#first_aid_treatment').is(':checked');
-                        }
-                    },
-                    'quantity[0]': {
-                        required: function() {
-                            return $('#first_aid_treatment').is(':checked');
-                        }
-                    },
-                    // 'remarks[0]': {
-                    //     required: function() {
-                    //         return $('#first_aid_treatment').is(':checked');
-                    //     },
-                    //     minlength: 3,
-                    //     maxlength: 600
-                    // },
-                    details: {
-                        required: function() {
-                            return $('#suggested_by').val() == '3';
-                        },
-                        minlength: 3,
-                        maxlength: 100
-                    },
-                    hospital_name: {
-                        required: function() {
-                            return $('#is_reffered').is(':checked');
-                        },
-                        minlength: 3,
-                        maxlength: 100
-                    },
-                    first_aider: {
-                        required: function() {
-                            return $('#is_reffered').is(':checked');
-                        }
-                    },
-                    is_reffered_mobile_no: {
-                        required: function() {
-                            return $('#is_reffered').is(':checked');
-                        },
-                        digits: true,
-                        minlength: 10,
-                        maxlength: 10
-                    },
-                    vechicle: {
-                        required: function() {
-                            return $('#is_reffered').is(':checked');
-                        }
-                    },
-                    patient_status: {
-                        required: function() {
-                            return $('#is_reffered').is(':checked');
-                        }
-                    },
-                    fitness_certificate: {
-                        required: function() {
-                            return $('#patient_status').val() ==
-                                '2';
-                        }
-                    },
-                    close_description: {
-                        required: function() {
-                            return $('#patient_status').val() ==
-                                '2';
-                        },
-                        minlength: 3,
-                        maxlength: 600
-                    },
-                    other_vechicle: {
-                        required: function() {
-                            return $('#vechicle').val() ==
-                                '3';
-                        },
-                        minlength: 3,
-                        maxlength: 100
-                    }
-                },
-                messages: {
-                    emp_id: {
-                        required: "Please enter employee code.",
-
-                    },
-                    unit_id: {
-                        required: "Please enter unit name.",
-
-                    },
-                    emp_name: {
-                        required: "Please enter employee name.",
-                        minlength: "employee name must be at least 3 characters.",
-                        maxlength: "employee name must not exceed 30 characters.",
-                        remote: "Employee name must be Unique.",
-
-                    },
-                    // company_name: {
-                    //     required: "Please enter Company name.",
-                    // },
-                    department_id: {
-                        required: "Please enter department Name.",
-                    },
-                    dob: {
-                        required: "Please enter the date of birth.",
-                    },
-                    details: {
-                        required: "Please enter the details.",
-                        minlength: "Details must be at least 3 characters.",
-                        maxlength: "Details must not exceed 100 characters.",
-                    },
-                    date: {
-                        required: "Please select the date.",
-                    },
-                    suggested_by: {
-                        required: "Please select the Suggested By.",
-                    },
-                    mobile_no: {
-                        required: "Please enter the Mobile Number.",
-                        digits: "The Moblie contains only the numeric",
-                        minlength: "mobile number minimum 10 required",
-                        maxlength: "mobile number maximum 10 required",
-                        notEqual: "Emergency contact and mobile number should not be the same."
-                    },
-                    emergency_contact: {
-                        required: "Please enter the Emergency Contact.",
-                        digits: "The Moblie contains only the numeric",
-                        minlength: "Emergency Contact minimum 10 required",
-                        maxlength: "Emergency Contact maximum 10 required",
-                        notEqual: "Emergency contact and mobile number should not be the same."
-
-                    },
-                    time: {
-                        required: "Please select the time.",
-                    },
-                    gender: {
-                        required: "Please select the gender.",
-                    },
-                    cheif_complaint: {
-                        required: 'Chief Complaint is required',
-                        minlength: 'Minimum 3 characters are required',
-                        maxlength: 'Chief Complaint should not exceed 600 characters',
-                    },
-                    address: {
-                        required: 'Address is required',
-                        minlength: 'Minimum 3 characters are required',
-                        maxlength: 'Address should not exceed 600 characters',
-                    },
-                    treatment: {
-                        required: "Please enter treatment details .",
-                        minlength: "Treatment must be at least 3 characters.",
-                        maxlength: "Treatment must not exceed 100 characters.",
-                    },
-                    'medicine_id[0]': {
-                        required: "Please select a medicine .",
-                    },
-                    'quantity[0]': {
-                        required: "Please enter the quantity .",
-                    },
-                    'remarks[0]': {
-                        required: "Please enter remarks .",
-                        minlength: "remarks must be at least 3 characters.",
-                        maxlength: "remarks must not exceed 100 characters.",
-                    },
-                    hospital_name: {
-                        required: "Hospital name is required .",
-                        minlength: "Hospital name must be at least 3 characters.",
-                        maxlength: "Hospital name must not exceed 100 characters.",
-
-                    },
-                    first_aider: {
-                        required: "Please Select the First aider.",
-
-                    },
-                    is_reffered_mobile_no: {
-                        required: "Please enter the Mobile Number.",
-                        digits: "The Moblie contains only the numeric",
-                        minlength: "mobile number minimum 10 required",
-                        maxlength: "mobile number maximum 10 required",
-                    },
-                    vechicle: {
-                        required: "vechicle is required ",
-                    },
-                    fitness_certificate: {
-                        required: "Fitness Certificate is required .",
-                    },
-                    close_description: {
-                        required: "Close Description is required .",
-                        minlength: "Close Description must be at least 3 characters.",
-                        maxlength: "Close Description must not exceed 600 characters.",
-                    },
-                    other_vechicle: {
-                        required: "Other Vechicle is required .",
-                        minlength: "Other Vechicle must be at least 3 characters.",
-                        maxlength: "Other Vechicle must not exceed 100 characters.",
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log("Form has " + errors + " invalid fields.");
-                },
-            });
-        });
     </script>
 @endpush

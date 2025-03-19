@@ -41,7 +41,9 @@ class RoadsideFirstAid extends Model
             ->leftjoin('ohc_opd_injured_condition', 'ohc_opd_roadside_first_aid.person_condtion', '=', 'ohc_opd_injured_condition.id')
             ->where('ohc_opd_roadside_first_aid.trash', 'NO');
 
-
+            $user = Auth::user();
+            $userRole = string_to_array($user->role);
+            $empId = $user->employee_id;
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -66,7 +68,11 @@ class RoadsideFirstAid extends Model
                     }
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_opd_roadside_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_opd_roadside_first_aid.created_by', Auth::id());
+        }
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('ohc_opd_roadside_first_aid.name', 'LIKE', '%' . $request->emp_name . '%');
         }
@@ -196,6 +202,9 @@ class RoadsideFirstAid extends Model
     {
         $request = request();
         $search = '';
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         $query = $this->select('ohc_opd_roadside_first_aid.*');
         if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
@@ -218,7 +227,11 @@ class RoadsideFirstAid extends Model
                     }
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_opd_roadside_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_opd_roadside_first_aid.created_by', Auth::id());
+        }
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('ohc_opd_roadside_first_aid.name', 'LIKE', '%' . $request->emp_name . '%');
         }

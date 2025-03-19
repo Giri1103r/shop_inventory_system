@@ -36,7 +36,9 @@ class FirstAid extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_opd_first_aid.*');
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -59,7 +61,11 @@ class FirstAid extends Model
                     }
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_opd_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_opd_first_aid.created_by', Auth::id());
+        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -177,6 +183,9 @@ class FirstAid extends Model
     {
         $request = request();
         $search = '';
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         $query = $this->select('ohc_opd_first_aid.*');
         if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
@@ -196,7 +205,11 @@ class FirstAid extends Model
                     }
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_opd_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_opd_first_aid.created_by', Auth::id());
+        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');

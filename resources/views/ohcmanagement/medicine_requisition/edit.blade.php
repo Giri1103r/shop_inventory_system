@@ -46,30 +46,14 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit </label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unit as $unit)
-                                                            <option @if ($user_medicine_requisition->unit_id == $unit->id) selected @endif
-                                                                value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="unit_id" id="unit_id" value="{{getUnitname($user_medicine_requisition->unit_id)}}" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="department_id" class="form-label require">Department
                                                     </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
-                                                        @foreach ($departmentList as $department)
-                                                            <option @if ($user_medicine_requisition->department_id == $department->id) selected @endif
-                                                                value="{{ encryptId($department->id) }}">
-                                                                {{ $department->department_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <input type="text" name="department_id" id="department_id" value="{{getDepartment($user_medicine_requisition->department_id)}}" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -236,7 +220,7 @@
                                                                             style="width: 30px; height: 30px;">
                                                                             <i class="fa-solid fa-trash"></i>
                                                                         </div>
-                                                                    
+
 
                                                                 </td>
                                                             </tr>
