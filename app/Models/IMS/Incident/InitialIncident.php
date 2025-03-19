@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Master\Employee;
 
 class InitialIncident extends Model
 {
@@ -37,6 +38,7 @@ class InitialIncident extends Model
         'reporting_media_others',
         'brief_description',
         'investigation_assigned',
+        'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -64,6 +66,19 @@ class InitialIncident extends Model
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_incident.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
+        } 
+
+        /**
+         * Role Based list view condition end
+         */
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -261,6 +276,22 @@ class InitialIncident extends Model
         );
         return $this->where('id', $incident_Id)->update($update_array);
     }
+
+    public function chooseAssigneeUpdate($incident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
+
 
     public function uaucsubmit($id)
     {

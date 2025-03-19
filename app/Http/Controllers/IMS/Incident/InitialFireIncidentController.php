@@ -721,16 +721,6 @@ class InitialFireIncidentController extends Controller
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', '1')->first();
 
-            $risk_levels = '';
-            if ($newHiraList->risk_levels == 1) {
-                $risk_levels = '1 to 9';
-            } elseif ($newHiraList->risk_levels == 2) {
-                $risk_levels = '10 to 16';
-            } elseif ($newHiraList->risk_levels == 3) {
-                $risk_levels = '17 to 25';
-            } elseif ($newHiraList->risk_levels == 4) {
-                $risk_levels = 'Legal';
-            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -740,10 +730,10 @@ class InitialFireIncidentController extends Controller
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList','risk_levels'))->render();
+                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList','risk_levels'));
+            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -776,16 +766,6 @@ class InitialFireIncidentController extends Controller
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', 2)->first();
 
-            $risk_levels = '';
-            if ($newHiraList->risk_levels == 1) {
-                $risk_levels = '1 to 9';
-            } elseif ($newHiraList->risk_levels == 2) {
-                $risk_levels = '10 to 16';
-            } elseif ($newHiraList->risk_levels == 3) {
-                $risk_levels = '17 to 25';
-            } elseif ($newHiraList->risk_levels == 4) {
-                $risk_levels = 'Legal';
-            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -795,10 +775,10 @@ class InitialFireIncidentController extends Controller
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList','risk_levels'))->render();
+                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList','risk_levels'));
+            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -1160,6 +1140,7 @@ class InitialFireIncidentController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_ACTION_PENDING;
             $fire_inicdent_report_id = $ehsReview->fire_inicdent_report_id;
+            $this->initialfireincident->chooseAssigneeUpdate($fire_inicdent_report_id,$ehsReview->team_member);
             $incident = $this->initialfireincident->updateStatus($fire_inicdent_report_id, $incident_status);
             if ($ehsReview->team_member) {
                 $teamMemberIds = explode(',', $ehsReview->team_member);

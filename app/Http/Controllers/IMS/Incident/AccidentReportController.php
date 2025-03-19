@@ -1044,6 +1044,7 @@ class AccidentReportController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $accident_status = STATUS_ACTION_PENDING;
             $accident_id = $ehsReview->accident_report_id;
+            $this->accident_report->chooseAssigneeUpdate($accident_id,$ehsReview->team_member);
             $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
 
             if ($ehsReview->team_member) {
@@ -1523,16 +1524,6 @@ class AccidentReportController extends Controller
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '1')->first();
 
-            $risk_levels = '';
-            if ($newHiraList->risk_levels == 1) {
-                $risk_levels = '1 to 9';
-            } elseif ($newHiraList->risk_levels == 2) {
-                $risk_levels = '10 to 16';
-            } elseif ($newHiraList->risk_levels == 3) {
-                $risk_levels = '17 to 25';
-            } elseif ($newHiraList->risk_levels == 4) {
-                $risk_levels = 'Legal';
-            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -1542,10 +1533,10 @@ class AccidentReportController extends Controller
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList','risk_levels'))->render();
+                return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList','risk_levels'));
+            return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -1557,16 +1548,6 @@ class AccidentReportController extends Controller
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '2')->first();
 
-            $risk_levels = '';
-            if ($newHiraList->risk_levels == 1) {
-                $risk_levels = '1 to 9';
-            } elseif ($newHiraList->risk_levels == 2) {
-                $risk_levels = '10 to 16';
-            } elseif ($newHiraList->risk_levels == 3) {
-                $risk_levels = '17 to 25';
-            } elseif ($newHiraList->risk_levels == 4) {
-                $risk_levels = 'Legal';
-            }
 
             // dd($newHiraList,$inc_id);
 
@@ -1577,10 +1558,10 @@ class AccidentReportController extends Controller
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList','risk_levels'))->render();
+                return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList'))->render();
             }
 
-            return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList','risk_levels'));
+            return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }

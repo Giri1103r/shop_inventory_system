@@ -39,6 +39,7 @@ class AccidentReport extends Model
         'action_submission_date',
         'action_submission_description',
         'investigation_assigned',
+        'choose_assignee',
         'status',
         'trash',
         'created_by',
@@ -227,6 +228,20 @@ class AccidentReport extends Model
         $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
         $update_array = array(
             'investigation_assigned' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $accident_Id)->update($update_array);
+    }
+    public function chooseAssigneeUpdate($accident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );

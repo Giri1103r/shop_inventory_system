@@ -49,6 +49,17 @@
                             <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
                         </tr>
                         <tr>
+                            @php
+                                if ($newHiraList->risk_levels == 1) {
+                                    $risk_levels = '1 to 9';
+                                } elseif ($newHiraList->risk_levels == 2) {
+                                    $risk_levels = '10 to 16';
+                                } elseif ($newHiraList->risk_levels == 3) {
+                                    $risk_levels = '17 to 25';
+                                } elseif ($newHiraList->risk_levels == 4) {
+                                    $risk_levels = 'Legal';
+                                }
+                            @endphp
                             <th>Risk Level</th>
                             <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>

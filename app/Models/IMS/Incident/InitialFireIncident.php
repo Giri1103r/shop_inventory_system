@@ -37,6 +37,7 @@ class InitialFireIncident extends Model
         'reporting_media_others',
         'brief_description',
         'investigation_assigned',
+        'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -253,6 +254,20 @@ class InitialFireIncident extends Model
         $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
         $update_array = array(
             'investigation_assigned' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
+    public function chooseAssigneeUpdate($incident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
