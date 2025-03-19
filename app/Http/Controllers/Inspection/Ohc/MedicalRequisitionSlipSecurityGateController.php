@@ -10,7 +10,7 @@ use App\Models\Master\Unit;
 use App\Models\Inspection\Master\Shift;
 
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
-use App\Models\Inspection\Ohc\OhcDetails;
+use App\Models\Inspection\Ohc\MedicineRequistionSlipfdodetails;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\UploadLog;
 use App\Models\User;
@@ -27,12 +27,10 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
     private $unit;
     private $shift;
     private $department;
-    private $OhcDetails;
     private $user;
     private $medicine_requisition_fdo_checklist;
-
     private $inventory;
-
+    private $medicine_requisition_fdo_details;
 
     private $location;
     public function __construct()
@@ -43,11 +41,10 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
-        $this->OhcDetails = new OhcDetails();
         $this->medicine_requisition_fdo_checklist = new MedicineRequistionFdoChecklist();
         $this->inventory = new Inventory();
         $this->user = new User();
-
+        $this->medicine_requisition_fdo_details = new MedicineRequistionSlipfdodetails();
     }
 
     public function Index(Request $request)

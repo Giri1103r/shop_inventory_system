@@ -133,24 +133,24 @@ class AdminController extends Controller
 
             $file = $request->file('signature_image');
             if ($file != null) {
-              
-                $destinationPath = 'public/uploads/signatureupload';
+
+                $destinationPath = 'uploads/signatureupload';
 
                 if (!File::exists(public_path($destinationPath))) {
                     File::makeDirectory(public_path($destinationPath), 0777, true, true);
                 }
-        
+
                 $ppe_file_path = null;
-        
+
                 if ($request->hasFile('signature_image')) {
                     $signature_image = $request->file('signature_image');
-        
+
                     $signature_image_name = time() . '_' . $signature_image->getClientOriginalName();
                     $signature_image->move(public_path($destinationPath), $signature_image_name);
-        
+
                     $signature_image_path = $destinationPath . '/' . $signature_image_name;
                 }
-        
+
                 $update_data['signature_upload'] = $signature_image_path;
 
                 User::where('id', $id)->update($update_data);

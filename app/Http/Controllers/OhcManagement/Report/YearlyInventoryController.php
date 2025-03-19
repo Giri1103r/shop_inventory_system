@@ -92,7 +92,7 @@ class YearlyInventoryController extends Controller
 
 
         $allIssuances = $this->medicine_issuance->getYearlyissuedDate($selectedYear, $medicineIssuing);
-
+      
         $data = [
             'medicine' => $medicine,
             'inventory' => $inventory,

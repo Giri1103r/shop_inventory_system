@@ -49,8 +49,11 @@ class PrescribetoPatient extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-            'ohc_management_opd_patient.*');
-
+            'ohc_management_opd_patient.*'
+        );
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -77,7 +80,11 @@ class PrescribetoPatient extends Model
                 }
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_opd_patient.id', 'DESC');
+        } else {
+            $query->where('ohc_management_opd_patient.created_by', Auth::id());
+        }
 
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
@@ -120,23 +127,23 @@ class PrescribetoPatient extends Model
 
     // store
 
-    public function store( $unit)
+    public function store($department, $unit)
     {
         $request = request();
 
 
-        if( $request->has('is_outside_worker') == 1){
-           $employeeId =  $request->outside_emp_id;
-        }else{
+        if ($request->has('is_outside_worker') == 1) {
+            $employeeId =  $request->outside_emp_id;
+        } else {
             $employeeId =   $request->emp_id;
         }
 
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' =>  $unit->id ?? null,
-            'department_id' => $request->department_id ,
+            'department_id' =>  $request->department_id ?? $department->id ?? null,
             'company_name' => $request->company_name,
-            'emp_id' =>$employeeId ,
+            'emp_id' => $employeeId,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
             'mobile_no' => $request->mobile_no,
@@ -152,30 +159,30 @@ class PrescribetoPatient extends Model
             'is_refered' => $request->has('is_reffered') ? 1 : 0,
             'patient_status' => $request->patient_status,
             'fitness_certificate' => $request->fitness_certificate,
-            'closed_description' => $request->closed_description,
+            'closed_description' => $request->close_description,
             'suggested_details' => $request->details,
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob)
         ];
 
-        // dd( $insert_array);
+
         return $this->create($insert_array);
     }
 
-    public function updates($id, $unit)
+    public function updates($id, $department,$unit)
     {
         $request = request();
 
-        if( $request->has('is_outside_worker') == 1){
+        if ($request->has('is_outside_worker') == 1) {
             $employeeId =  $request->outside_emp_id;
-         }else{
-             $employeeId =   $request->emp_id;
-         }
+        } else {
+            $employeeId =   $request->emp_id;
+        }
 
         $update_array = array(
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' =>  $unit->id ?? null,
-            'department_id' =>$request->department_id ,
+            'department_id' => $request->department_id ?? $department->id ?? null,
             'company_name' => $request->company_name,
             'emp_id' =>   $employeeId,
             'gender' => $request->gender,
@@ -193,7 +200,7 @@ class PrescribetoPatient extends Model
             'is_refered' => $request->has('is_reffered') ? 1 : 0,
             'patient_status' => $request->patient_status,
             'fitness_certificate' => $request->fitness_certificate,
-            'closed_description' => $request->closed_description,
+            'closed_description' => $request->close_description,
             'suggested_details' => $request->details,
             'created_by' => Auth::id(),
             'dob' => DBdateformat($request->dob),
@@ -227,7 +234,7 @@ class PrescribetoPatient extends Model
         return $this->where('emp_name', $emp_name)->get();
     }
 
-    public function existUniqueCheck($emp_name,$id)
+    public function existUniqueCheck($emp_name, $id)
     {
         return $this->where('emp_name', $emp_name)
             ->where('id', '!=', $id)
@@ -243,9 +250,12 @@ class PrescribetoPatient extends Model
     {
         $request = request();
         $search = '';
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         $query = $this->select(
-            'ohc_management_opd_patient.*');
+            'ohc_management_opd_patient.*'
+        );
 
 
         if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
@@ -268,6 +278,11 @@ class PrescribetoPatient extends Model
                     $query->orWhere('date', 'LIKE', '%' . $formattedDate . '%');
                 }
             });
+        }
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_management_opd_patient.id', 'DESC');
+        } else {
+            $query->where('ohc_management_opd_patient.created_by', Auth::id());
         }
         if ($request->has('emp_name') && $request->emp_name) {
             $query = $query->where('ohc_management_opd_patient.emp_name', 'LIKE', '%' . $request->emp_name . '%');
@@ -292,5 +307,4 @@ class PrescribetoPatient extends Model
 
         return $query->get(); // Ensure this returns a Collection, not null
     }
-
 }

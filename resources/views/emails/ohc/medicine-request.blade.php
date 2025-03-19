@@ -20,7 +20,7 @@
                             <b>Medicine Request</b>
                         </td>
                     </tr>
-                  
+
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Medicine Name</b>
@@ -36,13 +36,7 @@
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                             valign="top"> {{ $details['pack'] }}</td>
                     </tr>
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>HSN Number</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ $details['hsn'] }}</td>
-                    </tr>
+
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Threshold Limit</b>
@@ -51,13 +45,7 @@
                             valign="top"> {{ $details['threshold_limit'] }}</td>
                     </tr>
 
-                    <tr>
-                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Expire Date</b>
-                        </td>
-                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{displaydateformat( $details['expiry_date']) }}</td>
-                    </tr>
+                   
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                             <b>Remarks</b>

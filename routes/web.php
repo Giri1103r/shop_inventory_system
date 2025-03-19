@@ -1045,6 +1045,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
                 Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
                 Route::post('/delete/{id}', [PrescribetoPatientController::class, 'delete']);
+                Route::post('/cancel', [PrescribetoPatientController::class, 'cancel']);
                 Route::post('/close', [PrescribetoPatientController::class, 'close']);
                 Route::get('/export/excel', [PrescribetoPatientController::class, 'exportExcel']);
                 Route::get('/export/pdf', [PrescribetoPatientController::class, 'exportPdf']);

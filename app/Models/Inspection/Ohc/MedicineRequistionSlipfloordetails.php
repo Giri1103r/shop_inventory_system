@@ -8,14 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
-class OhcDetails extends Model
+class MedicineRequistionSlipfloordetails extends Model
 {
-    protected $table = 'inspection_ohc_details';
+    protected $table = 'inspection_ohc_medicine_requisition_slip_floor_details';
 
     protected $primaryKey = 'id';
-
     protected $fillable = [
-        'ohc_type',
         'doc_no',
         'issue_date',
         'revision_date',
@@ -53,7 +51,7 @@ class OhcDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_details.*');
+        $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
 
         // dd($query);
         $org_total =  $query;
@@ -69,16 +67,16 @@ class OhcDetails extends Model
             });
         }
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_details.revision_date', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . decryptId($request->status) . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -86,25 +84,25 @@ class OhcDetails extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_ohc_details.revision_date', $columnorder);
+                    $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_details.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_ohc_details.doc_no', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_ohc_details.status', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_ohc_details.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_ohc_details.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_ohc_details.id', 'DESC');
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
                     break;
             }
         }
@@ -113,7 +111,7 @@ class OhcDetails extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('inspection_ohc_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -135,7 +133,6 @@ class OhcDetails extends Model
         $request = request();
 
         $insert_array = [
-            'ohc_type' => $request->ohc_type,
             'doc_no' => $request->document_no,
             'issue_date' => DBdateformat($request->issue_date),
             'shift' => decryptId($request->shift),
@@ -186,26 +183,5 @@ class OhcDetails extends Model
             User::where('id', $id)->update($update_data);
             Employee::where('login_id', $id)->update($update_data);
         }
-    }
-    public function statuschange($id)
-    {
-        $request = request();
-
-        $type = $request->types;
-        if ($type == 1) {
-            $update_data = array(
-                'status' => 0,
-            );
-        } else {
-            $update_data = array(
-                'status' => 1,
-            );
-        }
-
-        return $this->where('id', $id)->update($update_data);
-    }
-    public function Selectone($id)
-    {
-        return $this->where('id', $id)->first();
     }
 }

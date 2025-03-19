@@ -32,7 +32,6 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Medicine Name</th>
                                         <th>Total Received</th>
-                                        <th>Total Issue</th>
                                         <th>Total First Aid</th>
                                         <th>Total Prescribe</th>
                                         <th>Balance</th>
@@ -122,10 +121,6 @@
                 {
                     data: 'total_received',
                     name: 'total_received'
-                },
-                {
-                    data: 'total_issue',
-                    name: 'total_issue'
                 },
                 {
                     data: 'total_first_aid',

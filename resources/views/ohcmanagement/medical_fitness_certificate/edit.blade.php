@@ -60,7 +60,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
-                                                        Date</label>
+                                                        </label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
                                                             value="{{ displaydateformat($medicalfitness->date) }}"

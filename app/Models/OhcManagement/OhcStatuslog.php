@@ -31,7 +31,7 @@ class OhcStatuslog extends Model
     public function medicinelog($id)
     {
         $request = request();
-        $user = User::where('status', 1)->first();
+        $user = User::where('status', 1)->where('id',Auth::id())->first();
         $approveStatus = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
             ? STATUS_OHC_EHS_HEAD_APPROVED
             : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
@@ -226,21 +226,7 @@ class OhcStatuslog extends Model
         return $this->create($insert_data);
     }
 
-    // OHC Stock management Approval Log
 
-    // public function stockupdate($id)
-    // {
-    //     $request = request();
-    //     $insert_data = [
-    //         'type' => TYPE_OHC_MEDICINE_STOCK,
-    //         'reference_id' => $id,
-    //         'from_status' => STATUS_OHC_MEDICINE_APPROVAL_PENDING,
-    //         'to_status' => STATUS_OHC_EHS_HEAD_APPROVED,
-    //         'remarks' => $request->remarks,
-    //         'created_by' => Auth::id(),
-    //     ];
-    //     return $this->create($insert_data);
-    // }
 
     // Medicine Requistion Close Status
 
@@ -250,7 +236,7 @@ class OhcStatuslog extends Model
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_REQUISITION,
             'reference_id' => $id,
-            'from_status' => STATUS_OHC_PARAMEDICS_APPROVED,
+            'from_status' => STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED,
             'to_status' => STATUS_OHC_CLOSE,
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
@@ -290,20 +276,7 @@ class OhcStatuslog extends Model
         return $this->create($insert_data);
     }
 
-    // public function doctorverificationapprovedstatuslog($id, $ehsverifydata)
-    // {
-    //     $request = request();
-    //     $insert_data = [
-    //         'type' => TYPE_OHC_MEDICAL_FITNESS,
-    //         'reference_id' => $id,
-    //         'from_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
-    //         'to_status' => $ehsverifydata['approve_status'],
-    //         'remarks' =>  $request->remarks,
-    //         'created_by' => Auth::id(),
-    //     ];
-    //     // dd($insert_data );
-    //     return $this->create($insert_data);
-    // }
+
     public function ehsheadverificationapprovedstatuslog($id, $ehsheadverifydata)
     {
         $request = request();
@@ -342,34 +315,7 @@ class OhcStatuslog extends Model
     {
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_AGM_APPROVAL_PENDING)->first();
     }
-    // public function stockopen($id)
-    // {
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_RECEIVING)->where('from_status', STATUS_OHC_OPEN)->first();
-    // }
 
-    // MEDICINE Requistion
-
-    // public function getStockrequestdata($id)
-    // {
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_STOCK_REQUEST)->first();
-    // }
-    // public function getparamedicsapprovaldata($id)
-    // {
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->first();
-    // }
-
-    // public function getmedicineopen($id)
-    // {
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_REQUISITION)->where('from_status', STATUS_OHC_PARAMEDICS_APPROVED)->first();
-    // }
-
-    // Medicine Stocklog View
-
-    // public function medicinestockdata($id)
-    // {
-
-    //     return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICINE_STOCK)->where('from_status', STATUS_OHC_MEDICINE_APPROVAL_PENDING)->first();
-    // }
 
     public function medicineReceivingStockData($id)
     {

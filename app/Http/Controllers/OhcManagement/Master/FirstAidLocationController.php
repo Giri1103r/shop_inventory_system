@@ -292,18 +292,24 @@ class FirstAidLocationController extends Controller
         }
     }
 
+
+
     public function FirstAidUniquecheck(Request $request)
     {
         if ($request->ajax()) {
 
+            $unit_id = decryptId($request->unit_id);
+            $department = decryptId($request->department_id);
             $first_aid_box_no = $request->first_aid_box_no;
-            $unit_id =( $request->unit_id);
-            $department = ($request->department_id);
-           
             $id = $request->id;
             if ($id == '') {
+
+
                 $record = $this->firstaidlocation->firstaidboxuniqueCheck($first_aid_box_no,  $department ,  $unit_id );
+
             } else {
+
+                // dd('sdcgsed');
                 $id = decryptId($id);
                 $record = $this->firstaidlocation->firstaidboxexistUniqueCheck($first_aid_box_no,  $department ,  $unit_id,$id);
             }

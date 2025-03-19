@@ -322,6 +322,28 @@ class PperequestController extends BaseController
                             'created_by' => getusername($value->created_by),
                             'created_at' => Displaydateformat($value->created_at),
                         ];
+                        $ppestatuslog[] = [
+                            'from_status' =>'HOD Approval Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+                        $ppestatuslog[] = [
+                            'from_status' => 'EHS Offcer Approval Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+                        $ppestatuslog[] = [
+                            'from_status' => 'Store manager Issue Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+
                     }
                 }
 
@@ -358,7 +380,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

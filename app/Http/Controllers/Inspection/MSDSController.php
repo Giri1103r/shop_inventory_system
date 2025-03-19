@@ -12,17 +12,20 @@ use App\Models\Inspection\MSDSDetails;
 use App\Models\Inspection\MSDSCheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\MSDSStatusLog;
 
 class MSDSController extends Controller
 {
 
     private $msdsDetails;
     private $msdsCheckList;
+    private $statusLog;
 
     public function __construct()
     {
         $this->msdsDetails = new MSDSDetails();
         $this->msdsCheckList = new MSDSCheckList();
+        $this->statusLog = new MSDSStatusLog();
     }
 
     public function Index(Request $request)
@@ -50,16 +53,65 @@ class MSDSController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('inspection_status', function ($row) {
+                            $text = '';
+                            switch ($row->inspection_status) {
+                                case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_ACTION:
+                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
+                                    break;
+                                case WAITING_FOR_L1_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
+                                    break;
+                                case WAITING_FOR_L2_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
+                                    break;
+                                case INSPECTION_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
+                                    break;
+                                case L2_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case L1_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case EHS_OFFICER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                            // $btn .= '<a href="' . admin_url('msds/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
+                            if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
+                                $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+                            $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                            </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -158,13 +210,16 @@ class MSDSController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
+                $status_log = $this->statusLog->selectOne($id);
                 $msdsDetails = $this->msdsDetails->find($id);
-              
+                $inspection_details = $this->msdsDetails->selectOne($id);
                 $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
                 $data = array(
                     'msdsDetails' => $msdsDetails,
                     'msdsCheckList' => $msdsCheckList  ?? [],
+                    'status_log' => $status_log,
+                    'inspection_details' => $inspection_details,
                 );
             }
             return view('inspection.msds.view', $data);
@@ -172,6 +227,294 @@ class MSDSController extends Controller
             report($ex);
         }
     }
+
+    public function approvals(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $msdsDetails = $this->msdsDetails->find($id);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            $msdsCheckList = $this->msdsCheckList->selectOne($id);
+
+            $data = [
+                'inspection_details' => $inspection_details,
+                'msdsDetails' => $msdsDetails,
+                'msdsCheckList' => $msdsCheckList,
+            ];
+            return view('inspection.msds.approval', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function EHSOfficerSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $inspection_updates = $this->msdsDetails->EHSOfficerUpdate($id);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            if ($request->is_passed == 1) {
+                $message = 'MSDS Inspeciton Approved Successfully';
+                $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
+                $to_status = INSPECTION_APPROVED;
+            } else {
+                $message = 'Inspection Recommended for the CAPA Action';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = WAITING_FOR_CAPA_ACTION;
+            }
+            $userIds = [
+                'users' => $inspection_details->created_by,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => MSDS_INSPECTION,
+                'module_type' => 2,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'msds_details_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ]; 
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('msds/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('Something Went Wrong!'));
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function CAPASubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $forklift_inspection = $this->msdsDetails->capaSubmit($id);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            $ehsOfficers = $inspection_details->verified_by;
+            $userIds = [
+                'users' => $ehsOfficers,
+            ];
+            $mailsubject = 'Safety Inspection';
+            $notificationData = array(
+                'notification_type' => MSDS_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "CAPA Action done by Fire Associates",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('msds/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'msds_details_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_CAPA_ACTION,
+                'to_status' => WAITING_FOR_CAPA_VERIFICATION,
+                'created_by' => Auth::id(),
+                'remarks' => $request->capa_remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('msds/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function CAPAVerifySubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->remarks;
+            $forklift_inspection = $this->msdsDetails->capaVerifySubmit($id, $status, $remarks);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            if ($status == 1) {
+                $message = 'CAPA Action Verified Successfully';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $user = GetLevelOneManager();
+                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $to_status = WAITING_FOR_L1_VERIFICATION;
+            } else {
+                $message = 'EHS Officer Rejected the CAPA Action';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/capa');
+                $users = $inspection_details->created_by;
+                $to_status = EHS_OFFICER_REJECTED;
+            }
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => MSDS_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'msds_details_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_CAPA_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('msds/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function levelOneManagerSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->level_one_manager;
+            $forklift_inspection = $this->msdsDetails->levelOneManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            if ($status == 1) {
+                $message = 'Level One Manager Verified Successfully';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $user = GetLevelTwoManager();
+                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $to_status = WAITING_FOR_L2_VERIFICATION;
+            } else {
+                $message = 'Level One Manager Rejected the CAPA Action';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/capa');
+                $users = $inspection_details->created_by;
+                $to_status = L1_MANAGER_REJECTED;
+            }
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => MSDS_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            $insert_array = [
+                'msds_details_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_L1_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->level_one_manager,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('msds/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function levelTwoManagerSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->level_two_manager;
+            $forklift_inspection = $this->msdsDetails->levelTwoManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->msdsDetails->selectOne($id);
+            if ($status == 1) {
+                $message = 'RRAA Inspeciton Approved Successfully!';
+                $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
+                $to_status = INSPECTION_APPROVED;
+            } else {
+                $message = 'Level Two Manager Rejected the CAPA Action';
+                $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = L2_MANAGER_REJECTED;
+            }
+            $users = $inspection_details->created_by;
+            $userIds = [
+                'users' => $users,
+            ];
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => MSDS_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+            notificationSave($notificationData);
+            $insert_array = [
+                'msds_details_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_L2_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->level_two_manager,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('msds/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
 
     public function ExportExcel(Request $request)
     {
@@ -202,7 +545,7 @@ class MSDSController extends Controller
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_date;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] = getInspectionStatus($data->inspection_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -278,6 +621,51 @@ class MSDSController extends Controller
         }
     }
 
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $status_log = $this->statusLog->selectOne($id);
+                $msdsDetails = $this->msdsDetails->find($id);
+                $inspection_details = $this->msdsDetails->selectOne($id);
+                $msdsCheckList = $this->msdsCheckList->selectOne($id);
+
+                $data = [
+                    'status_log' => $status_log,
+                    'msdsDetails' => $msdsDetails,
+                    'inspection_details' => $inspection_details,
+                    'msdsCheckList' => $msdsCheckList,
+                    'pagetitle' => "MSDS Details",
+                ];
+    
+            }
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.msds.generalpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "MSDS Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
     public function edit($id)
     {
         try {
@@ -336,7 +724,7 @@ class MSDSController extends Controller
             
                $this->msdsCheckList->updates($msdsId);
 
-                Session::flash('success', __('Your data has been updated successfully'));
+               Session::flash('success', __('common.updated_msg'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }

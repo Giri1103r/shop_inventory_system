@@ -148,7 +148,7 @@ class Medicine extends Model
         $request = request();
 
 
-        $user = User::where('status', 1)->first();
+        $user = User::where('status', 1)->where('id',Auth::id())->first();
 
 
         $approveStatus = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
@@ -186,7 +186,7 @@ class Medicine extends Model
         $update_array = array(
             'medicine' => $request->medicine,
             'pack' => $request->pack,
-         
+
             'threshold_limit' => $request->threshold_limit,
             // 'unit_id' => $request->unit_id,
 
