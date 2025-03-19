@@ -191,20 +191,6 @@ class Notification extends Model
                     ->where('template_notification.trash', 'NO');
             }
 
-        }elseif (Auth::user()->role == ROLE_CERTIFIED_FIRST_AIDER) {
-            $nomination = DB::table('users')
-                ->select('id')
-                ->where('employee_id', Auth::user()->employee_id)
-                ->first();
-
-            if ($nomination) {
-                $assignedUserId = $nomination->id;
-
-                $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                    ->where('notification_type', 4)
-                    ->where('template_notification.trash', 'NO');
-            }
-
         }
 
 

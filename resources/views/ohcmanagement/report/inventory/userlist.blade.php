@@ -115,6 +115,10 @@
                     name: 'medicine_id'
                 },
                 {
+                    data: 'total_prescribe',
+                    name: 'total_prescribe'
+                },
+                {
                     data: 'total_received',
                     name: 'total_received'
                 },
@@ -122,13 +126,10 @@
                     data: 'total_first_aid',
                     name: 'total_first_aid'
                 },
+
                 {
-                    data: 'total_prescribe',
-                    name: 'total_prescribe'
-                },
-                {
-                    data: 'balance',
-                    name: 'balance'
+                    data: 'user_balance',
+                    name: 'user_balance'
                 },
 
             ],
