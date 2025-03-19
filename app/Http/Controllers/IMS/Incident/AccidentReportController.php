@@ -167,7 +167,7 @@ class AccidentReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    
+
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -291,8 +291,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -319,14 +319,14 @@ class AccidentReportController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                
+
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -347,7 +347,7 @@ class AccidentReportController extends Controller
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->accident_report->getrisklevel($id);
                 $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
-                $status_log = $this->Statuslog->selectOne($id,2);
+                $status_log = $this->Statuslog->selectOne($id, 2);
                 $data = array(
                     'accident_report' => $accident_report,
                     'getEHSVerify' => $getEHSVerify,
@@ -427,7 +427,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -582,7 +582,6 @@ class AccidentReportController extends Controller
             }
             return view('ims.incident.accidentReport.review', $data);
         } catch (Exception $ex) {
-            
         }
     }
 
@@ -635,8 +634,8 @@ class AccidentReportController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -666,7 +665,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -764,8 +763,8 @@ class AccidentReportController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -797,7 +796,7 @@ class AccidentReportController extends Controller
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -881,8 +880,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -933,8 +932,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -963,7 +962,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1003,8 +1002,8 @@ class AccidentReportController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1032,7 +1031,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1072,8 +1071,8 @@ class AccidentReportController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1104,7 +1103,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1143,8 +1142,8 @@ class AccidentReportController extends Controller
 
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1171,7 +1170,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1220,8 +1219,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1270,8 +1269,8 @@ class AccidentReportController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1299,7 +1298,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1365,7 +1364,7 @@ class AccidentReportController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            
+
             report($ex);
         }
     }
@@ -1501,7 +1500,7 @@ class AccidentReportController extends Controller
             $addInjury = $this->accident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            
+
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -1523,6 +1522,17 @@ class AccidentReportController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '1')->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -1532,10 +1542,10 @@ class AccidentReportController extends Controller
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList'))->render();
+                return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList'));
+            return view('ims.incident.accidentReport.existinghira', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -1546,6 +1556,18 @@ class AccidentReportController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '2')->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
+
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -1555,10 +1577,10 @@ class AccidentReportController extends Controller
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList'))->render();
+                return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira', 'accident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList'));
+            return view('ims.incident.accidentReport.existingMOC', compact('hiraList', 'selectedhira',  'accident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }

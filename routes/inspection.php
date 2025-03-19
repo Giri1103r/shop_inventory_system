@@ -245,8 +245,6 @@ Route::group(['prefix' => 'msds/'], function () {
     Route::post('level-one/verify/submit', [MSDSController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [MSDSController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [MSDSController::class, 'generalpdf']);
-
-
 });
 
 Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () {
@@ -268,5 +266,4 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('level-one/verify/submit', [RRAAController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [RRAAController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
-
 });

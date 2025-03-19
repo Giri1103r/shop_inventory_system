@@ -319,8 +319,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -604,6 +604,7 @@ class InitialFireIncidentController extends Controller
                 $teamMemberIds = explode(',', $ehsReview->team_member);
 
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email']);
+                $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Investigation Assigned';
 
                 // Fetch incident details once, not inside the loop
@@ -625,8 +626,8 @@ class InitialFireIncidentController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -636,7 +637,7 @@ class InitialFireIncidentController extends Controller
                         'module' => 1,
                     )),
                     'web_link' => admin_url('incident/fire-incident/investigation/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => array_to_string($teamMemberIds),
+                    'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -719,6 +720,17 @@ class InitialFireIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', '1')->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -728,10 +740,10 @@ class InitialFireIncidentController extends Controller
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
+                return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
+            return view('ims.initial.firereport.existinghira', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -763,6 +775,17 @@ class InitialFireIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', 2)->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -772,10 +795,10 @@ class InitialFireIncidentController extends Controller
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList'))->render();
+                return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira', 'fireincident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList'));
+            return view('ims.initial.firereport.existingMOC', compact('hiraList', 'selectedhira',  'fireincident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -840,8 +863,8 @@ class InitialFireIncidentController extends Controller
 
             // Use incidentDetails for notification data
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -972,8 +995,8 @@ class InitialFireIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1023,8 +1046,8 @@ class InitialFireIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1093,8 +1116,8 @@ class InitialFireIncidentController extends Controller
                 }
             }
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1163,8 +1186,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1230,8 +1253,8 @@ class InitialFireIncidentController extends Controller
                 }
             }
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1307,8 +1330,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1359,8 +1382,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,

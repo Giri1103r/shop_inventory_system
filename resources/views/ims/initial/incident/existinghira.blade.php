@@ -50,7 +50,7 @@
                         </tr>
                         <tr>
                             <th>Risk Level</th>
-                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                            <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>
                     </table>
                 </div>

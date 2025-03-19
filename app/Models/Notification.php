@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\IMS\Incident\EHSReview;
 
 use App\Scopes\TrashScope;
 
@@ -50,6 +51,7 @@ class Notification extends Model
         /**
          * Role Based list view condition start
          */
+        // $ehsReview =EHSReview::
         if (CheckUserRole(ROLE_SUPERADMIN)|| CheckUserRole(ROLE_ADMIN)) {
             $query->where('template_notification.trash', 'NO');
         } elseif (CheckUserRole(ROLE_TRAINER)) {
@@ -132,7 +134,7 @@ class Notification extends Model
 
                 $query->where(function ($query) use ($assignedUserId) {
                     $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                        ->whereIn('notification_type', [1,3,4])
+                        ->whereIn('notification_type', [1,3,4,5])
                         ->where('template_notification.trash', 'NO');
                 });
             }
@@ -192,7 +194,6 @@ class Notification extends Model
             }
 
         }
-
 
         /**
          * Role Based list view condition end

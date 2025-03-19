@@ -52,7 +52,7 @@
                         </tr>
                         <tr>
                             <th>Risk Level</th>
-                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                            <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>
                     </table>
                 </div>
@@ -79,7 +79,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             @if ($newHiraList == null)
-                <button type="button" class="btn btn-primary" id="saveHira">Save MOC</button>
+                <button type="button" class="btn btn-primary" id="savemoc">Save MOC</button>
             @endif
         </div>
     </form>

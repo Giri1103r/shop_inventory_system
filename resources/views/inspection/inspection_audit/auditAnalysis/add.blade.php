@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'MSDS Add')
-@section('pageurl', admin_url('msds/list'))
+@section('title', '6S Audit Analysis Add')
+@section('pageurl', admin_url('audit/6s-analysis/list'))
 
 @section('content')
 
@@ -27,14 +27,14 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('msds/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('audit/6s-analysis/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="msdsAdd" action="{{ admin_url('msds/add/submit') }}">
+                                    <form method="POST" id="msdsAdd" action="{{ admin_url('audit/6s-analysis/list/add/submit') }}">
                                         @csrf
 
                                         <div class="row">

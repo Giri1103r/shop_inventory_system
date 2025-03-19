@@ -323,7 +323,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -634,7 +634,7 @@ class InitialIncidentController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -730,6 +730,17 @@ class InitialIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', '1')->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -739,10 +750,10 @@ class InitialIncidentController extends Controller
                 ->where('hira_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'))->render();
+                return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'));
+            return view('ims.initial.incident.existinghira', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -753,6 +764,17 @@ class InitialIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', 2)->first();
+
+            $risk_levels = '';
+            if ($newHiraList->risk_levels == 1) {
+                $risk_levels = '1 to 9';
+            } elseif ($newHiraList->risk_levels == 2) {
+                $risk_levels = '10 to 16';
+            } elseif ($newHiraList->risk_levels == 3) {
+                $risk_levels = '17 to 25';
+            } elseif ($newHiraList->risk_levels == 4) {
+                $risk_levels = 'Legal';
+            }
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -762,10 +784,10 @@ class InitialIncidentController extends Controller
                 ->where('moc_id', '!=', 0)
                 ->first();
             if ($request->ajax()) {
-                return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'))->render();
+                return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList','risk_levels'))->render();
             }
 
-            return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList'));
+            return view('ims.initial.incident.existingMOC', compact('hiraList', 'selectedhira', 'incident_id', 'newHiraList','risk_levels'));
         } catch (Exception $error) {
             return response()->json(['error' => $error->getMessage()], 500);
         }
@@ -850,7 +872,7 @@ class InitialIncidentController extends Controller
 
             // Use incidentDetails for notification data
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -981,7 +1003,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1033,7 +1055,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1104,7 +1126,7 @@ class InitialIncidentController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -1174,7 +1196,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1243,7 +1265,7 @@ class InitialIncidentController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -1318,7 +1340,7 @@ class InitialIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1370,7 +1392,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(

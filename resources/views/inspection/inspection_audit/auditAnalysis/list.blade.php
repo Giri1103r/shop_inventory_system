@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'MSDS List')
-@section('pageurl', admin_url('msds/list'))
+@section('pageurl', admin_url('audit/6s-analysis/list'))
 
 @section('content')
 
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('msds/add') }}">Add</x-button-add>
+                            href="{{ admin_url('audit/6s-analysis/add') }}">Add</x-button-add>
                         
                     </div>
                     <div id="search" class="collapse">
