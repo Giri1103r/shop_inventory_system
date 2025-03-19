@@ -834,7 +834,9 @@ class AccidentReportController extends Controller
 
             return view('ims.incident.accidentReport.uauc_riskanalysis', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
         }
     }
     public function uaucSubmit(Request $request)
@@ -1044,7 +1046,7 @@ class AccidentReportController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $accident_status = STATUS_ACTION_PENDING;
             $accident_id = $ehsReview->accident_report_id;
-            $this->accident_report->chooseAssigneeUpdate($accident_id,$ehsReview->team_member);
+            $this->accident_report->chooseAssigneeUpdate($accident_id, $ehsReview->team_member);
             $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
 
             if ($ehsReview->team_member) {

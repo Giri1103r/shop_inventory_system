@@ -19,7 +19,7 @@
             <div class="row" id="existingMOCdiv" style="display: none;">
                 <label for="moc_id" class="form-label require">MOC</label>
                 <div class="col-sm-7 form-input">
-                    <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
+                    <select name="moc_id" id="moc_id" class="form-control" style="width: 100%">
                         <option value="">Select MOC</option>
                         @if ($selectedhira != null)
                             @foreach ($hiraList as $hira)
