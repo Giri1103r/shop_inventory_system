@@ -232,7 +232,7 @@ class AppServiceProvider extends ServiceProvider
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
 
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
 
