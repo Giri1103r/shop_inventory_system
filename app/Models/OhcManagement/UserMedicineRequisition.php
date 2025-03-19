@@ -60,7 +60,7 @@ class UserMedicineRequisition extends Model
 
 
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-        } elseif (in_array(ROLE_PARAMEDICS, $userRole)) {
+        } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
         } else {
             $query->where('ohc_management_user_medicine_requisition.created_by', Auth::id());
         }

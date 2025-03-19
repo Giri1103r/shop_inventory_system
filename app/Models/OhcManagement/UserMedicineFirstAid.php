@@ -177,7 +177,7 @@ class UserMedicineFirstAid extends Model
         }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_user_medicine_first_aid.id', 'DESC');
         } else {
-            $query->where('ohc_management_user_medicine_first_aid.created_by', Auth::id())->where('unit_id',$unit_id);
+            $query->where('ohc_management_user_medicine_first_aid.created_by', Auth::id())->where('ohc_management_user_medicine_first_aid.unit_id',$unit_id);
         }
         if ($request->has('status') && $request->status) {
 

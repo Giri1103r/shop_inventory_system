@@ -276,8 +276,8 @@ class MedicineReceiving extends Model
         $currentDate = now();
         $expiryLimit = now()->addDays(60);
         $query = $this->select('ohc_management_medicine_receiving.*')
-            ->where('approve_status', STATUS_OHC_CLOSE)
-            ->where('expire_date', '<=', $expiryLimit);
+            ->where('approve_status', STATUS_OHC_CLOSE);
+
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
