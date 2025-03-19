@@ -155,7 +155,7 @@ class InitialIncidentController extends Controller
                             // $employees = Employee::select('id','login_id')->where('id',  $getEHSVerify->team_member)->first();
 
 
-                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN)) ) {
+                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -353,14 +353,14 @@ class InitialIncidentController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -399,6 +399,8 @@ class InitialIncidentController extends Controller
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
 
+                $status_log = $this->Statuslog->selectOne($id, 1);
+
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -410,6 +412,7 @@ class InitialIncidentController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalincident' => $getEHSApprovalincident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.initial.incident.view', $data);
@@ -495,7 +498,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -554,7 +557,6 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
         }
     }
 
@@ -655,7 +657,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -665,7 +667,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -877,7 +879,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1061,7 +1063,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1132,7 +1134,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1194,7 +1196,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1202,7 +1204,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1270,7 +1272,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1337,7 +1339,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $initialincident->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1389,7 +1391,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $initialincident->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1398,7 +1400,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1521,7 +1523,7 @@ class InitialIncidentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+
             report($ex);
         }
     }
@@ -1630,7 +1632,7 @@ class InitialIncidentController extends Controller
             $filename = "Initial Incident.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
         }
     }

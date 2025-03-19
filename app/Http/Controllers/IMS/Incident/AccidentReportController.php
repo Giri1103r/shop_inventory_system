@@ -167,7 +167,7 @@ class AccidentReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -319,14 +319,14 @@ class AccidentReportController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+                
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -347,7 +347,7 @@ class AccidentReportController extends Controller
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->accident_report->getrisklevel($id);
                 $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
-
+                $status_log = $this->Statuslog->selectOne($id,2);
                 $data = array(
                     'accident_report' => $accident_report,
                     'getEHSVerify' => $getEHSVerify,
@@ -358,6 +358,7 @@ class AccidentReportController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalAccident' => $getEHSApprovalAccident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.incident.accidentReport.view', $data);
@@ -426,7 +427,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -581,7 +582,7 @@ class AccidentReportController extends Controller
             }
             return view('ims.incident.accidentReport.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            
         }
     }
 
@@ -656,7 +657,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -664,7 +665,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -795,7 +796,7 @@ class AccidentReportController extends Controller
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -961,7 +962,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1030,7 +1031,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1093,7 +1094,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1102,7 +1103,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1169,7 +1170,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1239,7 +1240,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1289,7 +1290,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
             }
@@ -1297,7 +1298,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1363,7 +1364,7 @@ class AccidentReportController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            
             report($ex);
         }
     }
@@ -1499,7 +1500,7 @@ class AccidentReportController extends Controller
             $addInjury = $this->accident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+            
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

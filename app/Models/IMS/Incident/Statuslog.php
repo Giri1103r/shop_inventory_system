@@ -27,11 +27,11 @@ class Statuslog extends Model
 
 
 
-    public function selectOne($id)
+    public function selectOne($id,$type)
     {
 
-        $data =  $this->select('ptw_status_log.*','ptw_status.to_status','ptw_status.status_name')->leftjoin('ptw_status', 'ptw_status.id', '=', 'ptw_status_log.to_status')
-            ->where('ptw_status_log.permit_id', $id)
+        $data =  $this->select('ims_incident_status_log.*','ims_incident_status.to_status','ims_incident_status.status_name')->leftjoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_incident_status_log.to_status')
+            ->where('ims_incident_status_log.ims_id', $id)->where('ims_incident_status_log.ims_type', $type)
             ->get();
 
         return $data;
