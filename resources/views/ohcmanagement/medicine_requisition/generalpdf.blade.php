@@ -150,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                  Medicine Requisition
+                    Medicine Requisition
                 </td>
             </tr>
         </table>
@@ -160,35 +160,43 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Requisition ID</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ isset($user_medicine_requisition->req_id) ? $user_medicine_requisition->req_id : '' }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($user_medicine_requisition->req_id) ? $user_medicine_requisition->req_id : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Unit Name</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Department</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ getDepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ getDepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Request Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ displaydateformat(isset($user_medicine_requisition->request_date) ? $user_medicine_requisition->request_date : '') }}</td>
+                {{ displaydateformat(isset($user_medicine_requisition->request_date) ? $user_medicine_requisition->request_date : '') }}
+            </td>
         </tr>
 
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($user_medicine_requisition->created_by) ? $user_medicine_requisition->created_by : '') }}</td>
+                {{ getUsername(isset($user_medicine_requisition->created_by) ? $user_medicine_requisition->created_by : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($user_medicine_requisition->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($user_medicine_requisition->created_at) }}
+            </td>
         </tr>
     </table>
 
@@ -201,7 +209,7 @@
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                      Medicine Details
+                        Medicine Details
                     </td>
                 </tr>
             </table>
@@ -266,37 +274,37 @@
                     </thead>
                     <tbody>
                         @foreach ($logdata as $log)
-                        <tr>
-                            <td>
-                                @if($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                                    <p>Paramedics Approval Pending</p>
+                            <tr>
+                                <td>
+                                    @if ($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                                        <p>Paramedics Approval Pending</p>
                                     @elseif($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
-                                    <p>Stock Requested</p>
-                                @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
-                                    <p>Paramedics Approved</p>
-                                @elseif($log['from_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
-                                    <p>Paramedics Approval Pending</p>
-                                @elseif($log['from_status'] == STATUS_OHC_CLOSE)
-                                    <p>Paramedics Approved</p>
-                                @endif
-                            </td>
+                                        <p>Stock Requested</p>
+                                    @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                        <p>Paramedics Approved</p>
+                                    @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                        <p>Paramedics Approval Pending</p>
+                                    @elseif($log['from_status'] == STATUS_OHC_CLOSE)
+                                        <p>Paramedics Approved</p>
+                                    @endif
+                                </td>
 
-                            <td>
-                                @if($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)
-                                    <p>Paramedics Approval Pending</p>
-                                @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_APPROVED)
-                                    <p>Paramedics Approved</p>
-                                @elseif($log['to_status'] == STATUS_OHC_PARAMEDICS_REJECTED)
-                                    <p>Paramedics Rejected</p>
-                                @elseif($log['to_status'] == STATUS_OHC_CLOSE)
-                                    <p>Close</p>
-                                @endif
-                            </td>
+                                <td>
+                                    @if ($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                                        <p>Paramedics Approval Pending</p>
+                                    @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                        <p>Paramedics Approved</p>
+                                    @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                        <p>Paramedics Rejected</p>
+                                    @elseif($log['to_status'] == STATUS_OHC_CLOSE)
+                                        <p>Close</p>
+                                    @endif
+                                </td>
 
-                            <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
-                            <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
-                            <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
-                        </tr>
+                                <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
+                                <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
