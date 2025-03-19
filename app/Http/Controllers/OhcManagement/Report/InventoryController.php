@@ -66,13 +66,6 @@ class InventoryController extends Controller
                             return getUnitname($row->unit_id);
                         });
 
-                    // Add user_balance column only if the user is not a super admin
-                    if (!checkUserRole(ROLE_SUPERADMIN)) {
-                        $datatables->addColumn('user_balance', function ($row) {
-                            return $row->total_received - $row->total_first_aid;
-                        });
-                    }
-
                     $datatables->rawColumns(['status', 'unit_id', 'medicine_id']);
 
                     return $datatables->setFilteredRecords($data['filter_records'])

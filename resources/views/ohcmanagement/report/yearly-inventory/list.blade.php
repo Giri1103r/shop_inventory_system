@@ -231,11 +231,11 @@
                     tableBody += `<tr>
             <td>${idCounter++}</td>
             <td>${medicineName}</td>
-            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
-            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
-            <td>${item.total_purchase ? item.total_purchase : "0"}</td>
-            <td>${item.total_issue ? item.total_issue : "0"}</td>
-            <td>${item.balance ? item.balance : "0"}</td>
+            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            <td>${item.total_purchase ? item.total_purchase : ""}</td>
+            <td>${item.total_issue ? item.total_issue : ""}</td>
+            <td>${item.balance ? item.balance : ""}</td>
         </tr>`;
                 });
 
