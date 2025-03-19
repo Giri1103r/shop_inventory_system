@@ -771,6 +771,12 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Target Date</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getEHSVerify->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Remark</label>
                                             <div class="view_data">
                                                 {{ $getEHSVerify->remark }}
