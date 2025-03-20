@@ -325,7 +325,7 @@ class MedicineController extends Controller
                 $action = $request->action;
                 if ($action == 'approve') {
                     $mailsubject =  'Medicine Name Has Been Approved';
-                   
+
                     Mail::to($email)->queue(new MedicineApprovalEmail($details));
                     $notificationData = [
                         'notification_type' => 4,
@@ -333,7 +333,7 @@ class MedicineController extends Controller
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode([
                             'title' => $mailsubject,
-                            'message' => $details->medicine . 'has been approved by the' . $details->approver_name,
+                            'message' => $details->medicine . 'has been approved by the' . Auth::user()->name,
                             'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                             'id' => $id,
                             'module' => 1,

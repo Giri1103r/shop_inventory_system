@@ -212,7 +212,8 @@ class Inventory extends Model
             $balancedata = $olddata->balance + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
-                ->increment('balance', $balancedata);
+                ->update(['balance' => $balancedata]);
+              
         }
     }
 

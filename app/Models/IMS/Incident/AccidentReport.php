@@ -39,6 +39,7 @@ class AccidentReport extends Model
         'action_submission_date',
         'action_submission_description',
         'investigation_assigned',
+        'choose_assignee',
         'status',
         'trash',
         'created_by',
@@ -232,6 +233,20 @@ class AccidentReport extends Model
         );
         return $this->where('id', $accident_Id)->update($update_array);
     }
+    public function chooseAssigneeUpdate($accident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $accident_Id)->update($update_array);
+    }
 
     public function getEHSVerifyAccident($id)
     {
@@ -395,22 +410,14 @@ class AccidentReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name');
+        $query = $this->select('ims_initial_accident_report.*', 'masters_unit.unit_name', 'masters_employee.emp_id', 'masters_department.department_name',  'masters_location.location_name', 'ims_incident_status.status_name', 'ims_incident_status.bg_color', 'ims_accident_investigation.risk_analysis');
+        $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_accident_report.accident_status');
         $query = $query->leftJoin('masters_unit', 'ims_initial_accident_report.unit_id', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_employee', 'ims_initial_accident_report.emp_code', '=', 'masters_employee.emp_id');
         $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('accident_report_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+        $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
+     
         if ($request->has('accident_report_no') && $request->accident_report_no) {
             $query = $query->where('accident_report_no',  $request->accident_report_no);
         }

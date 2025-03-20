@@ -64,6 +64,7 @@ return [
     'rraa' => 'RRAA',
     'resource_code' => 'Resource Code',
     'safety_gallery_inspection' => 'Safety Gallery Inspection',
+    'signature' => 'Signature',
 
 
 

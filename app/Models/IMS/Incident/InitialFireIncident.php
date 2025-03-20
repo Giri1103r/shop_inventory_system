@@ -37,6 +37,7 @@ class InitialFireIncident extends Model
         'reporting_media_others',
         'brief_description',
         'investigation_assigned',
+        'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -258,6 +259,20 @@ class InitialFireIncident extends Model
         );
         return $this->where('id', $incident_Id)->update($update_array);
     }
+    public function chooseAssigneeUpdate($incident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
 
     public function uaucsubmit($id)
     {
@@ -290,8 +305,9 @@ class InitialFireIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
+        $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -318,11 +334,15 @@ class InitialFireIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->incident_status));
         }
 
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ims_initial_fireincident.status', decryptId($request->status));
+        }
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
