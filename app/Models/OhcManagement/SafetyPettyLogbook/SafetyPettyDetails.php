@@ -85,4 +85,18 @@ class SafetyPettyDetails extends Model
         return $datas;
     }
 
+    public function store()
+    {
+        $request = request();
+       
+        $insert_array = array(
+            'document_number' => $request->document_number,
+            'issue_date' => $request->issue_date,
+            'revision_date' => todaydate('todaydate'),
+            'created_by' => Auth::id(),
+        );
+      
+        return $this->create($insert_array);
+    }
+
 }

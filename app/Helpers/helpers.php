@@ -1882,26 +1882,33 @@ if (!function_exists('getMonth')) {
         function GetSafetySignature($userid, $id, $type)
         {
 
-            $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
+            $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 return '';
             } else {
-                return $name->signature_upload;
+                return $name->file_path;
             }
         }
     }
 
     if (!function_exists('GetSignature')) {
-
-        function GetSignature($userid,$type)
+        function GetSignature($userid, $id, $type)
         {
-
-            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
-
-            if ($name == null) {
-                return '';
-            } else {
-                return $name->signature_upload;
+            switch ($type) {
+                case RRAA_INSPECTION:
+                    $name = DB::table('inspection_rraa_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
+                case MSDS_INSPECTION:
+                    $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -1949,8 +1956,7 @@ if (!function_exists('getMonth')) {
     }
 
     // Monthly Eye Wash Sequence
-    if(!function_exists('MEWSequence'))
-    {
+    if (!function_exists('MEWSequence')) {
         function MEWSequence()
         {
             return 'MEW-000001';
@@ -1964,11 +1970,11 @@ if (!function_exists('getMonth')) {
                 return 'Gemba Walk Start';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
                 return 'Waiting for CAPA Action';
-            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
                 return 'Waiting for Floor manager Action';
-            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
                 return 'Waiting for EHS Officer Verification';
-            }else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
+            } else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
                 return 'Inspection Closed';
             }
 

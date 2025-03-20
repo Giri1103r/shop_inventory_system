@@ -219,7 +219,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
@@ -259,6 +259,7 @@
                                         </div>
                                     </form>
                                 @else
+
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -297,7 +298,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -370,7 +371,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url($signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -423,7 +424,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url($signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -477,7 +478,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -538,7 +539,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -579,7 +580,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
@@ -632,7 +633,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
@@ -683,7 +684,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
@@ -735,7 +736,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">

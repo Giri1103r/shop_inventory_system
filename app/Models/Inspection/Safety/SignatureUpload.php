@@ -48,7 +48,7 @@ class SignatureUpload extends Model
             $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
-                $upload_path = 'uploads/inspection/safety/signatureupload';
+                $upload_path = 'public/uploads/inspection/safety/signatureupload';
 
                 if (!File::exists($upload_path)) {
                     File::makeDirectory($upload_path, 0777, true, true);

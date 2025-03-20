@@ -133,8 +133,8 @@ class SafetyPettyController extends Controller
             try {
 
                $sfty_petty_details = $this->sfty_petty_details->store();
-               $sfty_petty_Id = $sfty_petty_details->id;
-               $this->sfty_petty_checklist->store($sfty_petty_Id);
+               $sfty_petty_id = $sfty_petty_details->id;
+               $this->sfty_petty_checklist->store($sfty_petty_id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {

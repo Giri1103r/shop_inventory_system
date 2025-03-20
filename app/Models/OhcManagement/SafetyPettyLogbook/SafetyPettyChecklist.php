@@ -42,4 +42,34 @@ class SafetyPettyChecklist extends Model
         'trash' => 'NO'
     ]; 
 
+    public function store($sfty_petty_id)
+    {
+        $request = request();
+
+        $insertedData = [];
+
+        foreach ($request->employee_code as $index => $employeeCode) {
+            $insert_array = array(
+                'safety_petty_logbook_details_id' => $sfty_petty_id,
+                'serial_number' =>$request->serial_number[$index],
+                'employee_name' => $request->employee_name,  
+                'employee_code' => $request->employee_code[$index], 
+                'department' => $request->department[$index], 
+                'unit' => $request->unit[$index],  
+                'date' => $request->date[$index],  
+                'amount' => $request->amount[$index],  
+                'description' => $request->description[$index],  
+                'amount_given_by' => $request->amount_given_by[$index],  
+                'amount_received_by' => $request->amount_received_by[$index],  
+                'remark' => $request->remark[$index],  
+                'created_by' => Auth::id(),
+            );
+           
+            $insertedData []=  $this->create($insert_array);
+            // dd( $insertedData);
+        }
+        
+        return $insertedData;
+    }
+
 }
