@@ -186,4 +186,6 @@ class MedicineRequistionSlipfdodetails extends Model
             Employee::where('login_id', $id)->update($update_data);
         }
     }
+
+    
 }

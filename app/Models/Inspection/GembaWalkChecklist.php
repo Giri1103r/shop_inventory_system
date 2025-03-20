@@ -28,8 +28,9 @@ class GembaWalkChecklist extends Model
         'capa',
         'date_of_compliance',
         'responsibility_id',
-        'gemba_walk_status',
+        'gemba_walk_checklist_status',
         'remark',
+        'observation',
         'status',
         'trash',
         'created_by',
@@ -43,10 +44,6 @@ class GembaWalkChecklist extends Model
         'status' => 1,
         'trash' => 'NO'
     ];
-
-
-
-
 
 
     public function store($gembaWalk_id)
@@ -68,8 +65,9 @@ class GembaWalkChecklist extends Model
                     'capa' => $walk['checklist_capa'],
                     'date_of_compliance' => DBdateformat($walk['date_of_compliance']),
                     'responsibility_id' => decryptId($walk['responsibility_id']),
-                    'gemba_walk_status' => $walk['current_status'],
+                    'gemba_walk_checklist_status' => $walk['current_status'],
                     'remark' => $walk['checklist_remark'],
+                    'observation' => json_encode($walk['checklist_observation']),
                     'created_by' => Auth::id()
                 ];
 
@@ -99,22 +97,13 @@ class GembaWalkChecklist extends Model
                     GembaWalkChecklistFile::create([
                         'gemba_walk_id' => $gembaWalk_id,
                         'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
+                        'file_type'=>3,
                         'file_name' => $filenewname,
                         'file_orgname' => $fileName,
                         'file_path' => $path,
                         'file_size' => $fileSize,
                         'file_extension' => $fileExt,
                         'created_by' => $user_id,
-                    ]);
-                }
-
-
-                foreach ($walk['checklist_observation'] as $obsIndex => $obs) {
-                   $data =  GembaWalkChecklistObservation::create([
-                        'gemba_walk_id' => $gembaWalk_id,
-                        'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
-                        'observation' => $obs,
-                        'created_by' => Auth::id(),
                     ]);
                 }
             }
@@ -124,4 +113,6 @@ class GembaWalkChecklist extends Model
 
         return response()->json(['error' => 'Invalid data'], 400);
     }
+
+
 }

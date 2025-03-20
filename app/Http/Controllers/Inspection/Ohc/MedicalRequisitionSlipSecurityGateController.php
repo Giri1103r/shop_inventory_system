@@ -81,6 +81,41 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
                         })
+                        ->addColumn('inspection_status', function ($row) {
+                            $text = '';
+                            switch ($row->inspection_status) {
+                                case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_ACTION:
+                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
+                                    break;
+                                case WAITING_FOR_CAPA_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
+                                    break;
+                                case WAITING_FOR_L1_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
+                                    break;
+                                case WAITING_FOR_L2_VERIFICATION:
+                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
+                                    break;
+                                case INSPECTION_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
+                                    break;
+                                case L2_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case L1_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                case EHS_OFFICER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    break;
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
+                        })
                         ->addColumn('action', function ($row) {
                             return '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
                         })
@@ -107,7 +142,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $shift = $this->shift->getShiftname();
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
-            $location = $this->location->getLocation();
+            $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
@@ -181,4 +216,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             dd($ex);
         }
     }
+
+
+  
 }

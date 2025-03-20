@@ -55,6 +55,7 @@ use App\Http\Controllers\IMS\Incident\InitialIncidentController;
 use App\Http\Controllers\IMS\Incident\InitialFireIncidentController;
 use App\Http\Controllers\IMS\Incident\AccidentReportController;
 use App\Http\Controllers\Inspection\Ohc\DailyDepartmentFirstAidBoxController;
+use App\Http\Controllers\Inspection\Ohc\FirstAiderlistController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
@@ -1357,6 +1358,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/add/submit', [MedicalRequisitionSlipController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);
+                    Route::GET('/approval/view/{id}', [MedicalRequisitionSlipController::class, 'approval']);
                     Route::POST('/status', [MedicalRequisitionSlipController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipController::class, 'ExportPDF']);
@@ -1369,6 +1371,10 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
+                    Route::POST('/floormanagerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'floormanagerapproval']);
+
+                    Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'safetyofficerapproval']);
+
                     Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
                     Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
@@ -1387,6 +1393,23 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [DailyDepartmentFirstAidBoxController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [DailyDepartmentFirstAidBoxController::class, 'ExportPDF']);
                     Route::POST('/lists', [DailyDepartmentFirstAidBoxController::class, 'Checklists']);
+                });
+
+                Route::group(['prefix' => 'first-aider'], function () {
+                    Route::GET('/list', [FirstAiderlistController::class, 'Index']);
+                    Route::POST('/list', [FirstAiderlistController::class, 'Index']);
+                    Route::GET('/add', [FirstAiderlistController::class, 'Add']);
+                    Route::POST('/add/submit', [FirstAiderlistController::class, 'Store']);
+                    Route::POST('/unique', [FirstAiderlistController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [FirstAiderlistController::class, 'View']);
+                    Route::POST('/status', [FirstAiderlistController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [FirstAiderlistController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [FirstAiderlistController::class, 'ExportPDF']);
+                    Route::POST('/lists', [FirstAiderlistController::class, 'Checklists']);
+                    Route::GET('/emplyeename', [FirstAiderlistController::class, 'employeename']);
+                    Route::GET('/employeedetails ', [FirstAiderlistController::class, 'employeedetails']);
+
+
                 });
             });
         });

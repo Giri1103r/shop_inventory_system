@@ -4,25 +4,41 @@ namespace App\Http\Controllers\Inspection\Safety;
 
 use Exception;
 use App\Models\UploadLog;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Inspection\Master\Shift;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
+use Illuminate\Support\Facades\Session;
 
 class MonthlyEyeWashInspectionController extends Controller
 {
     private $eye_wash_details;
     private $checklist_file;
     private $upload_log;
+    private $shift;
+    private $location;
+    private $unit;
+    private $frequency;
+    private $statusLog;
 
     public function __construct()
     {
         $this->eye_wash_details = new MonthlyEyeWashInspection();
         $this->checklist_file = new ChecklistFile();
         $this->upload_log = new UploadLog();
+        $this->shift = new Shift();
+        $this->location = new Location();
+        $this->unit = new Unit();
+        $this->frequency = new Frequency();
+        $this->statusLog = new SafetyStatusLog();
     }
 
     public function Index(Request $request)
@@ -76,17 +92,37 @@ class MonthlyEyeWashInspectionController extends Controller
         return view('inspection.Safety.eye_wash_inspection.list', $data);
     }
 
-    public function add(Request $request)
+    public function Add(Request $request)
     {
         try {
-        //    $checklistQuestions = getCheckListQuestion(EYE_WASH_INSPECTION_CHECKLIST);
+
+            $location = $this->location->getLocationName();
+            $unit = $this->unit->getUnit();
+            $frequency = $this->frequency->getFrequency();
+            $shifts = $this->shift->getShiftname();
+
             $data = array(
-                // 'checklistQuestions' => $checklistQuestions,
+                'locations' => $location,
+                'units' => $unit,
+                'frequency' => $frequency,
+                'shifts' => $shifts,
             );
             return view('inspection.Safety.eye_wash_inspection.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return admin_url('safety/eye-wash-inspection/monthly/list');
+        }
+    }
+
+    public function Store(Request $request)
+    {
+        try {
+            
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return admin_url('safety/eye-wash-inspection/monthly/list');
         }
     }
 }

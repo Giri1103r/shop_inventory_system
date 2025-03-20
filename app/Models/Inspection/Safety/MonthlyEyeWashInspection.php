@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MonthlyEyeWashInspection extends Model
 {
-    protected $table = 'inspection_safety_details';
+    protected $table = 'inspection_monthly_eyewash';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -43,7 +43,7 @@ class MonthlyEyeWashInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_details.*');
+        $query = $this->select('inspection_monthly_eyewash.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -57,13 +57,13 @@ class MonthlyEyeWashInspection extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_details.category_name', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_monthly_eyewash.category_name', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_safety_details.category_name', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_monthly_eyewash.category_name', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_details.category_id', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_monthly_eyewash.category_id', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -71,25 +71,25 @@ class MonthlyEyeWashInspection extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_safety_details.rev_date', $columnorder);
+                    $query->orderBy('inspection_monthly_eyewash.rev_date', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_safety_details.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_monthly_eyewash.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_safety_details.document_number', $columnorder);
+                    $query = $query->orderBy('inspection_monthly_eyewash.document_number', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_safety_details.status', $columnorder);
+                    $query = $query->orderBy('inspection_monthly_eyewash.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_safety_details.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_monthly_eyewash.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_safety_details.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_monthly_eyewash.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_safety_details.id', 'DESC');
+                    $query = $query->orderBy('inspection_monthly_eyewash.id', 'DESC');
                     break;
             }
         }
@@ -113,7 +113,7 @@ class MonthlyEyeWashInspection extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_safety_details'));
+        static::addGlobalScope(new TrashScope('inspection_monthly_eyewash'));
 
     }
 }

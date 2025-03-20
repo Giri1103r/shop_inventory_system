@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDSController;
 use App\Http\Controllers\Inspection\RRAAController;
-use App\Http\Controllers\Inspection\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
@@ -127,17 +127,17 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::post('list', [GembaWalkController::class, 'index']);
     Route::get('add', [GembaWalkController::class, 'add']);
     Route::post('add/submit', [GembaWalkController::class, 'store']);
-    // Route::get('edit/{id}', [ChecklistSubTypeDataController::class, 'edit']);
-    // Route::post('edit/submit', [ChecklistSubTypeDataController::class, 'update']);
     Route::get('view/{id}', [GembaWalkController::class, 'view']);
-    // Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
-    // Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
-    // Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
-    // Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
-    // Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
-    // Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
-    // Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
-    // Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
+    Route::get('capa-verification/{id}', [GembaWalkController::class, 'approvals']);
+    Route::post('capa/submit', [GembaWalkController::class, 'CAPASubmit']);
+    Route::get('floor-manager/{id}', [GembaWalkController::class, 'review']);
+    Route::post('floor-manager/review/submit', [GembaWalkController::class, 'capaReviewSubmit']);
+    Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
+    Route::post('ehs-officer/review/submit', [GembaWalkController::class, 'ehsReviewSubmit']);
+
+
+
+   
 });
 Route::group(['prefix' => 'environment/'], function () {
     Route::group(['prefix' => 'ambient-noise/'], function () {
@@ -182,10 +182,10 @@ Route::group(['prefix' => 'safety/'], function () {
     });
 
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
-        Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
-        Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
-        Route::get('add', [MonthlyEyeWashInspectionController::class, 'add']);
-        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'store']);
+        Route::get('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::post('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::get('add', [MonthlyEyeWashInspectionController::class, 'Add']);
+        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'Store']);
     });
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
         Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
@@ -229,6 +229,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::post('add/submit', [SafetyGalleryInsepctionController::class, 'store']);
         Route::get('view/{id}', [SafetyGalleryInsepctionController::class, 'view']);
     });
+
 });
 
 

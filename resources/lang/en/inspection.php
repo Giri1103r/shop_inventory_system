@@ -66,6 +66,20 @@ return [
     'safety_gallery_inspection' => 'Safety Gallery Inspection',
     'signature' => 'Signature',
 
+    // Monthly Eye Wash Inspection
+    'sr_no' => 'Serial No',
+    'resource_code' => 'Resource Code',
+    'condition' => 'Condition',
+    'value' => 'Value',
+    'hfsov' => 'Hands Free Stay Open Value',
+    'foot_pedal_value' => 'Foot Pedal Value',
+    'eyewash_heads' => 'Eye Wash Heads',
+    'receptacle' => 'Receptacle',
+    'water' => 'Water',
+    'quality' => 'Quality',
+    'pressure' => 'Pressure',
+    'temperature' => 'Temperature',
+
 
 
 ];
