@@ -158,8 +158,14 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[1]" id = "location"
-                                                            class="form-control">
+                                                        <select name="location[1]" id="location"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Location</option>
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ encryptId($location->id) }}">
+                                                                    {{ $location->location_name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -489,6 +495,8 @@
                 $(document).on('click', '#add-row', function() {
                     let currentFormSets = $('.form-wrapper .form-set').length;
 
+
+
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
@@ -529,8 +537,10 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[${form_set_count}]" id = "location"
-                                                            class="form-control">
+                                                        <select name="location[${form_set_count}]" id="location"
+                                                            class=" form-control single-select location-select" style="width: 100%">
+                                                            <option value="">Select Location</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -635,19 +645,14 @@
                                             </div>
                     `;
 
-                    $('.form-wrapper').append(newFormSet);
+                    let newFormSetElement = $(newFormSet); // Convert string to jQuery object
 
-                    serial_number++;
+                    let locationSelect = newFormSetElement.find('select[name^="location"]');
+                    GetLocations(locationSelect); // Now this will work correctly
 
-                    // $('select[name^="condition["], select[name^="water["]').each(function() {
-                    //     $(this).select2({
-                    //         placeholder: "Select an Option",
-                    //         width: '100%'
-                    //     });
-                    // });
+                    $('.form-wrapper').append(newFormSetElement);
 
-                    // Adding validation rules dynamically
-                    $("input[name='location[" + form_set_count + "]']").rules('add', {
+                    $("select[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the location',
@@ -731,12 +736,30 @@
                         }
                     });
 
+                    serial_number++;
                     form_set_count++;
                     updatePageIndices();
 
                 });
             });
 
+            function GetLocations(selectElement) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ admin_url('safety/eye-wash-inspection/monthly/get/locations') }}",
+                    success: function(response) {
+                        console.log(response);
+                        if (response.length > 0) {
+                            let options = `<option value="">Select Location</option>`;
+                            response.forEach(location => {
+                                options +=
+                                    `<option value="${location.id}">${location.location_name}</option>`;
+                            });
+                            $(selectElement).html(options).trigger('change');
+                        }
+                    }
+                });
+            }
 
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
@@ -745,7 +768,7 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('input[name^="location"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
                     $(this).find('select[name^="condition"]').attr('name', 'condition[' + idx + ']');
                     $(this).find('input[name^="value"]').attr('name', 'value[' + idx + ']');

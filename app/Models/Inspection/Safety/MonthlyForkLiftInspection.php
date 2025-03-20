@@ -38,6 +38,7 @@ class MonthlyForkLiftInspection extends Model
         'approved_by',
         'l1_manager_verification',
         'l2_manager_verification',
+        'capa_ehs_remarks',
         'status',
         'trash',
         'created_by',
@@ -45,7 +46,7 @@ class MonthlyForkLiftInspection extends Model
         'created_at',
         'updated_at',
         'responses',
-        'capa_ehs_remarks'
+        
     ];
 
     protected $attributes = [

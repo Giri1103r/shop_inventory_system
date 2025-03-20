@@ -267,6 +267,7 @@ class AppServiceProvider extends ServiceProvider
         defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
 
         //Status Log
+        defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
 
