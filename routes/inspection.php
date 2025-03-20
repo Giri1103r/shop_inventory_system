@@ -181,10 +181,10 @@ Route::group(['prefix' => 'safety/'], function () {
     });
 
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
-        Route::get('list', [MonthlyEyeWashInspectionController::class, 'index']);
-        Route::post('list', [MonthlyEyeWashInspectionController::class, 'index']);
-        Route::get('add', [MonthlyEyeWashInspectionController::class, 'add']);
-        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'store']);
+        Route::get('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::post('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::get('add', [MonthlyEyeWashInspectionController::class, 'Add']);
+        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'Store']);
     });
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
         Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
@@ -222,6 +222,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::post('add/submit', [SafetyGalleryInsepctionController::class, 'store']);
         Route::get('view/{id}', [SafetyGalleryInsepctionController::class, 'view']);
     });
+
 });
 
 

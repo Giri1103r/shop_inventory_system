@@ -1895,4 +1895,13 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    // Monthly Eye Wash Sequence
+    if(!function_exists('MEWSequence'))
+    {
+        function MEWSequence()
+        {
+            return 'MEW-000001';
+        }
+    }
 }

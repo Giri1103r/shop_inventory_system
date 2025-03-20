@@ -242,6 +242,12 @@ class AppServiceProvider extends ServiceProvider
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
 
+
+        // Monthly Eye Wash 
+        defined('GOOD') or define('GOOD',1);
+        defined('FAIR') or define('FAIR',2);
+        defined('POOR') or define('POOR',3);
+
         View::composer('*', function ($view) {
 
             /**
