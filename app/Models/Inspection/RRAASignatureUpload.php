@@ -14,6 +14,7 @@ class RRAASignatureUpload extends Model
         'id',
         'type',
         'inspection_id',
+        'emp_id',
         'file_path',
         'file_name',
         'file_orgname',
