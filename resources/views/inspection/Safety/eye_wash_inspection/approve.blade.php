@@ -241,6 +241,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                             </div>
                                         </div>

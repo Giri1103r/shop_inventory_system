@@ -56,6 +56,7 @@ class EyeWashInspectionDetails extends Model
         $pressure = $request->pressure;
         $temperature = $request->temperature;
         $receptacle = $request->receptacle;
+        $remarks = $request->remarks;
 
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
@@ -73,6 +74,7 @@ class EyeWashInspectionDetails extends Model
                 'pressure' => $pressure[$index],
                 'temperature' => $temperature[$index],
                 'value' => $value[$index],
+                'remarks' => $remarks[$index],
                 'created_by' => Auth::id(),
             );
 
