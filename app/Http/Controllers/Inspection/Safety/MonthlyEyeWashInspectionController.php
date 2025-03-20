@@ -181,12 +181,56 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $store_eyewash_inspection = $this->eye_wash->store();
             $inspection_id = $store_eyewash_inspection->id;
+            $inspection_details = $this->eye_wash->selectOne($inspection_id);
             $store_inspection_details = $this->eye_wash_details->store($inspection_id);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/eyewash/monthly/verification/view/' . encryptId($inspection_id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
+                $details = array(
+                    'safety_type' => 'Monthly Forklift Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
+            $insert_array = [
+                'type' => EYE_WASH_INSPECTION,
+                'inspection_id' => $$inspection_id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
 
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
@@ -208,12 +252,13 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection = $this->eye_wash->selectOne($id);
-            $inspection_details = $this->eye_wash_details->GetDetails($inspection->id);
-
+            $inspection_details = $this->eye_wash->selectOne($id);
+            $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+            $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'status_log' => $status_log,
             );
 
             return view('inspection.Safety.eye_wash_inspection.view', $data);

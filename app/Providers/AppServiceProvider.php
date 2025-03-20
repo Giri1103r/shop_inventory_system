@@ -280,7 +280,8 @@ class AppServiceProvider extends ServiceProvider
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
         defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
 
-        // Monthly Eye Wash
+        // Fire 
+        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
 
 
         View::composer('*', function ($view) {
