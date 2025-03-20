@@ -595,7 +595,38 @@ class MonthlyEyeWashInspectionController extends Controller
     public function exportViewPdf(Request $request)
     {
         try{
-            dd($request->id);
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
+                $inspection_details = $this->eye_wash->selectOne($id);
+                $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+
+                $data = [
+                    'status_log' => $status_log,
+                    'inspection_details' => $inspection_details,
+                    'inspection' => $inspection,
+                    'pagetitle' => "Monthly EyeWash Inspection",
+                ];
+            }
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.Safety.eye_wash_inspection.viewPdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Monthly Eyewash Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
         }
         catch(Exception $ex)
         {
