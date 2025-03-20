@@ -224,12 +224,13 @@
                                                         </div>
                                                     </div>
                                                 @endif
+
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url($signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -255,17 +256,6 @@
                                                         @endphp
                                                     @endif
                                                 @endif
-                                                @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
-                                                                alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
-                                                        </div>
-                                                    </div>
-                                                @endif
                                                 @if (isset($inspection_details->capa_recomendation))
                                                     <div class="col-md-12 mb-2">
                                                         <div class="form-group form-input">
@@ -290,6 +280,7 @@
                                             </div>
                                         @endif
                                         @if (isset($inspection_details->capa_remarks))
+
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
                                             </div>
@@ -323,7 +314,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url($signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -377,7 +368,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -430,7 +421,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -482,7 +473,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -511,7 +502,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url($signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
