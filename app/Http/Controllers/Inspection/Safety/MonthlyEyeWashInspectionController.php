@@ -665,7 +665,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
                 $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
+                $export[] = $data->revision_data;
                 $export[] =  getInspectionStatus($data->inspection_status);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);

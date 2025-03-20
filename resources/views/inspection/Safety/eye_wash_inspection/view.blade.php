@@ -47,7 +47,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->revision_date }}
+                                                    {{ $inspection_details->revision_data }}
                                                 </div>
                                             </div>
                                         </div>
