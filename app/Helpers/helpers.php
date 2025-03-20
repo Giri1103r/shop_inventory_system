@@ -1886,7 +1886,7 @@ if (!function_exists('getMonth')) {
             if ($name == null) {
                 return '';
             } else {
-                return $name->signature_upload;
+                return $name->file_path;
             }
         }
     }
