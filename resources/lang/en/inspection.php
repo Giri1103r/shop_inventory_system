@@ -83,6 +83,10 @@ return [
     'equipment_inactive_msg' => 'Do you want to Inactive the Equipment',
     'equipment_active_msg' => 'Do you want to Active the Equipment',
 
-
+    // Fire Inspection
+    'department' => 'Department',
+    'check_items' => 'Check Items',
+    'quantity' => 'Quantity',
+    'observations' => 'Check If Observations Needed'
 
 ];

@@ -140,13 +140,27 @@ class HooterInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Safety.eye_wash_inspection.list', $data);
+        return view('inspection.Fire.hooter_inspection.list', $data);
     }
 
     public function Add(Request $request)
     {
         try{
+            $location = $this->location->getLocationName();
+            $unit = $this->unit->getUnit();
+            $frequency = $this->frequency->getFrequency();
+            $shifts = $this->shift->getShiftname();
+            $department = $this->department->getdepartment();
 
+            $data = array(
+                'locations' => $location,
+                'units' => $unit,
+                'frequency' => $frequency,
+                'shifts' => $shifts,
+                'department' => $department,
+            );
+
+            return view('inspection.Fire.hooter_inspection.add',$data);
         }
         catch(Exception $ex)
         {

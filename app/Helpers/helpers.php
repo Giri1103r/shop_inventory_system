@@ -2022,4 +2022,13 @@ if (!function_exists('getMonth')) {
             return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }
     }
+
+    // Fire Inspection Hooter Sequence
+    if(!function_exists('HooterSequence'))
+    {
+        function HooterSequence()
+        {
+            return 'HTR-000001';
+        }
+    }
 }
