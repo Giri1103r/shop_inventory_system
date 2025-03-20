@@ -297,7 +297,7 @@
                                 {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                     {{ $injury->department_name }}
                                 @else --}}
-                                    {{ $injury->injury_person_department_id }}
+                                {{ $injury->injury_person_department_id }}
                                 {{-- @endif --}}
                             </td>
                             <td>
@@ -535,213 +535,214 @@
 
 
         @endif
-
-        @if ($accident_report->accident_status >= STATUS_RISKANALYSIS_PENDING)
-            <div style="width:100%;">
-                <table style="width:100%;">
+        @if ($getInvestigation->root_cause_analysis != 3)
+            @if ($accident_report->accident_status >= STATUS_RISKANALYSIS_PENDING)
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td
+                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                                UAUC
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table width="100%" style="width:100%;">
                     <tr>
-                        <td
-                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                            UAUC
+                        <td width="50%" style="padding:5px;"><b>UAUC</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            @if ($accident_report->ua_uc_yes_no == 1)
+                                Yes
+                            @else
+                                No
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>UA/UC</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            @php
+                                $ua_uc_values = explode(',', $accident_report->ua_or_uc);
+                            @endphp
+
+                            <span>UA: {!! in_array('1', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
+                            <br>
+                            <span>UC: {!! in_array('2', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $accident_report->description_uauc }}
                         </td>
                     </tr>
                 </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>UAUC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @if ($accident_report->ua_uc_yes_no == 1)
-                            Yes
-                        @else
-                            No
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>UA/UC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @php
-                            $ua_uc_values = explode(',', $accident_report->ua_or_uc);
-                        @endphp
 
-                        <span>UA: {!! in_array('1', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
-                        <br>
-                        <span>UC: {!! in_array('2', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $accident_report->description_uauc }}
-                    </td>
-                </tr>
-            </table>
-
-        @endif
-        @if ($accident_report->accident_status >= STATUS_EHSVERIFY_PENDING)
-            <div style="width:100%;">
-                <table style="width:100%;">
+            @endif
+            @if ($getInvestigation->risk_analysis != 2 && $accident_report->accident_status >= STATUS_EHSVERIFY_PENDING)
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td
+                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                                Risk Level
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table width="100%" style="width:100%;">
                     <tr>
-                        <td
-                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                            Risk Level
+                        <td width="50%" style="padding:5px;"><b>Risk Level</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            @if ($getrisklevel->risk_level == 1)
+                                Low
+                            @elseif($getrisklevel->risk_level == 2)
+                                Medium
+                            @else
+                                High
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Description of CA</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getrisklevel->description_ca }}
                         </td>
                     </tr>
                 </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Risk Level</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @if ($getrisklevel->risk_level == 1)
-                            Low
-                        @elseif($getrisklevel->risk_level == 2)
-                            Medium
-                        @else
-                            High
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Description of CA</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getrisklevel->description_ca }}
-                    </td>
-                </tr>
-            </table>
 
-        @endif
-        @if (
-            $accident_report->accident_status >= STATUS_ACTION_PENDING &&
-                $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
-            <div style="width:100%;">
-                <table style="width:100%;">
+            @endif
+            @if (
+                $accident_report->accident_status >= STATUS_ACTION_PENDING &&
+                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td
+                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                                EHS Head Verify
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table width="100%" style="width:100%;">
                     <tr>
-                        <td
-                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                            EHS Head Verify
+                        <td width="50%" style="padding:5px;"><b>Verifier Name</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getEHSVerify->reviewer_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ Displaydateformat($getEHSVerify->date) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Choose Assignee</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getEHSVerify->team_member_names }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Target Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ Displaydateformat($getEHSVerify->target_date) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Remark</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getEHSVerify->remark }}
                         </td>
                     </tr>
                 </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Verifier Name</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getEHSVerify->reviewer_name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($getEHSVerify->date) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Choose Assignee</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getEHSVerify->team_member_names }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Target Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($getEHSVerify->target_date) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remark</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getEHSVerify->remark }}
-                    </td>
-                </tr>
-            </table>
-        @endif
-        @if (
-            $accident_report->accident_status >= STATUS_EHSAPPROVAL_PENDING &&
-                $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
-            <div style="width:100%;">
-                <table style="width:100%;">
+            @endif
+            @if (
+                $accident_report->accident_status >= STATUS_EHSAPPROVAL_PENDING &&
+                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td
+                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                                Action submission
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table width="100%" style="width:100%;">
                     <tr>
-                        <td
-                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                            Action submission
+                        <td width="50%" style="padding:5px;"><b>Submission By</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ getUsername($accident_report->action_submission_by) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ Displaydateformat($getEHSVerify->date) }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Action Taken</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $accident_report->action_submission_description }}
                         </td>
                     </tr>
                 </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Submission By</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ getUsername($accident_report->action_submission_by) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($getEHSVerify->date) }}
-                    </td>
-                </tr>
+            @endif
 
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Action Taken</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $accident_report->action_submission_description }}
-                    </td>
-                </tr>
-            </table>
-        @endif
-
-        @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
-            <div style="width:100%;">
-                <table style="width:100%;">
+            @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
+                <div style="width:100%;">
+                    <table style="width:100%;">
+                        <tr>
+                            <td
+                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                                EHS Approval
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table width="100%" style="width:100%;">
                     <tr>
-                        <td
-                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                            EHS Approval
+                        <td width="50%" style="padding:5px;"><b>Approval Name</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getEHSApprovalAccident->reviewer_name }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ Displaydateformat($getEHSApprovalAccident->date) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Remark</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $getEHSApprovalAccident->remark }}
                         </td>
                     </tr>
                 </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Approval Name</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getEHSApprovalAccident->reviewer_name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($getEHSApprovalAccident->date) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remark</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getEHSApprovalAccident->remark }}
-                    </td>
-                </tr>
-            </table>
+            @endif
         @endif
 </body>
 

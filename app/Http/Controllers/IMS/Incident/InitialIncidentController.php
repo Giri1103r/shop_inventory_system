@@ -1525,8 +1525,6 @@ class InitialIncidentController extends Controller
             $filename = "Incident.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
-
             report($ex);
         }
     }
