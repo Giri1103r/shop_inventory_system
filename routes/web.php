@@ -1363,6 +1363,8 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [MedicalRequisitionSlipController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipController::class, 'ExportPDF']);
                     Route::POST('/lists', [MedicalRequisitionSlipController::class, 'Checklists']);
+                    Route::POST('/floormanagerapproval/submit', [MedicalRequisitionSlipController::class, 'floormanagerapproval']);
+                    Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipController::class, 'safetyofficerapproval']);
                 });
 
                 Route::group(['prefix' => 'medical-requisition-slip/fdo-security-gate'], function () {
@@ -1371,9 +1373,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
-                    Route::POST('/floormanagerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'floormanagerapproval']);
 
-                    Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'safetyofficerapproval']);
 
                     Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
                     Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);
