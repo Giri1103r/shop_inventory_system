@@ -17,6 +17,7 @@ class InspectionOhcStatuslog extends Model
         'to_status',
         'type',
         'remarks',
+        'approved_by',
         'status',
         'trash',
         'created_by',
@@ -33,9 +34,20 @@ class InspectionOhcStatuslog extends Model
             'to_status' =>$data['to_status'],
             'type' =>$data['type'],
             'remarks' =>$data['remarks'],
-            'created_by' => Auth::id(),
+            'created_by' => $data['created_by'],
+            'approved_by' => $data['approved_by'] ?? null ,
+
         ];
-       
+
         return self::create($insert_array);
+    }
+    public function floormanger($id ,$floortype,$type){
+        return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$floortype)->first();
+    }
+    public function safetyofficer($id ,$safetytype,$type){
+        return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$safetytype)->first();
+    }
+    public function  getStatuslog($id, $type){
+        return $this->where('reference_id',$id)->where('type',$type)->get();
     }
 }

@@ -158,11 +158,70 @@ class MedicineRequistionSlipfloordetails extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function safetyofficerapprovalupdate($id,$approveStatus){
-        return $this->where('id',$id)->update(['approved_by'=>Auth::id(),'approve_status'=>$approveStatus]);
+    public function safetyofficerapprovalupdate($id,$nextStatus){
+        return $this->where('id',$id)->update(['approved_by'=>Auth::id(),'approve_status'=>$nextStatus]);
     }
 
-    public function floormanagerapprovalupdate($id,$approveStatus){
-        return $this->where('id',$id)->update(['verified_by'=>Auth::id(),'approve_status'=>$approveStatus]);
+    public function floormanagerapprovalupdate($id,$nextStatus){
+        return $this->where('id',$id)->update(['verified_by'=>Auth::id(),'approve_status'=>$nextStatus]);
     }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
+
+        // dd($query);
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+        }
+        if (isset($request->approve_status) && $request->approve_status) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status));
+        }
+
+        if (isset($request->order) && count($request->order) > 0) {
+            $columnName = $request->order[0]['column'];
+            $columnorder = $request->order[0]['dir'];
+            switch ($columnName) {
+                case "rev_date":
+                    $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', $columnorder);
+                    break;
+                case "issue_date":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', $columnorder);
+                    break;
+                case "document_number":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', $columnorder);
+                    break;
+                case "approve_status":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.approve_status', $columnorder);
+                    break;
+                case "created_by":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_by', $columnorder);
+                    break;
+                case "created_date":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_at', $columnorder);
+                    break;
+                default:
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+                    break;
+            }
+        }
+
+
+
+
+        $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+
+
+        return   $query;
+    }
+
 }
