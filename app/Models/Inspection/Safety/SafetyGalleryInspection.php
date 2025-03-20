@@ -74,6 +74,9 @@ class SafetyGalleryInspection extends Model
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_safety_gallery.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+        }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
@@ -264,6 +267,37 @@ class SafetyGalleryInspection extends Model
             return false;
         }
         return true;
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_safety_gallery.*');
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
+                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
     }
 
     protected static function booted()

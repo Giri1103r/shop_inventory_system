@@ -6,14 +6,16 @@ use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class EquipmentController extends Controller
 {
-    private $precaution;
+    private $equipment;
     private $uploadlog;
 
     public function __construct()
@@ -72,7 +74,7 @@ class EquipmentController extends Controller
 
         $data = array();
 
-        return view('master.precaution.list', $data);
+        return view('inspection.safety.master.equipment.list', $data);
     }
 
     public function Add(Request $request)
@@ -80,7 +82,7 @@ class EquipmentController extends Controller
         try {
 
             $data = array();
-            return view('master.precaution.add', $data);
+            return view('inspection.safety.master.equipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -128,7 +130,7 @@ class EquipmentController extends Controller
                     'precaution' => $precaution,
                 );
             }
-            return view('master.precaution.view', $data);
+            return view('inspection.safety.master.equipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -143,7 +145,7 @@ class EquipmentController extends Controller
             $data = array(
                 'precaution' => $precaution,
             );
-            return view('master.precaution.edit', $data);
+            return view('inspection.safety.master.equipment.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -244,7 +246,7 @@ class EquipmentController extends Controller
     {
         $data = array();
 
-        return view('master.precaution.import', $data);
+        return view('inspection.safety.master.equipment.import', $data);
     }
 
     public function ImportSubmit(Request $request)
@@ -408,7 +410,7 @@ class EquipmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.precaution.pdf', $data);
+            $view = view('inspection.safety.master.equipment.pdf', $data);
             $html = $view->render();
 
 

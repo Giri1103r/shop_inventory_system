@@ -151,40 +151,43 @@
                                         </thead>
                                         <tbody>
                                             @php $srNo = 1; @endphp
-                                            @foreach ($user_response as $subcategory => $questions)
-                                                @php
-                                                    $rowCount = count($questions);
-                                                    $firstRow = true;
-                                                @endphp
-                                                @foreach ($questions as $questionId => $answer)
-                                                    <tr>
-                                                        @if ($firstRow)
-                                                            <td rowspan="{{ $rowCount }}"
-                                                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                                                {{ $srNo }}</td>
-                                                            <td rowspan="{{ $rowCount }}"
-                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                                                {{ GetSubChecklistTypeName($subcategory) }}
-                                                            </td>
-                                                            @php
-                                                                $srNo++;
-                                                                $firstRow = false;
-                                                            @endphp
-                                                        @endif
-                                                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                                            {{ GetChecklistTypeDate($questionId) }}
-                                                        </td>
-                                                        <td
-                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                            @if ($answer == 'YES')
-                                                                <span style="color: green; font-size: 20px;">✓</span>
-                                                            @elseif ($answer == 'NO' || $answer == 'N/A')
-                                                                <span style="color: red; font-size: 20px;">X</span>
+                                            @if (isset($user_response))
+                                                @foreach ($user_response as $subcategory => $questions)
+                                                    @php
+                                                        $rowCount = count($questions);
+                                                        $firstRow = true;
+                                                    @endphp
+                                                    @foreach ($questions as $questionId => $answer)
+                                                        <tr>
+                                                            @if ($firstRow)
+                                                                <td rowspan="{{ $rowCount }}"
+                                                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                                                    {{ $srNo }}</td>
+                                                                <td rowspan="{{ $rowCount }}"
+                                                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                                                    {{ GetSubChecklistTypeName($subcategory) }}
+                                                                </td>
+                                                                @php
+                                                                    $srNo++;
+                                                                    $firstRow = false;
+                                                                @endphp
                                                             @endif
-                                                        </td>
-                                                    </tr>
+                                                            <td colspan="2"
+                                                                style="border: 1px solid black; padding: 8px;">
+                                                                {{ GetChecklistTypeDate($questionId) }}
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                @if ($answer == 'YES')
+                                                                    <span style="color: green; font-size: 20px;">✓</span>
+                                                                @elseif ($answer == 'NO' || $answer == 'N/A')
+                                                                    <span style="color: red; font-size: 20px;">X</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
                                                 @endforeach
-                                            @endforeach
+                                            @endif
                                         </tbody>
                                     </table>
                                     <div class="row mt-3">
@@ -203,6 +206,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @php
+                                                        $signature = GetSignature($inspection_details->verified_by);
+                                                    @endphp
                                                 @endif
                                                 @if (isset($inspection_details->created_at))
                                                     <div class="col-md-4 mb-2">
@@ -211,6 +217,17 @@
                                                             <div class="view_data">
                                                                 {{ Displaydateformat($inspection_details->created_at) }}
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
                                                 @endif
@@ -225,7 +242,21 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @php
+                                                            $signature = GetSignature($inspection_details->approved_by);
+                                                        @endphp
                                                     @endif
+                                                @endif
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
                                                 @endif
                                                 @if (isset($inspection_details->capa_recomendation))
                                                     <div class="col-md-12 mb-2">
@@ -272,6 +303,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @php
+                                                    $signature = GetSignature($inspection_details->created_by);
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -308,6 +353,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @php
+                                                $signature = GetSignature($inspection_details->verified_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -343,6 +402,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @php
+                                                $signature = GetSignature($inspection_details->l1_manager_verified_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -377,6 +450,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @php
+                                                $signature = GetSignature($inspection_details->l2_manager_verified_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                             @if ($inspection_details->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -385,6 +472,20 @@
                                                         <div class="view_data">
                                                             {{ getUsername($inspection_details->approved_by) }}
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @php
+                                                $signature = GetSignature($inspection_details->approved_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif

@@ -205,7 +205,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/forklift-inspection/monthly/list/export/pdf') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/monthly/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -225,7 +225,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/forklift-inspection/monthly/list/export/excel') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/monthly/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +

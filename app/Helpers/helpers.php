@@ -34,8 +34,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\MSDSCheckList;
 use App\Models\Inspection\RRAACheckList;
-
-
+use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1401,6 +1400,15 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getSPLBCount')) {
+
+        function getSPLBCount()
+        {
+            $data = SafetyPettyChecklist::get()->count();
+            return $data;
+        }
+    }
+
     if (!function_exists('getRRAACount')) {
 
         function getRRAACount()
@@ -1715,7 +1723,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetEHSOfficer')) {
         function GetEHSOfficer()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_EHS_OFFICER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_EHS_OFFICER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1728,7 +1736,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetLevelOneManager')) {
         function GetLevelOneManager()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1741,7 +1749,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetLevelTwoManager')) {
         function GetLevelTwoManager()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1854,6 +1862,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSignature')) {
+
+        function GetSignature($userid)
+        {
+
+            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return '';
+            } else {
+                return $name->signature_upload;
+            }
+        }
+    }
+
     if (!function_exists('getInspectionStatus')) {
         function getInspectionStatus($id)
         {
@@ -1902,6 +1925,27 @@ if (!function_exists('getMonth')) {
         function MEWSequence()
         {
             return 'MEW-000001';
+        }
+    }
+
+    if (!function_exists('getGMInspectionStatus')) {
+        function getGMInspectionStatus($id)
+        {
+            if ($id == GEMBA_WALK_INSPECTION_START) { 
+                return 'Gemba Walk Start';
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
+                return 'Waiting for CAPA Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
+                return 'Waiting for Floor manager Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+                return 'Waiting for EHS Officer Verification';
+            }else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
+                return 'Inspection Closed';
+            }
+
+            return 'Inspection Creation';
+
+            return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }
     }
 }
