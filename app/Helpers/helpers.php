@@ -1921,6 +1921,13 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+                    case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
+                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                        if ($name == null) {
+                            return '';
+                        } else {
+                            return $name->file_path;
+                        }
             }
         }
     }

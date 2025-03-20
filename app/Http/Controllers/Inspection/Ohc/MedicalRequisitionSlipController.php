@@ -12,6 +12,7 @@ use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionSlipfloordetails;
+use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\UploadLog;
 use App\Models\User;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Inspection\Safety\SignatureUpload;
 
 
 class MedicalRequisitionSlipController extends Controller
@@ -35,7 +37,7 @@ class MedicalRequisitionSlipController extends Controller
     private $medicine_requisition_floor_checklist;
     private $medicine_requisition_floor_details;
     private $inspection_ohc_status_log;
-
+    private $signature;
     private $inventory;
 
 
@@ -52,6 +54,7 @@ class MedicalRequisitionSlipController extends Controller
         $this->inventory = new Inventory();
         $this->user = new User();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
+        $this->signature = new OhcSignature();
 
         $this->medicine_requisition_floor_details = new MedicineRequistionSlipfloordetails();
     }
@@ -187,6 +190,7 @@ class MedicalRequisitionSlipController extends Controller
                 ];
                 $id = $medicine_requisition_floor_details->id;
                 $this->inspection_ohc_status_log->store($data);
+
                 $getfloormanager = getFloormanager();
                 $getfloormanagers = $getfloormanager->pluck('id')->toArray();
                 $details = $this->medicine_requisition_floor_details->Selectone($id);
@@ -316,7 +320,8 @@ class MedicalRequisitionSlipController extends Controller
                     'created_by' =>  $details->created_by,
                     'approved_by' => Auth::id(),
                 ];
-
+                
+                $signature_update = $this->signature->signatureUpload(  OHC_TYPE_MEDICINE_REQUISTION_FLOOR );
                 $this->inspection_ohc_status_log->store($data);
 
                 $this->medicine_requisition_floor_details->floormanagerapprovalupdate($id, $nextStatus);
@@ -429,6 +434,8 @@ class MedicalRequisitionSlipController extends Controller
                     'approved_by' => Auth::id(),
 
                 ];
+
+                $signature_update = $this->signature->signatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
                 $this->inspection_ohc_status_log->store($data);
                 $this->medicine_requisition_floor_details->safetyofficerapprovalupdate($id, $nextStatus);
                 $details = $this->medicine_requisition_floor_details->Selectone($id);
