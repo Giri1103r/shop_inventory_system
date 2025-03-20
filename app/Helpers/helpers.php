@@ -1776,7 +1776,19 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getFloormanager')) {
         function getFloormanager()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_FLOOR_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_FLOOR_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+    if (!function_exists('getSafetyOfficer')) {
+        function getSafetyOfficer()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_SAFETY_OFFICER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1910,6 +1922,13 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+                    case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
+                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                        if ($name == null) {
+                            return '';
+                        } else {
+                            return $name->file_path;
+                        }
             }
         }
     }
@@ -1938,6 +1957,25 @@ if (!function_exists('getMonth')) {
             }
 
             return 'Inspection Creation';
+        }
+    }
+
+    if (!function_exists('getohcrequisitionfloorstatus')) {
+        function getohcrequisitionfloorstatus($id)
+        {
+            if ($id == FLOOR_MANAGER_APPROVAL_PENDING) {
+                return 'floor manager Approval Pending';
+            } else if ($id == FLOOR_MANAGER_APPROVED) {
+                return 'floor Manager Approved';
+            } else if ($id == FLOOR_MANAGER_REJECTED) {
+                return 'floor Manager rejected';
+            } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
+                return 'Safet Officer Approval Pending';
+            } else if ($id == SAFETY_OFFICER_APPROVED) {
+                return 'Safet Officer Approved';
+            }
+
+            return 'OHC Creation';
         }
     }
 

@@ -241,6 +241,15 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                             </div>
                                         </div>
@@ -253,7 +262,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -308,7 +317,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('safety/eye-wash-inspection/monthly/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -608,7 +617,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/submit') }}"
+                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/capa/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -649,7 +658,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('safety/eye-wash-inspection/monthly/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -657,7 +666,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/capa/reverify/submit') }}"
+                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -708,7 +717,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-one/verify/submit') }}"
+                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -760,7 +769,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('safety/forklift-inspection/monthly/level-two/verify/submit') }}"
+                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"

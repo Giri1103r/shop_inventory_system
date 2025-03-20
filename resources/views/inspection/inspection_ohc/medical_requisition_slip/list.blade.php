@@ -42,12 +42,15 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="approve_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId(2) }}">Floor manager Approval pending</option>
+                                                <option value="{{ encryptId(3) }}">Floor Manager Approved</option>
+                                                <option value="{{ encryptId(4) }}">Floor Manager Rejected</option>
+                                                <option value="{{ encryptId(5) }}">Safety officer Approval pending</option>
+                                                <option value="{{ encryptId(6) }}">Safety officer Approved</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -134,7 +137,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.approve_status = $('#approve_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -197,21 +200,22 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
+
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        approve_status = $('#approve_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/medical-requisition-slip/export/pdf') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&approve_status=' + approve_status
                                     }
                                 },
                                 {
@@ -222,15 +226,16 @@
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        approve_status = $('#approve_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/medical-requisition-slip/export/excel') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&approve_status=' + approve_status
                                     }
                                 },
                             ]
