@@ -182,10 +182,12 @@ Route::group(['prefix' => 'safety/'], function () {
     });
 
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
-        Route::get('list', [MonthlyEyeWashInspectionController::class, 'Index']);
-        Route::post('list', [MonthlyEyeWashInspectionController::class, 'Index']);
-        Route::get('add', [MonthlyEyeWashInspectionController::class, 'Add']);
-        Route::post('add/submit', [MonthlyEyeWashInspectionController::class, 'Store']);
+        Route::GET('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::POST('list', [MonthlyEyeWashInspectionController::class, 'Index']);
+        Route::GET('add', [MonthlyEyeWashInspectionController::class, 'Add']);
+        Route::POST('add/submit', [MonthlyEyeWashInspectionController::class, 'Store']);
+        Route::GET('get/locations',[MonthlyEyeWashInspectionController::class,'GetLocations']);
+        Route::GET('view/{id}',[MonthlyEyeWashInspectionController::class,'View']);
     });
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
         Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
@@ -228,6 +230,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('add', [SafetyGalleryInsepctionController::class, 'add']);
         Route::post('add/submit', [SafetyGalleryInsepctionController::class, 'store']);
         Route::get('view/{id}', [SafetyGalleryInsepctionController::class, 'view']);
+
     });
 
 });

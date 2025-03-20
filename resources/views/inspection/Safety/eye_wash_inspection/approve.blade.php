@@ -256,5 +256,3 @@
 
 
     @stop
-    @push('script')
-    @endpush

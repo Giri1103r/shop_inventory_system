@@ -14,13 +14,14 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Safety\EyeWashInspectionDetails;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
 use Illuminate\Support\Facades\Session;
 
 class MonthlyEyeWashInspectionController extends Controller
 {
-    private $eye_wash_details;
+    private $eye_wash;
     private $checklist_file;
     private $upload_log;
     private $shift;
@@ -28,10 +29,11 @@ class MonthlyEyeWashInspectionController extends Controller
     private $unit;
     private $frequency;
     private $statusLog;
+    private $eye_wash_details;
 
     public function __construct()
     {
-        $this->eye_wash_details = new MonthlyEyeWashInspection();
+        $this->eye_wash = new MonthlyEyeWashInspection();
         $this->checklist_file = new ChecklistFile();
         $this->upload_log = new UploadLog();
         $this->shift = new Shift();
@@ -39,6 +41,7 @@ class MonthlyEyeWashInspectionController extends Controller
         $this->unit = new Unit();
         $this->frequency = new Frequency();
         $this->statusLog = new SafetyStatusLog();
+        $this->eye_wash_details = new EyeWashInspectionDetails();
     }
 
     public function Index(Request $request)
@@ -46,7 +49,7 @@ class MonthlyEyeWashInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->eye_wash_details->list();
+                    $data =  $this->eye_wash->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -68,7 +71,7 @@ class MonthlyEyeWashInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('inspection/master/checklist-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 $btn .= '<a href="' . admin_url('inspection/master/checklist-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                                 // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -118,11 +121,54 @@ class MonthlyEyeWashInspectionController extends Controller
     public function Store(Request $request)
     {
         try {
-            
+
+            $store_eyewash_inspection = $this->eye_wash->store();
+            $inspection_id = $store_eyewash_inspection->id;
+            $store_inspection_details = $this->eye_wash_details->store($inspection_id);
+
+            Session::flash('success','Monthly Eye Wash Inspection Added Successfully');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
+
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return admin_url('safety/eye-wash-inspection/monthly/list');
+        }
+    }
+
+    public function GetLocations(Request $request)
+    {
+        try{
+            $locations = $this->location->getLocationName();
+            return response()->json($locations);
+        }
+        catch(Exception $ex)
+        {
+            report($ex);
+            return response()->json(['error' => 'Please try again after sometimes'],406);
+        }
+    }
+
+    public function View(Request $request)
+    {
+        try{
+            $id = decryptId($request->id);
+            $inspection = $this->eye_wash->selectOne($id);
+            $inspection_details = $this->eye_wash_details->GetDetails($inspection->id);
+
+            $data = array(
+                'inspection' => $inspection,
+                'inspection_details' => $inspection_details,
+            );
+
+            return view('inspection.Safety.eye_wash_inspection.view',$data);
+
+        }
+        catch(Exception $ex)
+        {
+            report($ex);
+            Session::flash('error','Something went wrong !');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
 }

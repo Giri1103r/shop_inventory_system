@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlyEyeWashInspection extends Model
@@ -14,7 +15,7 @@ class MonthlyEyeWashInspection extends Model
         'id',
         'doc_no',
         'issue_date',
-        'revision_data',
+        'revision_date',
         'date_of_inspection',
         'location',
         'shift',
@@ -52,7 +53,7 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('rev_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_date LIKE "%' . $search . '%"');
             });
         }
 
@@ -70,8 +71,8 @@ class MonthlyEyeWashInspection extends Model
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "rev_date":
-                    $query->orderBy('inspection_monthly_eyewash.rev_date', $columnorder);
+                case "revision_date":
+                    $query->orderBy('inspection_monthly_eyewash.revision_date', $columnorder);
                     break;
                 case "issue_date":
                     $query = $query->orderBy('inspection_monthly_eyewash.issue_date', $columnorder);
@@ -111,9 +112,35 @@ class MonthlyEyeWashInspection extends Model
         return $datas;
     }
 
+
+    public function store()
+    {
+        $request = request();
+
+        $data = array(
+            'doc_no' => $request->doc_no,
+            'issue_date' => Displaydateformat($request->issue_date),
+            'revision_date' => $request->rev_date,
+            'date_of_inspection' => Displaydateformat($request->inspection_date),
+            'location' => decryptId($request->location_id),
+            'shift' => decryptId($request->shift_id),
+            'next_due' => Displaydateformat($request->next_due),
+            'unit' => decryptId($request->unit_id),
+            'frequency' => decryptId($request->frequency_id),
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+        );
+
+        return $this->create($data);
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_monthly_eyewash'));
-
     }
 }
