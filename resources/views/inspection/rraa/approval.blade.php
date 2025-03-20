@@ -1,7 +1,7 @@
 @extends('admin.layouts.admin')
 @section('title', 'RRAA Inspection')
 @section('pageurl', admin_url('rraa/ohc_fire_environment_compliance/list'))
- 
+
 @section('content')
     <div class="clearfix">
     </div>
@@ -52,7 +52,7 @@
                                             {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created at') }}</label>
                                         <div class="view_data">
@@ -225,7 +225,8 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                    $signature = GetSignature($inspection_details->verified_by, $inspection_details->id,
+                                                    RRAA_INSPECTION,);
                                                 @endphp
                                             @endif
                                             @if (isset($inspection_details->created_at))
@@ -304,7 +305,8 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->created_by);
+                                                    $signature = GetSignature($inspection_details->created_by, $inspection_details->id,
+                                                    RRAA_INSPECTION,);
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
@@ -353,7 +355,8 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                    $signature = GetSignature($inspection_details->verified_by, $inspection_details->id,
+                                                    RRAA_INSPECTION,);
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
@@ -403,7 +406,8 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature($inspection_details->l1_manager_verified_by);
+                                                $signature = GetSignature($inspection_details->l1_manager_verified_by, $inspection_details->id,
+                                                RRAA_INSPECTION,);
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
@@ -460,7 +464,8 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature($inspection_details->l2_manager_verified_by);
+                                                $signature = GetSignature($inspection_details->l2_manager_verified_by, $inspection_details->id,
+                                                RRAA_INSPECTION,);
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">

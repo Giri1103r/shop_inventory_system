@@ -263,7 +263,6 @@ class AppServiceProvider extends ServiceProvider
         defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 0);
 
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
-
         defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
 
         //Status Log
