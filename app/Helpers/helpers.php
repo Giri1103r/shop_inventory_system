@@ -1903,6 +1903,7 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
                 case MSDS_INSPECTION:
+
                     $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         return '';

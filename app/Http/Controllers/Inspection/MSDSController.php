@@ -21,7 +21,7 @@ use App\Models\Inspection\MSDSSignatureUpload;
 
 class MSDSController extends Controller
 {
- 
+
     private $msdsDetails;
     private $msdsCheckList;
     private $statusLog;
@@ -359,7 +359,6 @@ class MSDSController extends Controller
                             'mail_subject' => 'MSDS Inspection',
                             'message' => $message,
                         );
-
 
                         Mail::to($email_id)->queue(new MSDSEmail($data));
                      }
