@@ -201,7 +201,7 @@ class UserDiscard extends Model
         }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_discard.id', 'DESC');
         } else {
-            $query->where('ohc_management_discard.created_by', Auth::id())->where('unit_id',$unit_id);
+            $query->where('ohc_management_discard.created_by', Auth::id())->where('ohc_management_discard.unit_id',$unit_id);
         }
         if ($request->has('unit_id') && $request->unit_id) {
 

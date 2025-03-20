@@ -77,15 +77,16 @@ class MonthlyInventoryController extends Controller
 
         $medicine = $this->medicine->getMedicineData();
         $selectedUnit = $request->input('unit_id');
-        $selectedMonth = $request->input('month');
         $selectedYear = $request->input('year');
-
+        $formattedMonth = $request->input('month');
+        $date = DateTime::createFromFormat('F', $formattedMonth);
+        $selectedMonth = $date ? $date->format('m') : null;
         $inventory =  $this->inventory->getmonthlyinventoryreport($selectedUnit, $selectedMonth, $selectedYear);
         $receiving = $this->medicine_receiving->getPurchaseddate($selectedYear, $selectedMonth);
         $medicineIssuing = $this->user_medicine_issuance->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
         $allIssuances = [];
         foreach ($medicineIssuing as $id) {
-            
+
             $allIssuances[] = $this->medicine_issuance->getissuedDate($selectedYear, $selectedMonth, [$id]);
         }
 
@@ -167,11 +168,19 @@ class MonthlyInventoryController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $titleEndColumn = 'BK';
+            $titleEndColumn = 'BR';
             $sheet->mergeCells("F1:$titleEndColumn" . "3");
 
             // Set the title text
-            $sheet->setCellValue("F1", "Occupational Health Center Inventory Record \nPN International Pvt Ltd \n( $monthName -$selectedYear)");
+            $financialStartYear = $selectedYear - 1;
+            $financialEndYear = $selectedYear;
+
+
+        $financialYear =  "April $financialStartYear - March $financialEndYear";
+
+        // Set Excel Header with Financial Year
+        $sheet->setCellValue("F1", "Occupational Health Center Inventory Record \nPN International Pvt Ltd \n Financial Year($financialYear)");
+
 
             // Apply styling
             $sheet->getStyle("C1:$titleEndColumn" . "3")->applyFromArray([
@@ -183,7 +192,7 @@ class MonthlyInventoryController extends Controller
 
             // **Header Row**
             $headerStart = 'A4';
-            $headerEnd = 'BK4';
+            $headerEnd = 'BR4';
             $sheet->setCellValue('A4', 'Month:');
             $sheet->setCellValue('B4', " $monthName -$selectedYear");
             $range = "$headerStart:$headerEnd";
@@ -216,7 +225,7 @@ class MonthlyInventoryController extends Controller
             // **Column Headers**
 
             $headerRowStart = 'A5';
-            $headerRowEnd = 'BK5';
+            $headerRowEnd = 'BR5';
             $sheet->setCellValue('A5', 'ID');
             $sheet->setCellValue('B5', 'Name of Item');
             $range = "$headerRowStart:$headerRowEnd";

@@ -34,6 +34,7 @@ class UserMedicineIssuance extends Model
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
         $query = $this->select('ohc_management_user_medicine_issuance.*', 'masters_department.department_name', 'masters_unit.unit_name')
+            ->where('ohc_management_user_medicine_issuance.unit_id', '!=', 1)
             ->join('masters_department', 'ohc_management_user_medicine_issuance.department_id', '=', 'masters_department.id')
             ->join('masters_unit', 'ohc_management_user_medicine_issuance.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.trash', 'NO')
@@ -125,7 +126,6 @@ class UserMedicineIssuance extends Model
         ];
 
         return $this->create($insert_array);
-
     }
     public function unitissuestore($user_medicine_requisition)
     {
@@ -139,7 +139,6 @@ class UserMedicineIssuance extends Model
         ];
 
         return $this->create($insert_array);
-
     }
     public function updates($id)
     {
@@ -189,6 +188,7 @@ class UserMedicineIssuance extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_management_user_medicine_issuance.*', 'masters_department.department_name', 'masters_unit.unit_name')
+        ->where('ohc_management_user_medicine_issuance.unit_id', '!=', 1)
             ->join('masters_department', 'ohc_management_user_medicine_issuance.department_id', '=', 'masters_department.id')
             ->join('masters_unit', 'ohc_management_user_medicine_issuance.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.trash', 'NO')
@@ -202,10 +202,7 @@ class UserMedicineIssuance extends Model
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('ohc_management_user_medicine_issuance.status', decryptId($request->status));
-        }
+       
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_user_medicine_issuance.unit_id', decryptId($request->unit_id));
@@ -244,21 +241,21 @@ class UserMedicineIssuance extends Model
     }
 
     public function getunitdata($selectedYear, $selectedMonth, $selectedUnit)
-{
-    return $this->whereYear('created_at', $selectedYear)
-        ->whereMonth('created_at', $selectedMonth)
-        ->where('status', 1)
-        ->where('unit_id', $selectedUnit)
-        ->pluck('id')
-        ->toArray();
-}
+    {
+        return $this->whereYear('created_at', $selectedYear)
+            ->whereMonth('created_at', $selectedMonth)
+            ->where('status', 1)
+            ->where('unit_id', $selectedUnit)
+            ->pluck('id')
+            ->toArray();
+    }
 
-public function getYealyunitdata($selectedYear, $selectedUnit)
-{
-    return $this->whereYear('created_at', $selectedYear)
-        ->where('status', 1)
-        ->where('unit_id', $selectedUnit)
-        ->pluck('id')
-        ->toArray();
-}
+    public function getYealyunitdata($selectedYear, $selectedUnit)
+    {
+        return $this->whereYear('created_at', $selectedYear)
+            ->where('status', 1)
+            ->where('unit_id', $selectedUnit)
+            ->pluck('id')
+            ->toArray();
+    }
 }

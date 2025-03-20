@@ -771,7 +771,7 @@
                                 </div>
                             @endif
 
-                            @if ($incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
+                            @if ($getInvestigation->risk_analysis != 2 && $incident_report->incident_status >= STATUS_EHSVERIFY_PENDING )
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="card-header-inner">

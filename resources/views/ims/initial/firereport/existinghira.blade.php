@@ -8,13 +8,13 @@
         <div class="modal-body m-3">
             @if ($newHiraList == null)
                 <div class="d-flex justify-content-left my-3">
-                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . $fireincident_id . '/' . encryptId(1)) }}"
+                    <a href="{{ admin_url('incident/hira-master/fire-investigation/add/' . encryptId($fireincident_id) . '/' . encryptId(1)) }}"
                         class="btn btn-primary mx-2" id="newHira">New</a>
                     <button type="button" class="btn btn-secondary mx-2" id="existingHira">Existing</button>
                 </div>
             @endif
 
-            <input type="hidden" name="fireincident_id" value="{{ $fireincident_id }}">
+            <input type="hidden" name="fireincident_id" value="{{ encryptId($fireincident_id) }}">
 
             <div class="row" id="existingdiv">
                 <label for="hira_id" class="form-label require">HIRA</label>
@@ -50,8 +50,19 @@
                             <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
                         </tr>
                         <tr>
+                            @php
+                            if ($newHiraList->risk_levels == 1) {
+                                $risk_levels = '1 to 9';
+                            } elseif ($newHiraList->risk_levels == 2) {
+                                $risk_levels = '10 to 16';
+                            } elseif ($newHiraList->risk_levels == 3) {
+                                $risk_levels = '17 to 25';
+                            } elseif ($newHiraList->risk_levels == 4) {
+                                $risk_levels = 'Legal';
+                            }
+                        @endphp
                             <th>Risk Level</th>
-                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                            <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>
                     </table>
                 </div>

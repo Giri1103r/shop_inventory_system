@@ -198,17 +198,17 @@
                                                         <td>{{ $injury->emp_id }}</td>
                                                         <td>{{ $injury->injury_person_designation }}</td>
                                                         <td>
-                                                            @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                            {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                                 {{ $injury->department_name }}
-                                                            @else
+                                                            @else --}}
                                                                 {{ $injury->injury_person_department_id }}
-                                                            @endif
+                                                            {{-- @endif --}}
                                                         </td>
                                                         <td>
                                                             @if ($injury->body_part_image)
-                                                                <a href="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                                <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
                                                                     target="_blank">
-                                                                    <img src="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                                    <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
                                                                         alt="Body Parts Image"
                                                                         style="max-width: 100px; max-height: 100px; object-fit: contain;">
                                                                 </a>
@@ -592,188 +592,189 @@
                                 </div>
                             @endif
 
-
-                            @if ($accident_report->accident_status >= STATUS_RISKANALYSIS_PENDING)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">UAUC</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">UAUC</label>
-                                            <div class="view_data">
-                                                @if ($accident_report->ua_uc_yes_no == 1)
-                                                    Yes
-                                                @else
-                                                    No
-                                                @endif
+                            @if ($getInvestigation->root_cause_analysis != 3)
+                                @if ($accident_report->accident_status >= STATUS_RISKANALYSIS_PENDING)
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">UAUC</h4>
                                             </div>
                                         </div>
-
-                                        @if ($accident_report->ua_uc_yes_no == 1)
+                                        <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label for="name" class="form-label">UA/UC</label>
+                                                <label for="name" class="form-label">UAUC</label>
                                                 <div class="view_data">
-                                                    @php
-                                                        $ua_uc_values = explode(',', $accident_report->ua_or_uc);
-                                                    @endphp
-
-                                                    <span>UA: {!! in_array('1', $ua_uc_values)
-                                                        ? '<i class="fas fa-check text-success"></i>'
-                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
-                                                    <br>
-                                                    <span>UC: {!! in_array('2', $ua_uc_values)
-                                                        ? '<i class="fas fa-check text-success"></i>'
-                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    @if ($accident_report->ua_uc_yes_no == 1)
+                                                        Yes
+                                                    @else
+                                                        No
+                                                    @endif
                                                 </div>
-
-
                                             </div>
+
+                                            @if ($accident_report->ua_uc_yes_no == 1)
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label for="name" class="form-label">UA/UC</label>
+                                                    <div class="view_data">
+                                                        @php
+                                                            $ua_uc_values = explode(',', $accident_report->ua_or_uc);
+                                                        @endphp
+
+                                                        <span>UA: {!! in_array('1', $ua_uc_values)
+                                                            ? '<i class="fas fa-check text-success"></i>'
+                                                            : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                        <br>
+                                                        <span>UC: {!! in_array('2', $ua_uc_values)
+                                                            ? '<i class="fas fa-check text-success"></i>'
+                                                            : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="mb-3 col-md-12 form-input">
+                                                    <label class="form-label">Description of UAUC</label>
+                                                    <div class="view_data">
+                                                        {{ $accident_report->description_uauc }}
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($getInvestigation->risk_analysis != 2 && $accident_report->accident_status >= STATUS_EHSVERIFY_PENDING)
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Risk Level</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label">Description of UAUC</label>
+                                                <label for="name" class="form-label">Risk Level</label>
                                                 <div class="view_data">
-                                                    {{ $accident_report->description_uauc }}
+                                                    @if ($getrisklevel->risk_level == 1)
+                                                        Low
+                                                    @elseif($getrisklevel->risk_level == 2)
+                                                        Medium
+                                                    @else
+                                                        High
+                                                    @endif
                                                 </div>
                                             </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Description of CA</label>
+                                                <div class="view_data">
+                                                    {{ $getrisklevel->description_ca }}
+                                                </div>
+                                            </div>
 
-                            @if ($accident_report->accident_status >= STATUS_EHSVERIFY_PENDING)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Risk Level</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label for="name" class="form-label">Risk Level</label>
-                                            <div class="view_data">
-                                                @if ($getrisklevel->risk_level == 1)
-                                                    Low
-                                                @elseif($getrisklevel->risk_level == 2)
-                                                    Medium
-                                                @else
-                                                    High
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Description of CA</label>
-                                            <div class="view_data">
-                                                {{ $getrisklevel->description_ca }}
-                                            </div>
-                                        </div>
+                                @endif
 
-                                    </div>
-                                </div>
-                            @endif
+                                @if (
+                                    $accident_report->accident_status >= STATUS_ACTION_PENDING &&
+                                        $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Head Verify</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Verifier Name</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->reviewer_name }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($getEHSVerify->date) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="team_id" class="form-label">Choose Assignee</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->team_member_names }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->remark }}
+                                                </div>
+                                            </div>
 
-                            @if (
-                                $accident_report->accident_status >= STATUS_ACTION_PENDING &&
-                                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Verify</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Verifier Name</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->reviewer_name }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSVerify->date) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Choose Assignee</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->team_member_names }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->remark }}
-                                            </div>
-                                        </div>
+                                @endif
 
-                                    </div>
-                                </div>
-                            @endif
+                                @if (
+                                    $accident_report->accident_status >= STATUS_EHSAPPROVAL_PENDING &&
+                                        $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Action submission</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Submission By</label>
+                                                <div class="view_data">
+                                                    {{ getUsername($accident_report->action_submission_by) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($accident_report->action_submission_date) }}
+                                                </div>
+                                            </div>
 
-                            @if (
-                                $accident_report->accident_status >= STATUS_EHSAPPROVAL_PENDING &&
-                                    $accident_report->accident_status != STATUS_EHSAPPROVAL_REJECTED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Action submission</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Submission By</label>
-                                            <div class="view_data">
-                                                {{ getUsername($accident_report->action_submission_by) }}
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Action Taken</label>
+                                                <div class="view_data">
+                                                    {{ $accident_report->action_submission_description }}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($accident_report->action_submission_date) }}
-                                            </div>
-                                        </div>
 
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Action Taken</label>
-                                            <div class="view_data">
-                                                {{ $accident_report->action_submission_description }}
+                                        </div>
+                                    </div>
+                                @endif
+                                @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Approval</h4>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Approval By</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSApprovalAccident->reviewer_name }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($getEHSApprovalAccident->date) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSApprovalAccident->remark }}
+                                                </div>
+                                            </div>
 
-                                    </div>
-                                </div>
-                            @endif
-                            @if ($accident_report->accident_status >= STATUS_ACCIDENT_CLOSED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Approval</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Approval By</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalAccident->reviewer_name }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSApprovalAccident->date) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalAccident->remark }}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
+                                @endif
                             @endif
 
                             <div class="card-body ">

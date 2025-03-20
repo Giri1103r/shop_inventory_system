@@ -19,12 +19,12 @@
                 <label for="moc_id" class="form-label require">MOC</label>
                 <div class="col-sm-7 form-input">
 
-                    <select name="hira_id" id="hira_id" class="form-control" style="width: 100%">
-                        <option value="">Select HIRA</option>
+                    <select name="moc_id" id="moc_id" class="form-control" style="width: 100%">
+                        <option value="">Select MOC</option>
                         @if ($selectedhira != null)
                             @foreach ($hiraList as $hira)
                                 <option value="{{ encryptId($hira->id) }}"
-                                    {{ $selectedhira->hira_id == $hira->id ? 'selected' : '' }}>
+                                    {{ $selectedhira->moc_id == $hira->id ? 'selected' : '' }}>
                                     {{ $hira->services }}
                                 </option>
                             @endforeach
@@ -51,8 +51,19 @@
                             <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
                         </tr>
                         <tr>
+                            @php
+                            if ($newHiraList->risk_levels == 1) {
+                                $risk_levels = '1 to 9';
+                            } elseif ($newHiraList->risk_levels == 2) {
+                                $risk_levels = '10 to 16';
+                            } elseif ($newHiraList->risk_levels == 3) {
+                                $risk_levels = '17 to 25';
+                            } elseif ($newHiraList->risk_levels == 4) {
+                                $risk_levels = 'Legal';
+                            }
+                        @endphp
                             <th>Risk Level</th>
-                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                            <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>
                     </table>
                 </div>
@@ -79,7 +90,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             @if ($newHiraList == null)
-                <button type="button" class="btn btn-primary" id="saveHira">Save MOC</button>
+                <button type="button" class="btn btn-primary" id="savemoc">Save MOC</button>
             @endif
         </div>
     </form>
@@ -103,7 +114,6 @@
                 data: {
                     _token: "{{ csrf_token() }}",
                     moc_id: mocId,
-                    incident_id: incidentId,
                     accidentId: accidentId
                 },
                 dataType: "json",
@@ -112,7 +122,7 @@
                         alert("MOC saved successfully!");
                         $('#saved_hira_id').val(response
                             .moc_id); // Update the hidden input
-                        $('#hiraModal').modal('hide');
+                        $('#mocModal').modal('hide');
                     } else {
                         alert("Failed to save MOC: " + response.message);
                     }

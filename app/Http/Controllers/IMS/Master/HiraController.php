@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\IMS\Master\Hira;
 use App\Models\IMS\Master\HiraApproval;
+use App\Models\IMS\Incident\HiraMoc;
 
 class HiraController extends Controller
 {
@@ -34,6 +35,7 @@ class HiraController extends Controller
     private $department;
     private $user;
     private $uploadlog;
+    private $hiramoc;
 
 
     public function __construct()
@@ -46,6 +48,7 @@ class HiraController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->uploadlog = new UploadLog();
+        $this->hiramoc = new HiraMoc();
     }
 
 
@@ -235,6 +238,11 @@ class HiraController extends Controller
 
 
                 $hiraStore = $this->hira->store();
+
+                if ($request->incident_id || $request->accident_id || $request->fire_id) {
+
+                        $hiraStore = $this->hiramoc->hiramocstore($hiraStore->id);
+                }
 
 
                 Session::flash('success', 'Your data has been created successfully!');

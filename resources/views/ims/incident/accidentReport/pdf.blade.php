@@ -25,21 +25,16 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->sr_no }}
+                            {{ $value->accident_report_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->services}}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @if($value->hazard_type == 1)
-                                {{'P - Physical Hazard'}} 
-                            @elseif($value->hazard_type == 2)
-                               {{'C - Chemical Hazard'}}
-                            @elseif($value->hazard_type == 3)
-                                {{'B - Behavioral Hazard'}}
-                            @elseif($value->hazard_type == 4)
-                                {{'O - Other Hazard'}}
-                            @endif
+                            {{ $value->shift }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->status_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

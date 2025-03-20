@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Master\Employee;
 
 class InitialIncident extends Model
 {
@@ -37,6 +38,7 @@ class InitialIncident extends Model
         'reporting_media_others',
         'brief_description',
         'investigation_assigned',
+        'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -64,6 +66,35 @@ class InitialIncident extends Model
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_incident.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
+        }
+        //  else {
+        //     // Get the current user's ID
+        //     $userId = Auth::user()->id;
+
+        //     // Get the login_ids of employees assigned to incidents (from investigation_assigned or choose_assignee)
+        //     $employees = Employee::whereRaw("FIND_IN_SET(id, (SELECT investigation_assigned FROM ims_initial_incident WHERE id = ims_initial_incident.id))")
+        //         ->orWhereRaw("FIND_IN_SET(id, (SELECT choose_assignee FROM ims_initial_incident WHERE id = ims_initial_incident.id))")
+        //         ->pluck('login_id')
+        //         ->toArray();
+
+        //     $query->where(function ($q) use ($userId, $employees) {
+        //         // Check if the user's login_id exists in the assigned employees' list
+        //         $q->whereIn('ims_initial_incident.investigation_assigned', $employees)
+        //             ->orWhereIn('ims_initial_incident.choose_assignee', $employees);
+        //     })->where('ims_initial_incident.status', '1');
+        // }
+
+        /**
+         * Role Based list view condition end
+         */
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -262,6 +293,22 @@ class InitialIncident extends Model
         return $this->where('id', $incident_Id)->update($update_array);
     }
 
+    public function chooseAssigneeUpdate($incident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
+
+
     public function uaucsubmit($id)
     {
 
@@ -293,8 +340,9 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color', 'ims_initial_incident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
+        $query = $query->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -322,9 +370,14 @@ class InitialIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_incident.created_at', '<=', $endDate);
         }
+        if ($request->has('incident_status') && $request->incident_status) {
+
+            $query = $query->where('incident_status', decryptId($request->incident_status));
+        }
+
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('ims_initial_incident.status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');
