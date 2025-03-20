@@ -1772,6 +1772,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getFloormanager')) {
+        function GetEHSOfficer()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_ . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
@@ -1916,6 +1931,36 @@ if (!function_exists('getMonth')) {
             } else {
                 return $shift_name->shift;
             }
+        }
+    }
+
+    // Monthly Eye Wash Sequence
+    if(!function_exists('MEWSequence'))
+    {
+        function MEWSequence()
+        {
+            return 'MEW-000001';
+        }
+    }
+
+    if (!function_exists('getGMInspectionStatus')) {
+        function getGMInspectionStatus($id)
+        {
+            if ($id == GEMBA_WALK_INSPECTION_START) { 
+                return 'Gemba Walk Start';
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
+                return 'Waiting for CAPA Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
+                return 'Waiting for Floor manager Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+                return 'Waiting for EHS Officer Verification';
+            }else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
+                return 'Inspection Closed';
+            }
+
+            return 'Inspection Creation';
+
+            return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }
     }
 }

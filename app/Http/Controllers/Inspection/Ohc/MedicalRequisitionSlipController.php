@@ -8,7 +8,7 @@ use App\Models\Master\Department;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Inspection\Master\Shift;
-
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionSlipfloordetails;
 use App\Models\OhcManagement\Report\Inventory;
@@ -31,6 +31,7 @@ class MedicalRequisitionSlipController extends Controller
     private $user;
     private $medicine_requisition_floor_checklist;
     private $medicine_requisition_floor_details;
+    private $inspection_ohc_status_log;
 
     private $inventory;
 
@@ -47,8 +48,9 @@ class MedicalRequisitionSlipController extends Controller
         $this->medicine_requisition_floor_checklist = new MedicineRequisitionSlipFloor();
         $this->inventory = new Inventory();
         $this->user = new User();
-        $this->medicine_requisition_floor_details = new MedicineRequistionSlipfloordetails();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
 
+        $this->medicine_requisition_floor_details = new MedicineRequistionSlipfloordetails();
     }
     public function Index(Request $request)
     {
@@ -77,10 +79,39 @@ class MedicalRequisitionSlipController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('action', function ($row) {
-                            return '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                        ->addColumn('approve_status', function ($row) {
+                            $text = '';
+                            switch ($row->approve_status) {
+                                case FLOOR_MANAGER_APPROVAL_PENDING:
+                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Floor Manager Approval Pending</span>";
+                                    break;
+                                case FLOOR_MANAGER_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Floor Manager Approved</span>";
+                                    break;
+                                case FLOOR_MANAGER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Floor Manager Rejected</span>";
+                                    break;
+                                case SAFETY_OFFICER_APPROVAL_PENDING:
+                                    $text = "<span class='badge bg-INFO rounded' style='font-size: 1.0em;'>Safety Officer Approval Pending</span>";
+                                    break;
+                                case SAFETY_OFFICER_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Safety Officer Approved</span>";
+                                    break;
+
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status','issue_date'])
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            // if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING) || (checkUserRole(ROLE_DOCTOR) && $row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)  || ((checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING))) {
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
+                            return   $btn;
+                        })
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -88,7 +119,7 @@ class MedicalRequisitionSlipController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd( $ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -104,7 +135,7 @@ class MedicalRequisitionSlipController extends Controller
             $shift = $this->shift->getShiftname();
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
-            $location = $this->location->getLocation();
+            $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
@@ -140,8 +171,17 @@ class MedicalRequisitionSlipController extends Controller
             try {
                 // Store user medicine requisition
                 $medicine_requisition_floor_details = $this->medicine_requisition_floor_details->store();
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store(  $medicine_requisition_floor_details);
+                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store($medicine_requisition_floor_details);
+                $data = [
+                    'type' => OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                    'from_status' => OHC_CREATION,
+                    'to_status' => FLOOR_MANAGER_APPROVAL_PENDING,
+                    'reference_id' => $medicine_requisition_floor_details->id,
+                    'remarks' => "",
 
+                ];
+
+                $this->inspection_ohc_status_log->store($data);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -174,6 +214,90 @@ class MedicalRequisitionSlipController extends Controller
             return view('inspection.inspection_ohc.medical_requisition_slip.view', $data);
         } catch (Exception $ex) {
             dd($ex);
+        }
+    }
+
+    public function approval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $medicinerequisition = $this->medicine_requisition_floor_details->Selectone($id);
+                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
+
+                $data = array(
+                    'medicinerequisition' => $medicinerequisition,
+                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+                );
+            }
+            return view('inspection.inspection_ohc.medical_requisition_slip.approval', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+
+    public function safetyofficerapproval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+
+            try {
+
+                $this->medicine_requisition_floor_details->safetyofficerapprovalupdate($id);
+                Session::flash('success', 'Your data has been Responded successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
+        }
+    }
+
+    public function floormanagerapproval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+
+            try {
+
+                    $approveStatus = FLOOR_MANAGER_APPROVED ?? FLOOR_MANAGER_REJECTED;
+
+                    $data = [
+                        'type' => OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                        'from_status' => FLOOR_MANAGER_APPROVAL_PENDING,
+                        'to_status' => $approveStatus,
+                        'reference_id' =>$id,
+                        'remarks' => $request->remarks,
+
+                    ];
+
+                    $this->inspection_ohc_status_log->store($data);
+                    $this->medicine_requisition_floor_details->floormanagerapprovalupdate($id, $approveStatus);
+              if($request->action == "approve"){
+
+              }
+
+
+                Session::flash('success', 'Your data has been Responded successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 }

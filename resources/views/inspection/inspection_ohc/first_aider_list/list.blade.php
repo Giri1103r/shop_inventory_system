@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Floor' )
-@section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
+@section('title', 'First Aider List' )
+@section('pageurl', admin_url('ohc/first-aider/list'))
 
 
 @section('content')
@@ -16,7 +16,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/medical-requisition-slip/add') }}">Add</x-button-add>
+                                href="{{ admin_url('ohc/first-aider/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -124,7 +124,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/medical-requisition-slip/list') }}",
+                        url: "{{ admin_url('ohc/first-aider/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -161,9 +161,11 @@
                             data: 'revision_date',
                             name: 'revision_date'
                         },
+
+
                         {
-                            data: 'approve_status',
-                            name: 'approve_status'
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'created_date',
@@ -197,7 +199,7 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
+
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -207,7 +209,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/export/pdf') }}" +
+                                            "{{ admin_url('ohc/first-aider/export/pdf') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -226,8 +229,9 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/export/excel') }}" +
-                                            '&document_number=' + document_number +
+                                            "{{ admin_url('ohc/first-aider/export/excel') }}" +
+                                            '?search=' + searchValue +
+                                            '&document_number=' + document_number+
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
                                             '&status=' + status
@@ -266,12 +270,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate First Aider List') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate First Aider List') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -291,7 +295,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/medical-requisition-slip/status') }}",
+                                url: "{{ admin_url('ohc/first-aider/status') }}",
                                 type: 'post',
 
                                 data: {

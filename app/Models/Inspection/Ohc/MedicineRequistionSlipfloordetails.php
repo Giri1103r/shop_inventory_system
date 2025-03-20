@@ -146,42 +146,23 @@ class MedicineRequistionSlipfloordetails extends Model
             'first_aider' => $request->first_aider,
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
             'created_by' => Auth::id(),
-            'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'approve_status' => FLOOR_MANAGER_APPROVAL_PENDING,
         ];
 
         return self::create($insert_array);
 
     }
 
-    public function signatureupload()
+    public function Selectone($id)
     {
-        $request = request();
-        $id = Auth::id();
+        return $this->where('id', $id)->first();
+    }
 
-        $file = $request->file('signature_image');
-        if ($file != null) {
+    public function safetyofficerapprovalupdate($id,$approveStatus){
+        return $this->where('id',$id)->update(['approved_by'=>Auth::id(),'approve_status'=>$approveStatus]);
+    }
 
-            $destinationPath = 'uploads/signatureupload';
-
-            if (!File::exists(public_path($destinationPath))) {
-                File::makeDirectory(public_path($destinationPath), 0777, true, true);
-            }
-
-            $signature_image_path = null;
-
-            if ($request->hasFile('signature_image')) {
-                $signature_image = $request->file('signature_image');
-
-                $signature_image_name = time() . '_' . $signature_image->getClientOriginalName();
-                $signature_image->move(public_path($destinationPath), $signature_image_name);
-
-                $signature_image_path = $destinationPath . '/' . $signature_image_name;
-            }
-
-            $update_data['signature_upload'] = $signature_image_path;
-
-            User::where('id', $id)->update($update_data);
-            Employee::where('login_id', $id)->update($update_data);
-        }
+    public function floormanagerapprovalupdate($id,$approveStatus){
+        return $this->where('id',$id)->update(['verified_by'=>Auth::id(),'approve_status'=>$approveStatus]);
     }
 }

@@ -172,7 +172,6 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             return view('inspection.Safety.forklift_inspection_monthly.add', $data);
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));

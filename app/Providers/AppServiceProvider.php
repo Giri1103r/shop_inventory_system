@@ -80,6 +80,10 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_FIRE_ASSOCIATES') or define('ROLE_FIRE_ASSOCIATES', 18);
         defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
         defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
+        defined('ROLE_FLOOR_MANAGER') or define('ROLE_FLOOR_MANAGER', 21);
+        defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
+        defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
+
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
@@ -113,9 +117,8 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
         defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
-
-
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
+
 
 
         // Safety Permit
@@ -231,8 +234,33 @@ class AppServiceProvider extends ServiceProvider
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
+        // INSPECTION OHC
+        defined('OHC_CREATION') or define('OHC_CREATION', 1);
+        defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
+        defined('FLOOR_MANAGER_APPROVED') or define('FLOOR_MANAGER_APPROVED', 3);
+        defined('FLOOR_MANAGER_REJECTED') or define('FLOOR_MANAGER_REJECTED', 4);
+        defined('SAFETY_OFFICER_APPROVAL_PENDING') or define('SAFETY_OFFICER_APPROVAL_PENDING', 5);
+        defined('SAFETY_OFFICER_APPROVED') or define('SAFETY_OFFICER_APPROVED', 6);
+        defined('SAFETY_OFFICER_REJECTED') or define('SAFETY_OFFICER_REJECTED', 7);
+
+
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+
+
+        // Gemba Walk
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION',1);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION',2);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION',3);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED',4);
+
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1',1);
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2',2);
+        defined('GEMBA_WALK_INSPECTION_PASS_1') or define('GEMBA_WALK_INSPECTION_PASS_1',1);
+        defined('GEMBA_WALK_INSPECTION_PASS_2') or define('GEMBA_WALK_INSPECTION_PASS_2',2);
+        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL',3);
+        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS',4);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START',0);
 
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
 
@@ -241,6 +269,12 @@ class AppServiceProvider extends ServiceProvider
         //Status Log
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
+
+
+        // Monthly Eye Wash 
+        defined('GOOD') or define('GOOD',1);
+        defined('FAIR') or define('FAIR',2);
+        defined('POOR') or define('POOR',3);
 
         View::composer('*', function ($view) {
 

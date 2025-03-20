@@ -173,8 +173,8 @@
                     },
                    
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'gemba_walk_status',
+                        name: 'gemba_walk_status'
                     },
                     {
                         data: 'created_by',
