@@ -21,7 +21,7 @@ use App\Models\Inspection\MSDSSignatureUpload;
 
 class MSDSController extends Controller
 {
-
+ 
     private $msdsDetails;
     private $msdsCheckList;
     private $statusLog;
