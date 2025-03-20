@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Inspection\RRAA\RRAAEmail;
 use App\Models\Inspection\Master\Frequency;
 use Illuminate\Http\Request;
 use App\Models\Inspection\RRAADetails;
@@ -17,6 +18,7 @@ use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\RRAAStatusLog;
+use Illuminate\Support\Facades\Mail;
 
 class RRAAController extends Controller
 {
@@ -204,6 +206,44 @@ class RRAAController extends Controller
                
                $this->rraa_checkList->store($rraa_id);
 
+               $mailsubject = 'RRAA Inspection completed by fire associate';
+               $ehsOfficer = GetEHSOfficer();
+               $message = 'RRAA Inspection completed by fire associate';
+               
+               if (count($ehsOfficer) > 0) {
+                    foreach ($ehsOfficer as $user) {
+                        $email_id = $user->email;
+                        if ($email_id != '' || $email_id != null) {
+                            $data = $this->rraa_details->selectOne($rraa_id);
+                            $data = array(
+                                'data' => $data,
+                                'mail_subject' => 'RRAA Inspection',
+                                'message' => $message,
+                            );
+                            Mail::to($email_id)->queue(new RRAAEmail($data));
+                            
+                        }
+                    }
+                }
+
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $notificationData = array(
+                    'notification_type' => RRAA_INSPECTION,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $rraa->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($rraa->id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
@@ -345,6 +385,28 @@ class RRAAController extends Controller
                 'remarks' => $request->remarks,
             ]; 
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+        
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->rraa_details->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'RRAA Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
+                         
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
@@ -371,7 +433,7 @@ class RRAAController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "CAPA Action done by Fire Associates",
+                    'message' => "CAPA Action completed by Fire Associates",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_details->id,
                     'module' => 1,
@@ -389,6 +451,29 @@ class RRAAController extends Controller
                 'remarks' => $request->capa_remarks,
             ];
             $this->statusLog->create($insert_array);
+
+            $message = 'CAPA Action completed by Fire Associates';
+            $ehsOfficer = GetEHSOfficer();
+        
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->rraa_details->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'RRAA Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
+                         
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
@@ -446,6 +531,28 @@ class RRAAController extends Controller
                 'remarks' => $request->remarks,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+        
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->rraa_details->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'RRAA Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
+                         
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
@@ -503,6 +610,28 @@ class RRAAController extends Controller
                 'remarks' => $request->level_one_manager,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+        
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->rraa_details->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'RRAA Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
+                         
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
@@ -550,7 +679,6 @@ class RRAAController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-            notificationSave($notificationData);
             $insert_array = [
                 'rraa_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
@@ -559,6 +687,28 @@ class RRAAController extends Controller
                 'remarks' => $request->level_two_manager,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+        
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->rraa_details->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'RRAA Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
+                         
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {

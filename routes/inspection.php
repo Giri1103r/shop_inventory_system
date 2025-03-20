@@ -15,6 +15,7 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
+use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -248,5 +249,27 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('level-one/verify/submit', [RRAAController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [RRAAController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
+
+});
+
+Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
+    Route::get('list', [SafetyPettyController::class, 'index']);
+    Route::post('list', [SafetyPettyController::class, 'index']);
+    Route::get('add', [SafetyPettyController::class, 'add']);
+    Route::post('add/submit', [SafetyPettyController::class, 'store']);
+    Route::get('view/{id}', [SafetyPettyController::class, 'view']);
+    Route::post('delete', [SafetyPettyController::class, 'delete']);
+    Route::get('export/excel', [SafetyPettyController::class, 'exportExcel']);
+    Route::get('export/pdf', [SafetyPettyController::class, 'exportPdf']);
+    Route::post('status', [SafetyPettyController::class, 'statusChange']);
+    Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
+    Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
+    Route::get('verification/{id}/{employee_type}', [SafetyPettyController::class, 'approvals']);
+    Route::post('ehsofficer/verify/submit', [SafetyPettyController::class, 'EHSOfficerSubmit']);
+    Route::post('capa/submit', [SafetyPettyController::class, 'CAPASubmit']);
+    Route::post('capa/reverify/submit', [SafetyPettyController::class, 'CAPAVerifySubmit']);
+    Route::post('level-one/verify/submit', [SafetyPettyController::class, 'levelOneManagerSubmit']);
+    Route::post('level-two/verify/submit', [SafetyPettyController::class, 'levelTwoManagerSubmit']);
+    Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
 
 });

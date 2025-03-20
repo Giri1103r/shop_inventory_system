@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'RRAA Add')
-@section('pageurl', admin_url('rraa/ohc_fire_environment_compliance/list'))
+@section('title', 'ohc/Safety Petty Logbook Add')
+@section('pageurl', admin_url('ohc/safety-petty-logbook/list'))
 
 @section('content')
 
@@ -13,9 +13,8 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('RRAA Add') }}</h4> --}}
+           
         </div>
-
     </div>
 
     <div class="content-body  default-height">
@@ -27,19 +26,19 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('rraa/ohc_fire_environment_compliance/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/safety-petty-logbook/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="rraa_Add" action="{{ admin_url('rraa/ohc_fire_environment_compliance/add/submit') }}">
+                                    <form method="POST" id="sftyAdd" action="{{ admin_url('ohc/safety-petty-logbook/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">RRAA Details</h4>
+                                                <h4 class="text-white">Safety Petty Logbook Details</h4>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
@@ -70,14 +69,13 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                   
                                                 </div>
                                             </div>
 
                                             <div id="form-wrapper">
                                                 <div class="form-set mb-3">
                                                     <div class="card-header-inner">
-                                                        <h4 class="text-white">RRAA CheckList</h4>
+                                                        <h4 class="text-white">Safety Petty Logbook CheckList</h4>
                                                     </div>
                                                     <div class="d-flex justify-content-end">
                                                         <button class="btn btn-primary add-row me-3" type="button"
@@ -94,91 +92,94 @@
                                                                 <label class="form-label require">Serial Number</label>
                                                                 <input type="text" name="serial_number[1]"
                                                                     class="form-control" placeholder="Serial Number"
-                                                                    value="RRAA-00001" readonly>
+                                                                    value="SPLB-00001" readonly>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Category</label>
-                                                                <select name="category[1]" class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select Category</option>
-                                                                    @foreach ($category as $item)
-                                                                        <option value="{{ encryptId($item->id) }}">
-                                                                            {{ $item->category_name }}</option>
-                                                                    @endforeach
-                                                                </select>
+                                                                <label class="form-label require">Employee Name </label>
+                                                                <select name="employee_name[1]"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select Employee Name</option>
+                                                            </select>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">OHC Compliance Index</label>
-                                                                <input type="text" name="ohs_compliance_index[1]"
-                                                                    class="form-control" placeholder="OHC Compliance Index"
+                                                                <label class="form-label require">Employee Code</label>
+                                                                <input type="text" name="employee_code[1]"
+                                                                    class="form-control" placeholder="Employee Code"
                                                                     value="">
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Frequency</label>
-                                                                <select name="frequency[1]"
+                                                                <label class="form-label require">Department</label>
+                                                                <select name="department[1]"
                                                                     class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select Frequency</option>
-                                                                    @foreach ($frequency as $item)
-                                                                        <option value="{{ encryptId($item->id) }}">
-                                                                            {{ $item->frequency_name }}</option>
-                                                                    @endforeach
+                                                                    <option value="">Select Department</option>
                                                                 </select>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">scope(Unit)</label>
-                                                                <input type="text" name="scope[1]"
-                                                                class="form-control" placeholder="Scope"
-                                                                value="">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-4 mt-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Responsibility</label>
-                                                                <select name="emp_id[1]" id="emp_id"
-                                                                    class="form-control single-select emp-select" style="width:100%">
-                                                                    <option value="">Select Responsibility</option>
+                                                                <label class="form-label require">Unit</label>
+                                                                <select name="unit[1]"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select Unit</option>
                                                                 </select>
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4 mt-2">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Authority</label>
-                                                                <input type="text" name="authority[1]"
-                                                                class="form-control" placeholder="Authority"
-                                                                value="">
+                                                                <label class="form-label require">Date</label>
+                                                                <input type="text" name ="date[1]" id="date"
+                                                                    class="form-control" placeholder="Date" value="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Amount</label>
+                                                                <input type="text" name ="amount[1]" id="amount"
+                                                                    class="form-control" placeholder="Amount" value="">
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Accountability</label>
-                                                                <input type="text" name="accountability[1]"
-                                                                class="form-control" placeholder="Accountability"
-                                                                value="">
+                                                                <label class="form-label require">Amount Given By</label>
+                                                                <input type="text" name ="amount_given_by[1]"
+                                                                class="form-control" placeholder="Amount Given By" value="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Amount Received By</label>
+                                                                <input type="text" name ="amount_received_by[1]"
+                                                                class="form-control" placeholder="Amount Received By" value="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Description</label>
+                                                                <textarea name="description[1]" class="form-control" placeholder="Description" rows="3"></textarea>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Remark</label>
-                                                                <textarea name="remark[1]" rows="3"  class="form-control"
-                                                                 placeholder="Remark"></textarea>
+                                                                <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
                                                             </div>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -189,7 +190,7 @@
 
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('rraa/ohc_fire_environment_compliance/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ohc/safety-petty-logbook/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -224,61 +225,7 @@
             return this.optional(element) || value.trim().length > 0;
         }, "This field cannot contain only spaces");
 
-        $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('rraa/ohc_fire_environment_compliance/employeeid') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-        
-        function initEmployeeSelect2() {
-            $('.emp-select').select2({
-                ajax: {
-                    url: '{{ admin_url('rraa/ohc_fire_environment_compliance/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-        }
-
-        $('#rraa_Add').validate({
+        $('#sftyAdd').validate({
             rules: {
                 document_number: {
                     required: true,
@@ -290,28 +237,36 @@
                 revision_date: {
                     required: true,
                 },
-                'category[1]': {
+                'employee_name[1]': {
                     required: true,
                 },
-                'ohs_compliance_index[1]': {
+                'employee_code[1]': {
+                    required: true,
+                    noSpaces: true,
+                    uniqueEmployeeCode: true,
+                },
+                'department[1]': {
+                    required: true,
+                },
+                'unit[1]': {
+                    required: true,
+                },
+                'date[1]': {
+                    required: true,
+                },
+                'amount[1]': {
                     required: true,
                     noSpaces: true,
                 },
-                'frequency[1]': {
-                    required: true,
-                },
-                'scope[1]': {
+                'description[1]': {
                     required: true,
                     noSpaces: true,
                 },
-                'emp_id[1]': {
-                    required: true,
-                },
-                'authority[1]': {
+                'amount_given_by[1]': {
                     required: true,
                     noSpaces: true,
                 },
-                'accountability[1]': {
+                'amount_received_by[1]': {
                     required: true,
                     noSpaces: true,
                 },
@@ -330,26 +285,32 @@
                 revision_date: {
                     required: "Please Select Revision Date",
                 },
-                'category[1]': {
-                    required: "Category is Required",
+                'employee_name[1]': {
+                    required: "Employee Name is Required",
                 },
-                'ohs_compliance_index[1]': {
-                    required: "OHS Compliance Index is Required",
+                'employee_code[1]': {
+                    required: "Employee Code is Required",
                 },
-                'frequency[1]': {
-                    required: "Frequency is Required",
+                'department[1]': {
+                    required: "Department is Required",
                 },
-                'scope[1]': {
-                    required: "Scope is Required",
+                'unit[1]': {
+                    required: "Unit is Required",
                 },
-                'emp_id[1]': {
-                    required: "Responsibility is Required",
+                'date[1]': {
+                    required: "date is Required",
                 },
-                'authority[1]': {
-                    required: "Authority is Required",
+                'amount[1]': {
+                    required: "Amount is Required",
                 },
-                'accountability[1]': {
-                    required: "Accountability is Required",
+                'description[1]': {
+                    required: "Description is Required",
+                },
+                'amount_given_by[1]': {
+                    required: "Amount Given by is Required",
+                },
+                'amount_received_by[1]': {
+                    required: "Amount Received by is Required",
                 },
                 'remark[1]': {
                     required: "Remark is Required",
@@ -375,34 +336,47 @@
             }
         });
 
+        $.validator.addMethod("uniqueEmployeeCode", function(value, element) {
+            var employeeCode = [];
+            
+            $("input[name^='item_code']").each(function() {
+                var employeeCodeValue = $(this).val();
+                if (employeeCodeValue) {
+                    employeeCode.push(employeeCodeValue);  
+                }
+            });
+           
+            return employeeCodes.indexOf(value) === employeeCodes.lastIndexOf(value);
+        }, "Employee Code must be unique");
+
         let form_set_count = 2;
-        let serial_number = parseInt("{{ getRRAACount() }}", 10) + 1;
+        let serial_number = parseInt("{{ getSPLBCount() }}", 10) + 1;
         const maxFormSets = 200;
         const minFormSets = 1;
 
-        // $(".add-row").click(function() {
+
         $(document).on('click',".add-row",function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
 
             if (currentFormSets >= maxFormSets) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Maximum RRAA CheckList Reached',
-                    text: 'You can only add up to 200 RRAA CheckList.',
+                    title: 'Maximum Safety Petty Logbook CheckList Reached',
+                    text: 'You can only add up to 200 Safety Petty Logbook CheckList.',
                     confirmButtonColor: '#3085d6'
                 });
                 return;
             }
 
-            let newSerialNumber = 'RRAA-' + ('0000' + serial_number).slice(-5);
+            let newSerialNumber = 'SPLB-' + ('0000' + serial_number).slice(-5);
 
             var newFormSet = `
                 <div class="form-set mb-3">
                     <div class="card-header-inner">
-                        <h4 class="text-white">RRAA CheckList</h4>
+                        <h4 class="text-white">Safety Petty Logbook CheckList</h4>
                     </div>
                     <div class="d-flex justify-content-end">
-                         <button class="btn btn-primary add-row me-3" type="button"
+                        <button class="btn btn-primary add-row me-3" type="button"
                             id="add-row" style="width: 84px;">
                             Add
                         </button>
@@ -418,87 +392,90 @@
                             </div>
                         </div>
 
-                         <div class="col-md-4">
+                       <div class="col-md-4">
                             <div class="form-group form-input">
-                                <label class="form-label require">Category</label>
-                                <select name="category[${form_set_count}]" class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Category</option>
-                                    @foreach ($category as $item)
-                                        <option value="{{ encryptId($item->id) }}">
-                                            {{ $item->category_name }}</option>
-                                    @endforeach
-                                </select>
+                                <label class="form-label require">Employee Name </label>
+                                <select name="employee_name[${form_set_count}]"
+                                    class="form-control single-select" style="width: 100%">
+                                <option value="">Select Employee Name</option>
+                            </select>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="form-group form-input">
-                                <label class="form-label require">OHC Compliance Index</label>
-                                <input type="text" name="ohs_compliance_index[${form_set_count}]"
-                                    class="form-control" placeholder="OHC Compliance Index"
+                                <label class="form-label require">Employee Code</label>
+                                <input type="text" name="employee_code[${form_set_count}]"
+                                    class="form-control" placeholder="Employee Code"
                                     value="">
                             </div>
                         </div>
 
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
-                                <label class="form-label require">Frequency</label>
-                                <select name="frequency[${form_set_count}]"
+                                <label class="form-label require">Department</label>
+                                <select name="department[${form_set_count}]"
                                     class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Frequency</option>
-                                    @foreach ($frequency as $item)
-                                        <option value="{{ encryptId($item->id) }}">
-                                            {{ $item->frequency_name }}</option>
-                                    @endforeach
+                                    <option value="">Select Department</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
-                                <label class="form-label require">scope(Unit)</label>
-                                <input type="text" name="scope[${form_set_count}]"
-                                class="form-control" placeholder="Scope"
-                                value="">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Responsibility</label>
-                                <select name="emp_id[${form_set_count}]"
-                                    class="form-control single-select emp-select" style="width:100%">
-                                    <option value="">Select Responsibility</option>
+                                <label class="form-label require">Unit</label>
+                                <select name="unit[${form_set_count}]"
+                                    class="form-control single-select" style="width: 100%">
+                                    <option value="">Select Unit</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-4">
                             <div class="form-group form-input">
-                                <label class="form-label require">Authority</label>
-                                <input type="text" name="authority[${form_set_count}]"
-                                class="form-control" placeholder="Authority"
-                                value="">
+                                <label class="form-label require">Date</label>
+                                <input type="text" name ="date[${form_set_count}]" id="date"
+                                    class="form-control" placeholder="Date" value="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group form-input">
+                                <label class="form-label require">Amount</label>
+                                <input type="text" name ="amount[${form_set_count}]" id="amount"
+                                    class="form-control" placeholder="Amount" value="">
                             </div>
                         </div>
 
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
-                                <label class="form-label require">Accountability</label>
-                                <input type="text" name="accountability[${form_set_count}]"
-                                class="form-control" placeholder="Accountability"
-                                value="">
+                                <label class="form-label require">Amount Given By</label>
+                                <input type="text" name ="amount_given_by[${form_set_count}]"
+                                class="form-control" placeholder="Amount Given By" value="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2">
+                            <div class="form-group form-input">
+                                <label class="form-label require">Amount Received By</label>
+                                <input type="text" name ="amount_received_by[${form_set_count}]"
+                                class="form-control" placeholder="Amount Received By" value="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-2">
+                            <div class="form-group form-input">
+                                <label class="form-label require">Description</label>
+                                <textarea name="description[${form_set_count}]" class="form-control" placeholder="Description" rows="3"></textarea>
                             </div>
                         </div>
 
                         <div class="col-md-12 mt-2">
                             <div class="form-group form-input">
                                 <label class="form-label require">Remark</label>
-                                <textarea name="remark[${form_set_count}]" rows="3"  class="form-control"
-                                    placeholder="Remark"></textarea>
+                                <textarea name="remark[${form_set_count}]" class="form-control" placeholder="Remark" rows="3"></textarea>
                             </div>
                         </div>
-
                     </div>
                 </div>`;
 
@@ -506,81 +483,99 @@
 
             serial_number++;
 
-            $('select[name^="emp_id["]').each(function() {
+            $('select[name^="employee_name["]').each(function() {
                 $(this).select2({
-                    placeholder: "Select Responsibility",
+                    placeholder: "Select Employee Name",
                     width: '100%'
                 });
             });
 
-            $('select[name^="category["]').each(function() {
+            $('select[name^="department["]').each(function() {
                 $(this).select2({
-                    placeholder: "Select Category",
+                    placeholder: "Select Department",
                     width: '100%'
                 });
             });
 
-            $('select[name^="frequency["]').each(function() {
+            $('select[name^="unit["]').each(function() {
                 $(this).select2({
-                    placeholder: "Select Frequency",
+                    placeholder: "Select Unit",
                     width: '100%'
                 });
             });
 
-            $("select[name='category[" + form_set_count + "]']").rules('add', {
+            $("select[name='employee_name[" + form_set_count + "]']").rules('add', {
                 required: true,
                 messages: {
-                    required: 'Category is required',
+                    required: 'Employee Name is required',
                 }
             });
 
-            $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
+            $("input[name='employee_code[" + form_set_count + "]']").rules('add', {
                 required: true,
+                uniqueEmployeeCode: true,
+                noSpaces: true,
                 messages: {
-                    required: 'Responsibility is required',
+                    required: 'Employee Code is required',
+                    uniqueEmployeeCode: 'Employee Code must be unique',
+                    noSpaces: 'Employee Code cannot be empty or only spaces'
                 }
             });
 
-            $("input[name='ohs_compliance_index[" + form_set_count + "]']").rules('add', {
+            $("select[name='department[" + form_set_count + "]']").rules('add', {
+                required: true,
+                messages: {
+                    required: 'Department is required',
+                }
+            });
+
+            $("select[name='unit[" + form_set_count + "]']").rules('add', {
+                required: true,
+                messages: {
+                    required: 'Unit is required',
+                }
+            });
+
+            $("input[name='date[" + form_set_count + "]']").rules('add', {
+                required: true,
+                messages: {
+                    required: 'Date is required',
+                }
+            });
+
+            $("input[name='amount[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true, 
+                messages: {
+                    required: 'Amount is required',
+                    noSpaces: 'Amount cannot be empty or only spaces'
+                }
+            });
+
+            $("input[name='amount_given_by[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true, 
+                messages: {
+                    required: 'Amount Given By is required',
+                    noSpaces: 'Amount Given By cannot be empty or only spaces'
+                }
+            });
+
+            $("input[name='amount_received_by[" + form_set_count + "]']").rules('add', {
+                required: true,
+                noSpaces: true, 
+                messages: {
+                    required: 'Amount Received By is required',
+                    noSpaces: 'Amount Received By cannot be empty or only spaces'
+                }
+            });
+
+            $("textarea[name='description[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
                 messages: {
-                    required: 'OHS Compliance Index is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-
-            $("select[name='frequency[" + form_set_count + "]']").rules('add', {
-                required: true,
-                messages: {
-                    required: 'Frequency is required',
-                }
-            });
-
-            $("input[name='scope[" + form_set_count + "]']").rules('add', {
-                required: true,
-                noSpaces: true,
-                messages: {
-                    required: 'Scope is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-
-            $("input[name='authority[" + form_set_count + "]']").rules('add', {
-                required: true,
-                noSpaces: true,
-                messages: {
-                    required: 'Authority is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-
-            $("input[name='accountability[" + form_set_count + "]']").rules('add', {
-                required: true,
-                noSpaces: true,
-                messages: {
-                    required: 'Accountability is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    required: 'Description is required',
+                    noSpaces: 'Description cannot be empty or only spaces'
                 }
             });
 
@@ -592,10 +587,8 @@
                     noSpaces: 'Remark cannot be empty or only spaces'
                 }
             });
-
             form_set_count++;
-            updatePageIndices();
-            initEmployeeSelect2();
+            updatePageIndices(); 
         });
 
         $(document).on('click', '.remove-row', function() {
@@ -604,36 +597,36 @@
             if (currentFormSets <= minFormSets) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Minimum RRAA CheckList Required',
-                    text: 'At least 1 RRAA CheckList is required.',
+                    title: 'Minimum Safety Petty Logbook CheckList Required',
+                    text: 'At least 1 Safety Petty Logbook CheckList is required.',
                     confirmButtonColor: '#3085d6'
                 });
                 return;
             }
             $(this).closest('.form-set').remove();
             updatePageIndices();
-          
         });
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5)); 
-                
+                $(this).find("input[name^='serial_number']").val('SPLB-' + ('0000' + (index + 1)).slice(-5));
+
                 $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']'); 
-                $(this).find('input[name^="ohs_compliance_index"]').attr('name', 'ohs_compliance_index[' + (index + 1) + ']');
-                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']'); 
-                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']'); 
-                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']'); 
-                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']'); 
-                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']'); 
+                $(this).find('select[name^="employee_name"]').attr('name', 'employee_name[' + (index + 1) + ']'); 
+                $(this).find('input[name^="employee_code"]').attr('name', 'employee_code[' + (index + 1) + ']'); 
+                $(this).find('select[name^="department"]').attr('name', 'department[' + (index + 1) + ']'); 
+                $(this).find('select[name^="unit"]').attr('name', 'unit[' + (index + 1) + ']'); 
+                $(this).find('input[name^="date"]').attr('name', 'date[' + (index + 1) + ']'); 
+                $(this).find('input[name^="amount"]').attr('name', 'amount[' + (index + 1) + ']'); 
+                $(this).find('input[name^="amount_given_by"]').attr('name', 'amount_given_by[' + (index + 1) + ']');
+                $(this).find('input[name^="amount_received_by"]').attr('name', 'amount_received_by[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }
 
         $(".submit").on('click', function() {
-            if ($("#rraa_Add").valid()) {
-                $("#rraa_Add").submit();
+            if ($("#sftyAdd").valid()) {
+                $("#sftyAdd").submit();
             } else {
                 return false;
             }
@@ -641,3 +634,4 @@
     });
 </script>
 @endpush
+

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Inspection\MSDS\MSDSEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -13,6 +14,8 @@ use App\Models\Inspection\MSDSCheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\MSDSStatusLog;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class MSDSController extends Controller
 {
@@ -177,6 +180,48 @@ class MSDSController extends Controller
                $msdsId = $msds->id;
                $this->msdsCheckList->store($msdsId);
 
+               $mailsubject = 'MSDS Inspection completed by fire associate';
+               $ehsOfficer = GetEHSOfficer();
+               $message = 'MSDS Inspection completed by fire associate';
+           
+               if (count($ehsOfficer) > 0) {
+                    foreach ($ehsOfficer as $user) {
+
+                        $email_id = $user->email;
+
+                        if ($email_id != '' || $email_id != null) {
+                            $data = $this->msdsDetails->selectOne($msdsId);
+                            
+                            $data = array(
+                                'data' => $data,
+                                'mail_subject' => 'MSDS Inspection',
+                                'message' => $message,
+                            );
+
+                            Mail::to($email_id)->queue(new MSDSEmail($data));
+                            
+                        }
+                    }
+                }
+
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $notificationData = array(
+                    'notification_type' => MSDS_INSPECTION,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $msds->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('msds/view/' . encryptId($msds->id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
@@ -241,6 +286,7 @@ class MSDSController extends Controller
                 'msdsDetails' => $msdsDetails,
                 'msdsCheckList' => $msdsCheckList,
             ];
+
             return view('inspection.msds.approval', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -292,6 +338,29 @@ class MSDSController extends Controller
                 'remarks' => $request->remarks,
             ]; 
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+          
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->msdsDetails->selectOne($id);
+
+                         $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'MSDS Inspection',
+                            'message' => $message,
+                        );
+
+
+                        Mail::to($email_id)->queue(new MSDSEmail($data));
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -318,7 +387,7 @@ class MSDSController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "CAPA Action done by Fire Associates",
+                    'message' => "CAPA Action completed by Fire Associates",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_details->id,
                     'module' => 1,
@@ -336,6 +405,29 @@ class MSDSController extends Controller
                 'remarks' => $request->capa_remarks,
             ];
             $this->statusLog->create($insert_array);
+
+            $message = 'CAPA Action completed by Fire Associates';
+            $ehsOfficer = GetEHSOfficer();
+          
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->msdsDetails->selectOne($id);
+
+                         $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'MSDS Inspection',
+                            'message' => $message,
+                        );
+
+                        Mail::to($email_id)->queue(new MSDSEmail($data));
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -393,6 +485,28 @@ class MSDSController extends Controller
                 'remarks' => $request->remarks,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+          
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->msdsDetails->selectOne($id);
+
+                         $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'MSDS Inspection',
+                            'message' => $message,
+                        );
+
+                        Mail::to($email_id)->queue(new MSDSEmail($data));
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -450,6 +564,28 @@ class MSDSController extends Controller
                 'remarks' => $request->level_one_manager,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+          
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->msdsDetails->selectOne($id);
+
+                         $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'MSDS Inspection',
+                            'message' => $message,
+                        );
+
+                        Mail::to($email_id)->queue(new MSDSEmail($data));
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -468,7 +604,7 @@ class MSDSController extends Controller
             $forklift_inspection = $this->msdsDetails->levelTwoManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
             if ($status == 1) {
-                $message = 'RRAA Inspeciton Approved Successfully!';
+                $message = 'MSDS Inspeciton Approved Successfully!';
                 $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -497,7 +633,6 @@ class MSDSController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-            notificationSave($notificationData);
             $insert_array = [
                 'msds_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
@@ -506,6 +641,28 @@ class MSDSController extends Controller
                 'remarks' => $request->level_two_manager,
             ];
             $this->statusLog->create($insert_array);
+
+            $ehsOfficer = GetEHSOfficer();
+          
+            if (count($ehsOfficer) > 0) {
+                 foreach ($ehsOfficer as $user) {
+
+                     $email_id = $user->email;
+
+                     if ($email_id != '' || $email_id != null) {
+                         $data = $this->msdsDetails->selectOne($id);
+
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'MSDS Inspection',
+                            'message' => $message,
+                        );
+
+                        Mail::to($email_id)->queue(new MSDSEmail($data));
+                     }
+                 }
+             }
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -660,7 +817,6 @@ class MSDSController extends Controller
             $filename = "MSDS Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
