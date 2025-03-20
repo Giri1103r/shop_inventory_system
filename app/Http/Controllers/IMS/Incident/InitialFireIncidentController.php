@@ -743,9 +743,8 @@ class InitialFireIncidentController extends Controller
     public function saveHira(Request $request)
     {
         try {
-
             $HiraMoc = new HiraMoc();
-            $HiraMoc->fire_id = decryptId($request->fireincident_id);
+            $HiraMoc->fire_id = $request->fireincident_id;
             $HiraMoc->hira_id = decryptId($request->hira_id) ?? null;
             $HiraMoc->moc_id = decryptId($request->moc_id) ?? null;
             $HiraMoc->created_by = Auth::id();

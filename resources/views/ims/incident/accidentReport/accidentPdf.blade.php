@@ -302,9 +302,9 @@
                             </td>
                             <td>
                                 @if ($injury->body_part_image)
-                                    <a href="{{ admin_url('storage/app/public/uploads/uploads/' . $injury->body_part_image) }}"
+                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
                                         target="_blank">
-                                        <img src="{{ admin_url('storage/app/public/uploads/uploads/' . $injury->body_part_image) }}"
+                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
                                             alt="Body Parts Image"
                                             style="max-width: 100px; max-height: 100px; object-fit: contain;">
                                     </a>
