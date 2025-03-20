@@ -1772,6 +1772,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getFloormanager')) {
+        function GetEHSOfficer()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_ . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
+
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {

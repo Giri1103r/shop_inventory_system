@@ -117,9 +117,8 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
         defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
-
-
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
+
 
 
         // Safety Permit
@@ -234,6 +233,16 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_OFFICER_REJECTED') or define('EHS_OFFICER_REJECTED', 7);
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
+
+        // INSPECTION OHC
+        defined('OHC_CREATION') or define('OHC_CREATION', 1);
+        defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
+        defined('FLOOR_MANAGER_APPROVED') or define('FLOOR_MANAGER_APPROVED', 3);
+        defined('FLOOR_MANAGER_REJECTED') or define('FLOOR_MANAGER_REJECTED', 4);
+        defined('SAFETY_OFFICER_APPROVAL_PENDING') or define('SAFETY_OFFICER_APPROVAL_PENDING', 5);
+        defined('SAFETY_OFFICER_APPROVED') or define('SAFETY_OFFICER_APPROVED', 6);
+        defined('SAFETY_OFFICER_REJECTED') or define('SAFETY_OFFICER_REJECTED', 7);
+
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
