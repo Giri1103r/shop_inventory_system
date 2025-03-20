@@ -18,6 +18,7 @@ use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\EyeWashInspectionDetails;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
 
@@ -45,6 +46,7 @@ class MonthlyEyeWashInspectionController extends Controller
         $this->frequency = new Frequency();
         $this->statusLog = new SafetyStatusLog();
         $this->eye_wash_details = new EyeWashInspectionDetails();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -184,10 +186,10 @@ class MonthlyEyeWashInspectionController extends Controller
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return admin_url('safety/eye-wash-inspection/monthly/list');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
 
@@ -233,6 +235,8 @@ class MonthlyEyeWashInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
             );
+
+            return view('inspection.Safety.eye_wash_inspection.approve',$data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -584,6 +588,19 @@ class MonthlyEyeWashInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+    public function exportViewPdf(Request $request)
+    {
+        try{
+            dd($request->id);
+        }
+        catch(Exception $ex)
+        {
+            report($ex);
+            Session::flash('error','Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }

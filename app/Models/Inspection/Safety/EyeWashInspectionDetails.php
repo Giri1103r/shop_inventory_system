@@ -61,7 +61,7 @@ class EyeWashInspectionDetails extends Model
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
-                'location' => $location[$index],
+                'location' => decryptId($location[$index]),
                 'receptacle' => $receptacle[$index],
                 'resource_code' => $resource_code[$index],
                 'inspection_condition' => decryptId($condition[$index]),

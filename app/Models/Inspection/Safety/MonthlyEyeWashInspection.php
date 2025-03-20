@@ -141,6 +141,7 @@ class MonthlyEyeWashInspection extends Model
             'frequency' => decryptId($request->frequency_id),
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
 
         return $this->create($data);

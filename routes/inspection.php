@@ -188,6 +188,15 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::POST('add/submit', [MonthlyEyeWashInspectionController::class, 'Store']);
         Route::GET('get/locations',[MonthlyEyeWashInspectionController::class,'GetLocations']);
         Route::GET('view/{id}',[MonthlyEyeWashInspectionController::class,'View']);
+        Route::GET('verification/{id}/{employee_type}', [MonthlyEyeWashInspectionController::class, 'Approvals']);
+        Route::POST('ehsofficer/verify/submit', [MonthlyEyeWashInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [MonthlyEyeWashInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [MonthlyEyeWashInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [MonthlyEyeWashInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [MonthlyEyeWashInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('export/excel', [MonthlyEyeWashInspectionController::class, 'exportExcel']);
+        Route::GET('export/pdf', [MonthlyEyeWashInspectionController::class, 'exportPdf']);
+        Route::GET('exportViewPdf/{id}', [MonthlyEyeWashInspectionController::class, 'exportViewPdf']);
     });
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
         Route::get('list', [MonthlyForkLiftInspectionController::class, 'index']);
