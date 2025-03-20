@@ -15,7 +15,7 @@ class MonthlyEyeWashInspection extends Model
         'id',
         'doc_no',
         'issue_date',
-        'revision_date',
+        'revision_data',
         'date_of_inspection',
         'location',
         'shift',
@@ -61,7 +61,7 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
 
@@ -83,8 +83,8 @@ class MonthlyEyeWashInspection extends Model
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "revision_date":
-                    $query->orderBy('inspection_monthly_eyewash.revision_date', $columnorder);
+                case "revision_data":
+                    $query->orderBy('inspection_monthly_eyewash.revision_data', $columnorder);
                     break;
                 case "issue_date":
                     $query = $query->orderBy('inspection_monthly_eyewash.issue_date', $columnorder);
@@ -132,7 +132,7 @@ class MonthlyEyeWashInspection extends Model
         $data = array(
             'doc_no' => $request->doc_no,
             'issue_date' => Displaydateformat($request->issue_date),
-            'revision_date' => $request->rev_date,
+            'revision_data' => $request->rev_date,
             'date_of_inspection' => Displaydateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
@@ -263,7 +263,7 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
 
@@ -274,7 +274,7 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where('inspection_monthly_eyewash.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_monthly_eyewash.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_monthly_eyewash.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
