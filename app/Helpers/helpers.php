@@ -1715,7 +1715,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetEHSOfficer')) {
         function GetEHSOfficer()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_EHS_OFFICER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_EHS_OFFICER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1728,7 +1728,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetLevelOneManager')) {
         function GetLevelOneManager()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1741,7 +1741,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetLevelTwoManager')) {
         function GetLevelTwoManager()
         {
-            $data = Employee::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1850,6 +1850,21 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $name->name;
+            }
+        }
+    }
+
+    if (!function_exists('GetSignature')) {
+
+        function GetSignature($userid)
+        {
+
+            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return '';
+            } else {
+                return $name->signature_upload;
             }
         }
     }

@@ -15,7 +15,6 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
-use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -198,6 +197,9 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::post('capa/reverify/submit', [MonthlyForkLiftInspectionController::class, 'CAPAVerifySubmit']);
         Route::post('level-one/verify/submit', [MonthlyForkLiftInspectionController::class, 'levelOneManagerSubmit']);
         Route::post('level-two/verify/submit', [MonthlyForkLiftInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::get('export/excel', [MonthlyForkLiftInspectionController::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyForkLiftInspectionController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [MonthlyForkLiftInspectionController::class, 'exportViewPdf']);
     });
 
     Route::group(['prefix' => 'safety-gallery-inspection/'], function () {
@@ -213,6 +215,9 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::post('level-one/verify/submit', [SafetyGalleryInsepctionController::class, 'levelOneManagerSubmit']);
         Route::post('level-two/verify/submit', [SafetyGalleryInsepctionController::class, 'levelTwoManagerSubmit']);
         Route::post('unique', [SafetyGalleryInsepctionController::class, 'UniqueCheck']);
+        Route::get('export/excel', [SafetyGalleryInsepctionController::class, 'exportExcel']);
+        Route::get('export/pdf', [SafetyGalleryInsepctionController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [SafetyGalleryInsepctionController::class, 'exportViewPdf']);
     });
 
     Route::group(['prefix' => 'fire-safety-equipment/'], function () {
@@ -245,8 +250,6 @@ Route::group(['prefix' => 'msds/'], function () {
     Route::post('level-one/verify/submit', [MSDSController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [MSDSController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [MSDSController::class, 'generalpdf']);
-
-
 });
 
 Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () {
@@ -268,5 +271,4 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('level-one/verify/submit', [RRAAController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [RRAAController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
-
 });

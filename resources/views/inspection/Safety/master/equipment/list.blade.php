@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Gallery Inspection')
-@section('pageurl', admin_url('safety/safety-gallery-inspection/list'))
+@section('title', 'Checklist Type')
+@section('pageurl', admin_url('inspection/master/checklist-type/list'))
 
 
 @section('content')
@@ -13,9 +13,12 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+                        {{-- @if (CheckUserPermission('import')) --}}
+                            {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
+                        {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/safety-gallery-inspection/add') }}">Add</x-button-add>
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -24,20 +27,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                            <label for="checklist" class="form-label ">{{__('inspection.checklist_type_name')}}</label>
+                                            <input type="text" name="category_name" id="category_name"
                                                 class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -69,10 +61,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{__('inspection.checklist_type_id')}}</th>
+                                        <th>{{__('inspection.checklist_type_name')}}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -80,6 +72,7 @@
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -120,17 +113,16 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/safety-gallery-inspection/list') }}",
+                        url: "{{ admin_url('inspection/master/checklist-type/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.category_name = $('#category_name').val();
                             d.status = $('#status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -146,20 +138,20 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'category_id',
+                            name: 'category_id'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'category_name',
+                            name: 'category_name'
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'status',
+                            name: 'status'
                         },
                         {
-                            data: 'inspection_status',
-                            name: 'inspection_status',
+                            data: 'created_date',
+                            name: 'created_date'
                         },
                         {
                             data: 'action',
@@ -190,19 +182,15 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#category_name').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
+                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&category_name=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -211,18 +199,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#category_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
+                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&category_name=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -259,12 +243,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('inspection.inactive_msg') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('inspection.active_msg') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -280,13 +264,10 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
-
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-gallery-inspection/list/status') }}",
+                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
                                 type: 'post',
-
                                 data: {
                                     id: id,
                                     types: types
@@ -349,9 +330,10 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
+
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-gallery-inspection/list/delete') }}",
+                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
