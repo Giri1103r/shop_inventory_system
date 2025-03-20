@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type Show')
-@section('pageurl', admin_url('inspection/master/checklist-type/list'))
+@section('title', 'Equipment Show')
+@section('pageurl', admin_url('safety/master/equipment/list'))
 
 @push('style')
     <style>
@@ -40,7 +40,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
+                                        href="{{ admin_url('safety/master/equipment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -49,55 +49,34 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Checklist Type</h4>
+                                        <h4 class="text-white">{{__('inspection.equipment_name')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
                                         <label
-                                            class="form-label view_label">{{ __('inspection.checklist_type_id') }}</label>
+                                            class="form-label view_label">{{ __('inspection.equipment_name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($checklist_type->category_id) ? $checklist_type->category_id : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label
-                                            class="form-label view_label">{{ __('inspection.checklist_type_name') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($checklist_type->category_name) ? $checklist_type->category_name : '' }}
+                                            {{ isset($equipment->equipment_name) ? $equipment->equipment_name : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($checklist_type->created_by) }}
+                                            {{ getusername($equipment->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($checklist_type->created_at) }}
+                                            {{ displayDateformat($equipment->created_at) }}
                                         </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input custom-image-container">
-                                        <label class="form-label view_label">{{ __('inspection.image') }}</label>
-
-                                        @if (count($checklist_images) > 0)
-                                            @foreach ($checklist_images as $checklist_image)
-                                                <div class="image-wrapper">
-                                                    <img src="{{ admin_url($checklist_image->file_path) }}"
-                                                        alt="Checklist Type" class="img-fluid custom-image" />
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <div class="view_data">No Image Uploaded</div>
-                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($checklist_type->status == 1)
+                                            @if ($equipment->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}

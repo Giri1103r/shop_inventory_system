@@ -252,6 +252,39 @@ class MonthlyEyeWashInspection extends Model
         }
     }
 
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_monthly_eyewash.*');
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
+                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_date LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_monthly_eyewash.document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_monthly_eyewash.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_monthly_eyewash.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+        }
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_monthly_eyewash.inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_monthly_eyewash'));
