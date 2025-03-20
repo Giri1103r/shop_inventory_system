@@ -25,6 +25,14 @@ class MonthlyEyeWashInspection extends Model
         'checked_by',
         'verified_by',
         'approved_by',
+        'description',
+        'remarks',
+        'inspection_status',
+        'capa_recomendation',
+        'capa_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'capa_ehs_remarks',
         'l1_manager_verification',
         'l2_manager_verification',
         'status',
@@ -67,6 +75,10 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where('inspection_monthly_eyewash.category_id', 'LIKE', '%' . $request->rev_date . '%');
         }
 
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_monthly_eyewash.inspection_status', decryptId($request->inspection_status));
+        }
+
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -80,8 +92,8 @@ class MonthlyEyeWashInspection extends Model
                 case "document_number":
                     $query = $query->orderBy('inspection_monthly_eyewash.document_number', $columnorder);
                     break;
-                case "status":
-                    $query = $query->orderBy('inspection_monthly_eyewash.status', $columnorder);
+                case "inspection_status":
+                    $query = $query->orderBy('inspection_monthly_eyewash.inspection_status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_monthly_eyewash.created_by', $columnorder);
@@ -137,6 +149,106 @@ class MonthlyEyeWashInspection extends Model
     public function selectOne($id)
     {
         return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
+    public function EHSOfficerUpdate($id)
+    {
+
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L1_MANAGER_REJECTED,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L2_MANAGER_REJECTED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
     }
 
     protected static function booted()
