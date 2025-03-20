@@ -1,7 +1,7 @@
 @extends('admin.layouts.admin')
 @section('title', 'RRAA Inspection')
 @section('pageurl', admin_url('rraa/ohc_fire_environment_compliance/list'))
-
+ 
 @section('content')
     <div class="clearfix">
     </div>
@@ -156,6 +156,33 @@
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
                                             name="id">
                                         <div class="row">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                             <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
                                                     passed Without the CAPA
@@ -197,6 +224,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @php
+                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                @endphp
                                             @endif
                                             @if (isset($inspection_details->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -205,6 +235,17 @@
                                                         <div class="view_data">
                                                             {{ Displaydateformat($inspection_details->created_at) }}
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -262,6 +303,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @php
+                                                    $signature = GetSignature($inspection_details->created_by);
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -297,6 +352,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @php
+                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -333,6 +402,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @php
+                                                $signature = GetSignature($inspection_details->l1_manager_verified_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -376,6 +459,20 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @php
+                                                $signature = GetSignature($inspection_details->l2_manager_verified_by);
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
                                 @endif
@@ -406,6 +503,23 @@
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
@@ -443,6 +557,23 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
@@ -479,6 +610,23 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-4 form-group form-input mb-2">
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                            @else
+                                                <div class="form-input col-md-12 mb-2">
+                                                    <label class="form-label require">Signature</label>
+                                                    <input type="file" name="signature_image"
+                                                        id="signature_upload" class="form-control form-control-sm"
+                                                        accept="image/*" placeholder="Enter the image">
+                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                    <div id="signature_upload" class="text-danger"></div>
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
@@ -514,6 +662,23 @@
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 form-group form-input mb-2">
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                            @else
+                                                <div class="form-input col-md-12 mb-2">
+                                                    <label class="form-label require">Signature</label>
+                                                    <input type="file" name="signature_image"
+                                                        id="signature_upload" class="form-control form-control-sm"
+                                                        accept="image/*" placeholder="Enter the image">
+                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                    <div id="signature_upload" class="text-danger"></div>
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
@@ -545,12 +710,18 @@
                     maxlength: 100,
                     noSpaces: true,
                 },
+                signature_image: {
+                    required: true,
+                }
             },
             messages: {
                 remarks: {
                     required: "Remarks is Required",
                     minlength: "Minimum Characters should be 3",
                     maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 }
             },
             errorElement: 'div',
@@ -586,12 +757,18 @@
                     maxlength: 100,
                     noSpaces: true,
                 },
+                signature_image: {
+                    required: true,
+                }
             },
             messages: {
                 capa_remarks: {
                     required: "Remarks is Required",
                     minlength: "Minimum Characters should be 3",
                     maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 }
             },
             errorElement: 'div',
@@ -623,12 +800,18 @@
                     maxlength: 100,
                     noSpaces: true,
                 },
+                signature_image: {
+                    required: true,
+                }
             },
             messages: {
                 level_one_manager: {
                     required: "Remarks is Required",
                     minlength: "Minimum Characters should be 3",
                     maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 }
             },
             errorElement: 'div',
@@ -660,12 +843,18 @@
                     maxlength: 100,
                     noSpaces: true,
                 },
+                signature_image: {
+                    required: true,
+                }
             },
             messages: {
                 level_two_manager: {
                     required: "Remarks is Required",
                     minlength: "Minimum Characters should be 3",
                     maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 }
             },
             errorElement: 'div',
