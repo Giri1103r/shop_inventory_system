@@ -258,7 +258,7 @@ class MonthlyForkLiftInspectionController extends Controller
 
     public function approvals(Request $request)
     {
-        try {
+        try { 
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
             $data = [
