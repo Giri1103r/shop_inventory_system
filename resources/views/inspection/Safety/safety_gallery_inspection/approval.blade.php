@@ -271,7 +271,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                    $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
                                                 @endphp
                                             @endif
                                             @if (isset($inspection_details->created_at))
@@ -350,7 +350,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->created_by);
+                                                   $signature = GetSafetySignature($inspection_details->created_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
@@ -399,7 +399,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature($inspection_details->verified_by);
+                                                    $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
@@ -449,7 +449,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature($inspection_details->l1_manager_verified_by);
+                                               $signature = GetSafetySignature($inspection_details->l1_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
@@ -497,7 +497,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature($inspection_details->l2_manager_verified_by);
+                                                $signature = GetSafetySignature($inspection_details->l2_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">

@@ -1891,6 +1891,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSignature')) {
+
+        function GetSignature($userid,$type)
+        {
+
+            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return '';
+            } else {
+                return $name->signature_upload;
+            }
+        }
+    }
+
     if (!function_exists('getInspectionStatus')) {
         function getInspectionStatus($id)
         {
