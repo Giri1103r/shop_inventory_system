@@ -1774,9 +1774,9 @@ if (!function_exists('getMonth')) {
 
 
     if (!function_exists('getFloormanager')) {
-        function GetEHSOfficer()
+        function getFloormanager()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_ . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_FLOOR_MANAGER . ', user_role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1946,7 +1946,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getGMInspectionStatus')) {
         function getGMInspectionStatus($id)
         {
-            if ($id == GEMBA_WALK_INSPECTION_START) { 
+            if ($id == GEMBA_WALK_INSPECTION_START) {
                 return 'Gemba Walk Start';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
                 return 'Waiting for CAPA Action';
