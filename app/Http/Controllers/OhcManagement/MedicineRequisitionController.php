@@ -83,17 +83,17 @@ class MedicineRequisitionController extends Controller
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->created_by == Auth::id()) {
-                                if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                                if ($row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) {
                                     $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
                                 }
                             }
 
-                            if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
-                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Paramedics Approval Pending</span>";
-                            } else if ($row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
-                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Paramedics Approved</span>";
-                            } else if ($row->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
-                                $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>Paramedics Rejected</span>";
+                            if ($row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
+                                $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
+                            } else if ($row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) {
+                                $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                            } else if ($row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED) {
+                                $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>EHS Head Rejected</span>";
                             } else if ($row->approve_status == STATUS_OHC_OPEN) {
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>Open</span>";
                             } else if ($row->approve_status == STATUS_OHC_CLOSE) {
@@ -115,13 +115,13 @@ class MedicineRequisitionController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING && $row->created_by == Auth::id()) {
+                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)) {
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_PARAMEDICS_APPROVED)) {
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
                             }
 
@@ -199,7 +199,7 @@ class MedicineRequisitionController extends Controller
                 $details = $this->user_medicine_requisition->selectOne($user_medicine_requisition->id);
                 // Email details
                 $mailsubject = getUsername($details ->created_by) .'Request the Medicine for the stock';
-                $user_role = ROLE_PARAMEDICS;
+                $user_role = ROLE_EHS_HEAD;
 
                 // Fetch users with the specified role
                 $users = $this->user->whereRaw('FIND_IN_SET(?, role)', [$user_role])->get();
@@ -249,14 +249,14 @@ class MedicineRequisitionController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -315,8 +315,8 @@ class MedicineRequisitionController extends Controller
                 $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
                 $this->medicine_requisition->updates($id);
 
-                $mailsubject = 'Certified First Aider Request the Medicine';
-                $user_role = ROLE_PARAMEDICS;
+                $mailsubject = 'Paramedics Request the Medicine';
+                $user_role = ROLE_EHS_HEAD;
 
                 // Fetch users with the specified role
                 $users = $this->user->whereRaw('FIND_IN_SET(?, role)', [$user_role])->get();
@@ -408,7 +408,7 @@ class MedicineRequisitionController extends Controller
                 $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
                 $medicine_requisition = $this->medicine_requisition->selectOne($id);
             }
-            if ($user_medicine_requisition->approve_status != STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+            if ($user_medicine_requisition->approve_status != STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
                 return redirect(admin_url('ohc/medicine-requisition/view/' . encryptId($id)))
                  ;
             }
@@ -442,11 +442,11 @@ class MedicineRequisitionController extends Controller
             }
             if ($request->action == 'approve') {
                 $data = [
-                    'approve_status' => STATUS_OHC_PARAMEDICS_APPROVED,
+                    'approve_status' => STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED,
                 ];
             } else {
                 $data = [
-                    'approve_status' => STATUS_OHC_PARAMEDICS_REJECTED,
+                    'approve_status' => STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED,
                 ];
             }
 
@@ -455,7 +455,7 @@ class MedicineRequisitionController extends Controller
             $createdBy = $this->user_medicine_requisition->where('id', $id)->pluck('created_by');
             $user = $this->user->where('id', $createdBy)->where('status', 1)->first();
             if ($request->action == 'approve') {
-                $mailsubject = 'Paramedics Approved the medicine';
+                $mailsubject = 'EHS Head Approved the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {
@@ -488,7 +488,7 @@ class MedicineRequisitionController extends Controller
                 );
                 notificationSave($notificationData);
             } else {
-                $mailsubject = 'Paramedics Rejected the medicine';
+                $mailsubject = 'EHS Head Rejected the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {
@@ -725,24 +725,24 @@ class MedicineRequisitionController extends Controller
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  getDepartment($data->department_id);
                 $export[] =  Displaydateformat($data->request_date);
-                if ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                if ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
                     $export[] = 'Stock Requested ';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                } elseif ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
                     $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) {
                     $export[] = 'Paramedics approval Pending';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED) {
                     $export[] = 'Paramedics approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'Open';
                 } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
-                if ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVAL_PENDING) {
+                if ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
                     $export[] = 'Paramedics approval Pending ';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_APPROVED) {
+                } elseif ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) {
                     $export[] = 'Paramedics Approved';
-                } elseif ($data->approve_status == STATUS_OHC_PARAMEDICS_REJECTED) {
+                } elseif ($data->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED) {
                     $export[] = 'Paramedics Rejected';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'closed';

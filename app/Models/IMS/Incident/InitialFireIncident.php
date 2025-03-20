@@ -37,6 +37,7 @@ class InitialFireIncident extends Model
         'reporting_media_others',
         'brief_description',
         'investigation_assigned',
+        'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
         'description_uauc',
@@ -58,7 +59,7 @@ class InitialFireIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status','ims_incident_status.bg_color','ims_initial_fireincident_investigation.risk_analysis');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
         // dd($query);
@@ -91,12 +92,15 @@ class InitialFireIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->incident_status));
         }
 
+        if ($request->has('status') && $request->status) {
 
+            $query = $query->where('ims_initial_fireincident.status', decryptId($request->status));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -255,6 +259,20 @@ class InitialFireIncident extends Model
         );
         return $this->where('id', $incident_Id)->update($update_array);
     }
+    public function chooseAssigneeUpdate($incident_Id, $choose_assignee)
+    {
+        $request = request();
+        $decryptedTeamMemberIds = is_array($request->team_member)
+            ? array_map('decryptId', $request->team_member)
+            : [];
+        $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+        $update_array = array(
+            'choose_assignee' => $commaSeparatedTeamMembers,
+            'updated_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $incident_Id)->update($update_array);
+    }
 
     public function uaucsubmit($id)
     {
@@ -287,14 +305,15 @@ class InitialFireIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
+        $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
+        $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
+                    ->orWhere('sr_no', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('sr_no') && $request->sr_no) {
@@ -315,11 +334,15 @@ class InitialFireIncident extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ims_initial_fireincident.created_at', '<=', $endDate);
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->status));
+            $query = $query->where('incident_status', decryptId($request->incident_status));
         }
 
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('ims_initial_fireincident.status', decryptId($request->status));
+        }
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
@@ -406,47 +429,40 @@ class InitialFireIncident extends Model
                 ->select('hiramoc.hira_id', 'hira.services as hira_name', 'hiramoc.moc_id', 'moc.services as moc_name')
                 ->get();
 
-            $mergedHiraMoc = [];
-            $tempHira = null;
-
+            $lastHira = null;
+            $lastMoc = null;
             foreach ($hiraMocRecords as $record) {
-                if ($record->hira_id != 0 && $record->moc_id == 0) {
-                    $tempHira = [
+
+                if ($record->hira_id) {
+                    $lastHira = [
                         'hira_id' => $record->hira_id,
                         'hira_name' => $record->hira_name,
                         'moc_id' => null,
-                        'moc_name' => null
+                        'moc_name' => null,
                     ];
-                } elseif ($record->hira_id == 0 && $record->moc_id != 0) {
-
-                    if ($tempHira) {
-                        $tempHira['moc_id'] = $record->moc_id;
-                        $tempHira['moc_name'] = $record->moc_name;
-                        $mergedHiraMoc[] = $tempHira;
-                        $tempHira = null;
-                    } else {
-
-                        $mergedHiraMoc[] = [
-                            'hira_id' => null,
-                            'hira_name' => null,
-                            'moc_id' => $record->moc_id,
-                            'moc_name' => $record->moc_name
-                        ];
-                    }
-                } else {
-
-                    $mergedHiraMoc[] = [
-                        'hira_id' => $record->hira_id,
-                        'hira_name' => $record->hira_name,
+                }
+                if ($record->moc_id) {
+                    $lastMoc = [
+                        'hira_id' => null,
+                        'hira_name' => null,
                         'moc_id' => $record->moc_id,
-                        'moc_name' => $record->moc_name
+                        'moc_name' => $record->moc_name,
                     ];
                 }
             }
-            if ($tempHira) {
-                $mergedHiraMoc[] = $tempHira;
+            $mergedHiraMoc = [];
+            if ($lastHira && $lastMoc) {
+                $mergedHiraMoc[] = [
+                    'hira_id' => $lastHira['hira_id'],
+                    'hira_name' => $lastHira['hira_name'],
+                    'moc_id' => $lastMoc['moc_id'],
+                    'moc_name' => $lastMoc['moc_name'],
+                ];
+            } elseif ($lastHira) {
+                $mergedHiraMoc[] = $lastHira;
+            } elseif ($lastMoc) {
+                $mergedHiraMoc[] = $lastMoc;
             }
-
             $data->hira_moc = $mergedHiraMoc;
 
             if (!empty($data->witness_id)) {
@@ -459,7 +475,6 @@ class InitialFireIncident extends Model
             }
         }
 
-        // dd($data);
         return $data;
     }
 

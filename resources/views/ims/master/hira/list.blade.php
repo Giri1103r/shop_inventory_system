@@ -26,20 +26,20 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Hira Type ID</label>
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Source, Situation,
                                                     Act,Activity,Product,Services</label>
                                                 <input type="text" name="services" id="services" class=" form-control ">
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label require">Type of Hazard</label>
                                             <select name="hazard_type" id="hazard_type" style="width: 100%"
                                                 class="form-control single-select">
@@ -50,7 +50,7 @@
                                                 <option value="4">O - Other Hazard</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -61,7 +61,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
@@ -71,7 +71,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">

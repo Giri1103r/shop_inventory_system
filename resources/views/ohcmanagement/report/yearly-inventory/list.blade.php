@@ -170,14 +170,14 @@
             function fillMonthDays(inventoryData, year, receivingData, issueData) {
                 let headerRow1 = `<tr style="font-size: 15px; background-color: #e1acc9; color:black">
                     <td colspan="2">Year: <span class="selectedMonthYear">${year}</span></td>
-                    <td colspan="12"><center><b>Material Available (Month Wise)</b></center></td>
+                    <td colspan="12"><center><b>Medicine(s) Available (Month Wise)</b></center></td>
                     <td colspan="12"><center><b>Issued Medicine Quantity (Month Wise)</b></center></td>
-                    <td colspan="4"><center><b>Grant</b></center></td>
+                    <td colspan="4"><center><b>Grand</b></center></td>
                  </tr>`;
 
                 let headerRow2 = `<tr style="font-size: 14px; background-color: #7ecfa1; color: black">
                     <td>ID</td>
-                    <td>Name of Item</td>`;
+                    <td>Medicine Name</td>`;
 
                 // Adding Month Headers (Short Names) for Purchase and Issue Data
                 const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -231,11 +231,11 @@
                     tableBody += `<tr>
             <td>${idCounter++}</td>
             <td>${medicineName}</td>
-            ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
-            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : "0"}</td>`).join("")}
-            <td>${item.total_purchase ? item.total_purchase : "0"}</td>
-            <td>${item.total_issue ? item.total_issue : "0"}</td>
-            <td>${item.balance ? item.balance : "0"}</td>
+           ${purchaseData.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            ${issueQuantities.map(qty => `<td>${qty !== 0 ? qty : ""}</td>`).join("")}
+            <td>${item.total_purchase ? item.total_purchase : ""}</td>
+            <td>${item.total_issue ? item.total_issue : ""}</td>
+            <td>${item.balance ? item.balance : ""}</td>
         </tr>`;
                 });
 

@@ -1,1 +1,1 @@
-    <button type="button" class="btn btn-danger">{{ __('common.reject') }}</button>
+    <button type="submit" name="rejected" class="btn btn-danger">{{ __('common.reject') }}</button>

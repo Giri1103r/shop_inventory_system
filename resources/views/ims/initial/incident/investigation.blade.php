@@ -580,7 +580,7 @@
                                                     <h4 class="text-dark mb-0">Why Why Analysis</h4>
                                                     <button type="button"
                                                         class="btn btn-sm btn-success addwhywhyanalysis">
-                                                        ➕ Add More
+                                                        Add More
                                                     </button>
                                                 </div>
 
@@ -623,8 +623,8 @@
                                                                         name="whywhyanalysis[0][whywhyanalysis_fifth]"
                                                                         class="form-control"></td>
                                                                 <td><button type="button"
-                                                                        class="btn btn-sm btn-danger removewhywhyanalysisRow">🗑
-                                                                        Remove</button></td>
+                                                                        class="btn btn-sm  removewhywhyanalysisRow"> <i
+                                                                            class="fa-solid fa-trash text-danger"></i></button>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -937,9 +937,9 @@
                 <td><i class="fas fa-arrow-right text-primary"></i></td>
                 <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
                 <td>
-                    <button type="button" class="btn btn-sm btn-danger removewhywhyanalysisRow">
-                        🗑 Remove
-                    </button>
+                    <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
+                        <i class="fa-solid fa-trash text-danger"></i>
+                        </button>
                 </td>
             </tr>
         `;
@@ -1019,6 +1019,7 @@
 
             flatpickr("#target_date", {
                 dateFormat: "d-m-Y",
+                minDate: "today"
             });
 
 

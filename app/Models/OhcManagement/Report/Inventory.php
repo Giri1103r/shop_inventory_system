@@ -158,18 +158,26 @@ class Inventory extends Model
         // });
     }
 
+    public function getMedicineInspection(){
+        return $this
+        ->where('status', 1)
+        ->whereColumn('balance', '<', 'threshold_limit')
+        ->get();
+    }
+
     public function getMedicineData()
     {
         return $this->where('unit_id', 1)
-                    ->where('status', 1)
-                    ->whereColumn('balance', '<', 'threshold_limit')
-                    ->get();
+        ->where('status', 1)
+        ->whereColumn('balance', '<', 'threshold_limit')
+
+        ->get();
     }
 
 
     public function getstockdata()
     {
-        return $this->where('unit_id', 1)->where('status', 1)->get();
+        return $this->where('unit_id', 1) ->where('balance','!=','0')->where('status', 1)->get();
     }
     public function getAvailableQuantity($id)
     {
@@ -189,6 +197,7 @@ class Inventory extends Model
                 ->update(['total_issue' => $newIssue]);
 
             $newbalance  =  $oldissue->balance - $data['quantity'];
+
             $this->where('unit_id', 1)
                 ->where('medicine_id', $data['medicine_id'])
                 ->update(['balance' => $newbalance]);
@@ -203,14 +212,14 @@ class Inventory extends Model
             $balancedata = $olddata->balance + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
-                ->increment('balance', $balancedata);
-
+                ->update(['balance' => $balancedata]);
+              
         }
     }
 
     public function getmedicineUnitwise()
     {
-        return $this->where('unit_id', Auth::user()->unit_id)->where('status', 1)->get();
+        return $this->where('unit_id', Auth::user()->unit_id)->where('balance','!=',0)->where('status', 1)->get();
     }
     public function getunitwiseAvailableQuantity($id)
     {

@@ -55,19 +55,23 @@
                                                     @endif
                                                 </span>
                                             </li>
-                                            <li
-                                                class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                                <div class="col-sm-4"style="margin-right:1px;">
-                                                    <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                                                        id="chpi" data-bs-target="#profileImageModal">Change
-                                                        Image</button>
-                                                </div>
-                                                <div class="col-sm-5">
-                                                    <button class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                                        id="chpw" data-bs-target="#changePasswordLargeModal">Change
-                                                        Password</button>
+                                            <li class="list-group-item d-flex align-items-center">
+                                                <div class="row w-100">
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                                                            id="chpi" data-bs-target="#profileImageModal">Change Image</button>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal"
+                                                            id="chpw" data-bs-target="#changePasswordLargeModal">Change Password</button>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal"
+                                                            id="chpw" data-bs-target="#signatureModal">Signature Upload</button>
+                                                    </div>
                                                 </div>
                                             </li>
+
 
                                         </ul>
                                     </div>
@@ -259,6 +263,68 @@
                         <button type="Submit" class="btn btn-primary">Update Password</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Signature Upload --}}
+    <div class="modal fade" id="signatureModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Signature Upload</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="signatureUpload" action="{{ admin_url('profile/signature-upload/update') }}" method="post"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="row addMorecompet1">
+                                <div class="col-md-4 form-input">
+                                    <label class="form-label ">Signature Upload</label>
+                                    <br>
+                                    <div class="fileinput fileinput-new apprFileinput message" style=""
+                                        data-provides="fileinput">
+                                        <div class="fileinput-preview thumbnail bootimgheight appbootimgheight"
+                                            data-trigger="fileinput">
+                                        </div>
+                                        <p class="mini-txt ">(png, jpeg, jpg )</p>
+                                        <div class="file-pop " style  = "border :2px solid black; padding:30px;">
+                                            <span class="text-green btn-file">
+                                                <span class="photo fileinput-new" title="Add Image">
+                                                    <img class="imgupload"
+                                                        src='{{ admin_url('public/assets/images/common/camera.png') }}'
+                                                        style="height: 30px;" />
+                                                </span>
+                                                <span class="fileinput-exists" title="Add Image"></span>
+                                                <input type="file" name="signature_image" class='atarfile'
+                                                    accept="image/*">
+                                            </span>
+
+                                            <button type="button" name="re"
+                                                class="btn btn-nothing text-maroon fileinput-exists"
+                                                data-dismiss="fileinput" title="Remove Image"><i
+                                                    class="fa fa-times-circle-o" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+
+                </form>
+
+
             </div>
         </div>
     </div>

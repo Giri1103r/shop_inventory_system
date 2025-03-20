@@ -142,7 +142,7 @@ class MedicineReceiving extends Model
 
         return $this->create($insert_array);
     }
-    public function updates($id, $hsn, $pack)
+    public function updates($id,$pack)
     {
         $request = request();
 
@@ -153,7 +153,7 @@ class MedicineReceiving extends Model
             'quantity' => $request->quantity,
             'batch_number' => $request->batch_number,
             'expire_date' => DBdateformat($request->expire_date),
-            'hsn_id' => $request->hsn_id ?? $hsn->id,
+            'hsn_id' => $request->hsn_id,
             'rate' => $request->rate,
             'pack_id' =>  $request->pack_id ?? $pack->id,
             'approve_status' => STATUS_OHC_EHS_VERIFICATION_PENDING,
@@ -276,8 +276,8 @@ class MedicineReceiving extends Model
         $currentDate = now();
         $expiryLimit = now()->addDays(60);
         $query = $this->select('ohc_management_medicine_receiving.*')
-            ->where('approve_status', STATUS_OHC_CLOSE)
-            ->where('expire_date', '<=', $expiryLimit);
+            ->where('approve_status', STATUS_OHC_CLOSE);
+
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];

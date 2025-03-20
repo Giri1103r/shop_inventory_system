@@ -64,13 +64,13 @@ class PperequestController extends BaseController
                 ->where('ppe_pperequest.trash', 'NO');
 
             if (in_array(ROLE_EHS_OFFICER, $userRole)) {
-                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
+                $ppe_request_array->orderBy('ppe_request_id', 'DESC');
             } elseif (in_array(ROLE_HOD, $userRole)) {
                 $departmentId = $user->department_id;
                 $ppe_request_array->where('ppe_pperequest.department', $departmentId)
-                    ->orderBy('ppe_pperequest.id', 'DESC');
+                    ->orderBy('ppe_request_id', 'DESC');
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
-                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
+                $ppe_request_array->orderBy('ppe_request_id', 'DESC');
             } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
             } else {
                 $ppe_request_array->where('ppe_pperequest.created_by', Auth::id());
@@ -90,7 +90,7 @@ class PperequestController extends BaseController
 
 
 
-            $ppe_request_array = $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC')->paginate($request->input('per_page', 10));
+            $ppe_request_array = $ppe_request_array->orderBy('ppe_request_id', 'DESC')->paginate($request->input('per_page', 10));
 
             $ppe_request_list = $ppe_request_array->toArray();
 
@@ -121,7 +121,7 @@ class PperequestController extends BaseController
                 }
                 $data = [];
 
-                $data['id'] = $listdata->id;
+                $data['id'] = $listdata->ppe_request_id;
                 $data['emp_id'] = $listdata->emp_id;
                 $data['emp_name'] = $listdata->emp_name;
                 $data['item_code'] = $listdata->item_code;
@@ -322,6 +322,28 @@ class PperequestController extends BaseController
                             'created_by' => getusername($value->created_by),
                             'created_at' => Displaydateformat($value->created_at),
                         ];
+                        $ppestatuslog[] = [
+                            'from_status' =>'HOD Approval Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+                        $ppestatuslog[] = [
+                            'from_status' => 'EHS Offcer Approval Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+                        $ppestatuslog[] = [
+                            'from_status' => 'Store manager Issue Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+
                     }
                 }
 
@@ -345,6 +367,8 @@ class PperequestController extends BaseController
                     'department' => getDepartment($details->department),
                     'item_code' => getItemCode($details->item_code),
                     'ppe_name' => $details->ppe_name,
+                    'ppe_image' => $details->ppe_image,
+                    'remarks' => $details->employee_reason ?? $details->employee_remarks,
                     'created_by' => getusername($details->created_by),
                     'created_at' => Displaydateformat($details->created_at),
                     'status_log' => $ppestatuslog ,
@@ -356,7 +380,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

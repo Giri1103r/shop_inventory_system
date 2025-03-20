@@ -11,22 +11,33 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
-                    {{-- <div id="search" class="collapse">
+                    <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="document_number"
+                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <input type="text" name="document_number" id="document_number"
                                                 class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="issue_date"
+                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="rev_date"
+                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -48,7 +59,7 @@
                             </div>
                         </form>
                         <hr>
-                    </div> --}}
+                    </div>
 
 
                     <div class="card-body">
@@ -118,9 +129,10 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.document_number = $('#document_number').val();
+                            d.issue_date = $('#issue_date').val();
+                            d.rev_date = $('#rev_date').val();
                             d.status = $('#status').val();
-
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -184,15 +196,19 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
+                                          '?search=' + searchValue +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -201,14 +217,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        document_number = $('#document_number').val();
+                                        issue_date = $('#issue_date').val();
+                                        rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
+                                          '?search=' + searchValue +
+                                            '&document_number=' + document_number +
+                                            '&issue_date=' + issue_date +
+                                            '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
                                 },
@@ -245,12 +265,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -270,7 +290,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
+                                url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/status') }}",
                                 type: 'post',
 
                                 data: {

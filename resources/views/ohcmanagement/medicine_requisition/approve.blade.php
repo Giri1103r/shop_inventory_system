@@ -109,7 +109,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Paramedics Approval Pending</h4>
+                                        <h4 class="text-white">EHS Head Approval Pending</h4>
                                     </div>
                                 </div>
                                 <div class="row">

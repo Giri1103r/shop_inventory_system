@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Uauc and Riskanalysis')
+@section('title', 'UAUC and Riskanalysis')
 @section('pageurl', admin_url('accidentReport/list'))
 
 
@@ -327,16 +327,16 @@
                                                     <td>{{ $injury->emp_id }}</td>
                                                     <td>{{ $injury->injury_person_designation }}</td>
                                                     <td>
-                                                        @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                        {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                             {{ $injury->department_name }}
-                                                        @else
+                                                        @else --}}
                                                             {{ $injury->injury_person_department_id }}
-                                                        @endif
+                                                        {{-- @endif --}}
                                                     </td>
                                                     <td>
                                                         @if ($injury->body_part_image)
-                                                            <a href="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}" target="_blank">
-                                                                <img src="{{ admin_url('storage/app/private/' . $injury->body_part_image) }}"
+                                                            <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}" target="_blank">
+                                                                <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
                                                                      alt="Body Parts Image"
                                                                      style="max-width: 100px; max-height: 100px; object-fit: contain;">
                                                             </a>

@@ -13,6 +13,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportmedicineJob;
+use App\Mail\Ohc\MedicineApprovalEmail;
 use App\Mail\Ohc\MedicineRequestEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
 use App\Models\OhcManagement\Master\Medicine;
@@ -95,9 +96,9 @@ class MedicineController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
+                            if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/medicine/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
                             if (CheckUserPermission('edit') && $row->status == 0) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
@@ -149,17 +150,17 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-                'hsn' => 'required',
+
                 'threshold_limit' => 'required',
-                'expire_date' => 'required',
+
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
-                'hsn.required' => 'Please enter the HSN code.',
+
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-                'expire_date.required' => 'Please select the expiry date.',
+
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -173,49 +174,59 @@ class MedicineController extends Controller
 
                 $id =  $data->id;
                 $medicine = $this->medicine->selectOne($id);
+                $details = $this->medicine->selectOne($id);
+
                 $this->ohc_status->medicinelog($id);
-                $mailsubject = 'Medicine is Added';
-                $user_role = ROLE_EHS_HEAD;
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
+                        $count = $this->unit->getUnitcount();
+                    $this->inventory->store($details, $count);
+                }
+                if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
+                    $mailsubject = 'Medicine is Added';
+                    $user_role = ROLE_EHS_HEAD;
 
-                if (count($users) > 0) {
+                    $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                    $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
-                    foreach ($users as $user) {
+                    if (count($users) > 0) {
 
-                        $email_id = $user->email;
+                        foreach ($users as $user) {
 
-                        if ($email_id != '' || $email_id != null) {
-                            $medicinedetails =  $this->medicine->selectone($medicine->id);
-                            $details  = $medicinedetails->toArray();
+                            $email_id = $user->email;
 
-                            $details['name'] = $user->name;
-                            $details['email_id'] =  $email_id;
-                            $details['mail_subject'] = $mailsubject;
+                            if ($email_id != '' || $email_id != null) {
+                                $medicinedetails =  $this->medicine->selectone($medicine->id);
+                                $details  = $medicinedetails->toArray();
 
-                            Mail::to($details['email_id'])->queue(new MedicineRequestEmail($details));
+                                $details['name'] = $user->name;
+                                $details['email_id'] =  $email_id;
+                                $details['mail_subject'] = $mailsubject;
+
+                                Mail::to($details['email_id'])->queue(new MedicineRequestEmail($details));
+                            }
                         }
                     }
+
+                    $notificationData = array(
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => $medicine->medicine . ' is added to the master submitted by ' . getUsername($medicine->created_by),
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $medicine->id,
+                            'module' => 1,
+                        )),
+                        'web_link' => admin_url('ohc/medicine/approval/view/' . encryptId($medicine->id)),
+                        'assigned_user' => array_to_string($userids),
+                        'created_by' => Auth::id(),
+                    );
+
+                    notificationSave($notificationData);
                 }
 
-                $notificationData = array(
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => $medicine->medicine . ' is added to the master submitted by ' . getUsername($medicine->created_by),
-                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $medicine->id,
-                        'module' => 1,
-                    )),
-                    'web_link' => admin_url('ohc/medicine/approval/view/' . encryptId($medicine->id)),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-
-                notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -262,12 +273,11 @@ class MedicineController extends Controller
                     'medicine' => $medicine,
                 );
             }
-            if($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING){
+            if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
                 return view('ohcmanagement.master.medicine.approve', $data);
-            }else{
-               return redirect(admin_url('ohc/medicine/view/' . encryptId($medicine->id)));
+            } else {
+                return redirect(admin_url('ohc/medicine/view/' . encryptId($medicine->id)));
             }
-
         } catch (Exception $ex) {
         }
     }
@@ -315,14 +325,15 @@ class MedicineController extends Controller
                 $action = $request->action;
                 if ($action == 'approve') {
                     $mailsubject =  'Medicine Name Has Been Approved';
-                    Mail::to($email)->queue(new MedicineRequestEmail($details));
+
+                    Mail::to($email)->queue(new MedicineApprovalEmail($details));
                     $notificationData = [
                         'notification_type' => 4,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode([
                             'title' => $mailsubject,
-                            'message' => $details->medicine . 'has been approved by the' . $details->approver_name,
+                            'message' => $details->medicine . 'has been approved by the' . Auth::user()->name,
                             'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                             'id' => $id,
                             'module' => 1,
@@ -331,10 +342,12 @@ class MedicineController extends Controller
                         'assigned_user' => $createdby,
                         'created_by' => Auth::id(),
                     ];
+                    notificationSave($notificationData);
                     $count = $this->unit->getUnitcount();
                     $this->inventory->store($details, $count);
                 } else {
                     $mailsubject =  'Medicine Name Has Been Rejected';
+                    $details['mail_subject'] =   $mailsubject;
                     Mail::to($email)->queue(new MedicineStockRequestEmail($details));
                     $notificationData = [
                         'notification_type' => 4,
@@ -351,6 +364,7 @@ class MedicineController extends Controller
                         'assigned_user' => $createdby,
                         'created_by' => Auth::id(),
                     ];
+                    notificationSave($notificationData);
                 }
 
                 $this->medicine->approval($id, $updateData);
@@ -395,19 +409,17 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-                'hsn' => 'required',
+                // 'hsn' => 'required',
                 // 'unit_id' => 'required',
                 'threshold_limit' => 'required',
-                'expire_date' => 'required',
+                // 'expire_date' => 'required',
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
-                'hsn.required' => 'Please enter the HSN code.',
-                // 'unit_id.required' => 'Please select a unit.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-                'expire_date.required' => 'Please select the expiry date.',
+
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -557,8 +569,7 @@ class MedicineController extends Controller
                     $export[] = 'EHS Head approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
                     $export[] = 'EHS Head Approved';
-                }
-                else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';

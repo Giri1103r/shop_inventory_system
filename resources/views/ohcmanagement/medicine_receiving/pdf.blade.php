@@ -28,7 +28,7 @@
                             {{ getmedicinename($value->medicine_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ gethsn($value->hsn_id )}}
+                            {{ ($value->hsn_id )}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->pack }}

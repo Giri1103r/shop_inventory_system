@@ -49,8 +49,19 @@
                             <td style="font-weight: bold">{{ $newHiraList->likelihood }}</td>
                         </tr>
                         <tr>
+                            @php
+                                if ($newHiraList->risk_levels == 1) {
+                                    $risk_levels = '1 to 9';
+                                } elseif ($newHiraList->risk_levels == 2) {
+                                    $risk_levels = '10 to 16';
+                                } elseif ($newHiraList->risk_levels == 3) {
+                                    $risk_levels = '17 to 25';
+                                } elseif ($newHiraList->risk_levels == 4) {
+                                    $risk_levels = 'Legal';
+                                }
+                            @endphp
                             <th>Risk Level</th>
-                            <td style="font-weight: bold">{{ $newHiraList->risk_levels }}</td>
+                            <td style="font-weight: bold">{{ $risk_levels }}</td>
                         </tr>
                     </table>
                 </div>
@@ -156,7 +167,7 @@
 
                         if (data.hira) {
                             $('#likelihood').text(data.hira.likelihood);
-                            $('#riskLevel').text(data.hira.risk_levels);
+                            $('#riskLevel').text(data.risk_levels);
                             $('#hiraDetails').show(); // Show the details table
                         } else {
                             $('#hiraDetails').hide(); // Hide if no data

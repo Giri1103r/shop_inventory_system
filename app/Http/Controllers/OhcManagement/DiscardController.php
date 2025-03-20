@@ -67,15 +67,31 @@ class DiscardController extends Controller
                     $data = $this->user_discard->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
+
                         ->addColumn('medicine_status', function ($row) {
-                            $text = "<span style='color:red'>In-Active<span>";
+                            $user = Auth::user(); // Get the authenticated user
+
+
+                            $text = "<span style='color:red'>In-Active</span>";
+
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->med_id) . "' data-type = '1' >Active<span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->med_id) . "' data-type = '0' >In-Active<span>";
+                                $text = "<span style='color:green'>Active</span>";
+                            } elseif ($row->status == 0) {
+                                $text = "<span style='color:red'>In-Active</span>";
                             }
+
+                    
+                            if ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD) {
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->med_id) . "' data-type='1'>Active</span>";
+                                } elseif ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->med_id) . "' data-type='0'>In-Active</span>";
+                                }
+                            }
+
                             return $text;
                         })
+
 
 
 

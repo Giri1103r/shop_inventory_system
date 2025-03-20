@@ -150,7 +150,7 @@ class InitialFireIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Investigation"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
 
-                            if ($row->incident_status == 4  && $row->risk_analysis !=2) {
+                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -178,7 +178,6 @@ class InitialFireIncidentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -320,8 +319,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -350,14 +349,14 @@ class InitialFireIncidentController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+                
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
@@ -395,7 +394,7 @@ class InitialFireIncidentController extends Controller
                 $displayMedia = array_map(function ($media) use ($mediaOptions) {
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
-
+                $status_log = $this->Statuslog->selectOne($id,3);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -407,6 +406,7 @@ class InitialFireIncidentController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalincident' => $getEHSApprovalincident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.initial.firereport.view', $data);
@@ -492,7 +492,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -551,7 +551,7 @@ class InitialFireIncidentController extends Controller
             }
             return view('ims.initial.firereport.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            
         }
     }
 
@@ -601,9 +601,10 @@ class InitialFireIncidentController extends Controller
 
 
             if ($ehsReview->team_member) {
+                
                 $teamMemberIds = explode(',', $ehsReview->team_member);
-
-                $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email']);
+                $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
+                $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Investigation Assigned';
 
                 // Fetch incident details once, not inside the loop
@@ -625,8 +626,8 @@ class InitialFireIncidentController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -636,7 +637,7 @@ class InitialFireIncidentController extends Controller
                         'module' => 1,
                     )),
                     'web_link' => admin_url('incident/fire-incident/investigation/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => array_to_string($teamMemberIds),
+                    'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -648,7 +649,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -658,7 +659,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -719,6 +720,7 @@ class InitialFireIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', '1')->first();
+
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -741,9 +743,8 @@ class InitialFireIncidentController extends Controller
     public function saveHira(Request $request)
     {
         try {
-
             $HiraMoc = new HiraMoc();
-            $HiraMoc->fire_id = decryptId($request->fireincident_id);
+            $HiraMoc->fire_id = $request->fireincident_id;
             $HiraMoc->hira_id = decryptId($request->hira_id) ?? null;
             $HiraMoc->moc_id = decryptId($request->moc_id) ?? null;
             $HiraMoc->created_by = Auth::id();
@@ -763,6 +764,7 @@ class InitialFireIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $fireincident_id = decryptId($fireincident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('fire_id', $fireincident_id)->where('hiramoc_id', 2)->first();
+
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -813,7 +815,7 @@ class InitialFireIncidentController extends Controller
             $getEHSReview = $this->initialfireincident->getEHSReviewincident($fire_id);
 
             $teamMemberIds = explode(',', $getEHSReview->team_member);
-            
+
             $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
             // dd($employees);
             // Extract login IDs into an array for notification
@@ -840,8 +842,8 @@ class InitialFireIncidentController extends Controller
 
             // Use incidentDetails for notification data
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -869,7 +871,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -972,8 +974,8 @@ class InitialFireIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1023,8 +1025,8 @@ class InitialFireIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1053,7 +1055,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1093,8 +1095,8 @@ class InitialFireIncidentController extends Controller
                 }
             }
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1123,7 +1125,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1137,10 +1139,10 @@ class InitialFireIncidentController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_ACTION_PENDING;
             $fire_inicdent_report_id = $ehsReview->fire_inicdent_report_id;
+            $this->initialfireincident->chooseAssigneeUpdate($fire_inicdent_report_id,$ehsReview->team_member);
             $incident = $this->initialfireincident->updateStatus($fire_inicdent_report_id, $incident_status);
             if ($ehsReview->team_member) {
                 $teamMemberIds = explode(',', $ehsReview->team_member);
-
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
 
                 // Extract login IDs into an array for notification
@@ -1163,8 +1165,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1185,7 +1187,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                   'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1193,7 +1195,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1230,8 +1232,8 @@ class InitialFireIncidentController extends Controller
                 }
             }
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1260,7 +1262,7 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
@@ -1307,8 +1309,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1328,7 +1330,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                   'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1359,8 +1361,8 @@ class InitialFireIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1380,7 +1382,7 @@ class InitialFireIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1389,23 +1391,35 @@ class InitialFireIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/fire-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/fire-incident/list'));
         }
     }
 
+
     public function gethiradetails($hira_id)
     {
         $hira_id = decryptId($hira_id);
+
         $hira = Hira::select('services', 'likelihood', 'risk_levels')
             ->where('id', $hira_id)
             ->first();
-        if ($hira) {
-            return response()->json([
-                'hira' => $hira,
-            ]);
+        $risk_levels = '';
+        if ($hira->risk_levels == 1) {
+            $risk_levels = '1 to 9';
+        } elseif ($hira->risk_levels == 2) {
+            $risk_levels = '10 to 16';
+        } elseif ($hira->risk_levels == 3) {
+            $risk_levels = '17 to 25';
+        } elseif ($hira->risk_levels == 4) {
+            $risk_levels = 'Legal';
         }
+
+        return response()->json([
+            'hira' => $hira,
+            'risk_levels' => $risk_levels,
+        ]);
     }
 
     public function Uniquecheck(Request $request)
@@ -1432,7 +1446,7 @@ class InitialFireIncidentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->hira->statuschange($id);
+            $this->initialfireincident->statuschange($id);
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
@@ -1503,7 +1517,7 @@ class InitialFireIncidentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            
             report($ex);
         }
     }
@@ -1612,7 +1626,7 @@ class InitialFireIncidentController extends Controller
             $filename = "Initial Fire Incident.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
         }
     }

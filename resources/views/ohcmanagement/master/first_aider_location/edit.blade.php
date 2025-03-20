@@ -96,6 +96,15 @@
                                                         class="form-control" placeholder="Station Number">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">First Aid Box Number</label>
+                                                    <input type="text" name="first_aid_box_no" id="first_aid_box_no"
+                                                        value="{{ $firstaidlocation->first_aid_box_no }}"
+                                                        class="form-control" placeholder="First Aid Box Number">
+                                                </div>
+                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -206,56 +215,82 @@
         });
         $(function() {
             $('#FirstAiderLocationAdd').validate({
-                    rules: {
-                        location_id: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                            pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
-                            remote: {
-                                url: '{{ admin_url('ohc/first-aid-location/unique') }}',
-                                type: 'post',
-                                data: {
-                                    _token: "{{ csrf_token() }}",
-                                    location_id: function() {
-                                        return $('#location_id').val();
-                                    },
-                                    id: function() {
-                                        return $('#id').val();
-                                    },
+                rules: {
+                    location_id: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                location_id: function() {
+                                    return $('#location_id').val();
                                 },
-                            },
-                        },
-                        department_id: {
-                            required: true,
-                        },
-                        unit_id: {
-                            required: true,
-                        },
-                        station_master: {
-                            required: true,
-                        },
-                        station_number: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 20,
-                            pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
-                            remote: {
-                                url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
-                                type: 'post',
-                                data: {
-                                    _token: "{{ csrf_token() }}",
-                                    station_number: function() {
-                                        return $('#station_number').val();
-                                    },
-                                    id: function() {
-                                        return $('#id').val();
-                                    },
+                                id: function() {
+                                    return $('#id').val();
                                 },
                             },
                         },
                     },
-                
+                    department_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    station_master: {
+                        required: true,
+                    },
+                    station_number: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                station_number: function() {
+                                    return $('#station_number').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                },
+                            },
+                        },
+                    },
+
+                    first_aid_box_no: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/first-aid-box') }}',
+                            type: 'POST',
+                            type: 'post',
+                            data: {
+                                first_aid_box_no: function() {
+                                    return $('#first_aid_box_no').val();
+                                },
+
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                department_id: function() {
+                                    return $('#department_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                },
+                            }
+                        }
+                    },
+                },
                 messages: {
                     location_id: {
                         required: "Location Name is required.",
@@ -263,6 +298,12 @@
                         maxlength: "Location Name must not exceed 30 characters.",
                         pattern: "Location Name contains invalid characters.",
                         remote: "Location Name Should Be unique.",
+                    },
+                    first_aid_box_no: {
+                        required: "First Aid Box Number is required.",
+                        minlength: "First Aid Box Number must be at least 3 characters long.",
+                        maxlength: "First Aid Box Number must not exceed 30 characters.",
+                        remote: "First Aid Box Number Must Be Unique according to unit and department",
                     },
                     department_id: {
                         required: "Department is required.",

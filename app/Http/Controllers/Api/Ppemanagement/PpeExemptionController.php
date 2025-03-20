@@ -290,7 +290,17 @@ class PpeExemptionController extends BaseController
                             'created_by' => getusername($value->created_by),
                             'created_at' => Displaydateformat($value->created_at),
                         ];
+
+                        $ppestatuslog[] = [
+                            'from_status' =>'EHS Head Approval Pending',
+                            'to_status' => '-',
+                            'remarks' =>'-',
+                            'created_by' => '-',
+                            'created_at' => '-',
+                        ];
+
                     }
+
                 }
                 $files = [];
                 if (!empty($ppefiles)) {

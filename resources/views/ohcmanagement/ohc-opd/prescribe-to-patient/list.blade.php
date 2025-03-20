@@ -31,7 +31,8 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <input type="text" name="emp_name" id="emp_name" class="form-control form-control-sm">
+                                            <input type="text" name="emp_name" id="emp_name"
+                                                class="form-control form-control-sm">
 
 
                                         </div>
@@ -366,7 +367,7 @@
                 table.draw();
             });
 
-            $(document).on('click', '.Close', function() {
+            $(document).on('click', '.cancel', function() {
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
@@ -397,7 +398,7 @@
 
 
                         $.ajax({
-                            url: "{{ admin_url('ohc/prescribe-to-patient/close') }}",
+                            url: "{{ admin_url('ohc/prescribe-to-patient/cancel') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -445,6 +446,10 @@
                     }
                 });
             });
+
+
+
+
 
         });
     </script>

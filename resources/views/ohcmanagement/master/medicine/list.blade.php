@@ -121,9 +121,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Medicine Name</th>
                                         <th>Pack</th>
-                                        <th>HSN Number</th>
                                         <th>ThresholdLimit</th>
-                                        <th>Expire Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>Remarks</th>
                                         <th>Approve Status</th>
@@ -236,18 +234,12 @@
                         data: 'pack',
                         name: 'pack'
                     },
-                    {
-                        data: 'hsn',
-                        name: 'hsn'
-                    },
+
                     {
                         data: 'threshold_limit',
                         name: 'threshold_limit'
                     },
-                    {
-                        data: 'expiry_date',
-                        name: 'expiry_date'
-                    },
+
                     {
                         data: 'status',
                         name: 'status'

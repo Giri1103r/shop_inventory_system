@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 
 class WeeklyAmbulanceController extends Controller
@@ -43,7 +44,7 @@ class WeeklyAmbulanceController extends Controller
     public function __construct()
     {
         $this->weekly_ambulance_details = new WeeklyAmbulance();
-        $this->weekly_ambulance_inspection_checklist = new WeeklyAmbulanceChecklist();
+
         $this->upload_log = new UploadLog();
         $this->unit = new Unit();
         $this->department = new Department();
@@ -63,9 +64,6 @@ class WeeklyAmbulanceController extends Controller
                 try {
 
                     $data = $this->weekly_ambulance_details->list();
-
-
-
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -150,7 +148,7 @@ class WeeklyAmbulanceController extends Controller
                     'remarks' => ($request->remarks),
                 ];
 
-                $weekly_ambulance_details = $this->weekly_ambulance_details->store( $responses);
+                $weekly_ambulance_details = $this->weekly_ambulance_details->store($responses);
 
                 Session::flash('success', __('Your data Created Successfully.!'));
             } catch (Exception $ex) {
@@ -180,15 +178,151 @@ class WeeklyAmbulanceController extends Controller
                 $data = array(
                     'weekAmbualance' => $weekAmbualance,
                     'inspectionCkeclist' => $inspectionCkeclist,
-
                     'checklist_details' =>  $checklist_details,
                     'getoption' => $getoption,
                 );
-
             }
             return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
         } catch (Exception $ex) {
             dd($ex);
+        }
+    }
+
+    public function StatusChange(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+
+            $this->weekly_ambulance_details->statuschange($id);
+
+
+            return response()->json(['status' => 'success', 'msg' => 'Your Status Changed Successfully'], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->weekly_ambulance_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Next Due On',
+                'Date Of Inspection',
+                'Shift',
+                'Location',
+                'Unit',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->revision_date;
+                $export[] =  Displaydateformat($data->issue_date);
+                $export[] = Displaydateformat( $data->next_due);
+                $export[] = Displaydateformat( $data->date_of_inspection);
+                $export[] =  getShift($data->shift);
+                $export[] =  getLocationname($data->location);
+                $export[] =  getUnitname($data->unit);
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Weekly ambulance inspection Checklist.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->weekly_ambulance_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Next Due On',
+                'Date Of Inspection',
+                'Shift',
+                'Location',
+                'Unit',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Weekly Ambulance Inspection Checklist",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.weekly_ambulance.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Weekly Ambulance Inspection Checklist.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }
 }

@@ -140,19 +140,19 @@ class PrescribetoPatientController extends Controller
 
                         ->editColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
+                            }
+                            if (CheckUserPermission('edit')) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            // }
-                            // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
+                            }
                             if ($row->patient_status !== 3) {
                                 $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
                             if ($row->patient_status !== 3) {
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="Close" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="cancel" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
+
                             return $btn;
                         })
 
@@ -224,10 +224,25 @@ class PrescribetoPatientController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-          $unit =  $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+
+            $unit = null;
+            $department = null;
 
 
-            $opd_patient = $this->opd_patient->store( $unit);
+            if (!empty($request->unit_id)) {
+                $unit = $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+
+                if ($unit) {
+                    $department = $this->department
+                        ->where('unit_id', $unit->id)
+                        ->where('department_name', $request->department)
+                        ->where('status', 1)
+                        ->first();
+                }
+            }
+
+
+          $opd_patient = $this->opd_patient->store( $department,$unit);
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
 
@@ -239,7 +254,7 @@ class PrescribetoPatientController extends Controller
 
 
             // mail notification
-            $user_role = ROLE_EHS_OFFICER;
+            $user_role = ROLE_EHS_HEAD;
             $mailsubject = 'OPD of the Patient is Submitted';
             $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
@@ -355,9 +370,6 @@ class PrescribetoPatientController extends Controller
         }
     }
 
-
-    // view
-
     public function view(Request $request)
     {
         try {
@@ -376,6 +388,7 @@ class PrescribetoPatientController extends Controller
 
             );
 
+
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -384,7 +397,7 @@ class PrescribetoPatientController extends Controller
         }
     }
 
-   
+
     public function update(Request $request)
     {
         $id = decryptId($request->id);
@@ -404,7 +417,21 @@ class PrescribetoPatientController extends Controller
             }
 
 
-            $unit =  $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+            $unit = null;
+            $department = null;
+
+
+            if (!empty($request->unit_id)) {
+                $unit = $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
+
+                if ($unit) {
+                    $department = $this->department
+                        ->where('unit_id', $unit->id)
+                        ->where('department_name', $request->department)
+                        ->where('status', 1)
+                        ->first();
+                }
+            }
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
             if ($user_opd_patient->first_aid_treatment === 1) {
@@ -447,7 +474,7 @@ class PrescribetoPatientController extends Controller
                 }
             }
 
-            $opd_patient = $this->opd_patient->updates($id, $unit);
+            $opd_patient = $this->opd_patient->updates($id, $department,$unit);
             if ($user_opd_patient->first_aid_treatment === 1) {
                 $firstaid = $this->opd_firstaid->updates($id);
             }
@@ -640,7 +667,7 @@ class PrescribetoPatientController extends Controller
             $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_id,
-                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                    'text' => $employee->emp_id,
                 ];
             })
         );
@@ -712,6 +739,20 @@ class PrescribetoPatientController extends Controller
     }
 
     // cancel the patient
+
+    public function cancel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $remarks = $request->remarks;
+            $opd_patient = $this->opd_patient->find($id);
+            $this->opd_patient->close($id, $remarks);
+            return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
+        }
+    }
 
     public function close(Request $request)
     {

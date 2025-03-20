@@ -20,6 +20,17 @@ class RRAADetails extends Model
         'document_number',
         'issue_date',
         'revision_date',
+        'inspection_status',
+        'remarks',
+        'capa_recomendation',
+        'capa_remarks',
+        'capa_ehs_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'verified_by',
+        'approved_by',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -62,9 +73,9 @@ class RRAADetails extends Model
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('status') && $request->status) {
+        if ($request->has('inspection_status') && $request->inspection_status) {
 
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('inspection_status', decryptId($request->inspection_status));
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -93,9 +104,167 @@ class RRAADetails extends Model
             'document_number' => $request->document_number,
             'issue_date' => $request->issue_date,
             'revision_date' => todaydate('todaydate'),
-            'created_by' => Auth::id()
+            'created_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
       
         return $this->create($insert_array);
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
+    public function EHSOfficerUpdate($id)
+    {
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L1_MANAGER_REJECTED,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L2_MANAGER_REJECTED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_rraa_details.*');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query =  $query->Where(function ($query) use ($search) { 
+                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
+                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('document_number') && $request->document_number) {
+            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if ($request->has('issue_date') && $request->issue_date) {
+            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if ($request->has('revision_date') && $request->revision_date) {
+            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        }
+        if ($request->has('inspection_status') && $request->inspection_status) {
+            $query = $query->where('inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_rraa_details'));
     }
 }

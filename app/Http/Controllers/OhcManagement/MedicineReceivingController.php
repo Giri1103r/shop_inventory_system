@@ -67,9 +67,7 @@ class MedicineReceivingController extends Controller
                             return getMedicinename($row->medicine_id);
                         })
 
-                        ->editColumn('hsn_id', function ($row) {
-                            return gethsn($row->hsn_id);
-                        })
+
                         ->editColumn('vendor_id', function ($row) {
                             return $row->vendor_name;
                         })
@@ -344,11 +342,11 @@ class MedicineReceivingController extends Controller
 
             try {
 
-                $hsn = $this->medicine->where('hsn',$request->hsn_display)->first();
+
                 $pack = $this->medicine->where('pack',$request->pack_display)->first();
 
 
-                $this->medicine_receiving->updates($id,$hsn, $pack);
+                $this->medicine_receiving->updates($id,$pack);
 
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
@@ -739,7 +737,7 @@ class MedicineReceivingController extends Controller
                 }
 
                 if ($action == 'approve') {
-                   
+
                     $data = $this->medicine_receiving->selectOne($id);
                     $createdId = $data->created_by;
                     $user = $this->user->where('id', $createdId)->first();
@@ -952,7 +950,7 @@ class MedicineReceivingController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  getMedicinename($data->medicine_id);
-                $export[] =  gethsn($data->hsn_id);
+                $export[] =  ($data->hsn_id);
                 $export[] =  $data->pack;
                 $export[] =  $data->quantity;
                 $export[] =  $data->batch_number;

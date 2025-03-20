@@ -69,8 +69,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Status</label>
-                                            <select name="status" id="status" class=" form-control single-select"
+                                            <label for="inspectiontype" class="form-label ">Approve Status</label>
+                                            <select name="incident_status" id="incident_status" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Status</option>
                                                 @foreach ($status as $status)
@@ -78,6 +78,16 @@
                                                         {{ $status->status_name }}</option>
                                                 @endforeach
 
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
 
@@ -185,6 +195,7 @@
                         d.unit_id = $('#unit_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.incident_status = $('#incident_status').val();
                         d.status = $('#status').val();
 
                     },
@@ -261,6 +272,7 @@
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var incident_status = $('#incident_status').val();
                                     var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -272,6 +284,7 @@
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&incident_status=' + incident_status +
                                         '&status=' + status
                                 }
                             },
@@ -285,6 +298,7 @@
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var incident_status = $('#incident_status').val();
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -295,6 +309,7 @@
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
+                                        '&incident_status=' + incident_status +
                                         '&status=' + status
                                 }
                             },
@@ -331,12 +346,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate HIRA') }}';
+                    var title = '{{ __('Do You want to In-Activate Initial Incident') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate HIRA') }}';
+                    var title = '{{ __('Do You want to Activate Initial Incident') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }

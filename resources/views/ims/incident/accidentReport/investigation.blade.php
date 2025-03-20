@@ -470,7 +470,7 @@
                                                     </div>
 
                                                     <!-- Department -->
-                                                    <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_0">
+                                                    <div class="col-md-4 form-input " id="injuryPersonDepttexxt_0">
                                                         <label class="form-label require">Injury Person
                                                             Department</label>
                                                         <input type="text" alt="0"
@@ -479,7 +479,7 @@
                                                     </div>
 
                                                     <!-- Department Dropdown for Others -->
-                                                    <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
+                                                    {{-- <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
                                                         <label class="form-label require">Injury Person Department</label>
                                                         <select alt="0" class="form-control single-select"
                                                             name="injury_person[0][injury_person_department_id]"
@@ -490,7 +490,7 @@
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="col-md-4">
                                                         <div class="form-group form-input">
                                                             <label for="nature_of_injury" class="form-label">Nature of
@@ -499,7 +499,7 @@
                                                                 name="injury_person[0][nature_of_injury]"
                                                                 id="nature_of_injury_0" style="width: 100%"
                                                                 class="form-control single-select">
-                                                                <option value="">Nature of Injury</option>
+                                                                <option value="">Select Nature of Injury</option>
                                                                 <option value="{{ encryptId('1') }}">Major</option>
                                                                 <option value="{{ encryptId('2') }}">Minor</option>
                                                             </select>
@@ -1713,7 +1713,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1725,8 +1725,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                                                    </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                </div>-->
             </div>
         </div>
     </div>
@@ -2080,7 +2080,7 @@
                             <label class="form-label require">Injury Person Designation</label>
                             <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
                         </div>
-                            <div class="col-md-4 form-input d-none" id="injuryPersonDepttexxt_${injuryIndex}">
+                            <div class="col-md-4 form-input" id="injuryPersonDepttexxt_${injuryIndex}">
                                 <label class="form-label require">Injury Person Department</label>
                                 <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
                                 class="form-control InjPerDept" id="InjPerDept_${injuryIndex}"> 
@@ -2140,7 +2140,6 @@
                     injuryPersonDropdownContainer.removeClass("d-none");
                     injuryPersonTextContainer.addClass("d-none");
                     injuryPersonDeptDropdown.addClass("d-none");
-                    injuryPersonDepttexxt.removeClass("d-none");
 
                     // Fetch Employee/Worker List
                     $.ajax({
@@ -2170,72 +2169,82 @@
                     // Show Input Fields for Others
                     injuryPersonTextContainer.removeClass("d-none");
                     injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonDepttexxt.addClass("d-none");
                     injuryPersonDeptDropdown.removeClass("d-none");
 
                 } else {
                     injuryPersonDropdownContainer.addClass("d-none");
                     injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDepttexxt.addClass("d-none");
                     injuryPersonDeptDropdown.removeClass("d-none");
                 }
             });
 
             $(document).on("change", ".injuryPersonName", function() {
-                var injury_person_id = $(this).val();
-                var injuryIndex = $(this).attr("alt");
+                var $this = $(this);
+                var injury_person_id = $this.val();
+                var injuryIndex = $this.attr("alt");
                 var injury_person_type = $("#RowInjTypedata_" + injuryIndex).val();
-
-                // Prevent duplicate selections
                 var isAlreadySelected = false;
                 $(".injuryPersonName").not(this).each(function() {
-                    if ($(this).val() === injury_person_id && injury_person_id !== "") {
+                    var existing_person_id = $(this).val();
+                    var existing_index = $(this).attr("alt");
+                    var existing_person_type = $("#RowInjTypedata_" + existing_index).val();
+                    if (existing_person_id === injury_person_id && existing_person_type ===
+                        injury_person_type && injury_person_id !== "") {
                         isAlreadySelected = true;
                         return false; // Exit loop
                     }
                 });
 
                 if (isAlreadySelected) {
-                    Swal.fire("Error", "Selected value already exists.", "error");
-                    $(this).val("");
-                    return;
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Selected value already exists for the same injury type.",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        $this.val("").trigger("change"); // Reset field after alert is closed
+                    });
                 }
 
                 // Define Designation and Department fields
                 var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
                 var injuryPersonDeptInput = $("#InjPerDept_" + injuryIndex);
+                if (injury_person_type != 'R1ZPdDJJQnR5WmZNUVJUaDhaelhIdz09') {
+                    $.ajax({
+                        url: "{{ url('accidentReport/fetchPersonDetails') }}/" + injury_person_id +
+                            "/" + injury_person_type,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(response) {
+                            if (response.employee || response.worker) {
+                                let person = response.employee || response.worker;
 
-                $.ajax({
-                    url: "{{ url('accidentReport/fetchPersonDetails') }}/" + injury_person_id +
-                        "/" + injury_person_type,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.employee || response.worker) {
-                            let person = response.employee || response.worker;
+                                if (person.designation) {
+                                    injuryPersonDesignation.val(person.designation).prop(
+                                        "readonly",
+                                        true);
+                                } else {
+                                    injuryPersonDesignation.val("").prop("readonly", false);
+                                }
 
-                            if (person.designation) {
-                                injuryPersonDesignation.val(person.designation).prop("readonly",
-                                    true);
+                                if (person.department_name) {
+                                    injuryPersonDeptInput.val(person.department_name).prop(
+                                        "readonly", true);
+
+
+                                } else {
+                                    injuryPersonDeptInput.val("").prop("readonly", false);
+                                }
                             } else {
-                                injuryPersonDesignation.val("").prop("readonly", false);
+                                Swal.fire("Error", "Data could not be fetched.", "error");
                             }
-
-                            if (person.department_name) {
-                                injuryPersonDeptInput.val(person.department_name).prop(
-                                    "readonly", true);
-                            } else {
-                                injuryPersonDeptInput.val("").prop("readonly", false);
-                            }
-                        } else {
-                            Swal.fire("Error", "Data could not be fetched.", "error");
+                        },
+                        error: function() {
+                            Swal.fire("Error", "An error occurred while fetching details.",
+                                "error");
                         }
-                    },
-                    error: function() {
-                        Swal.fire("Error", "An error occurred while fetching details.",
-                            "error");
-                    }
-                });
+                    });
+                }
             });
 
             // Remove injury details row
@@ -2278,6 +2287,12 @@
                         required: "Injury Person Type is required."
                     }
                 });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_id]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Name is required."
+                    }
+                });
                 $(`input[name="injury_person[${injuryIndex}][injury_person_name]"]`).rules("add", {
                     required: true,
                     messages: {
@@ -2302,6 +2317,9 @@
                 $('#accidentinvestigation').validate({
                     rules: {
                         'injury_person[0][injury_person_type]': {
+                            required: true,
+                        },
+                        'injury_person[0][injury_person_id]': {
                             required: true,
                         },
                         'injury_person[0][injury_person_name]': {
@@ -2355,6 +2373,9 @@
                     messages: {
                         'injury_person[0][injury_person_type]': {
                             required: "Injury Person Type is required."
+                        },
+                        'injury_person[0][injury_person_id]': {
+                            required: "Injury Person Name is required."
                         },
                         'injury_person[0][injury_person_name]': {
                             required: "Injury Person Name is required."
@@ -2415,7 +2436,23 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        form.submit();
+                        // Form is valid, proceed with capturing the fishbone diagram
+                        let fishboneContainer = $(".fishbone-container")[
+                            0]; // Get the fishbone diagram container
+
+                        // Capture the fishbone diagram as an image
+                        html2canvas(fishboneContainer, {
+                            scale: 2
+                        }).then(function(canvas) {
+                            let imageData = canvas.toDataURL(
+                                "image/png"); // Convert canvas to base64
+
+                            // Set the image data to the hidden input field
+                            $("#fishbone_image").val(imageData);
+
+                            // Now submit the form programmatically
+                            form.submit();
+                        });
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
@@ -2431,10 +2468,6 @@
                 });
 
             });
-
-
-
-
         });
 
         //injury script
@@ -2451,17 +2484,20 @@
             var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
             var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
             var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
+            var injuredPerson_empName = $('#RowInjothersdata_' + getid).val();
 
             var errorcount = '0';
             var injuredPerson = '0';
 
-            if (injuredPerson_emp == '') {
+            if (injuredPerson_emp == '' && injuredPerson_empName == '') {
                 Swal.fire('Error', 'Please Select Victim Name', 'error');
                 errorcount = '1';
             } else {
                 errorcount = '0';
                 if (injuredPerson_emp != '') {
                     injuredPerson = injuredPerson_emp;
+                } else {
+                    injuredPerson = injuredPerson_empName;
                 }
             }
 

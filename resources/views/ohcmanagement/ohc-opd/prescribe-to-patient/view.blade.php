@@ -229,7 +229,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Vechicle') }}</label>
                                         <div class="view_data">
-                                            {{ isset($isreffered->refered_vechicle) ? $isreffered->refered_vechicle : '' }}
+                                            {{ getReferedVechicle(isset($isreffered->refered_by_vechicle) ? $isreffered->refered_by_vechicle : '' )}}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -237,6 +237,25 @@
                                         <div class="view_data">
                                             {{ getPatientStatus(isset($opdpatient->patient_status) ? $opdpatient->patient_status : '') }}
                                         </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Fitness Certificate') }}</label>
+                                        <div class="view_data">
+                                            @if ($opdpatient->fitness_certificate == 1)
+                                                <p>Required</p>
+                                            @else
+                                           <p>Not Required</p>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Close the Description') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($opdpatient->closed_description) ? $opdpatient->closed_description : '') }}
+
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
