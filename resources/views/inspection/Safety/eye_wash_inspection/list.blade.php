@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Eye Wash Inspection')
+@section('title', 'Monthly EyeWash Inspection')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 
 
@@ -41,12 +41,19 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
+                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{encryptId('6')}}">CLOSED</option>
+                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
+                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
+                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -130,7 +137,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -158,8 +165,8 @@
                             name: 'revision_date',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',
@@ -193,17 +200,17 @@
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/eye-wash-inspection/monthly/list/export/pdf') }}" +
+                                            "{{ admin_url('safety/eye-wash-inspection/monthly/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                                 {
@@ -214,16 +221,16 @@
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/eye-wash-inspection/monthly/list/export/excel') }}" +
+                                            "{{ admin_url('safety/eye-wash-inspection/monthly/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]

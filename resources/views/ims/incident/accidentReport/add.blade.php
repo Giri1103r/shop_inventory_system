@@ -127,7 +127,7 @@
 
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Address of the injured person</label>
+                                                    <label class="form-label require">Address of the injured person</label>
                                                     <textarea class="form-control" name="address_of_the_injuredperson" id="address_of_the_injuredperson"></textarea>
 
                                                 </div>

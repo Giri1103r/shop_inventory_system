@@ -17,21 +17,22 @@ use App\Models\Inspection\MSDSStatusLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\Inspection\MSDSSignatureUpload;
 
 class MSDSController extends Controller
 {
-
+ 
     private $msdsDetails;
     private $msdsCheckList;
     private $statusLog;
-    private $admin;
+    private $signature;
 
     public function __construct()
     {
         $this->msdsDetails = new MSDSDetails();
         $this->msdsCheckList = new MSDSCheckList();
         $this->statusLog = new MSDSStatusLog();
-        $this->admin = new AdminController();
+        $this->signature = new MSDSSignatureUpload();
     }
 
     public function Index(Request $request)
@@ -304,7 +305,7 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
             $inspection_updates = $this->msdsDetails->EHSOfficerUpdate($id);
             $inspection_details = $this->msdsDetails->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload();
             if ($request->is_passed == 1) {
                 $message = 'MSDS Inspeciton Approved Successfully';
                 $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
@@ -380,7 +381,7 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
             $forklift_inspection = $this->msdsDetails->capaSubmit($id);
             $inspection_details = $this->msdsDetails->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload();
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -450,7 +451,7 @@ class MSDSController extends Controller
             $remarks = $request->remarks;
             $forklift_inspection = $this->msdsDetails->capaVerifySubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
                 $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
@@ -530,7 +531,7 @@ class MSDSController extends Controller
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->msdsDetails->levelOneManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
                 $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
@@ -610,7 +611,7 @@ class MSDSController extends Controller
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->msdsDetails->levelTwoManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'MSDS Inspeciton Approved Successfully!';
                 $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
