@@ -1877,13 +1877,12 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if (!function_exists('GetSignature')) {
+    if (!function_exists('GetSafetySignature')) {
 
-        function GetSignature($userid)
+        function GetSafetySignature($userid, $id, $type)
         {
 
-            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
-
+            $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
             if ($name == null) {
                 return '';
             } else {
