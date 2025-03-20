@@ -263,6 +263,7 @@ class AccidentReportController extends Controller
             try {
                 $accident_report =  $this->accident_report->store();
                 $accident_status = STATUS_ACCIDENT_REPORT;
+
                 $user_role = ROLE_EHS_HEAD;
                 $mailsubject = 'Accident has been submitted';
                 $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
@@ -301,6 +302,7 @@ class AccidentReportController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                
                 $insert_array = array(
                     'ims_type' => 2,
                     'ims_id' => $incidentDetails->id,
@@ -310,6 +312,7 @@ class AccidentReportController extends Controller
                     'remarks' => null,
                     'approved_by' => Auth::id(),
                 );
+                
                 $this->Statuslog->create($insert_array);
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -604,6 +607,7 @@ class AccidentReportController extends Controller
 
 
             if ($ehsReview->team_member) {
+                
                 $teamMemberIds = explode(',', $ehsReview->team_member);
 
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);

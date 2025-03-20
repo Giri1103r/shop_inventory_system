@@ -1400,7 +1400,7 @@ if (!function_exists('getMonth')) {
             return $data;
         }
     }
-   
+
     if (!function_exists('getRRAACount')) {
 
         function getRRAACount()
@@ -1851,6 +1851,28 @@ if (!function_exists('getMonth')) {
                 $status = 'Inspection Approved';
                 $badgeClass = 'badge bg-success';
             }
+
+            return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
+        }
+    }
+
+
+    if (!function_exists('getGMInspectionStatus')) {
+        function getGMInspectionStatus($id)
+        {
+            if ($id == GEMBA_WALK_INSPECTION_START) { 
+                return 'Gemba Walk Start';
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
+                return 'Waiting for CAPA Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
+                return 'Waiting for Floor manager Action';
+            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+                return 'Waiting for EHS Officer Verification';
+            }else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
+                return 'Inspection Closed';
+            }
+
+            return 'Inspection Creation';
 
             return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }

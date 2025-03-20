@@ -249,7 +249,6 @@ class Location extends Model
     }
     public function getLocationName(){
         $data = $this->select('id','location_name')->where('status',1)->get();
-
         return $data;
     }
 

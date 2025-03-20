@@ -139,7 +139,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $options =  getoption(FORKLIFT_INSPECTION_MONTHLY_CHECKLIST);
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
             $getoption = string_to_array($options->type);
-            $location = $this->location->getLocation();
+            $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $forklifts = $this->forklift_type->getForkLift();
@@ -154,7 +154,6 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             return view('inspection.Safety.forklift_inspection_monthly.add', $data);
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));

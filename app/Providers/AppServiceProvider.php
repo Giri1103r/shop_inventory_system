@@ -80,6 +80,10 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_FIRE_ASSOCIATES') or define('ROLE_FIRE_ASSOCIATES', 18);
         defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
         defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
+        defined('ROLE_FLOOR_MANAGER') or define('ROLE_FLOOR_MANAGER', 21);
+        defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
+        defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
+
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
@@ -225,6 +229,22 @@ class AppServiceProvider extends ServiceProvider
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+
+
+        // Gemba Walk
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION',1);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION',2);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION',3);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED',4);
+
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1',1);
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2',2);
+        defined('GEMBA_WALK_INSPECTION_PASS_1') or define('GEMBA_WALK_INSPECTION_PASS_1',1);
+        defined('GEMBA_WALK_INSPECTION_PASS_2') or define('GEMBA_WALK_INSPECTION_PASS_2',2);
+        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL',3);
+        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS',4);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START',0);
+
 
         View::composer('*', function ($view) {
 

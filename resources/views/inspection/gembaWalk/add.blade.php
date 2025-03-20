@@ -71,6 +71,15 @@
                                                             id="document_revision_date" class="form-control">
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-4 file-upload-block" id="file-upload-0">
+                                                    <label for="gemba_walk_prepared_by" class="form-label">Singnature Upload</label>
+                                                    <input type="file"
+                                                        class="form-control validate-file-accept validate-file-required"
+                                                        name="gemba_walk_prepared_by" id="gemba_walk_prepared_by">
+                                                    <div class="text-danger"></div>
+
+                                                </div>
                                             </div>
 
 
@@ -177,9 +186,7 @@
                                                                     class="form-control validate-file-accept validate-file-required"
                                                                     name="gemba_walk[0][evidence]" id="evidence_0">
                                                                 <div class="text-danger"></div>
-                                                                {{-- <small>Allowed file types: png, jpeg , jpg, pdf, doc, mp4</small> --}}
-                                                                {{-- <div class="preview-container mt-2 d-flex flex-wrap gap-2"
-                                                                id="preview-container-0"></div> --}}
+
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
@@ -260,7 +267,8 @@
                                                             <div class="col-md-2 mt-2">
                                                                 <button type="button"
                                                                     class="btn btn-primary addChecklistObservation"
-                                                                    style="margin-top: 30px;" data-index=0>Add More</button>
+                                                                    style="margin-top: 30px;" data-index=0>Add
+                                                                    More</button>
                                                             </div>
                                                         </div>
 
@@ -503,7 +511,7 @@
                 const rowIndex = $(this).data("index");
                 const observationContainer = checklistRow.find(".observationContainer");
                 const observationIndex = checklistRow.find(".observationRow")
-                .length; // Correct index assignment
+                    .length; // Correct index assignment
                 // alert(rowIndex,observationIndex);
 
                 if (observationIndex >= 5) {
@@ -543,13 +551,3 @@
         });
     </script>
 @endpush
-
-
-
-
-
-
-
-
-
-
