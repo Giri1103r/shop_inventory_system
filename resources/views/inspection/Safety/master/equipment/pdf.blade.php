@@ -24,12 +24,8 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->category_id}}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->category_name}}
+                            {{ $value->equipment_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
@@ -41,8 +37,6 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>

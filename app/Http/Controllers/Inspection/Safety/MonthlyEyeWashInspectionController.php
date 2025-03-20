@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
@@ -135,7 +136,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by','status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -236,7 +237,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'inspection_details' => $inspection_details,
             );
 
-            return view('inspection.Safety.eye_wash_inspection.approve',$data);
+            return view('inspection.Safety.eye_wash_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -592,9 +593,108 @@ class MonthlyEyeWashInspectionController extends Controller
         }
     }
 
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->eye_wash->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_date;
+                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->eye_wash->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Monthly Eye Wash Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.safety.pdf.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Monthly Eye Wash Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+
     public function exportViewPdf(Request $request)
     {
-        try{
+        try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
@@ -627,11 +727,9 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $filename = "Monthly Eyewash Inspection.pdf";
             return $mpdf->Output($filename, 'D');
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             report($ex);
-            Session::flash('error','Something went wrong !');
+            Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }

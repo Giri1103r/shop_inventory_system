@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type Import')
+@section('title', 'Equipment Import')
 @section('pageurl', admin_url('checklistmaster/list'))
 
 
@@ -24,21 +24,21 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('inspection/master/checklist-type/sample_download') }}"></x-button-download>
-                                    <x-button-back href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
+                                    <x-button-download href="{{ admin_url('safety/master/equipment/sample_download') }}"></x-button-download>
+                                    <x-button-back href="{{ admin_url('safety/master/equipment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body ">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="companyimport" enctype="multipart/form-data"
-                                        action="{{ admin_url('inspection/master/checklist-type/import/Submit') }}">
+                                    <form method="POST" id="equipmentImport" enctype="multipart/form-data"
+                                        action="{{ admin_url('safety/master/equipment/import/Submit') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
                                                 <label class="form-label required">File</label>
-                                                <input type="file"  name="checklist_type_file_upload" class="form-control"  placeholder="">
+                                                <input type="file"  name="equipment_file" class="form-control"  placeholder="">
                                             </div>
                                         </div>
                                         <hr>
@@ -65,21 +65,19 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-            $('#companyimport').validate({
+            $('#equipmentImport').validate({
                 rules: {
-
-                    company_upload: {
+                    equipment_file: {
                         required: true,
                         extension: "xlsx",
                         filesize: 5242880,
                     },
                 },
                 messages: {
-                    company_upload: {
+                    equipment_file: {
                         required: "Please upload a file",
                         extension: "Please upload an Excel file (.xlsx)",
                     },
-
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
