@@ -104,7 +104,7 @@ class MSDSDetails extends Model
         $insert_array = array(
             'document_number' => $request->document_number,
             'issue_date' => $request->issue_date,
-            'revision_date' => todaydate('todaydate'),
+            'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );

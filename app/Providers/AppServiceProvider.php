@@ -186,6 +186,12 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
 
+        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 5);
+
+        defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
+        defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
+
+
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -296,6 +302,12 @@ class AppServiceProvider extends ServiceProvider
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
 
+        // OPTIONS
+        defined('YES') or define('YES',1);
+        defined('NO') or define('NO',2);
+
+        // Fire File Upload 
+        defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
 

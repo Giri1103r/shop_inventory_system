@@ -318,6 +318,13 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('add', [HooterInspectionController::class, 'Add']);
         Route::POST('add/submit', [HooterInspectionController::class, 'Store']);
         Route::GET('view/{id}', [HooterInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HooterInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HooterInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HooterInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HooterInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HooterInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HooterInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HooterInspectionController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [HooterInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [HooterInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [HooterInspectionController::class, 'GetDepartment']);

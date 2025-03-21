@@ -90,6 +90,9 @@ return [
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
     'shifts' => 'Shift',
+    'upload_image' => 'Device Image',
+    'observation_required' => 'Is Observation Required ?',
+    'checked_obs' => 'Required Inspections',
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
@@ -99,5 +102,8 @@ return [
     'economic_order_quantity' => 'Economic Order Quantity',
     'observation_status' => 'Observation Status',
     'fire_safety_equipment' => 'Fire Safety Equipment',
+
+    //ohc safety petty logbook
+    'safety_petty_logbook' => 'Safety Petty Logbook',
 
 ];

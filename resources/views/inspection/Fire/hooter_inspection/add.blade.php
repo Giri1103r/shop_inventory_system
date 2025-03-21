@@ -27,7 +27,7 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/add/submit') }}"
+                                        action="{{ admin_url('fire/hooter-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
@@ -127,6 +127,33 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.upload_image') }}</label>
+                                                    <input type="file" name="device_image" class="form-control"
+                                                        accept="image/*">
+                                                </div>
+                                            </div>
+                                            {{-- <div class="col-md-4 mb-2 d-flex flex-column align-items-center">
+                                                <div class="form-group form-input text-center">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.observation_required') }}</label>
+                                                    <div class="d-flex gap-3">
+                                                        <div class="form-check">
+                                                            <input type="radio" name="obs_choice"
+                                                                id="yes_option" value="{{ YES }}" class="form-check-input"
+                                                                required>
+                                                            <label for="yes_option" class="form-check-label">Yes</label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input type="radio" name="obs_choice" id="no_option"
+                                                                value="{{ NO }}" class="form-check-input" required>
+                                                            <label for="no_option" class="form-check-label">No</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> --}}
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -140,10 +167,10 @@
                                                         style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
                                                         style="min-width: 160px;">
                                                         Add Observation
-                                                    </button>
+                                                    </button> --}}
                                                     <button type="button"
                                                         class="btn btn-danger remove-row d-flex align-items-center"
                                                         style="min-width: 130px;">
@@ -201,7 +228,6 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.observations') }}</label>
-                                                        <!-- Checkboxes -->
                                                         <div class="mt-1">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
@@ -218,14 +244,13 @@
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[]" id="auditbility" value="YES">
+                                                                    name="auditbility[1]" id="auditbility" value="YES">
                                                                 <label class="form-check-label"
                                                                     for="auditbility">Audibility</label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -235,6 +260,7 @@
                                                     </div>
                                                 </div>
 
+
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -243,7 +269,7 @@
                                                     <h4 class="text-white">Hooter Inspection Observation</h4>
                                                 </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
                                                     <button class="btn btn-primary add-row" type="button" id="add-row"
                                                         style="width: 120px;">
                                                         Add
@@ -257,17 +283,16 @@
                                                         style="width: 120px;">
                                                         <i class="fa-solid fa-trash me-2"></i> Remove
                                                     </button>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
 
@@ -366,8 +391,16 @@
                         },
                         "remarks[1]": {
                             required: true,
-                        }
-
+                        },
+                        device_image: {
+                            required: true,
+                            extension: "jpg",
+                            filesize: 2097152
+                        },
+                        observation:{
+                            required : true,
+                        },
+                
                     },
                     messages: {
                         doc_no: {
@@ -413,7 +446,16 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
-                        }
+                        },
+                        device_image: {
+                            required: "Please upload an image.",
+                            extension: "Only JPG files are allowed.",
+                            filesize: "Image must be under 2MB."
+                        },
+                        observation:{
+                            required: "Please add observation",
+                        },
+                        
 
                     },
                     errorElement: 'span',
@@ -527,19 +569,19 @@
                                                         <div class="mt-1">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="blinking_light[${form_set_count}]" id="blinking_light"
+                                                                    name="blinking_light[${form_set_count}]" id="blinking_light[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="blinking_light">Blinking Light</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="connection[${form_set_count}]" id="connection"
+                                                                    name="connection[${form_set_count}]" id="connection[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="connection">Connection</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[${form_set_count}]" id="auditbility"
+                                                                    name="auditbility[${form_set_count}]" id="auditbility[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="auditbility">Audibility</label>
                                                             </div>
@@ -682,7 +724,7 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="department"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
                     $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
                     $(this).find('textarea[name^="check_items"]').attr('name', 'check_items[' + idx + ']');
