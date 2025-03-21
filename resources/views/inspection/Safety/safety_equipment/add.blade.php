@@ -512,7 +512,7 @@
                     $("input[name='minimum_order_value[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select teh Minimum Order Value',
+                            required: 'Please Select the Minimum Order Value',
                         }
                     });
 

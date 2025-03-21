@@ -20,6 +20,7 @@ use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
+use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -243,6 +244,18 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+    });
+
+    Route::group(['prefix' => 'safety-walk-observation/'], function () {
+        Route::get('list', [SafetyWalkObservationController::class, 'index']);
+        Route::post('list', [SafetyWalkObservationController::class, 'index']);
+        Route::get('add', [SafetyWalkObservationController::class, 'add']);
+        Route::post('add/submit', [SafetyWalkObservationController::class, 'store']);
+        Route::get('view/{id}', [SafetyWalkObservationController::class, 'view']);
+        Route::GET('get/equipment', [SafetyWalkObservationController::class, 'GetEquipment']);
+        Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
+        Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
     });
 });
 
