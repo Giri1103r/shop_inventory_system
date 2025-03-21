@@ -46,8 +46,9 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId(2) }}">Active</option>
+                                                <option value="{{ encryptId(3) }}">In-Active</option>
+                                                <option value="{{ encryptId(4) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -163,8 +164,8 @@
 
 
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'approve_status',
+                            name: 'approve_status'
                         },
                         {
                             data: 'created_date',

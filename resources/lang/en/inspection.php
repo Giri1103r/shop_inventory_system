@@ -89,6 +89,7 @@ return [
     'quantity' => 'Quantity',
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
+    'shifts' => 'Shift',
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',

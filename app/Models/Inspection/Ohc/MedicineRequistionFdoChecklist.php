@@ -24,7 +24,7 @@ class MedicineRequistionFdoChecklist extends Model
         'updated_at'
     ];
 
-    public function store($OhcDetails)
+    public function store($medicine_requisition_fdo_details)
     {
         $request = request();
 
@@ -32,7 +32,7 @@ class MedicineRequistionFdoChecklist extends Model
         foreach ($request->medicine_id as $index => $medicine) {
 
             $insert_array = [
-                'reference_id' =>   $OhcDetails->id,
+                'reference_id' =>   $medicine_requisition_fdo_details->id,
                 'medicine_id' => decryptId($medicine),
                 'quantity' => $request->quantity[$index],
                 'remarks' => $request->remarks[$index],

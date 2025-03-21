@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models\Inspection\Ohc;
+namespace App\Models\Inspection\Fire;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
-class OhcSignature extends Model
+class FireSignatureUpload extends Model
 {
-    protected $table = 'inspection_ohc_signatureupload';
+    protected $table = 'inspection_fire_signatureupload';
 
     protected $primaryKey = 'id';
 
@@ -18,7 +18,7 @@ class OhcSignature extends Model
         'id',
         'type',
         'emp_id',
-        'ohc_id',
+        'inspection_id',
         'file_path',
         'file_name',
         'file_orgname',
@@ -39,14 +39,12 @@ class OhcSignature extends Model
     public function signatureUpload($type)
     {
         try {
-
             $id = Auth::id();
             $request = Request();
-
             $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
-                $upload_path = 'public/uploads/inspection/ohc/signatureupload';
+                $upload_path = 'public/uploads/inspection/safety/signatureupload';
 
                 if (!File::exists($upload_path)) {
                     File::makeDirectory($upload_path, 0777, true, true);
@@ -61,7 +59,7 @@ class OhcSignature extends Model
                 $insert_array = [
                     'checklist_id' => $id,
                     'emp_id' => Auth::id(),
-                    'ohc_id' => decryptId($request->id),
+                    'inspection_id' => decryptId($request->id),
                     'type' => $type,
                     'file_path' => $url,
                     'file_name' => $file_name,
@@ -69,21 +67,10 @@ class OhcSignature extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
-
-             $data =    $this->create($insert_array);
-
+                $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
-    }
-
-    public function safetyofficersignature($id, $safetyofficer, $type){
-      
-        return $this->where('ohc_id',$id)->where('emp_id',$safetyofficer->approved_by)->where('type',$type)->first();
-    }
-
-    public function floormanagersignature($id, $floormanger, $type){
-        return $this->where('ohc_id',$id)->where('emp_id',$floormanger->approved_by)->where('type',$type)->first();
     }
 }

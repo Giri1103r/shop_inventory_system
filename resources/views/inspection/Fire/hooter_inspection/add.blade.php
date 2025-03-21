@@ -238,7 +238,7 @@
                                             </div>
                                         </div>
                                         <div class="form-observation">
-                                            <div class="row mt-4 form-set">
+                                            <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">Hooter Inspection Observation</h4>
                                                 </div>
@@ -442,6 +442,7 @@
             const minFormSets = 1;
             const maxFormSets = 200;
             let serial_number = 2;
+            const maxObsSets = 5;
 
             $(document).ready(function() {
                 $(document).on('click', '#add-row', function() {
@@ -606,6 +607,55 @@
                     updatePageIndices();
 
                 });
+
+                $(document).on('click', '#add-obs', function() {
+                    let observationFormsets = $('.form-observation .form-obs').length;
+
+                    if (currentFormSets >= maxObsSets) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Maximum Hooter Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Hooter Inspection Observation.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+                    var newObsSet = `
+                        <div class="row mt-4 form-obs">
+                                                <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Hooter Inspection Observation</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="width: 120px;">
+                                                        Add
+                                                    </button>
+                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                        style="width: 150px;">
+                                                        Add Observation
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="width: 120px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                    `;
+
+                });
             });
 
             function GetDepartment(selectElement) {
@@ -628,7 +678,7 @@
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
-                    let newSerialNumber = 'MEW-' + ('000000' + idx).slice(-6);
+                    let newSerialNumber = 'HTR-' + ('000000' + idx).slice(-6);
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
