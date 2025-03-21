@@ -164,8 +164,8 @@
 
 
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'approve_status',
+                            name: 'approve_status'
                         },
                         {
                             data: 'created_date',

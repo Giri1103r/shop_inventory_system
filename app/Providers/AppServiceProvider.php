@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
-        defined('ROLE_MEDICIAL_ASSISITANT') or define('ROLE_MEDICIAL_ASSISITANT', 25);
+        defined('ROLE_MEDICIAL_ASSISTANT') or define('ROLE_MEDICIAL_ASSISTANT', 25);
 
 
 
@@ -244,6 +244,10 @@ class AppServiceProvider extends ServiceProvider
         defined('SAFETY_OFFICER_APPROVAL_PENDING') or define('SAFETY_OFFICER_APPROVAL_PENDING', 5);
         defined('SAFETY_OFFICER_APPROVED') or define('SAFETY_OFFICER_APPROVED', 6);
         defined('SAFETY_OFFICER_REJECTED') or define('SAFETY_OFFICER_REJECTED', 7);
+        defined('MEDICAL_ASSISTANT_APPROVAL_PENDING') or define('MEDICAL_ASSISTANT_APPROVAL_PENDING', 8);
+        defined('MEDICAL_ASSISTANT_APPROVED') or define('MEDICAL_ASSISTANT_APPROVED', 9);
+        defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
+
 
 
         //Notification Type

@@ -8,9 +8,11 @@ use App\Models\Master\Department;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
-use App\Models\Inspection\Ohc\OhcDetails;
+use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBoxDetails;
+use App\Models\OhcManagement\Master\CertifiedFirstAider;
 use App\Models\OhcManagement\Master\FirstAidLocation;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\UploadLog;
@@ -28,10 +30,12 @@ class DailyDepartmentFirstAidBoxController extends Controller
     private $unit;
     private $shift;
     private $department;
-    private $OhcDetails;
+    private $daily_department_first_aid_box_details;
     private $user;
     private $daily_department_first_aid_box;
     private $First_aid;
+    private $certified_First_aid;
+    private $inspection_ohc_status_log;
 
     private $inventory;
 
@@ -45,29 +49,26 @@ class DailyDepartmentFirstAidBoxController extends Controller
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
-        $this->OhcDetails = new OhcDetails();
+        $this->daily_department_first_aid_box_details = new DailyDepartmentFirstAidBoxDetails();
         $this->First_aid = new FirstAidLocation();
+        $this->certified_First_aid = new CertifiedFirstAider();
+
         $this->daily_department_first_aid_box = new DailyDepartmentFirstAidBox();
         $this->inventory = new Inventory();
         $this->user = new User();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
 
     }
+
+
     public function Index(Request $request)
     {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->OhcDetails->list();
+                    $data = $this->daily_department_first_aid_box_details->list();
 
-                   
-                    $filteredData = collect($data['data'])->where('ohc_type', OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX)->values();
-
-
-                    $filteredCount = $filteredData->count();
-                    $totalCount = count($data['data']);
-
-
-                    return DataTables::of($filteredData)
+                    $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
@@ -87,16 +88,47 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('action', function ($row) {
-                            return '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                        ->addColumn('approve_status', function ($row) {
+                            $text = '';
+                            switch ($row->approve_status) {
+                                case MEDICAL_ASSISTANT_APPROVAL_PENDING:
+                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Floor Manager / Medical Assistant Approval Pending</span>";
+                                    break;
+                                case MEDICAL_ASSISTANT_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Floor Manager/ Medical Assistant Approved</span>";
+                                    break;
+                                case MEDICAL_ASSISTANT_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Floor Manager/ Medical Assistant Rejected</span>";
+                                    break;
+
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status'])
-                        ->setFilteredRecords($filteredCount)
-                        ->setTotalRecords($totalCount)
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING)) {
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            }
+
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
+
+                            return   $btn;
+                        })
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
 
+                    return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -106,6 +138,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
     }
 
 
+
     public function Add(Request $request)
     {
         try {
@@ -113,9 +146,9 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $shift = $this->shift->getShiftname();
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
-            $First_aid = $this->First_aid->getFirsaid();
+            $First_aid = $this->certified_First_aid->getFirsaid();
 
-            $location = $this->location->getLocation();
+            $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
@@ -153,10 +186,21 @@ class DailyDepartmentFirstAidBoxController extends Controller
             try {
 
                 // Store user medicine requisition
-                $OhcDetails = $this->OhcDetails->store();
+                $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->store();
 
-                $daily_department_first_aid_box = $this->daily_department_first_aid_box->store($OhcDetails);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->store($daily_department_first_aid_box_details);
+                $data = [
+                    'type' => OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
+                    'from_status' => OHC_CREATION,
+                    'to_status' => MEDICAL_ASSISTANT_APPROVAL_PENDING,
+                    'reference_id' => $daily_department_first_aid_box_details->id,
+                    'remarks' => "",
+                    'approved_by' => null,
+                    'created_by' => Auth::id(),
 
+                ];
+                $id = $daily_department_first_aid_box_details->id;
+                $this->inspection_ohc_status_log->store($data);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -178,7 +222,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $medicinerequisition = $this->OhcDetails->Selectone($id);
+                $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
 
                 $data = array(

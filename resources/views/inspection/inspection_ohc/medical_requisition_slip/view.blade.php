@@ -89,7 +89,27 @@
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
-
+                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -154,7 +174,8 @@
 
                                 @if (
                                     $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED)
+                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Floor Manager Approval </h4>
@@ -181,6 +202,7 @@
                                                     {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                                 </div>
                                             </div>
+
                                             @if (isset($floormanagersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -189,6 +211,17 @@
                                                         <img src="{{ admin_url($floormanagersignature->file_path) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @elseif(!empty($floorapproversignatureview) && !empty($floorapproversignatureview->signature_upload))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}"
+                                                            alt="Approver Signature"
+                                                            style="width: 150px; margin-top: -10px;" />
+
                                                     </div>
                                                 </div>
                                             @endif
@@ -203,7 +236,9 @@
                                     </div>
                                 @endif
 
-                                @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED)
+                                @if (
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Safety Officer Approval</h4>
@@ -238,6 +273,17 @@
                                                         <img src="{{ admin_url($safetyofficersignature->file_path) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @elseif(!empty($approversignatureview) && !empty($approversignatureview->signature_upload))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($approversignatureview->signature_upload) }}"
+                                                            alt="Approver Signature"
+                                                            style="width: 150px; margin-top: -10px;" />
+
                                                     </div>
                                                 </div>
                                             @endif

@@ -51,6 +51,7 @@
                                                 <option value="{{ encryptId(4) }}">Floor Manager Rejected</option>
                                                 <option value="{{ encryptId(5) }}">Safety officer Approval pending</option>
                                                 <option value="{{ encryptId(6) }}">Safety officer Approved</option>
+                                                <option value="{{ encryptId(7) }}">Safety officer Rejected</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">

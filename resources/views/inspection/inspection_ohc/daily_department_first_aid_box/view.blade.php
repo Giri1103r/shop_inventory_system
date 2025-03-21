@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '  Daily Departmental First Aid Box ')
+@section('title', 'Daily Departmental First Aid Box Show')
 @section('pageurl', admin_url('ohc/first-aid-box/daily-departmental/list'))
 
 @push('style')
@@ -103,7 +103,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">First Aider</label>
                                         <div class="view_data">
-                                            {{ (isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
+                                            {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

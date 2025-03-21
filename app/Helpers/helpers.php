@@ -1624,6 +1624,20 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getFirstAider')) {
+
+        function getFirstAider($userid)
+        {
+
+            $certifier_name = DB::table('ohc_master_certified_first_aider')->select('certifier_name')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($certifier_name == null) {
+                return '';
+            } else {
+                return $certifier_name->certifier_name;
+            }
+        }
+    }
     if (!function_exists('getPatientStatus')) {
 
         function getPatientStatus($userid)
@@ -1816,7 +1830,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getMedicalAssistant')) {
         function getMedicalAssistant()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICIAL_ASSISITANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICIAL_ASSISTANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
