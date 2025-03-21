@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidbox as OhcDailyDepartmentFirstAidbox;
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -19,6 +20,7 @@ use App\Models\UploadLog;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -201,6 +203,55 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 ];
                 $id = $daily_department_first_aid_box_details->id;
                 $this->inspection_ohc_status_log->store($data);
+
+                 // Safety Officer
+
+                 $getfloormanager = getfloormanager();
+                 $getfloormanagers = $getfloormanager->pluck('id')->toArray();
+                 $getfloormanagerEmail = $getfloormanager->pluck('email')->toArray();
+
+                 // medical officer
+
+                 $getmedicalassistant = getMedicalAssistant();
+                 $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
+                 $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
+                 // Select One
+                 $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->Selectone($id);
+                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+                 // notification and email
+
+                 $title = "Medical Requisition Slip- Fdo & Security Gate";
+                 $mailsubject = "Medical Requisition Slip- Fdo & Security Gate";
+                 $details = array(
+                     'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate',
+                     'mail_subject' => $mailsubject,
+                     'title' => $title,
+                     'data' => $daily_department_first_aid_box_details,
+                     'checklist' =>   $daily_department_first_aid_box
+                 );
+
+                 $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
+                 if (!empty($recipients)) {
+                     Mail::to($recipients)->queue(new OhcDailyDepartmentFirstAidbox($details));
+                 }
+
+                 $notificationData = array(
+                     'notification_type' => 1,
+                     'module_type' => 1,
+                     'notification_message' => $mailsubject,
+                     'mobile_notification' => json_encode(array(
+                         'title' => $mailsubject,
+                         'message' => "Requestor Created the medicine requisition slip Fdo & Security Gate",
+                         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                         'id' => $id,
+                         'module' => 1,
+                     )),
+                     'web_link' => admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($id)), // Fixed concatenation
+                     'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
+                     'created_by' => Auth::id(),
+                 );
+
+                 notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
