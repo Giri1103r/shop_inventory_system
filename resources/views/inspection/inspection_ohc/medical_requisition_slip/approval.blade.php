@@ -151,7 +151,9 @@
                                         </table>
                                     </div>
                                 </div>
-                                @if ($medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING)
+                                @if (
+                                    (checkUserRole(ROLE_FLOOR_MANAGER) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING) ||
+                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Floor Manager Approval Pending</h4>
@@ -159,7 +161,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="basic-form">
-                                            <form method="POST" id="requestApprovalForm"
+                                            <form method="POST" id="FloorApprovalForm" enctype="multipart/form-data"
                                                 action="{{ admin_url('ohc/medical-requisition-slip/floormanagerapproval/submit') }}">
                                                 @csrf
                                                 <input type="hidden" name="id"
@@ -170,20 +172,40 @@
                                                             <label for="approver_name" class="form-label require">Approver
                                                                 Name</label>
                                                             <input type="text" class="form-control form-control-sm"
-                                                                id="approver_name" readonly
+                                                                id="floor_approver_name" readonly
                                                                 value="{{ Auth::user()->name }}">
                                                         </div>
                                                         <div class="col-md-4 mb-3">
                                                             <label for="date" class="form-label require">Date</label>
                                                             <input type="text" class="form-control form-control-sm"
-                                                                id="date" name="date" readonly
+                                                                id="floor_date" name="floor_date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
+                                                        </div>
+                                                        <div class="col-md-4 form-group form-input mb-2">
+                                                            @if (isset(Auth::user()->signature_upload))
+                                                                <label class="form-label"
+                                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top:-10px">
+                                                            @else
+                                                                <div class="form-input col-md-12 mb-2">
+                                                                    <label class="form-label require">Signature</label>
+                                                                    <input type="file" name="signature_image"
+                                                                        id="signature_upload"
+                                                                        class="form-control form-control-sm"
+                                                                        accept="image/*" placeholder="Enter the image">
+                                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                                    <div id="signature_upload" class="text-danger"></div>
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"
                                                                     class="form-label require">Remarks</label>
-                                                                <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
+                                                                <textarea class="form-control @error('remarks') is-invalid @enderror" id="floor_remarks" name="floor_remarks"
+                                                                    rows="3"></textarea>
                                                                 <div class="text-danger" id="remarks_error"></div>
                                                                 @error('remarks')
                                                                     <span id="remark_error"
@@ -197,44 +219,67 @@
                                                 <div class="d-flex float-end gap-2 mx-auto">
                                                     <button type="submit" name="action" value="approve"
                                                         class="btn btn-success w-100">Approve</button>
-
+                                                    <button type="submit" name="action" value="reject"
+                                                        class="btn btn-danger w-100">Reject</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 @endif
-
-                                {{-- <div class="row">
+                                @if (
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
+                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED)
                                     <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                            <div class="view_data">
-                                                {{ getUsername(isset($doctorapprovalview->created_by) ? $doctorapprovalview->created_by : '') }}
-                                            </div>
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Floor Manager Approval </h4>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                            <div class="view_data">
-                                                {{ displaydateformat(isset($doctorapprovalview->created_at) ? $doctorapprovalview->created_at : '') }}
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                            <div class="view_data">
-                                                {{ displaytimeformat(isset($doctorapprovalview->created_at) ? $doctorapprovalview->created_at : '') }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                            <div class="view_data">
-                                                {{ isset($doctorapprovalview->remarks) ? $doctorapprovalview->remarks : '' }}
-                                            </div>
-                                        </div>
-
                                     </div>
-                                </div> --}}
-                                @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING)
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            @if (!empty($floormanagersignature) && !empty($floormanagersignature->file_path))
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($floormanagersignature->file_path) }}"
+                                                            alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+                                @if (
+                                    (checkUserRole(ROLE_SAFETY_OFFICER) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
+                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Safety Officer Approval Pending</h4>
@@ -242,7 +287,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="basic-form">
-                                            <form method="POST" id="requestApprovalForm"
+                                            <form method="POST"
+                                                id="safetyofficerApprovalForm" enctype="multipart/form-data"
                                                 action="{{ admin_url('ohc/medical-requisition-slip/safetyofficerapproval/submit') }}">
                                                 @csrf
                                                 <input type="hidden" name="id"
@@ -262,6 +308,25 @@
                                                                 id="date" name="date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
                                                         </div>
+                                                        <div class="col-md-4 form-group form-input mb-2">
+                                                            @if (isset(Auth::user()->signature_upload))
+                                                                <label class="form-label"
+                                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top:-10px">
+                                                            @else
+                                                                <div class="form-input col-md-12 mb-2">
+                                                                    <label class="form-label require">Signature</label>
+                                                                    <input type="file" name="signature_image"
+                                                                        id="signature_upload"
+                                                                        class="form-control form-control-sm"
+                                                                        accept="image/*" placeholder="Enter the image">
+                                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                                    <div id="signature_upload" class="text-danger"></div>
+                                                                </div>
+                                                            @endif
+                                                        </div>
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"
@@ -286,6 +351,57 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Safety Officer Approval</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label" style="display: block;">
+                                                        {{ __('inspection.signature') }}
+                                                    </label>
+                                                    <img src="{{ admin_url($safetyofficersignature->file_path) }}"
+                                                         alt="Signature Upload"
+                                                         style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -296,3 +412,117 @@
     </div>
 
 @stop
+@push('script')
+    <script>
+        $(document).ready(function() {
+            $('#safetyofficerApprovalForm').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+
+                    },
+                    signature_image: {
+                        required: true,
+                    }
+                },
+                messages: {
+
+                    remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
+        });
+        // floor manager validation
+
+        $(document).ready(function() {
+            $('#FloorApprovalForm').validate({
+                rules: {
+                    floor_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+
+
+                    },
+                    signature_image: {
+                        required: true,
+                    }
+                },
+                messages: {
+
+                    remarks: {
+                        required: " Remarks cannot be empty.",
+                        minlength: "Remarks  must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function(error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error
+                            .message);
+                    });
+                }
+            });
+
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                return this.optional(element) || regexp.test(value);
+            }, "Please check your input.");
+        });
+    </script>
+@endpush

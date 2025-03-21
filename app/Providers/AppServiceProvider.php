@@ -83,6 +83,8 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_FLOOR_MANAGER') or define('ROLE_FLOOR_MANAGER', 21);
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
+        defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
+        defined('ROLE_MEDICIAL_ASSISITANT') or define('ROLE_MEDICIAL_ASSISITANT', 25);
 
 
 
@@ -182,7 +184,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
-        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 6);
+        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
 
 
         // IMS  EHS_REVIEW
@@ -271,13 +273,17 @@ class AppServiceProvider extends ServiceProvider
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
 
 
+        // Monthly Eye Wash
+        defined('GOOD') or define('GOOD',1);
+        defined('FAIR') or define('FAIR',2);
+        defined('POOR') or define('POOR',3);
+
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
         defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
 
-        // Monthly Eye Wash
-        defined('GOOD') or define('GOOD', 1);
-        defined('FAIR') or define('FAIR', 2);
-        defined('POOR') or define('POOR', 3);
+        // Fire
+        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+
 
         View::composer('*', function ($view) {
 

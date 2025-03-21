@@ -266,6 +266,14 @@
                                                             class="form-control">
                                                     </div>
                                                 </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
 
                                             </div>
                                         </div>
@@ -386,6 +394,9 @@
                         },
                         "resource_code[1]": {
                             required: true,
+                        },
+                        "remarks[1]": {
+                            required: true,
                         }
 
                     },
@@ -454,6 +465,9 @@
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                        },
+                        "remarks[1]": {
+                            required: "Please add remarks",
                         }
 
                     },
@@ -641,6 +655,14 @@
                                                             class="form-control">
                                                     </div>
                                                 </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
 
                                             </div>
                     `;
@@ -670,6 +692,13 @@
                         required: true,
                         messages: {
                             required: 'Please add the condition of the Eye wash inspection',
+                        }
+                    });
+
+                    $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please add the temperature details for the Eye wash inspection',
                         }
                     });
 
@@ -780,6 +809,7 @@
                     $(this).find('input[name^="quality"]').attr('name', 'quality[' + idx + ']');
                     $(this).find('input[name^="pressure"]').attr('name', 'pressure[' + idx + ']');
                     $(this).find('input[name^="temperature"]').attr('name', 'temperature[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'temperature[' + idx + ']');
 
                     $(this).find('select').select2();
                 });

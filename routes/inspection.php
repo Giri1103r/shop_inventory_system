@@ -137,7 +137,7 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
 
 
 
-
+   
 });
 Route::group(['prefix' => 'environment/'], function () {
     Route::group(['prefix' => 'ambient-noise/'], function () {
@@ -291,6 +291,12 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('status', [SafetyPettyController::class, 'statusChange']);
     Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
     Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
+    Route::get('verification/{id}/{employee_type}', [SafetyPettyController::class, 'approvals']);
+    Route::post('ehsofficer/verify/submit', [SafetyPettyController::class, 'EHSOfficerSubmit']);
+    Route::post('capa/submit', [SafetyPettyController::class, 'CAPASubmit']);
+    Route::post('capa/reverify/submit', [SafetyPettyController::class, 'CAPAVerifySubmit']);
+    Route::post('level-one/verify/submit', [SafetyPettyController::class, 'levelOneManagerSubmit']);
+    Route::post('level-two/verify/submit', [SafetyPettyController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
 
 });

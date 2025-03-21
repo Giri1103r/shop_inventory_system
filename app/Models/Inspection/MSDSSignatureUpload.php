@@ -16,7 +16,6 @@ class MSDSSignatureUpload extends Model
 
     protected $fillable = [
         'id',
-        'type',
         'inspection_id',
         'emp_id',
         'file_path',
@@ -59,7 +58,6 @@ class MSDSSignatureUpload extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-                    'checklist_id' => $id,
                     'emp_id' => Auth::id(),
                     'inspection_id' => decryptId($request->id),
                     'file_path' => $url,
@@ -68,6 +66,7 @@ class MSDSSignatureUpload extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
+
                 $this->create($insert_array);
             }
         } catch (Exception $ex) {

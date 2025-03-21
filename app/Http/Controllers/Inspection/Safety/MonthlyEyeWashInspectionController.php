@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\EyeWashInspectionDetails;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
 
@@ -45,6 +47,7 @@ class MonthlyEyeWashInspectionController extends Controller
         $this->frequency = new Frequency();
         $this->statusLog = new SafetyStatusLog();
         $this->eye_wash_details = new EyeWashInspectionDetails();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -133,7 +136,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by','status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -179,15 +182,59 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $store_eyewash_inspection = $this->eye_wash->store();
             $inspection_id = $store_eyewash_inspection->id;
+            $inspection_details = $this->eye_wash->selectOne($inspection_id);
             $store_inspection_details = $this->eye_wash_details->store($inspection_id);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/eyewash/monthly/verification/view/' . encryptId($inspection_id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
+                $details = array(
+                    'safety_type' => 'Monthly Forklift Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
+            $insert_array = [
+                'type' => EYE_WASH_INSPECTION,
+                'inspection_id' => $$inspection_id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
 
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return admin_url('safety/eye-wash-inspection/monthly/list');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
 
@@ -206,12 +253,13 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection = $this->eye_wash->selectOne($id);
-            $inspection_details = $this->eye_wash_details->GetDetails($inspection->id);
-
+            $inspection_details = $this->eye_wash->selectOne($id);
+            $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+            $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'status_log' => $status_log,
             );
 
             return view('inspection.Safety.eye_wash_inspection.view', $data);
@@ -233,6 +281,8 @@ class MonthlyEyeWashInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
             );
+
+            return view('inspection.Safety.eye_wash_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -584,6 +634,147 @@ class MonthlyEyeWashInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->eye_wash->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_data;
+                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->eye_wash->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Monthly Eye Wash Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.safety.pdf.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Monthly Eye Wash Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+        }
+    }
+
+
+    public function exportViewPdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
+                $inspection_details = $this->eye_wash->selectOne($id);
+                $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+
+                $data = [
+                    'status_log' => $status_log,
+                    'inspection_details' => $inspection_details,
+                    'inspection' => $inspection,
+                    'pagetitle' => "Monthly EyeWash Inspection",
+                ];
+            }
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.Safety.eye_wash_inspection.viewPdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Monthly Eyewash Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
