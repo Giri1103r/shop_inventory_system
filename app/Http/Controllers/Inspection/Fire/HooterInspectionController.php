@@ -169,4 +169,19 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
     }
+
+    public function GetDepartment(Request $request)
+    {
+        try
+        {
+            $department = $this->department->getdepartment();
+
+            return response()->json($department);
+        }
+        catch(Exception $ex)
+        {
+            report($ex);
+            return response()->json(['error' => 'Something went wrong !'],406);
+        }
+    }
 }

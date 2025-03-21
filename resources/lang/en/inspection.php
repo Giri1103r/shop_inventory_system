@@ -87,6 +87,7 @@ return [
     'department' => 'Department',
     'check_items' => 'Check Items',
     'quantity' => 'Quantity',
-    'observations' => 'Check If Observations Needed'
+    'observations' => 'Check If Observations Needed',
+    'obs' => 'Observation',
 
 ];

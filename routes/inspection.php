@@ -314,6 +314,7 @@ Route::group(['prefix' => 'fire/'], function(){
         Route::GET('view/{id}',[HooterInspectionController::class,'View']);
         Route::GET('export/excel',[HooterInspectionController::class,'ExportExcel']);
         Route::GET('export/pdf',[HooterInspectionController::class,'ExportPDF']);
+        Route::GET('get/department',[HooterInspectionController::class,'GetDepartment']);
     });
 
     Route::group(['prefix' => 'monthly-fire-pumphouse-inspection/'],function(){

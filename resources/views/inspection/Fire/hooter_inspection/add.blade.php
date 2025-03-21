@@ -135,16 +135,22 @@
                                                     <h4 class="text-white">Hooter Inspection Checklist</h4>
                                                 </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
+                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                        style="min-width: 160px;">
+                                                        Add Observation
                                                     </button>
-
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="min-width: 130px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
                                                 </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -225,6 +231,39 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-observation">
+                                            <div class="row mt-4 form-set">
+                                                <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Hooter Inspection Observation</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="width: 120px;">
+                                                        Add
+                                                    </button>
+                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                        style="width: 150px;">
+                                                        Add Observation
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="width: 120px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -313,37 +352,13 @@
                         forklift_type: {
                             required: true,
                         },
-                        "temperature[1]": {
+                        "check_items[1]": {
                             required: true,
                         },
-                        "pressure[1]": {
+                        "quantity[1]": {
                             required: true,
                         },
-                        "quality[1]": {
-                            required: true,
-                        },
-                        "water[1]": {
-                            required: true,
-                        },
-                        "receptacle[1]": {
-                            required: true,
-                        },
-                        "eyewash_heads[1]": {
-                            required: true,
-                        },
-                        "foot_pedal[1]": {
-                            required: true,
-                        },
-                        "hfsov[1]": {
-                            required: true,
-                        },
-                        "value[1]": {
-                            required: true,
-                        },
-                        "condition[1]": {
-                            required: true,
-                        },
-                        "location[1]": {
+                        "department[1]": {
                             required: true,
                         },
                         "resource_code[1]": {
@@ -384,38 +399,14 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
-                        "temperature[1]": {
-                            required: "Please add the temperature of the water",
+                        "quantity[1]": {
+                            required: "Please add the quantity",
                         },
-                        "location[1]": {
-                            required: "Please Select The Location",
+                        "department[1]": {
+                            required: "Please Select The Department",
                         },
-                        "condition[1]": {
-                            required: "Please add the condition of the Eye wash inspection",
-                        },
-                        "value[1]": {
-                            required: "Please add the value",
-                        },
-                        "hfsov[1]": {
-                            required: "Please add the value of Hand free stay open",
-                        },
-                        "foot_pedal[1]": {
-                            required: "Please add foot pedal value",
-                        },
-                        "eyewash_heads[1]": {
-                            required: "Please add the name of Eyewash heads",
-                        },
-                        "receptacle[1]": {
-                            required: "Please add the name of receptable used",
-                        },
-                        "water[1]": {
-                            required: "Please select the water quality",
-                        },
-                        "quality[1]": {
-                            required: "Please select the quality of water",
-                        },
-                        "pressure[1]": {
-                            required: "Please add the pressure of the water",
+                        "check_items[1]": {
+                            required: "Please add the checkitems",
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
@@ -437,18 +428,11 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        console.log('test');
                         form.submit();
 
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
-                        console.log(errors + " field(s) are invalid");
-                        validator.errorList.forEach(function(error) {
-                            console.log("Field: " + error.element.name + ", Error: " +
-                                error
-                                .message);
-                        });
                     }
                 });
             });
@@ -468,14 +452,14 @@
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Monthly Eye Wash CheckList Reached',
-                            text: 'You can only add up to 200 Monthly Eye Wash CheckList.',
+                            title: 'Maximum Hooter Inspection CheckList Reached',
+                            text: 'You can only add up to 200 Hooter Inspection CheckList.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
                     }
 
-                    let newSerialNumber = 'MEW-' + ('00000' + serial_number).slice(-5);
+                    let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
@@ -514,7 +498,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department"
+                                                        <select name="department[${form_set_count}]" id="department-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                         </select>
                                                     </div>
@@ -595,82 +579,27 @@
                         }
                     });
 
-                    $("select[name='condition[" + form_set_count + "]']").rules('add', {
+                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add the condition of the Eye wash inspection',
+                            required: 'Please add the quantity',
+                        }
+                    });
+
+                    $("textarea[name='check_items[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please add the check items',
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add the temperature details for the Eye wash inspection',
+                            required: 'Please add the remarks',
                         }
                     });
 
-                    $("input[name='value[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the valve',
-                        }
-                    });
-
-                    $("input[name='hfsov[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the value of Hand free stay open',
-                        }
-                    });
-
-                    $("input[name='foot_pedal[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add foot pedal value',
-                        }
-                    });
-
-                    $("input[name='eyewash_heads[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the name of Eyewash heads',
-                        }
-                    });
-
-                    $("input[name='receptacle[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the name of receptable used',
-                        }
-                    });
-
-                    $("select[name='water[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the water quality',
-                        }
-                    });
-
-                    $("input[name='quality[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the quality of water',
-                        }
-                    });
-
-                    $("input[name='pressure[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the pressure of the water',
-                        }
-                    });
-
-                    $("input[name='temperature[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the temperature of the water',
-                        }
-                    });
 
                     serial_number++;
                     form_set_count++;
@@ -679,17 +608,16 @@
                 });
             });
 
-            function GetLocations(selectElement) {
+            function GetDepartment(selectElement) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ admin_url('safety/eye-wash-inspection/monthly/get/locations') }}",
+                    url: "{{ admin_url('fire/hooter-inspection/get/department') }}",
                     success: function(response) {
-                        console.log(response);
                         if (response.length > 0) {
-                            let options = `<option value="">Select Location</option>`;
-                            response.forEach(location => {
+                            let options = `<option value="">Select Department</option>`;
+                            response.forEach(department => {
                                 options +=
-                                    `<option value="${location.id}">${location.location_name}</option>`;
+                                    `<option value="${department.id}">${department.department_name}</option>`;
                             });
                             $(selectElement).html(options).trigger('change');
                         }
@@ -704,19 +632,11 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('select[name^="department"]').attr('name', 'location[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
-                    $(this).find('select[name^="condition"]').attr('name', 'condition[' + idx + ']');
-                    $(this).find('input[name^="value"]').attr('name', 'value[' + idx + ']');
-                    $(this).find('input[name^="hfsov"]').attr('name', 'hfsov[' + idx + ']');
-                    $(this).find('input[name^="foot_pedal"]').attr('name', 'foot_pedal[' + idx + ']');
-                    $(this).find('input[name^="eyewash_heads"]').attr('name', 'eyewash_heads[' + idx + ']');
-                    $(this).find('input[name^="receptacle"]').attr('name', 'receptacle[' + idx + ']');
-                    $(this).find('select[name^="water"]').attr('name', 'water[' + idx + ']');
-                    $(this).find('input[name^="quality"]').attr('name', 'quality[' + idx + ']');
-                    $(this).find('input[name^="pressure"]').attr('name', 'pressure[' + idx + ']');
-                    $(this).find('input[name^="temperature"]').attr('name', 'temperature[' + idx + ']');
-                    $(this).find('textarea[name^="remarks"]').attr('name', 'temperature[' + idx + ']');
+                    $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
+                    $(this).find('textarea[name^="check_items"]').attr('name', 'check_items[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
                 });
@@ -730,7 +650,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum One CheckList Required',
-                        text: 'At least One Monthly Eyewash CheckList is required.',
+                        text: 'At least One Hooter Inspection Checklist is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;
