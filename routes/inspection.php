@@ -1,22 +1,24 @@
 <?php
 
-use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDSController;
 use App\Http\Controllers\Inspection\RRAAController;
+use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
-use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
+use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
+
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
-
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
+use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -298,6 +300,7 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('level-one/verify/submit', [SafetyPettyController::class, 'levelOneManagerSubmit']);
     Route::post('level-two/verify/submit', [SafetyPettyController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
+});
 
 Route::group(['prefix' => 'fire/'], function(){
     Route::group(['prefix' => 'hooter-inspection/'],function(){
@@ -319,12 +322,12 @@ Route::group(['prefix' => 'fire/'], function(){
         Route::GET('view/{id}',[MonthlyFirePumpHouseController::class,'View']);
         Route::GET('export/excel',[MonthlyFirePumpHouseController::class,'ExportExcel']);
         Route::GET('export/pdf',[MonthlyFirePumpHouseController::class,'ExportPDF']);
-        Route::GET('verification/{id}/{employee_type}', [SafetyGalleryInsepctionController::class, 'approvals']);
-        Route::POST('ehsofficer/verify/submit', [SafetyGalleryInsepctionController::class, 'EHSOfficerSubmit']);
-        Route::POST('capa/submit', [SafetyGalleryInsepctionController::class, 'CAPASubmit']);
-        Route::POST('capa/reverify/submit', [SafetyGalleryInsepctionController::class, 'CAPAVerifySubmit']);
-        Route::POST('level-one/verify/submit', [SafetyGalleryInsepctionController::class, 'levelOneManagerSubmit']);
-        Route::POST('level-two/verify/submit', [SafetyGalleryInsepctionController::class, 'levelTwoManagerSubmit']);
-        Route::GET('exportViewPdf/{id}', [SafetyGalleryInsepctionController::class, 'exportViewPdf']);
+        Route::GET('verification/{id}/{employee_type}', [MonthlyFirePumpHouseController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [MonthlyFirePumpHouseController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [MonthlyFirePumpHouseController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [MonthlyFirePumpHouseController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [MonthlyFirePumpHouseController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
     });
 });
