@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OhcManagement\SafetyPettyLogbook;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyDetails;
@@ -13,18 +14,23 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Master\Work;
 
 class SafetyPettyController extends Controller
 {
     private $sfty_petty_details;
     private $sfty_petty_checklist;
     private $employee;
+    private $work;
+    private $unit;
 
     public function __construct()
     {
         $this->sfty_petty_details = new SafetyPettyDetails();
         $this->sfty_petty_checklist = new SafetyPettyChecklist();
         $this->employee = new Employee();
+        $this->work = new Work();
+        $this->unit = new Unit();
     }
 
     public function Index(Request $request)
@@ -81,7 +87,10 @@ class SafetyPettyController extends Controller
     public function add(Request $request)
     {
         try {
-            $data = array();
+            $unit = $this->unit->getunit();
+            $data = [
+                'unit' => $unit
+            ];
             return view('ohcmanagement.safety_petty.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -90,17 +99,17 @@ class SafetyPettyController extends Controller
 
     public function Store(Request $request)
     {
-       
+
         try {
             $rules = [
                 'document_number' => 'required',
                 'issue_date' => 'required',
                 'revision_date' => 'required',
                 'serial_number' => 'required',
-                'employee_name' => 'required',
+                'emp_id' => 'required',
                 'employee_code' => 'required',
-                'department' => 'required',
-                'unit' => 'required',
+                'department_id' => 'required',
+                'unit_id' => 'required',
                 'date' => 'required',
                 'amount' => 'required',
                 'description' => 'required',
@@ -113,10 +122,10 @@ class SafetyPettyController extends Controller
                 'issue_date.required' => __('Issue Date is required'),
                 'revision_date.required' => __('Revision Date is required'),
                 'serial_number.required' => __('Serial Number is required'),
-                'employee_name.required' => __('Employee Name is required'),
+                'emp_id.required' => __('Employee Name is required'),
                 'employee_code.required' => __('Employee Code is required'),
-                'department.required' => __('Department is required'),
-                'unit.required' => __('Unit is required'),
+                'department_id.required' => __('Department is required'),
+                'unit_id.required' => __('Unit is required'),
                 'date.required' => __('Date is required'),
                 'amount.required' => __('Amount is required'),
                 'description.required' => __('Description is required'),
@@ -124,12 +133,12 @@ class SafetyPettyController extends Controller
                 'amount_received_by.required' => __('Amount Received by is required'),
                 'remark.required' => __('Remark is required'),
             ];
-         
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             try {
 
                $sfty_petty_details = $this->sfty_petty_details->store();
@@ -146,5 +155,32 @@ class SafetyPettyController extends Controller
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
+    }
+
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                ];
+            })
+        );
     }
 }

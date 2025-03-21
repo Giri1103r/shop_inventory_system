@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Fire\HooterInspection;
 use App\Models\Inspection\Fire\HooterInspectionDetails;
@@ -21,7 +22,6 @@ class HooterInspectionController extends Controller
 {
     private $hooter;
     private $hooter_details;
-    private $hooter_observation;
     private $shift;
     private $location;
     private $unit;
@@ -32,7 +32,6 @@ class HooterInspectionController extends Controller
     {
         $this->hooter = new HooterInspection();
         $this->hooter_details = new HooterInspectionDetails();
-        $this->hooter_observation = new HooterInspectionObservation();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -42,7 +41,7 @@ class HooterInspectionController extends Controller
 
     public function Index(Request $request)
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             if ($request->ajax()) {
                 try {
                     $data =  $this->hooter->list();
@@ -145,7 +144,7 @@ class HooterInspectionController extends Controller
 
     public function Add(Request $request)
     {
-        try{
+        try {
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
@@ -160,28 +159,131 @@ class HooterInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.hooter_inspection.add',$data);
-        }
-        catch(Exception $ex)
-        {
+            return view('inspection.Fire.hooter_inspection.add', $data);
+        } catch (Exception $ex) {
             report($ex);
-            Session::flash('error','Something went wrong !');
+            Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
     }
 
     public function GetDepartment(Request $request)
     {
-        try
-        {
+        try {
             $department = $this->department->getdepartment();
 
             return response()->json($department);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['error' => 'Something went wrong !'], 406);
+        }
+    }
+
+    public function Store(Request $request)
+    {
+        try{
+            dd($request->all());
         }
         catch(Exception $ex)
         {
             report($ex);
-            return response()->json(['error' => 'Something went wrong !'],406);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('fire/hooter-inspection/list'));
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+        try {
+            $allData = $this->hooter->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_data;
+                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('fire/hooter-inspection/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+        try {
+
+            $allData = $this->hooter->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Hooter Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.Fire.pdf.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Hooter Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/hooter-inspection/list'));
         }
     }
 }

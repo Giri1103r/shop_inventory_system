@@ -70,7 +70,7 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                   
+
                                                 </div>
                                             </div>
 
@@ -249,7 +249,7 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
-        
+
         function initEmployeeSelect2() {
             $('.emp-select').select2({
                 ajax: {
@@ -612,21 +612,21 @@
             }
             $(this).closest('.form-set').remove();
             updatePageIndices();
-          
+
         });
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5)); 
-                
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']'); 
+                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5));
+
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']');
                 $(this).find('input[name^="ohs_compliance_index"]').attr('name', 'ohs_compliance_index[' + (index + 1) + ']');
-                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']'); 
-                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']'); 
-                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']'); 
-                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']'); 
-                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']'); 
+                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']');
+                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']');
+                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']');
+                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']');
+                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }

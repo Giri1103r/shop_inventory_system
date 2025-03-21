@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Fire;
 
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 
 class HooterInspection extends Model
@@ -17,6 +18,7 @@ class HooterInspection extends Model
         'location',
         'shift',
         'next_due',
+        'observation',
         'frequency',
         'checked_by',
         'verified_by',
@@ -120,8 +122,45 @@ class HooterInspection extends Model
         return $datas;
     }
 
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_fire_hooter.*');
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
+                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_fire_hooter.document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_fire_hooter.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_fire_hooter.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        }
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
     public function selectOne($id)
     {
         return $this->where('id',$id)->where('status',1)->where('trash','NO')->first();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_fire_hooter'));
     }
 }

@@ -354,13 +354,13 @@ class SafetyGalleryInsepctionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+            // $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
             $details = array(
                 'safety_type' => 'Safety Gallery Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
-                'url' => $url,
+                // 'url' => $url,
                 'data' => $inspection_details
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
@@ -664,7 +664,7 @@ class SafetyGalleryInsepctionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fork-lift-inspection/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -714,7 +714,7 @@ class SafetyGalleryInsepctionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fork-lift-inspection/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 

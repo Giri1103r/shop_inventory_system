@@ -1,6 +1,8 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Fire Pump House Inspection')
-@section('pageurl', admin_url('fire/monthly-fire-pump-house-inspection/list'))
+@section('title', 'Safety Equipment List')
+@section('pageurl', admin_url('safety/fire-safety-equipment/list'))
+
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -13,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/monthly-fire-pump-house-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('safety/fire-safety-equipment/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -39,12 +41,13 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{encryptId('1')}}">Active</option>
+                                                <option value="{{encryptId('2')}}">InActive</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -118,7 +121,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}",
+                        url: "{{ admin_url('safety/fire-safety-equipment/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -128,7 +131,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -156,8 +159,8 @@
                             name: 'revision_data',
                         },
                         {
-                            data: 'inspection_status',
-                            name: 'inspection_status',
+                            data: 'status',
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -196,7 +199,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
+                                            "{{ admin_url('safety/fire-safety-equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -216,7 +219,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
+                                            "{{ admin_url('safety/fire-safety-equipment/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -282,7 +285,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/monthly-fire-pump-house-inspection/list/status') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -347,9 +350,10 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
+
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/monthly-fire-pump-house-inspection/list/delete') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
