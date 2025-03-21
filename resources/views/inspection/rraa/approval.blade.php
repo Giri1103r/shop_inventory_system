@@ -244,7 +244,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url( $signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -313,7 +313,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url( $signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -363,7 +363,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url('public/' . $signature) }}"
+                                                            <img src="{{ admin_url( $signature) }}"
                                                                 alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
@@ -414,7 +414,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url( $signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
@@ -472,7 +472,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url('public/' . $signature) }}"
+                                                        <img src="{{ admin_url( $signature) }}"
                                                             alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>

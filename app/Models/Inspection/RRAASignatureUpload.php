@@ -16,7 +16,6 @@ class RRAASignatureUpload extends Model
 
     protected $fillable = [
         'id',
-        'type',
         'inspection_id',
         'emp_id',
         'file_path',
@@ -57,7 +56,6 @@ class RRAASignatureUpload extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-                    'checklist_id' => $id,
                     'emp_id' => Auth::id(),
                     'inspection_id' => decryptId($request->id),
                     'file_path' => $url,
