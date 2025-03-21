@@ -90,4 +90,13 @@ return [
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
 
+    //Safety Equipment List
+    'standard_norms' => 'Standard/Norms',
+    'equipment_category' => 'Equipment Category',
+    'unit_of_measurement' => 'Unit Of Measurement',
+    'minimum_order_value' => 'Minimum Order Quantity',
+    'economic_order_quantity' => 'Economic Order Quantity',
+    'observation_status' => 'Observation Status',
+    'fire_safety_equipment' => 'Fire Safety Equipment',
+
 ];

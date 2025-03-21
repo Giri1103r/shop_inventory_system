@@ -270,17 +270,22 @@ class AppServiceProvider extends ServiceProvider
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
+        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 4);
 
 
         // Monthly Eye Wash
         defined('GOOD') or define('GOOD',1);
         defined('FAIR') or define('FAIR',2);
         defined('POOR') or define('POOR',3);
-        
+
+        //Standard/Norms
+        defined('STANDARD') or define('STANDARD',1);
+        defined('NORMS') or define('NORMS',2);
+
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
         defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
 
-        // Fire 
+        // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
 
 
