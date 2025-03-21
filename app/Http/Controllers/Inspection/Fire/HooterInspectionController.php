@@ -9,14 +9,19 @@ use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
+use App\Mail\Inspection\Fire\FireInspection;
+use App\Models\Inspection\Fire\FireStatusLog;
+use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\Fire\HooterInspection;
+use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\HooterInspectionDetails;
-use App\Models\Inspection\Fire\HooterInspectionObservation;
 
 class HooterInspectionController extends Controller
 {
@@ -27,6 +32,10 @@ class HooterInspectionController extends Controller
     private $unit;
     private $frequency;
     private $department;
+    private $files;
+    private $signature;
+    private $statusLog;
+    private $checklist_follow;
 
     public function __construct()
     {
@@ -37,6 +46,10 @@ class HooterInspectionController extends Controller
         $this->location = new Location();
         $this->unit = new Unit();
         $this->frequency = new Frequency();
+        $this->files = new FireFileUpload();
+        $this->signature = new FireSignatureUpload();
+        $this->statusLog = new FireStatusLog();
+        $this->checklist_follow = new FireCheckListFollowUp();
     }
 
     public function Index(Request $request)
@@ -171,8 +184,16 @@ class HooterInspectionController extends Controller
     {
         try {
             $department = $this->department->getdepartment();
+            $departments = [];
 
-            return response()->json($department);
+            foreach ($department as $department) {
+                $departments[] = [
+                    'id' => encryptId($department->id),
+                    'department_name' => $department->department_name,
+                ];
+            }
+
+            return response()->json($departments);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['error' => 'Something went wrong !'], 406);
@@ -181,11 +202,89 @@ class HooterInspectionController extends Controller
 
     public function Store(Request $request)
     {
-        try{
-            dd($request->all());
+        try {
+
+            $inspection = $this->hooter->store();
+            $inspection_type = HOOTER_INSPECTION;
+            $id = $inspection->id;
+
+            $inspection_details = $this->hooter_details->store($id);
+            $inspection_file = $this->files->file_upload($inspection_type, $id);
+
+            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'FIRE INSPECTION';
+            $notificationData = array(
+                'notification_type' => FIRE_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Hooter Inspection",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('fire/hooter-inspection/view/' . encryptId($id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Hooter Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/ehs');
+                $details = array(
+                    'fire_type' => 'Hooter Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection
+                );
+                Mail::to($email_id)->queue(new FireInspection($details));
+            }
+
+            $insert_array = [
+                'type' => HOOTER_INSPECTION,
+                'inspection_id' => $id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('flash', 'Your data added successfully');
+            return redirect(admin_url('fire/hooter-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('fire/hooter-inspection/list'));
         }
-        catch(Exception $ex)
-        {
+    }
+
+    public function View(Request $request)
+    {
+        try {
+
+            $id = decryptId($request->id);
+            $inspection_type = HOOTER_INSPECTION;
+
+            $inspection = $this->hooter->selectOne($id);
+            $inspection_details = $this->hooter_details->GetDetails($inspection->id);
+            $inspection_image = $this->files->GetFile($inspection_type,$id);
+            $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
+
+            $data = array(
+                'inspection' => $inspection,
+                'inspection_details' => $inspection_details,
+                'inspection_image' => $inspection_image,
+                'status_log' => $status_log,
+            );
+            return view('inspection.Fire.hooter_inspection.view', $data);
+        } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));

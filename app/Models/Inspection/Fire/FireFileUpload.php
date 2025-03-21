@@ -8,16 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
 
-class FireSignatureUpload extends Model
+class FireFileUpload extends Model
 {
-    protected $table = 'inspection_fire_signatureupload';
+    protected $table = 'inspection_fire_files';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
         'type',
-        'emp_id',
         'inspection_id',
         'file_path',
         'file_name',
@@ -36,15 +35,15 @@ class FireSignatureUpload extends Model
         'trash' => 'NO'
     ];
 
-    public function signatureUpload($type)
+    public function file_upload($type,$inspection_id)
     {
         try {
             $id = Auth::id();
             $request = Request();
-            $file = $request->file('signature_image');
-            if ($request->has('signature_image')) {
-                $image = $request->file('signature_image');
-                $upload_path = 'public/uploads/inspection/fire/signatureupload';
+            $file = $request->file('device_image');
+            if ($request->has('device_image')) {
+                $image = $request->file('device_image');
+                $upload_path = 'public/uploads/inspection/fire/'.GetTypeName($type);
 
                 if (!File::exists($upload_path)) {
                     File::makeDirectory($upload_path, 0777, true, true);
@@ -57,9 +56,7 @@ class FireSignatureUpload extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-                    'checklist_id' => $id,
-                    'emp_id' => Auth::id(),
-                    'inspection_id' => decryptId($request->id),
+                    'inspection_id' => $inspection_id,
                     'type' => $type,
                     'file_path' => $url,
                     'file_name' => $file_name,
@@ -73,4 +70,17 @@ class FireSignatureUpload extends Model
             report($ex);
         }
     }
+
+    public function GetFile($type,$id)
+    {
+        $data = $this->where('type',$type)->where('inspection_id',$id)->where('status',1)->where('trash','NO')->first();
+
+        if($data)
+        {
+            return $data->file_path;
+        }
+
+        return false;
+    }
+
 }

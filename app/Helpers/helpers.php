@@ -12,6 +12,7 @@ use App\Models\UploadLogType;
 use App\Models\UserPermission;
 use App\Models\Master\Employee;
 use App\Models\Master\UserRole;
+use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master\ForkLiftType;
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Inspection\MSDSCheckList;
+use App\Models\Inspection\RRAACheckList;
 use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -32,8 +35,6 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Inspection\RRAACheckList;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
@@ -2040,6 +2041,37 @@ if (!function_exists('getMonth')) {
         function HooterSequence()
         {
             return 'HTR-000001';
+        }
+    }
+
+    // Fire Inspection Folder Name
+    if(!function_exists('GetTypeName'))
+    {
+        function GetTypeName($id)
+        {
+            switch($id)
+            {
+                case HOOTER_INSPECTION:
+                    return 'Hooter-Inspection';
+                    break;
+                
+                default:
+                    break;
+            }   
+        }
+    }
+
+    // Get Department Name
+    if(!function_exists('GetDeptName'))
+    {
+        function GetDeptName($id)
+        {
+            $data = Department::where('id',$id)->first();
+
+            if($data)
+            {
+                return $data->department_name;
+            }
         }
     }
 }

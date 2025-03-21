@@ -194,7 +194,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'message' => "Fire Associate create the Monthly EyeWash Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_id,
                     'module' => 1,
@@ -205,12 +205,12 @@ class MonthlyEyeWashInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            $title = 'Fire Associate create the Monthly Eyewash Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
                 $details = array(
-                    'safety_type' => 'Monthly Forklift Inspection',
+                    'safety_type' => 'Monthly Eyewash Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
