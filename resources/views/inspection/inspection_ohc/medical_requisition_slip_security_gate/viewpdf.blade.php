@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Medicine Requisition Slip Floor | KARAM</title>
+    <title> Medicine Requisition Slip Fdo & Security gate| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Medicine Requisition Slip Floor </td>
+                    Medicine Requisition Slip Fdo & Security gate</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Medicine Requisition Slip Floor
+                    Medicine Requisition Slip Fdo & Security gate
                 </td>
             </tr>
         </table>
@@ -173,7 +173,7 @@
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($medicinerequisition->revision_date) ? $medicinerequisition->revision_date: '' }}
+                {{ isset($medicinerequisition->revision_date) ? $medicinerequisition->revision_date : '' }}
             </td>
         </tr>
         <tr>
@@ -190,6 +190,23 @@
                 {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
             </td>
         </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Signature</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
+                    <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
+                        style="width: 150px; height: auto;" />
+                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                    {{-- Fixed typo --}}
+                    <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
+                        style="width: 150px; height: auto;" />
+                @else
+                    <span>No signature available</span>
+                @endif
+            </td>
+        </tr>
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -218,28 +235,26 @@
         </div>
         <div class="table-responsive">
             <div class="col-md-12">
-                @if (isset($medicine_requisition_floor_checklist) && $medicine_requisition_floor_checklist->isNotEmpty())
+                @if (isset($medicine_requisition_fdo_checklist) && $medicine_requisition_fdo_checklist->isNotEmpty())
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
                                 <th>S.No</th>
                                 <th>Medicine Name</th>
-                                <th>Freeze Quantity</th>
                                 <th>Quantity</th>
                                 <th>Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if ($medicine_requisition_floor_checklist->isEmpty())
+                            @if ($medicine_requisition_fdo_checklist->isEmpty())
                                 <tr>
                                     <td colspan="4" class="text-center">No data is available</td>
                                 </tr>
                             @else
-                                @foreach ($medicine_requisition_floor_checklist as $data)
+                                @foreach ($medicine_requisition_fdo_checklist as $data)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                        <td>{{ $data->freeze_quantity }}</td>
                                         <td>{{ $data->quantity }}</td>
                                         <td>{{ $data->remarks }}</td>
 
@@ -257,61 +272,8 @@
         </div>
         <br>
     </div>
-    @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED || $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING )
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Floor Manager Approval
-                </td>
-            </tr>
-        </table>
-    </div>
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($floormanger->approved_by) ? $floormanger->approved_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '' )}}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Signature</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (!empty($floormanagersignature) && !empty($floormanagersignature->file_path))
-                    <img src="{{ admin_url($floormanagersignature->file_path) }}" alt="Approver Signature"
-                        style="width: 150px; height: auto;" />
-                @else
-                    No Signature Available
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
-            </td>
-        </tr>
 
-    </table>
-    @endif
-    @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED)
+    @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED || $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -340,7 +302,7 @@
                 <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '' )}}
+                    {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                 </td>
             </tr>
             <tr>
@@ -349,6 +311,9 @@
                 <td width="48%" style="padding:5px;">
                     @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
                         <img src="{{ admin_url($safetyofficersignature->file_path) }}" alt="Approver Signature"
+                            style="width: 150px; height: auto;" />
+                    @elseif(!empty($approversignatureview) && !empty($approversignatureview->signature_upload))
+                        <img src="{{ admin_url($approversignatureview->signature_upload) }}" alt="Approver Signature"
                             style="width: 150px; height: auto;" />
                     @else
                         No Signature Available

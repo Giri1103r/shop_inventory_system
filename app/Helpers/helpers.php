@@ -1985,6 +1985,9 @@ if (!function_exists('getMonth')) {
             } else if ($id == SAFETY_OFFICER_APPROVED) {
                 return 'Safet Officer Approved';
             }
+            else if ($id == SAFETY_OFFICER_REJECTED) {
+                return 'Safet Officer rejected';
+            }
 
             return 'OHC Creation';
         }
