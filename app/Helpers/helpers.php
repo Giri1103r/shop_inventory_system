@@ -1797,7 +1797,18 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+    if (!function_exists('getMedicalAssistant')) {
+        function getMedicalAssistant()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICIAL_ASSISITANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
 
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
@@ -1923,7 +1934,7 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
                     case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
-                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
                         if ($name == null) {
                             return '';
                         } else {

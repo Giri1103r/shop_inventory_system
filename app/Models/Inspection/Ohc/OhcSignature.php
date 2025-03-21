@@ -42,7 +42,7 @@ class OhcSignature extends Model
 
             $id = Auth::id();
             $request = Request();
-            
+
             $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
@@ -69,10 +69,21 @@ class OhcSignature extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
-                $this->create($insert_array);
+
+             $data =    $this->create($insert_array);
+
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
+    }
+
+    public function safetyofficersignature($id, $safetyofficer, $type){
+      
+        return $this->where('ohc_id',$id)->where('emp_id',$safetyofficer->approved_by)->where('type',$type)->first();
+    }
+
+    public function floormanagersignature($id, $floormanger, $type){
+        return $this->where('ohc_id',$id)->where('emp_id',$floormanger->approved_by)->where('type',$type)->first();
     }
 }

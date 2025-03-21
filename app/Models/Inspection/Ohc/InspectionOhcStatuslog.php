@@ -45,6 +45,7 @@ class InspectionOhcStatuslog extends Model
         return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$floortype)->first();
     }
     public function safetyofficer($id ,$safetytype,$type){
+    
         return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$safetytype)->first();
     }
     public function  getStatuslog($id, $type){
