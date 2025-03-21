@@ -18,21 +18,12 @@ use App\Models\Inspection\Safety\FireSafetyEquipmentDetails;
 class FireSafetyEquipmentController extends Controller
 {
     private $safety_equipment;
-    private $checklist_file;
-    private $upload_log;
-    private $shift;
-    private $location;
-    private $unit;
-    private $frequency;
-    private $statusLog;
     private $safety_equipment_details;
-    private $signature;
     private $equipment;
 
     public function __construct()
     {
         $this->safety_equipment = new FireSafetyEquipment();
-        $this->upload_log = new UploadLog();
         $this->equipment = new Equipment();
         $this->safety_equipment_details = new FireSafetyEquipmentDetails();
     }
