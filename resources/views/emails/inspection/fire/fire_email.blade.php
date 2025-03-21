@@ -32,33 +32,18 @@
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Issue date</b>
+                                <b>Issue Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ displaydateformat($details['data']->issue_date) }}</td>
                         </tr>
 
-
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Review Date</b>
+                                <b>Revision & Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['data']->revision_date }}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Unit Name</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getUnitname($details['data']->unit) }}</td>
-                        </tr>
-                        <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Department Name</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getDepartment($details['data']->department) }}</td>
+                                valign="top"> {{ $details['data']->revision_data }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -67,7 +52,33 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getUsername($details['data']->created_by) }}</td>
                         </tr>
-
+                        <tr>
+                            @if (isset($details['data']->verified_by))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Verified By</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUsername($details['data']->verified_by) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->l1_manager_verified_by))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Level One Manager</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUsername($details['data']->l1_manager_verified_by) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->l2_manager_verified_by))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Level Two Manager</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUsername($details['data']->l2_manager_verified_by) }}</td>
+                            @endif
+                        </tr>
                         <tr>
                             @if (isset($details['data']->approved_by))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -79,50 +90,6 @@
                         </tr>
                     </tbody>
                 </table>
-
-                <table role="presentation" border="1" cellpadding="0" cellspacing="0"
-                style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; margin-top:10%"
-                width="100%">
-               
-                <thead>
-                    <tr>
-                        <th style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Medicine Name</b>
-                        </th>
-                        <th style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Quantity</b>
-                        </th>
-                        <th style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Remarks</b>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody style="font-family:Nakheel Headline">
-                    @if (!empty($details['checklist']) && is_iterable($details['checklist']))
-                        @foreach ($details['checklist'] as $checklistItem)
-                            <tr>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ getMedicinename($checklistItem->medicine_id) }}
-                                </td>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ $checklistItem->quantity }}
-                                </td>
-                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    {{ $checklistItem->remarks }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="3" align="center" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-                                No medicine details available
-                            </td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-
-
 
             </td>
         </tr>

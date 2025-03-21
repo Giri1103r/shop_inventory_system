@@ -54,7 +54,9 @@ class MedicineRequistionSlipfdodetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_ohc_medicine_requisition_slip_fdo_details.*');
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -68,17 +70,23 @@ class MedicineRequistionSlipfdodetails extends Model
                     ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
             });
         }
+
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISITANT, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());
+        }
         if (isset($request->document_number) && $request->document_number) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.issue_date', 'LIKE', '%' . DBdateformat($request->issue_date) . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.revision_date', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.approve_status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -148,44 +156,78 @@ class MedicineRequistionSlipfdodetails extends Model
             'first_aider' => $request->first_aider,
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
             'created_by' => Auth::id(),
-            'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'approve_status' => SAFETY_OFFICER_APPROVAL_PENDING,
         ];
 
         return self::create($insert_array);
 
     }
 
-    public function signatureupload()
+    public function Selectone($id)
     {
-        $request = request();
-        $id = Auth::id();
+        return $this->where('id', $id)->first();
+    }
+    public function safetyofficerapprovalupdate($id,$nextStatus){
+        return $this->where('id',$id)->update(['approved_by'=>Auth::id(),'approve_status'=>$nextStatus]);
+    }
+    public function exportdata()
+    {
+        $search = '';
+        $request = Request();
+        $query = $this->select('inspection_ohc_medicine_requisition_slip_fdo_details.*');
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
 
-        $file = $request->file('signature_image');
-        if ($file != null) {
-
-            $destinationPath = 'uploads/signatureupload';
-
-            if (!File::exists(public_path($destinationPath))) {
-                File::makeDirectory(public_path($destinationPath), 0777, true, true);
-            }
-
-            $signature_image_path = null;
-
-            if ($request->hasFile('signature_image')) {
-                $signature_image = $request->file('signature_image');
-
-                $signature_image_name = time() . '_' . $signature_image->getClientOriginalName();
-                $signature_image->move(public_path($destinationPath), $signature_image_name);
-
-                $signature_image_path = $destinationPath . '/' . $signature_image_name;
-            }
-
-            $update_data['signature_upload'] = $signature_image_path;
-
-            User::where('id', $id)->update($update_data);
-            Employee::where('login_id', $id)->update($update_data);
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISITANT, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());
         }
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.issue_date', 'LIKE', '%' . DBdateformat($request->issue_date) . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+        }
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.approve_status', 'LIKE', '%' . decryptId($request->status) . '%');
+        }
+
+        if (isset($request->order) && count($request->order) > 0) {
+            $columnName = $request->order[0]['column'];
+            $columnorder = $request->order[0]['dir'];
+            switch ($columnName) {
+                case "rev_date":
+                    $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.revision_date', $columnorder);
+                    break;
+                case "issue_date":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.issue_date', $columnorder);
+                    break;
+                case "document_number":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.doc_no', $columnorder);
+                    break;
+                case "status":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.status', $columnorder);
+                    break;
+                case "created_by":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', $columnorder);
+                    break;
+                case "created_date":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', $columnorder);
+                    break;
+                default:
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
+                    break;
+            }
+        }
+
+
+        return $query->orderBy('id', 'DESC')->get(); // Add `get()` here
     }
 
-    
+
 }

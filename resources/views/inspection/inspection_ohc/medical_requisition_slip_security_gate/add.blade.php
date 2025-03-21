@@ -118,9 +118,9 @@
                                             <label class="form-label view_label">Requestor Signature</label>
 
                                             <p>
-                                                <a href="{{ asset('public/' . $signature_upload->signature_upload) }}"
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
                                                     target="_blank">
-                                                    <img src="{{ asset('public/' . $signature_upload->signature_upload) }}"
+                                                    <img src="{{ asset( $signature_upload->signature_upload) }}"
                                                         style="width: 100px" alt="image">
                                                 </a>
                                             </p>

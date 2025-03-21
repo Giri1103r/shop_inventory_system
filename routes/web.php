@@ -1374,13 +1374,14 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
-
-
+                    Route::GET('/generalpdf/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'generalpdf']);
+                    Route::GET('/approval/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'approval']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
                     Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipSecurityGateController::class, 'ExportPDF']);
-                    Route::POST('/lists', [MedicalRequisitionSlipSecurityGateController::class, 'Checklists']);
+                    Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'safetyofficerapproval']);
+
                 });
 
                 Route::group(['prefix' => 'first-aid-box/daily-departmental'], function () {

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Fdo & Security Gate ')
-@section('pageurl', admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'))
+@section('title', 'Safety Equipment List')
+@section('pageurl', admin_url('safety/fire-safety-equipment/list'))
 
 
 @section('content')
@@ -13,10 +13,9 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/add') }}">Add</x-button-add>
+                            href="{{ admin_url('safety/fire-safety-equipment/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -42,13 +41,13 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(5) }}">Safety Officer Approval Pending</option>
-                                                <option value="{{ encryptId(6) }}">Safety Officer Approved</option>
-                                                <option value="{{ encryptId(7) }}">Safety Officer Rejected</option>
+                                                <option value="{{encryptId('1')}}">Active</option>
+                                                <option value="{{encryptId('2')}}">InActive</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -71,11 +70,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>{{ __('inspection.doc_no') }}</th>
+                                        <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -83,7 +81,6 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -97,11 +94,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            var IssueDatepicker = flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
 
-
-            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -128,7 +121,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/list') }}",
+                        url: "{{ admin_url('safety/fire-safety-equipment/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -138,7 +131,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -155,25 +148,19 @@
 
                         {
                             data: 'doc_no',
-                            name: 'doc_no'
+                            name: 'doc_no',
                         },
                         {
                             data: 'issue_date',
-                            name: 'issue_date'
+                            name: 'issue_date',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
-                        },
-
-
-                        {
-                            data: 'approve_status',
-                            name: 'approve_status'
+                            data: 'revision_data',
+                            name: 'revision_data',
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'status',
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -203,7 +190,6 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -213,7 +199,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/pdf') }}"+
+                                            "{{ admin_url('safety/fire-safety-equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -233,7 +219,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/excel') }}" +
+                                            "{{ admin_url('safety/fire-safety-equipment/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -299,7 +285,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/status') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -367,7 +353,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/delete') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
