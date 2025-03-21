@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Medical Requisition Slip Fdo Security gate')
+@section('title', 'RRAA Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -26,24 +26,17 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
+                            {{ $value->doc_no }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->revision_date) }}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->issue_date) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
 
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department) }}
+                            {{ $value->revision_data }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getohcrequisitionfloorstatus($value->approve_status) }}
+                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
+                            {{ $value->status == 1 ? 'Active' : 'InActive' }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
