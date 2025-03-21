@@ -90,4 +90,7 @@ return [
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
 
+    //ohc safety petty logbook
+    'safety_petty_logbook' => 'Safety Petty Logbook',
+
 ];
