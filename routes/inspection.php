@@ -317,7 +317,7 @@ Route::group(['prefix' => 'fire/'], function(){
         Route::GET('get/department',[HooterInspectionController::class,'GetDepartment']);
     });
 
-    Route::group(['prefix' => 'monthly-fire-pumphouse-inspection/'],function(){
+    Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'],function(){
         Route::GET('list',[MonthlyFirePumpHouseController::class,'Index']);
         Route::POST('list',[MonthlyFirePumpHouseController::class,'Index']);
         Route::GET('add',[MonthlyFirePumpHouseController::class,'Add']);
@@ -325,5 +325,12 @@ Route::group(['prefix' => 'fire/'], function(){
         Route::GET('view/{id}',[MonthlyFirePumpHouseController::class,'View']);
         Route::GET('export/excel',[MonthlyFirePumpHouseController::class,'ExportExcel']);
         Route::GET('export/pdf',[MonthlyFirePumpHouseController::class,'ExportPDF']);
+        Route::GET('verification/{id}/{employee_type}', [SafetyGalleryInsepctionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [SafetyGalleryInsepctionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [SafetyGalleryInsepctionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [SafetyGalleryInsepctionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [SafetyGalleryInsepctionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [SafetyGalleryInsepctionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [SafetyGalleryInsepctionController::class, 'exportViewPdf']);
     });
 });

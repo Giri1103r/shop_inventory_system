@@ -89,5 +89,6 @@ return [
     'quantity' => 'Quantity',
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
+    'shifts' => 'Shift',
 
 ];

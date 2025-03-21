@@ -247,6 +247,7 @@ class AppServiceProvider extends ServiceProvider
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
 
 
         // Gemba Walk
@@ -279,9 +280,11 @@ class AppServiceProvider extends ServiceProvider
         
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
         defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
+        defined('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST') or define('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST',3);
 
         // Fire 
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
 
 
         View::composer('*', function ($view) {
