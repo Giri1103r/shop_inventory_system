@@ -255,8 +255,10 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+                
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
+
                 $safetyofficer = $this->inspection_ohc_status_log->safetyofficer($id, $safetytype, $type);
 
                 $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
