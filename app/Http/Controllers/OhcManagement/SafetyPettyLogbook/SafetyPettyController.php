@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Work;
+use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\User;
 
 class SafetyPettyController extends Controller
 {
@@ -23,6 +25,8 @@ class SafetyPettyController extends Controller
     private $employee;
     private $work;
     private $unit;
+    private $signature;
+    private $user;
 
     public function __construct()
     {
@@ -31,6 +35,9 @@ class SafetyPettyController extends Controller
         $this->employee = new Employee();
         $this->work = new Work();
         $this->unit = new Unit();
+        $this->signature = new OhcSignature();
+        $this->user = new User();
+
     }
 
     public function Index(Request $request)
@@ -87,9 +94,10 @@ class SafetyPettyController extends Controller
     public function add(Request $request)
     {
         try {
+            $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
             $unit = $this->unit->getunit();
             $data = [
-                'unit' => $unit
+                'unit' => $unit,
             ];
             return view('ohcmanagement.safety_petty.add', $data);
         } catch (Exception $ex) {
@@ -99,56 +107,26 @@ class SafetyPettyController extends Controller
 
     public function Store(Request $request)
     {
-
         try {
-            $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
-                'serial_number' => 'required',
-                'emp_id' => 'required',
-                'employee_code' => 'required',
-                'department_id' => 'required',
-                'unit_id' => 'required',
-                'date' => 'required',
-                'amount' => 'required',
-                'description' => 'required',
-                'amount_given_by' => 'required',
-                'amount_received_by' => 'required',
-                'remark' => 'required',
-            ];
-            $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
-                'serial_number.required' => __('Serial Number is required'),
-                'emp_id.required' => __('Employee Name is required'),
-                'employee_code.required' => __('Employee Code is required'),
-                'department_id.required' => __('Department is required'),
-                'unit_id.required' => __('Unit is required'),
-                'date.required' => __('Date is required'),
-                'amount.required' => __('Amount is required'),
-                'description.required' => __('Description is required'),
-                'amount_given_by.required' => __('Amount Given by is required'),
-                'amount_received_by.required' => __('Amount Received by is required'),
-                'remark.required' => __('Remark is required'),
-            ];
 
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+            $sfty_petty_details = $this->sfty_petty_details->store();
+            $sfty_petty_id = $sfty_petty_details->id;
+            $this->sfty_petty_checklist->store($sfty_petty_id);
+            $empId =  Auth::user()->employee_id;
+           
+            $this->signature->signatureLogUpload(
+                $empId, $sfty_petty_id ,
+                OHC_AMOUNT_GIVENBY_INSPECTION, 
+                'signature_givenby_image' 
+            );
+    
+            $this->signature->signatureLogUpload(
+                  $empId, $sfty_petty_id ,
+                OHC_AMOUNT_RECEIVEDBY_INSPECTION, 
+                'signature_receivedby_image'
+            );
 
-            try {
-
-               $sfty_petty_details = $this->sfty_petty_details->store();
-               $sfty_petty_id = $sfty_petty_details->id;
-               $this->sfty_petty_checklist->store($sfty_petty_id);
-
-                Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
-            }
+            Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -183,4 +161,34 @@ class SafetyPettyController extends Controller
             })
         );
     }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $sfty_petty_details = $this->sfty_petty_details->find($id);
+                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+
+                $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+                $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+                $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+
+                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+                // $signature_received_by = $this->signature->getLogReceivedby($type,$sub_type_received);
+
+                $data = array(
+                    'sfty_petty_details' => $sfty_petty_details,
+                    'sfty_petty_checklist' => $sfty_petty_checklist  ?? [],
+                    // 'signature_given_by' => $signature_given_by,
+                    'signature_amount' => $signature_amount,
+                );
+            }
+            return view('ohcmanagement.safety_petty.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
+    }
+
 }

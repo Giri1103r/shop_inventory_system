@@ -255,7 +255,7 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
-                
+
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
 
@@ -422,7 +422,7 @@ class MedicalRequisitionSlipController extends Controller
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => 11,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -456,7 +456,7 @@ class MedicalRequisitionSlipController extends Controller
                     ];
                     $mailsubject = 'Medicine Requistion Slip Floor Rejected';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => 11,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -535,7 +535,7 @@ class MedicalRequisitionSlipController extends Controller
                 ];
                 $mailsubject = 'Medicine Requistion Slip Floor Approved';
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => 11,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(

@@ -90,6 +90,9 @@ return [
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
     'shifts' => 'Shift',
+    'upload_image' => 'Device Image',
+    'observation_required' => 'Is Observation Required ?',
+    'checked_obs' => 'Required Inspections',
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
@@ -108,5 +111,7 @@ return [
     'date_of_compliance' => 'Date of Compliance',
     'previous_month_observation' => 'Previous Month Obervation',
     'current_month_observation' => 'Current Month Obervation',
+    //ohc safety petty logbook
+    'safety_petty_logbook' => 'Safety Petty Logbook',
 
 ];

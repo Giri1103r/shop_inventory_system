@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Medicine Requisition Floor Slip')
+@section('title', 'Medical Requisition Slip Fdo Security gate')
 @section('content')
 
     <div style="width:100%;">
@@ -41,9 +41,6 @@
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getDepartment($value->department) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getohcrequisitionfloorstatus($value->approve_status) }}

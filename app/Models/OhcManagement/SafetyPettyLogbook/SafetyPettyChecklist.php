@@ -46,30 +46,29 @@ class SafetyPettyChecklist extends Model
     {
         $request = request();
 
-        $insertedData = [];
+        $insert_array = array(
+            'safety_petty_logbook_details_id' => $sfty_petty_id,
+            'serial_number' =>$request->serial_number,
+            'employee_name' => $request->emp_id,
+            'employee_code' => $request->employee_code,
+            'department' => decryptId($request->department_id),
+            'unit' => decryptId($request->unit_id),
+            'date' => $request->date,
+            'amount' => $request->amount,
+            'description' => $request->description,
+            'amount_given_by' => $request->amnt_givenby_id,
+            'amount_received_by' => $request->amnt_receivedby_id,
+            'remark' => $request->remark,
+            'created_by' => Auth::id(),
+        );
 
-        foreach ($request->employee_code as $index => $employeeCode) {
-            $insert_array = array(
-                'safety_petty_logbook_details_id' => $sfty_petty_id,
-                'serial_number' =>$request->serial_number[$index],
-                'employee_name' => $request->emp_id[$index],
-                'employee_code' => $request->employee_code[$index],
-                'department' => $request->department_id[$index],
-                'unit' => $request->unit_id[$index],
-                'date' => $request->date[$index],
-                'amount' => $request->amount[$index],
-                'description' => $request->description[$index],
-                'amount_given_by' => $request->amount_given_by[$index],
-                'amount_received_by' => $request->amount_received_by[$index],
-                'remark' => $request->remark[$index],
-                'created_by' => Auth::id(),
-            );
-
-            $insertedData []=  $this->create($insert_array);
-            // dd( $insertedData);
-        }
-
+        $insertedData =  $this->create($insert_array);
+          
         return $insertedData;
     }
 
+    public function selectOne($id)
+    {
+        return $this->where('safety_petty_logbook_details_id', $id)->get();
+    }
 }
