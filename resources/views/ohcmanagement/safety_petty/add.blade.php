@@ -33,7 +33,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="sftyAdd"
+                                    <form method="POST" id="sftyAdd" enctype="multipart/form-data"
                                         action="{{ admin_url('ohc/safety-petty-logbook/add/submit') }}">
                                         @csrf
 
@@ -179,7 +179,7 @@
                                                             @else
                                                                 <div class="form-input col-md-12 mb-2">
                                                                     <label class="form-label require">Signature</label>
-                                                                    <input type="file" name="signature_image" id="signature_upload"
+                                                                    <input type="file" name="signature_givenby_image" id="signature_upload"
                                                                         class="form-control form-control-sm" accept="image/*"
                                                                         placeholder="Enter the image">
                                                                     <small>Allowed file types: jpg, jpeg, png</small>
@@ -208,7 +208,7 @@
                                                             @else
                                                                 <div class="form-input col-md-12 mb-2">
                                                                     <label class="form-label require">Signature</label>
-                                                                    <input type="file" name="signature_image" id="signature_upload"
+                                                                    <input type="file" name="signature_receivedby_image" id="signature_upload"
                                                                         class="form-control form-control-sm" accept="image/*"
                                                                         placeholder="Enter the image">
                                                                     <small>Allowed file types: jpg, jpeg, png</small>

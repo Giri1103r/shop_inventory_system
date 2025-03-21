@@ -112,7 +112,19 @@ class SafetyPettyController extends Controller
             $sfty_petty_details = $this->sfty_petty_details->store();
             $sfty_petty_id = $sfty_petty_details->id;
             $this->sfty_petty_checklist->store($sfty_petty_id);
-            $this->signature->signatureUpload(OHC_SAFETY_PETTY_LOGBOOK_INSPECTION);
+            $empId =  Auth::user()->employee_id;
+           
+            $this->signature->signatureLogUpload(
+                $empId, $sfty_petty_id ,
+                OHC_AMOUNT_GIVENBY_INSPECTION, 
+                'signature_givenby_image' 
+            );
+    
+            $this->signature->signatureLogUpload(
+                  $empId, $sfty_petty_id ,
+                OHC_AMOUNT_RECEIVEDBY_INSPECTION, 
+                'signature_receivedby_image'
+            );
 
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -158,13 +170,23 @@ class SafetyPettyController extends Controller
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
                 $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
 
+                $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+                $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+                $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+
+                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+                // $signature_received_by = $this->signature->getLogReceivedby($type,$sub_type_received);
+
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
                     'sfty_petty_checklist' => $sfty_petty_checklist  ?? [],
+                    // 'signature_given_by' => $signature_given_by,
+                    'signature_amount' => $signature_amount,
                 );
             }
             return view('ohcmanagement.safety_petty.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }

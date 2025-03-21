@@ -142,12 +142,30 @@
                                                 {{ isset($item->amount_given_by) ? $item->amount_given_by : '' }}
                                             </div>
                                         </div>
+                                        {{-- @dd($signature_given_by) --}}
+                                        @if (isset($signature_amount) && $signature_amount)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label" style="display: block;">Signature (Amount Given By)</label>
+                                                    <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Amount Received By</label>
                                             <div class="view_data">
                                                 {{ isset($item->amount_received_by) ? $item->amount_received_by : '' }}
                                             </div>
                                         </div>
+                                        @if (isset($signature_amount) && $signature_amount)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label" style="display: block;">Signature (Amount Received By)</label>
+                                                    <img src="{{ admin_url($signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">remark</label>
                                             <div class="view_data">

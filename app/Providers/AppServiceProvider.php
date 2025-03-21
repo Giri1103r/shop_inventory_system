@@ -188,6 +188,10 @@ class AppServiceProvider extends ServiceProvider
 
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 5);
 
+        defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
+        defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
+
+
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
