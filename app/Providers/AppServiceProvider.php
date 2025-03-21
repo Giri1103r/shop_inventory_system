@@ -298,6 +298,12 @@ class AppServiceProvider extends ServiceProvider
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
 
+        // OPTIONS
+        defined('YES') or define('YES',1);
+        defined('NO') or define('NO',2);
+
+        // Fire File Upload 
+        defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
 
