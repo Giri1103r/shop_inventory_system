@@ -30,10 +30,8 @@
                                     <form method="POST" id="ppeExemptionForm" enctype="multipart/form-data"
                                         action="{{ admin_url('ppe_exemption/add/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="unit" id="unit"
-                                            value="{{ $userData->unit_id }}">
-                                        <input type="hidden" name="company" id="company"
-                                            value="{{ $userData->company_id }}">
+
+
                                         <hr>
                                         <div class="row">
                                             @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
@@ -90,6 +88,12 @@
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
+
+
+                                                <input type="hidden" name="unit" id="unit"
+                                                    class="form-control form-control-sm" readonly>
+                                                <input type="hidden" name="company" id="company"
+                                                    class="form-control form-control-sm" readonly>
                                             @else
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
@@ -124,6 +128,12 @@
 
                                                     </div>
                                                 </div>
+                                                <input type="hidden" name="company" id="company"
+                                                    class="form-control form-control-sm"
+                                                    value="{{ getCompanyname($employee->company_id) }}" readonly>
+                                                <input type="hidden" name="unit" id="unit"
+                                                    class="form-control form-control-sm"
+                                                    value="{{ getUnitname($employee->unit_id) }}" readonly>
                                             @endif
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
@@ -250,59 +260,65 @@
                 var requestFor = $(this).val();
                 var empIdContainer = $("#emp_id_container");
                 var authEmployeeId =
-                    "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
-
+                    "{{ auth()->user()->employee_id }}";
+                var authDepartment =
+                    "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}";
+                var authUnit =
+                    "{{ getUnitname(auth()->user()->unit_id) ?? 'N/A' }}";
+                    var authCompany =
+                    "{{ getCompanyname(auth()->user()->company_id) ?? 'N/A' }}";
                 if (requestFor === "1") {
-                    // If "Myself" is selected
+
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
                 <input type="text" name="emp_id" id="emp_id" class="form-control form-control-sm" value="${authEmployeeId}" readonly>
                 <div class="text-danger"></div>
             `);
 
-                    // Populate employee name and department using helper function
                     $("#emp_name").val("{{ auth()->user()->name }}");
-                    $("#department").val("{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}");
+                    $("#department").val(authDepartment);
+                    $("#unit").val(authUnit);
+                    $("#company").val(authCompany);
+
                 } else if (requestFor === "2") {
-                    // If "Worker" is selected
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
                 <select name="emp_id" id="emp_id" class="form-select form-select-sm " style="width: 100%">
-                    <option value="">Select the employee</option>
-
+                    <option value="">Select the Worker</option>
                 </select>
                 <div class="text-danger"></div>
             `);
 
-
-            $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
+                    $('#emp_id').select2({
+                        ajax: {
+                            url: '{{ admin_url('ppe_request/employeeid') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
                                 return {
-                                    id: item.id,
-                                    text: item.text
+                                    search: params.term
                                 };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-                    // Clear employee name and department
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
+                        },
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+
                     $("#emp_name").val("");
                     $("#department").val("");
+                    $("#unit").val("");
+                    $("#company").val("");
                 }
             });
 
@@ -317,8 +333,12 @@
                         success: function(data) {
                             if (data && data.employee) {
                                 $("#emp_name").val(data.employee.emp_name);
-                                $("#department").val(data.departments?.department_name ||
-                                    "No department available");
+                                $("#department").val(data.departments ? data.departments
+                                    .department_name : "No department available");
+                                $("#unit").val(data.units ? data.units
+                                    .unit_name : "No unit available");
+                                    $("#company").val(data.companys ? data.companys
+                                    .company_name : "No company available");
                             } else {
                                 Swal.fire({
                                     icon: "error",
@@ -338,6 +358,9 @@
                     });
                 } else {
                     $("#emp_name").val("");
+                    $("#unit").val("");
+                    $("#company").val("");
+
                     $("#department").val("");
                 }
             });

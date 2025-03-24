@@ -2154,7 +2154,7 @@
                     },
                     time_to: {
                         required: true,
-                        validTimeTo: true,
+                        // validTimeTo: true,
                     },
                     unit_id: {
                         required: true,
@@ -2217,7 +2217,7 @@
                     },
                     time_to: {
                         required: "To Time cannot be empty.",
-                        validTimeTo: "To Time should not exceed 18:00 PM.",
+                        // validTimeTo: "To Time should not exceed 18:00 PM.",
                     },
                     unit_id: {
                         required: "Please Select the unit.",

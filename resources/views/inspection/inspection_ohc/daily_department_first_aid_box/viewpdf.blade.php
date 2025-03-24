@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Medicine Requisition Slip Fdo & Security gate</td>
+                    Daily Departmental First Aid Box</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Medicine Requisition Slip Fdo & Security gate
+                    Daily Departmental First Aid Box
                 </td>
             </tr>
         </table>
@@ -188,6 +188,27 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShift(isset($medicinerequisition->shift) ? $medicinerequisition->shift : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>First Aid Box Number</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ (isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>First Aider Name</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
             </td>
         </tr>
         <tr>
@@ -235,28 +256,34 @@
         </div>
         <div class="table-responsive">
             <div class="col-md-12">
-                @if (isset($medicine_requisition_fdo_checklist) && $medicine_requisition_fdo_checklist->isNotEmpty())
+                @if (isset($daily_department_first_aid_box) && $daily_department_first_aid_box->isNotEmpty())
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
                                 <th>S.No</th>
                                 <th>Medicine Name</th>
-                                <th>Quantity</th>
+                                <th>Available Quantity</th>
+                                <th>Freeze Quantity</th>
+                                <th>Material Expiry</th>
                                 <th>Remarks</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if ($medicine_requisition_fdo_checklist->isEmpty())
+                            @if ($daily_department_first_aid_box->isEmpty())
                                 <tr>
                                     <td colspan="4" class="text-center">No data is available</td>
                                 </tr>
                             @else
-                                @foreach ($medicine_requisition_fdo_checklist as $data)
+                                @foreach ($daily_department_first_aid_box as $data)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                        <td>{{ $data->quantity }}</td>
+                                        <td>{{ $data->available_quantity }}</td>
+                                        <td>{{ $data->freeze_quantity }}</td>
+                                        <td>{{ Displaydateformat($data->material_expiry) }}</td>
+
                                         <td>{{ $data->remarks }}</td>
+
 
                                     </tr>
                                 @endforeach
@@ -273,13 +300,15 @@
         <br>
     </div>
 
-    @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED || $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+    @if (
+        $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVED ||
+            $medicinerequisition->approve_status == MEDICAL_ASSISTANT_REJECTED)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Safety Officer Approval
+                        Floor manager/ Medical Assistant Approval
                     </td>
                 </tr>
             </table>
@@ -289,42 +318,43 @@
                 <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($safetyofficer->approved_by) ? $safetyofficer->approved_by : '') }}</td>
+                    {{ getUsername(isset($floormanger->approved_by) ? $floormanger->approved_by : '') }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ Displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                    {{ Displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                    {{ Displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Signature</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
-                        <img src="{{ admin_url($safetyofficersignature->file_path) }}" alt="Approver Signature"
+                    @if (!empty($floormanagersignature) && !empty($floormanagersignature->file_path))
+                        <img src="{{ admin_url($floormanagersignature->file_path) }}" alt="Approver Signature"
                             style="width: 150px; height: auto;" />
-                    @elseif(!empty($approversignatureview) && !empty($approversignatureview->signature_upload))
-                        <img src="{{ admin_url($approversignatureview->signature_upload) }}" alt="Approver Signature"
+                    @elseif(!empty($floorapproversignatureview) && !empty($floorapproversignatureview->signature_upload))
+                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}" alt="Approver Signature"
                             style="width: 150px; height: auto;" />
                     @else
                         No Signature Available
                     @endif
+
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
+                    {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
                 </td>
             </tr>
 

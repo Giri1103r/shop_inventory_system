@@ -16,7 +16,7 @@
 
                     <x-button-add dataId="" class="add btn btn-primary ms-1"
                         href="{{ admin_url('rraa/ohc_fire_environment_compliance/add') }}">Add</x-button-add>
-                    
+
                 </div>
                 <div id="search" class="collapse">
                     <form action="" id="formsearch">
@@ -33,11 +33,11 @@
                                         <input type="text" name="issue_date" id="issue_date"
                                             class="form-control">
                                     </div>
-                                    <div class="col-md-3 mb-3 form-input">
+                                    {{-- <div class="col-md-3 mb-3 form-input">
                                         <label for="revision_date" class="form-label ">Revision Date</label>
                                         <input type="text" name="revision_date" id="revision_date"
                                             class="form-control">
-                                    </div>
+                                    </div> --}}
 
                                     <div class="col-md-3 mb-3 form-input">
                                         <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
@@ -77,7 +77,7 @@
                                     <th>{{ __('common.sno') }}</th>
                                     <th>Document Number</th>
                                     <th>Issue Date</th>
-                                    <th>Revision Date</th>
+                                    <th>Revision Data</th>
                                     <th>{{ __('common.status') }}</th>
                                     <th>{{ __('common.created_date') }}</th>
                                     <th>{{ __('common.action') }}</th>
@@ -91,7 +91,7 @@
             </div>
         </div>
     </div>
-</div>  
+</div>
 
 @stop
 
@@ -111,7 +111,7 @@
             dateFormat: "d-m-Y",
             // minDate: new Date(),
         });
-        
+
     });
 
     $(function() {

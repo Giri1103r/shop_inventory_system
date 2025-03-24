@@ -13,7 +13,7 @@ return [
     'active_msg' => 'Do you want to Activate the checklist type?',
     'doc_no' => 'Document Number',
     'issue_date' => 'Issue Date',
-    'rev_date' => 'Revision & Date',
+    'rev_date' => 'Revision & Data',
     'inspection_date' => 'Date of Inspection',
     'location' => 'Location',
     'next_due' => 'Next Due on',
@@ -116,4 +116,7 @@ return [
     'safety_petty_logbook' => 'Safety Petty Logbook',
     'approval' => 'Approval',
 
+
+    // Floor Stretcher 
+    'dept/location' => 'Department / Location',
 ];

@@ -25,8 +25,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Inspection\RRAACheckList;
+use App\Models\Inspection\MSDS\MSDSCheckList;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -35,7 +35,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1831,7 +1831,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getMedicalAssistant')) {
         function getMedicalAssistant()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICIAL_ASSISTANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICAL_ASSISTANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -2012,11 +2012,18 @@ if (!function_exists('getMonth')) {
             } else if ($id == FLOOR_MANAGER_REJECTED) {
                 return 'floor Manager rejected';
             } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
-                return 'Safet Officer Approval Pending';
+                return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
-                return 'Safet Officer Approved';
+                return 'Safety Officer Approved';
             } else if ($id == SAFETY_OFFICER_REJECTED) {
-                return 'Safet Officer rejected';
+                return 'Safety Officer rejected';
+
+            } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
+                return 'Medical Assistant /Floor Manager  Approval Pending';
+            } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
+                return 'Medical Assistant /Floor Manager rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
+                return 'Medical Assistant /Floor Manager Approved';
             }
 
             return 'OHC Creation';
@@ -2094,6 +2101,32 @@ if (!function_exists('getMonth')) {
             return 'Inspection Creation';
 
             return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
+        }
+    }
+
+    if (!function_exists('getObservationType')) {
+        function getObservationType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Unsafe Act';
+            } elseif ($type_id == 2) {
+                return 'Unsafe Condition';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkStatus')) {
+        function getGembaWalkStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'Closed';
+            } else {
+                return 'Unknown';
+            }
         }
     }
 

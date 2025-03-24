@@ -95,8 +95,8 @@
                     incident_type_name: {
                         required: true,
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\-_'"()]+$/,
+                        maxlength: 100,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                         remote: {
                             url: '{{ admin_url('incident/type-master/unique') }}',
                             type: 'post',
@@ -112,14 +112,14 @@
                         required: true,
                         minlength: 3,
                         maxlength: 10,
-                        pattern: /^[a-zA-Z0-9\-_'"()]+$/,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                 },
                 messages: {
                     incident_type_name: {
                         required: "Incident Type Name is required.",
                         minlength: "Incident Short Name must be exactly 2 characters.",
-                        maxlength: "Incident Short Name must be exactly 2000 characters.",
+                        maxlength: "Incident Short Name must be exactly 100 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                         remote: "Incident Type Name should be unique",
                     },

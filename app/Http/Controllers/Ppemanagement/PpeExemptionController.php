@@ -321,18 +321,21 @@ class PpeExemptionController extends Controller
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
-             if ($ppeexemption->approve_status == 5) {
+
+            // Initialize the variable to avoid undefined variable errors
+            $ehsheadstatus = null;
+
+            if ($ppeexemption->approve_status == 5) {
                 $ehsheadstatus = $this->ppestatus->getehsheadstatuslog($id);
             } else if ($ppeexemption->approve_status == 6) {
-
                 $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
             }
+
             $data = [
                 'ppeexemption' => $ppeexemption,
                 'ehsheadstatus' => $ehsheadstatus,
                 'pagetitle' => "PPE Exemption",
             ];
-
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -340,7 +343,6 @@ class PpeExemptionController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
@@ -353,10 +355,10 @@ class PpeExemptionController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
+
 
 
     public function edit(Request $request)

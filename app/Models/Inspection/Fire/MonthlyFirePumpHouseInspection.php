@@ -127,7 +127,22 @@ class MonthlyFirePumpHouseInspection extends Model
     public function store()
     {
         $request = request();
+
+        $mergedResponses = [];
+
+        foreach ($request->checklist as $sub_type_id => $checklist_items) {
+            foreach ($checklist_items as $checklist_id => $value) {
+                $mergedResponses[$sub_type_id][$checklist_id] = [
+                    'response' => $value,
+                    'remark' => $request->remarks[$sub_type_id][$checklist_id] ?? null,
+                ];
+            }
+        }   
+
+        $responsesJson = json_encode($mergedResponses);
+
         $responses = $request->checklist;
+        $remarks = $request->remarks;
         $respones = json_encode($responses);
         $insert_array = [
             'issue_date' => DBdateformat($request->issue_date),
@@ -138,7 +153,7 @@ class MonthlyFirePumpHouseInspection extends Model
             'unit' => decryptId($request->unit_id),
             'resource_code' => $request->resource_code,
             'created_by' => Auth::id(),
-            'responses' => $respones,
+            'responses' => $responsesJson,
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         ];
         return $this->create($insert_array);

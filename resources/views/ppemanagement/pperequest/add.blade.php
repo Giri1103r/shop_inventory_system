@@ -117,7 +117,7 @@
                                                             class="form-label require">Department</label>
                                                         <input type="text" name="department" id="department"
                                                             class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                            value="{{ getDepartment($employee->department) }}" readonly>
                                                         <div class="text-danger"></div>
 
                                                     </div>
@@ -228,15 +228,13 @@
         });
 
         $(document).ready(function() {
-
-
-
-
             $('input[name="request_for"]').on("change", function() {
                 var requestFor = $(this).val();
                 var empIdContainer = $("#emp_id_container");
                 var authEmployeeId =
-                    "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
+                "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
+                var authDepartment =
+                "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}"; // Authenticated user's department
 
                 if (requestFor === "1") {
                     // If "Myself" is selected
@@ -246,11 +244,9 @@
                 <div class="text-danger"></div>
             `);
 
-                    // Populate employee name and department using helper function
                     $("#emp_name").val("{{ auth()->user()->name }}");
-                    $("#department").val("{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}");
+                    $("#department").val(authDepartment); // Set auth user's department
                 } else if (requestFor === "2") {
-                    // If "Worker" is selected
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
                 <select name="emp_id" id="emp_id" class="form-select form-select-sm " style="width: 100%">
@@ -259,63 +255,37 @@
                 <div class="text-danger"></div>
             `);
 
-                    // Reinitialize Select2 for the new dropdown
                     $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
+                        ajax: {
+                            url: '{{ admin_url('ppe_request/employeeid') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
                                 return {
-                                    id: item.id,
-                                    text: item.text
+                                    search: params.term
                                 };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
+                        },
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
 
-                    // Clear employee name and department
                     $("#emp_name").val("");
-                    $("#department").val("");
+                    $("#department").val(""); // Clear department until employee is selected
                 }
             });
-            // $('#emp_id').select2({
-            //     ajax: {
-            //         url: '{{ admin_url('ppe_request/employeeid') }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function(params) {
-            //             return {
-            //                 search: params.term
-            //             };
-            //         },
-            //         processResults: function(data) {
-            //             return {
-            //                 results: $.map(data, function(item) {
-            //                     return {
-            //                         id: item.id,
-            //                         text: item.text
-            //                     };
-            //                 })
-            //             };
-            //         }
-            //     },
-            //     minimumInputLength: 1,
-            //     dropdownCssClass: 'form-control',
-            //     selectionCssClass: 'form-control'
-            // });
+
             // Handle Employee ID change for Worker
             $(document).on("change", "#emp_id", function() {
                 var emp_id = $(this).val();
@@ -327,8 +297,8 @@
                         success: function(data) {
                             if (data && data.employee) {
                                 $("#emp_name").val(data.employee.emp_name);
-                                $("#department").val(data.departments?.department_name ||
-                                    "No department available");
+                                $("#department").val(data.departments ? data.departments
+                                    .department_name : "No department available");
                             } else {
                                 Swal.fire({
                                     icon: "error",
@@ -348,7 +318,7 @@
                     });
                 } else {
                     $("#emp_name").val("");
-                    $("#department").val("");
+                    $("#department").val(""); // Clear department when no employee is selected
                 }
             });
         });
