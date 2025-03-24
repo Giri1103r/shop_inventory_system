@@ -329,7 +329,8 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
     Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
-    Route::post('/unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {

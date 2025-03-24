@@ -162,6 +162,7 @@ class AdminController extends Controller
             Session::flash('success', 'User Signature is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went wrong please try again After some time!');
             return redirect(admin_url('profile'));
