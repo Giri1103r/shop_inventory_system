@@ -117,6 +117,11 @@ return [
     'approval' => 'Approval',
 
 
-    // Floor Stretcher 
+    // Floor Stretcher
     'dept/location' => 'Department / Location',
+
+    //ForkLift Inspection Report
+    'forklift_inspection_report' => 'ForkLift Inspection Report',
+    'corrective_action' => 'Corrective and Preventive Action',
+
 ];

@@ -2068,17 +2068,10 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if (!function_exists('SafetyWalkCurrentObservation')) {
-        function SafetyWalkCurrentObservation()
+    if (!function_exists('forkliftInspection')) {
+        function forkliftInspection()
         {
-            return 'CURRENT-OBS-000001';
-        }
-    }
-
-    if (!function_exists('SafetyWalkPreviousObservation')) {
-        function SafetyWalkPreviousObservation()
-        {
-            return 'PREVIOUS-OBS-000001';
+            return 'FORKLIFT-INS-000001';
         }
     }
 
