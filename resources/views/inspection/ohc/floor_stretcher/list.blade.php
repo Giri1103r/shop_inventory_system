@@ -1,8 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Floor' )
-@section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
-
-
+@section('title', 'Ohc Floor Strecther Checklist')
+@section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -13,10 +11,9 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/medical-requisition-slip/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/floor_stretcher/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -42,16 +39,12 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="approve_status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="approve_status" id="approve_status" style="width: 100%"
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(2) }}">Floor manager Approval pending</option>
-                                                <option value="{{ encryptId(3) }}">Floor Manager Approved</option>
-                                                <option value="{{ encryptId(4) }}">Floor Manager Rejected</option>
-                                                <option value="{{ encryptId(5) }}">Safety officer Approval pending</option>
-                                                <option value="{{ encryptId(6) }}">Safety officer Approved</option>
-                                                <option value="{{ encryptId(7) }}">Safety officer Rejected</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -74,11 +67,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -86,8 +79,6 @@
                             </table>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -101,11 +92,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            var IssueDatepicker = flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
 
-
-            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -132,7 +119,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/medical-requisition-slip/list') }}",
+                        url: "{{ admin_url('ohc/floor_stretcher/checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -142,7 +129,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.approve_status = $('#approve_status').val();
+                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -158,24 +145,24 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
-                        },
-                        {
                             data: 'issue_date',
-                            name: 'issue_date'
+                            name: 'issue_date',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'frequency_name',
+                            name: 'frequency_name',
                         },
                         {
-                            data: 'approve_status',
-                            name: 'approve_status'
+                            data: 'unit_name',
+                            name: 'unit_name',
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'shift',
+                            name: 'shift',
+                        },
+                        {
+                            data: 'status',
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -205,22 +192,21 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        approve_status = $('#approve_status').val();
+                                        status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/export/pdf') }}" +
+                                            "{{ admin_url('ohc/floor_stretcher/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&approve_status=' + approve_status
+                                            '&status=' + status
                                     }
                                 },
                                 {
@@ -231,16 +217,16 @@
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        approve_status = $('#approve_status').val();
+                                        status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/export/excel') }}" +
+                                            "{{ admin_url('ohc/floor_stretcher/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&approve_status=' + approve_status
+                                            '&status=' + status
                                     }
                                 },
                             ]
@@ -301,7 +287,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/medical-requisition-slip/status') }}",
+                                url: "{{ admin_url('ohc/floor_stretcher/checklist/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -339,6 +325,86 @@
                             Swal.fire('Something went wrong', '', 'info');
                         }
                     })
+
+                });
+
+
+                /* Delete Record */
+                $(document).on('click', '.recordDelete', function() {
+
+                    var id = $(this).data('id');
+                    var login_id = $(this).data('login_id');
+
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var text = '{{ __('common.delete') }}';
+                    var btncolor = '#dc3545'
+
+                    Swal.fire({
+                        title: title,
+                        icon: 'warning',
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: text,
+                        confirmButtonColor: btncolor,
+                        denyButtonColor: '#28a745',
+                        customClass: {
+                            confirmButton: 'btn-skew',
+                            cancelButton: 'btn-skew'
+                        },
+                    }).then((result) => {
+                        if (result.value) {
+                            $.ajax({
+                                url: "{{ admin_url('ohc/floor_stretcher/checklist/list/delete') }}",
+                                type: 'post',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                        .attr('content')
+                                },
+                                data: {
+                                    id: id,
+                                    login_id: login_id
+                                },
+                                success: function(response) {
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-right',
+                                        showConfirmButton: false,
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        didOpen: (toast) => {
+                                            toast.addEventListener(
+                                                'mouseenter',
+                                                Swal.stopTimer)
+                                            toast.addEventListener(
+                                                'mouseleave',
+                                                Swal.resumeTimer
+                                            )
+                                        }
+                                    });
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: response.msg
+                                    });
+                                    table.draw();
+                                },
+                                error: function(data) {
+                                    if (data.status === 406 && data.responseJSON.msg ===
+                                        'module_exits') {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        });
+                                    } else {
+                                        $.notify(data.responseJSON.msg, "error");
+                                    }
+                                }
+                            });
+                        } else if (result.isDenied) {
+                            Swal.fire('Something went wrong', '', 'info');
+                        }
+                    })
+
 
                 });
 

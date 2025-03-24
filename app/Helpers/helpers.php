@@ -2012,11 +2012,15 @@ if (!function_exists('getMonth')) {
             } else if ($id == FLOOR_MANAGER_REJECTED) {
                 return 'floor Manager rejected';
             } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
-                return 'Safet Officer Approval Pending';
+                return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
-                return 'Safet Officer Approved';
-            } else if ($id == SAFETY_OFFICER_REJECTED) {
-                return 'Safet Officer rejected';
+                return 'Safety Officer Approved';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
+                return 'Medical Assistant /Floor Manager  Approval Pending';
+            } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
+                return 'Medical Assistant /Floor Manager rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
+                return 'Medical Assistant /Floor Manager Approved';
             }
 
             return 'OHC Creation';

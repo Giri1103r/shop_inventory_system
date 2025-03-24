@@ -114,4 +114,7 @@ return [
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',
 
+
+    // Floor Stretcher 
+    'dept/location' => 'Department / Location',
 ];
