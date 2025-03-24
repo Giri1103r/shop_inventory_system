@@ -25,8 +25,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Inspection\RRAACheckList;
+use App\Models\Inspection\MSDS\MSDSCheckList;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -2015,8 +2015,7 @@ if (!function_exists('getMonth')) {
                 return 'Safet Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
                 return 'Safet Officer Approved';
-            }
-            else if ($id == SAFETY_OFFICER_REJECTED) {
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
                 return 'Safet Officer rejected';
             }
 
@@ -2083,6 +2082,32 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getObservationType')) {
+        function getObservationType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Unsafe Act';
+            } elseif ($type_id == 2) {
+                return 'Unsafe Condition';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkStatus')) {
+        function getGembaWalkStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'Closed';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
     // Fire Inspection Hooter Sequence
     if (!function_exists('HooterSequence')) {
         function HooterSequence()
@@ -2092,12 +2117,10 @@ if (!function_exists('getMonth')) {
     }
 
     // Fire Inspection Folder Name
-    if(!function_exists('GetTypeName'))
-    {
+    if (!function_exists('GetTypeName')) {
         function GetTypeName($id)
         {
-            switch($id)
-            {
+            switch ($id) {
                 case HOOTER_INSPECTION:
                     return 'Hooter-Inspection';
                     break;
@@ -2109,14 +2132,12 @@ if (!function_exists('getMonth')) {
     }
 
     // Get Department Name
-    if(!function_exists('GetDeptName'))
-    {
+    if (!function_exists('GetDeptName')) {
         function GetDeptName($id)
         {
-            $data = Department::where('id',$id)->first();
+            $data = Department::where('id', $id)->first();
 
-            if($data)
-            {
+            if ($data) {
                 return $data->department_name;
             }
         }

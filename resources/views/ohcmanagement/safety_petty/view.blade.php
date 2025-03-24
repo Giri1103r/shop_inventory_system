@@ -78,115 +78,113 @@
 
                             </div>
 
-                            @foreach ($sfty_petty_checklist as $item)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Safety Petty Logbook CheckList</h4>
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Safety Petty Logbook CheckList</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.ser_no') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->serial_number) ? $sfty_petty_checklist->serial_number : '' }}
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('inspection.ser_no') }}</label>
-                                            <div class="view_data">
-                                                {{ isset($item->serial_number) ? $item->serial_number : '' }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Name</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->employee_name) ? $sfty_petty_checklist->employee_name : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label
+                                            class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->employee_code) ? $sfty_petty_checklist->employee_code : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label
+                                            class="form-label view_label">Department</label>
+                                        <div class="view_data">
+                                            {{ getDepartment($sfty_petty_checklist->department) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Unit</label>
+                                        <div class="view_data">
+                                            {{ getUnitname($sfty_petty_checklist->unit) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Date</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->date) ? $sfty_petty_checklist->date : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Amount</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->amount) ? $sfty_petty_checklist->amount : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Description</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->description) ? $sfty_petty_checklist->description : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Amount Given By</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->amount_given_by) ? $sfty_petty_checklist->amount_given_by : '' }}
+                                        </div>
+                                    </div>
+                                    {{-- @dd($signature_given_by) --}}
+                                    @if (isset($signature_amount) && $signature_amount)
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">Signature (Amount Given By)</label>
+                                                <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Employee Name</label>
-                                            <div class="view_data">
-                                                {{ isset($item->employee_name) ? $item->employee_name : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label
-                                                class="form-label view_label">Employee Code</label>
-                                            <div class="view_data">
-                                                {{ isset($item->employee_code) ? $item->employee_code : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label
-                                                class="form-label view_label">Department</label>
-                                            <div class="view_data">
-                                                {{ isset($item->department) ? $item->department : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Unit</label>
-                                            <div class="view_data">
-                                                {{ isset($item->unit) ? $item->unit : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Date</label>
-                                            <div class="view_data">
-                                                {{ isset($item->date) ? $item->date : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Amount</label>
-                                            <div class="view_data">
-                                                {{ isset($item->amount) ? $item->amount : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Description</label>
-                                            <div class="view_data">
-                                                {{ isset($item->description) ? $item->description : '' }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Amount Given By</label>
-                                            <div class="view_data">
-                                                {{ isset($item->amount_given_by) ? $item->amount_given_by : '' }}
-                                            </div>
-                                        </div>
-                                        {{-- @dd($signature_given_by) --}}
-                                        @if (isset($signature_amount) && $signature_amount)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label" style="display: block;">Signature (Amount Given By)</label>
-                                                    <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
+                                    @endif
 
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Amount Received By</label>
-                                            <div class="view_data">
-                                                {{ isset($item->amount_received_by) ? $item->amount_received_by : '' }}
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Amount Received By</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->amount_received_by) ? $sfty_petty_checklist->amount_received_by : '' }}
+                                        </div>
+                                    </div>
+                                    @if (isset($signature_amount) && $signature_amount)
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">Signature (Amount Received By)</label>
+                                                <img src="{{ admin_url($signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                        @if (isset($signature_amount) && $signature_amount)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label" style="display: block;">Signature (Amount Received By)</label>
-                                                    <img src="{{ admin_url($signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">remark</label>
-                                            <div class="view_data">
-                                                {{ isset($item->remark) ? $item->remark : '' }}
-                                            </div>
+                                    @endif
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">remark</label>
+                                        <div class="view_data">
+                                            {{ isset($sfty_petty_checklist->remark) ? $sfty_petty_checklist->remark : '' }}
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('common.created_by') }}</label>
-                                            <div class="view_data">
-                                                {{ getUsername(isset($item->created_by) ? $item->created_by : '') }}
-                                            </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
+                                        <div class="view_data">
+                                            {{ getUsername(isset($sfty_petty_checklist->created_by) ? $sfty_petty_checklist->created_by : '') }}
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                            <div class="view_data">
-                                                {{ displaydateformat(isset($item->created_at) ? $item->created_at : '') }}
-                                            </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displaydateformat(isset($sfty_petty_checklist->created_at) ? $sfty_petty_checklist->created_at : '') }}
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
+                            </div>
 
                         </div>
                     </div>

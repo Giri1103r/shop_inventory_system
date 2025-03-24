@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'RRAA Pdf')
+@section('title', 'Safety Petty Logbook Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -36,10 +36,10 @@
                             {{ $value->revision_date }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{-- @php
+                            @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp --}}
-                            {{ getInspectionStatus($value->inspection_status); }}
+                            @endphp
+                             {{ $status }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

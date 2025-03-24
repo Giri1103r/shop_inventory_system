@@ -16,6 +16,7 @@ class GembaWalkChecklistFile extends Model
 
     protected $fillable = [
         'gemba_walk_id',
+        'emp_id',
         'gemba_walk_checklist_id',
         'file_type',
         'file_path',
@@ -60,6 +61,7 @@ class GembaWalkChecklistFile extends Model
             $insert_data = array(
 
                 'gemba_walk_id' => $gembaWalk_id,
+                'emp_id'=>Auth::id(),
                 'file_type'=>1,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
@@ -101,6 +103,7 @@ class GembaWalkChecklistFile extends Model
 
             $insert_data = array(
                 'gemba_walk_id' => $gembaWalk_id,
+                'emp_id'=>Auth::id(),
                 'file_type'=>2,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\MSDS;
 
 use Exception;
 use Illuminate\Support\Str;

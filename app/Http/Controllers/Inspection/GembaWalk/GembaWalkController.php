@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+
 
 class GembaWalkController extends Controller
 {
@@ -53,96 +55,83 @@ class GembaWalkController extends Controller
         $this->statusLog = new GembaWalkStatusLog();
     }
 
+
+
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            if ($request->ajax()) {
-                try {
-                    $data =  $this->gembaWalk->list();
-                    $datatables = Datatables::of($data['data'])
-                        ->addIndexColumn()
-                        ->addColumn('status', function ($row) {
-                            $text = "<span style='color:red'>In-Active<span>";
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
-                            }
-                            return $text;
-                        })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
-                        })
-                        ->addColumn('revision_date', function ($row) {
-                            return Displaydateformat($row->revision_date);
-                        })
-                        ->addColumn('created_at', function ($row) {
-                            return Displaydateformat($row->created_at);
-                        })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
-                        })
-                        ->addColumn('gemba_walk_status', function ($row) {
-                            $text = '';
-                            switch ($row->gemba_walk_status) {
-                                case GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
-                                    break;
-                                case GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting for Floor Manager Verification</span>";
-                                    break;
+        try {
+            if (Auth::check()) {
+                if ($request->ajax()) {
+                    try {
+                        $data =  $this->gembaWalk->list();
+                        $datatables = Datatables::of($data['data'])
+                            ->addIndexColumn()
+                            ->addColumn('status', function ($row) {
+                                $text = "<span style='color:red'>In-Active<span>";
+                                if ($row->status == 1) {
+                                    $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                } else if ($row->status == 0) {
+                                    $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                }
+                                return $text;
+                            })
+                            ->addColumn('issue_date', function ($row) {
+                                return Displaydateformat($row->issue_date);
+                            })
+                            ->addColumn('revision_date', function ($row) {
+                                return Displaydateformat($row->revision_date);
+                            })
+                            ->addColumn('created_at', function ($row) {
+                                return Displaydateformat($row->created_at);
+                            })
+                            ->addColumn('created_by', function ($row) {
+                                return getUsername($row->created_by);
+                            })
+                            ->addColumn('gemba_walk_status', function ($row) {
+                                return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                            })
+                            ->addColumn('action', function ($row) {
+                                $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->id)) . '" title="View"><i class="fa-solid fa-eye"></i></a> ';
 
-                                case GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION:
-                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting for EHS Officer Verification</span>";
-                                    break;
+                                if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/capa-verification/' . encryptId($row->id)) . '" title="' . __('CAPA Action') . '"><i class="fa-solid fa-check-to-slot text-danger"></i></a> ';
+                                }
 
-                                case GEMBA_WALK_INSPECTION_CLOSED:
-                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Verification Approved</span>";
-                                    break;
-                                default:
-                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
-                            }
-                            return $text;
-                        })
-                        ->addColumn('action', function ($row) {
-                            $btn = '';
-                            // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
+                                if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && (CheckUserRole(ROLE_FLOOR_MANAGER) || isAdmin())) {
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->id)) . '" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-danger"></i></a> ';
+                                }
 
-                            if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/capa-verification/' . encryptId($row->id)) . '" class="" title="' . __('CAPA Action') . '"><i class="fa-solid fa-check-to-slot text-danger"></i></a> ';
-                            }
+                                if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION  && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->id)) . '" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
+                                }
 
-                            if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION && (CheckUserRole(ROLE_FLOOR_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->id)) . '" class="" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-danger"></i></a> ';
-                            }
-
-                            if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION  && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->id)) . '" class="" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
-                            }
-
-                            $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
-                            return $btn;
-                        })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'gemba_walk_status'])
-                        ->setFilteredRecords($data['filter_records'])
-                        ->setTotalRecords($data['total_records'])
-                        ->skipPaging()
-                        ->make(true);
-                    return $datatables;
-                } catch (Exception $ex) {
+                                return $btn;
+                            })
+                            ->rawColumns(['action', 'created_date', 'created_by', 'status', 'gemba_walk_status'])
+                            ->setFilteredRecords($data['filter_records'])
+                            ->setTotalRecords($data['total_records'])
+                            ->skipPaging()
+                            ->make(true);
 
-                    dd($ex);
-                    report($ex);
-                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                        return $datatables;
+                    } catch (Exception $ex) {
+                        report($ex);
+                        return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                    }
                 }
             }
-        }
 
-        return view('inspection.gembaWalk.list');
+            return view('inspection.gembaWalk.list');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'An error occurred while processing your request. Please try again later.'], 500);
+        }
     }
+
+
 
     public function Add(Request $request)
     {
@@ -236,17 +225,31 @@ class GembaWalkController extends Controller
     public function view($id)
     {
         try {
-            $id = decryptId($id);
             if (Auth::check()) {
+                $id = decryptId($id);
+
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
+                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($id);
+                $gembaWalk_verified_singnature = $this->gembaWalk->selectVerifiedSingnature($id);
+
                 $status_log = $this->statusLog->selectOne($id);
-                
+                $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
+                $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
+                $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
+
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
+                    'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature,
+
                     'status_log' => $status_log,
+                    'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
+                    'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
+                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details
 
                 );
+                // dd($data);
             }
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
@@ -261,9 +264,11 @@ class GembaWalkController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
+                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($id);
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
@@ -293,17 +298,15 @@ class GembaWalkController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-    
-
             if ($request->is_passed == "1") {
+                $capa_type = GEMBA_WALK_INSPECTION_PASS_L1;
 
-                $capa_type = GEMBA_WALK_INSPECTION_PASS_1;
                 $gembaWalk_id = decryptId($request->id);
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
                 $ehs_id = $gembaWalk_ehs->id;
 
                 $upload_status = GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1;
-                $gembaWalk_inspection_file = $this->gembaWalkInspectionEhsFile->capaFileSubmit($ehs_id, $upload_status);
+                $gembaWalk_inspection_file = $this->gembaWalkInspectionEhsFile->capaFileSubmit($gembaWalk_id, $ehs_id, $upload_status);
 
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
 
@@ -403,7 +406,7 @@ class GembaWalkController extends Controller
                 $userids = array_unique($userids);
                 $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
                 $gembaWalk_status = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
-                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
+                $to_status = GEMBA_WALK_INSPECTION_CLOSED;
 
                 if ($users->count() > 0) {
                     foreach ($users as $user) {
@@ -461,14 +464,18 @@ class GembaWalkController extends Controller
     public function review($id)
     {
         try {
-            $gembaWalk_id = decryptId($id);
             if (Auth::check()) {
+                $gembaWalk_id = decryptId($id);
                 $gembaWalk_details = $this->gembaWalk->selectOne($gembaWalk_id);
+                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($gembaWalk_id);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
-
+                $floorID = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 2)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
-                    'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details
+                    'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
+                    'floorID' => $floorID,
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature
+
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
@@ -480,6 +487,7 @@ class GembaWalkController extends Controller
 
     public function capaReviewSubmit(Request $request)
     {
+        // dd($request->all());
         try {
             $rules = [
                 'officer_name' => 'required',
@@ -501,14 +509,15 @@ class GembaWalkController extends Controller
 
             // dd($validator);
             $gembaWalk_id = decryptId($request->id);
-            
+
             $upload_status = GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2;
             $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION;
-            $capa_type = GEMBA_WALK_INSPECTION_PASS_2;
+            $capa_type = GEMBA_WALK_INSPECTION_PASS_L2;
 
-            $ehsOfficer_verify = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id,$capa_type);
+
+            $ehsOfficer_verify = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
             $ehs_id = $ehsOfficer_verify->id;
-            $gembaWalk_inspection_file = $this->gembaWalkInspectionEhsFile->capaFileSubmit($ehs_id, $upload_status);
+            $gembaWalk_inspection_file = $this->gembaWalkInspectionEhsFile->capaFileSubmit($gembaWalk_id, $ehs_id, $upload_status);
 
             $gemba_Walk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
 
@@ -573,6 +582,7 @@ class GembaWalkController extends Controller
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
             dd($ex);
+            report($ex);
         }
     }
 
@@ -580,18 +590,25 @@ class GembaWalkController extends Controller
     public function ehsOfficerReview($id)
     {
         try {
-            $gembaWalk_id = decryptId($id);
             if (Auth::check()) {
+                $gembaWalk_id = decryptId($id);
                 $gembaWalk_details = $this->gembaWalk->selectOne($gembaWalk_id);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($gembaWalk_id);
+                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($gembaWalk_id);
+                $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
+
 
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
-                    'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details
+                    'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
+                    'ehsId' => $ehsId,
+
                 );
+                // dd($data);
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
@@ -649,7 +666,7 @@ class GembaWalkController extends Controller
 
                 $userids = array_unique($userids);
                 $get_ehs_review = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
-                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
+                $to_status = GEMBA_WALK_INSPECTION_CLOSED;
 
                 if ($users->count() > 0) {
                     foreach ($users as $user) {
@@ -699,7 +716,7 @@ class GembaWalkController extends Controller
             } elseif ($request->input('action') == 'reject') {
 
                 $capa_type = GEMBA_WALK_INSPECTION_FAIL;
-                $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+                $gembaWalk_status = GEMBA_WALK_INSPECTION_REJECTED;
 
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
 
@@ -720,7 +737,7 @@ class GembaWalkController extends Controller
 
                 $userids = array_unique($userids);
                 $get_ehs_review = $this->gembaWalkInspectionEhsAprroval->getEHSReview($gembaWalk_id);
-                $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+                $to_status = GEMBA_WALK_INSPECTION_REJECTED;
                 if ($users->count() > 0) {
                     foreach ($users as $user) {
                         $email_id = $user->email;
@@ -773,6 +790,153 @@ class GembaWalkController extends Controller
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
             dd($ex);
+        }
+    }
+
+
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $gembaWalk_details = $this->gembaWalk->selectOne($id);
+                $status_log = $this->statusLog->selectOne($id);
+                $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
+                $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
+                $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
+
+                $data = [
+                    'gembaWalk_details' => $gembaWalk_details,
+                    'status_log' => $status_log,
+                    'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
+                    'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
+                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details
+                ];
+            }
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.gembaWalk.generalpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Gemba Walk Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->gembaWalk->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Gemba Walk Details",
+            );
+
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.gembawalk.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Gemba Walk.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->gembaWalk->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->gemba_walk_auto_id;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_date;
+                $export[] =  getGMInspectionStatus($data->gemba_walk_status);;
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Gemba Walk Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 }

@@ -193,7 +193,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
                                                         <input type="text" name="date_of_compliance[1][1]"
-                                                            id = "date_of_compliance" class="form-control">
+                                                            class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -302,7 +302,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
                                                         <input type="text" name="date_of_compliance[2][1]"
-                                                            id = "date_of_compliance" class="form-control">
+                                                            class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -373,14 +373,11 @@
                     minDate: new Date(),
                 });
 
-                flatpickr("#date_of_compliance[1][1]", {
-                        dateFormat: "d-m-Y",
-                        minDate: new Date(),
-                    });
-                flatpickr("#date_of_compliance[2][1]", {
-                        dateFormat: "d-m-Y",
-                        minDate: new Date(),
-                    });
+                flatpickr(".date_of_compliance", {
+                    dateFormat: "d-m-Y",
+                    minDate: new Date(),
+                });
+
 
                 $('#month').datepicker({
                     format: 'MM',
@@ -705,7 +702,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
                                                         <input type="text" name="date_of_compliance[1][${form_set_count}]"
-                                                            id = "date_of_compliance[1][${form_set_count}]" class="form-control">
+                                                            id = "date_of_compliance[1][${form_set_count}]" class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -782,7 +779,7 @@
                     });
                     serial_number++;
 
-                    flatpickr("#date_of_compliance", {
+                    flatpickr(".date_of_compliance", {
                         dateFormat: "d-m-Y",
                         minDate: new Date(),
                     });
@@ -884,7 +881,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
                                                         <input type="text" name="date_of_compliance[2][${form_set_current_count}]"
-                                                            id = "date_of_compliance" class="form-control">
+                                                             class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -960,10 +957,12 @@
                         }
                     });
 
-                    flatpickr("#date_of_compliance", {
+                    flatpickr(".date_of_compliance", {
                         dateFormat: "d-m-Y",
                         minDate: new Date(),
                     });
+
+
                     current_serial_number++;
                     form_set_current_count++;
                     updateCurrentPageIndices();

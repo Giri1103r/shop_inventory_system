@@ -16,7 +16,7 @@
 
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/safety-petty-logbook/add') }}">Add</x-button-add>
-                        
+
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -33,28 +33,16 @@
                                             <input type="text" name="issue_date" id="issue_date"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="revision_date" class="form-label ">Revision Date</label>
-                                            <input type="text" name="revision_date" id="revision_date"
-                                                class="form-control">
-                                        </div>
 
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{encryptId('6')}}">CLOSED</option>
-                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div> --}}
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -91,7 +79,7 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 
 @stop
 
@@ -111,11 +99,10 @@
             dateFormat: "d-m-Y",
             // minDate: new Date(),
         });
-        
+
     });
 
     $(function() {
-        /* Datatable */
         var table = $('.datatable-list').DataTable({
             autoWidth: false,
             responsive: true,
@@ -305,8 +292,6 @@
                     cancelButton: 'btn-skew'
                 },
             }).then((result) => {
-
-
                 if (result.value) {
                     $.ajax({
                         url: "{{ admin_url('ohc/safety-petty-logbook/status') }}",
