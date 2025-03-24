@@ -1388,12 +1388,16 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
                     Route::POST('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
                     Route::GET('/add', [DailyDepartmentFirstAidBoxController::class, 'Add']);
+                    Route::GET('/generalpdf/{id}', [DailyDepartmentFirstAidBoxController::class, 'generalpdf']);
+                    Route::GET('/approval/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'approval']);
                     Route::POST('/add/submit', [DailyDepartmentFirstAidBoxController::class, 'Store']);
                     Route::POST('/unique', [DailyDepartmentFirstAidBoxController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'View']);
                     Route::POST('/status', [DailyDepartmentFirstAidBoxController::class, 'StatusChange']);
                     Route::GET('/export/excel', [DailyDepartmentFirstAidBoxController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [DailyDepartmentFirstAidBoxController::class, 'ExportPDF']);
+
+                    Route::POST('/floormanagerapproval/submit', [DailyDepartmentFirstAidBoxController::class, 'floormanagerapproval']);
                     Route::POST('/lists', [DailyDepartmentFirstAidBoxController::class, 'Checklists']);
                 });
 
