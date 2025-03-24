@@ -70,13 +70,24 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 file-upload-block" id="file-upload-0">
-                                                    <label for="gemba_walk_prepared_by" class="form-label">Singnature
-                                                        Upload</label>
-                                                    <input type="file" class="form-control" name="gemba_walk_prepared_by"
-                                                        id="gemba_walk_prepared_by">
-                                                    <div class="text-danger"></div>
+                                
 
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    @if (isset(Auth::user()->signature_upload))
+                                                        <label class="form-label"
+                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                    @else
+                                                        <div class="form-input col-md-12 mb-2">
+                                                            <label class="form-label require">Signature</label>
+                                                            <input type="file" name="gemba_walk_prepared_by" id="gemba_walk_prepared_by"
+                                                                class="form-control form-control-sm" accept="image/*"
+                                                                placeholder="Enter the image">
+                                                            <small>Allowed file types: jpg, jpeg, png</small>
+                                                            <div id="gemba_walk_prepared_by" class="text-danger"></div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
 
