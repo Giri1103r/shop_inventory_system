@@ -881,7 +881,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-6 form-input">
-                                    <label class="form-label ">{{ __('Signature') }}</label>
+                                    <label class="form-label ">{{ __('Site Images') }}</label>
                                     <div>
                                         <div>
 

@@ -702,7 +702,6 @@
                                                         @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
                                                             <div style="flex-wrap: wrap; gap: 10px;">
                                                                 @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
-                                                                    <!-- Only display label if checkbox is checked and checkpoint exists -->
                                                                     @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index])
                                                                         <div
                                                                             style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
@@ -1715,7 +1714,6 @@
                             });
                     }
 
-                 
 
                     if (!isAlreadyInvolved && !protectiveEquipmentMap.has(equipmentName)) {
                         const isChecked = isDefaultChecked ? 'checked' : '';
@@ -1862,8 +1860,6 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-
-
                     if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
@@ -2016,8 +2012,6 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-
-
                     if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
@@ -2027,6 +2021,8 @@
                                 }
                             });
                     }
+
+
                     if (!isAlreadyInvolved && !displayedPrecautions.has(equipmentName)) {
                         const isChecked = isDefaultChecked ? 'checked' : '';
                         const checkpointHtml = `
@@ -2141,8 +2137,6 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-
-
                     if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
@@ -2266,8 +2260,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-
-                  if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(

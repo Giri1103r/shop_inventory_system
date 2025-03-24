@@ -824,7 +824,7 @@ class SafetyPermit extends Model
             }
 
             $data->mapped_precaution_taken = $mappeprecaution_taken;
-          
+
             $equipment_checklist = json_decode($data->equipment_checklist, true);
             $mappeequipment_checklist = [];
 
