@@ -97,59 +97,65 @@
 
                                     @php
                                         $user_response = json_decode($inspection_details->responses, true);
+                                        $srNo = 1;
                                     @endphp
+
                                     <table class="container p-5">
                                         <thead>
                                             <tr>
                                                 <th
                                                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                    Sr. No</th>
-                                                <th colspan="3"
-                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                    Check Points</th>
+                                                    Sr. No
+                                                </th>
                                                 <th
                                                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                    Reports</th>
+                                                    Check Points
+                                                </th>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Response
+                                                </th>
+                                                <th
+                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                    Remarks
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @php $srNo = 1; @endphp
                                             @foreach ($user_response as $subcategory => $questions)
-                                                @php
-                                                    $rowCount = count($questions);
-                                                    $firstRow = true;
-                                                @endphp
                                                 @foreach ($questions as $questionId => $answer)
                                                     <tr>
-                                                        @if ($firstRow)
-                                                            <td rowspan="{{ $rowCount }}"
-                                                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                                                {{ $srNo }}</td>
-                                                            <td rowspan="{{ $rowCount }}"
-                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                                                {{ GetSubChecklistTypeName($subcategory) }}
-                                                            </td>
-                                                            @php
-                                                                $srNo++;
-                                                                $firstRow = false;
-                                                            @endphp
-                                                        @endif
-                                                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                                                        <td
+                                                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                                            {{ $srNo }}
+                                                        </td>
+                                                        <td style="border: 1px solid black; padding: 8px;">
                                                             {{ GetChecklistTypeDate($questionId) }}
                                                         </td>
                                                         <td
                                                             style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                            @if ($answer == 'YES')
+                                                            @php
+                                                                $responseText = $answer['response'] ?? '-';
+                                                            @endphp
+                                                            @if ($responseText == 'YES')
                                                                 <span style="color: green; font-size: 20px;">✓</span>
-                                                            @elseif ($answer == 'NO' || $answer == 'N/A')
+                                                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
                                                                 <span style="color: red; font-size: 20px;">X</span>
+                                                            @else
+                                                                {{ $responseText }}
                                                             @endif
                                                         </td>
+                                                        <td
+                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                            {{ $answer['remark'] ?? '-' }}
+                                                        </td>
                                                     </tr>
+                                                    @php $srNo++; @endphp
                                                 @endforeach
                                             @endforeach
                                         </tbody>
                                     </table>
+
                                     <div class="row mt-3">
                                         @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                             <div class="card-header-inner">
@@ -167,7 +173,11 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                       $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                        $signature = GetSafetySignature(
+                                                            $inspection_details->verified_by,
+                                                            $inspection_details->id,
+                                                            SAFETY_GALLERY_INSPECTION,
+                                                        );
                                                     @endphp
                                                 @endif
                                                 @if (isset($inspection_details->created_at))
@@ -185,8 +195,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -203,7 +212,11 @@
                                                             </div>
                                                         </div>
                                                         @php
-                                                            $signature = GetSafetySignature($inspection_details->approved_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                            $signature = GetSafetySignature(
+                                                                $inspection_details->approved_by,
+                                                                $inspection_details->id,
+                                                                SAFETY_GALLERY_INSPECTION,
+                                                            );
                                                         @endphp
                                                     @endif
                                                 @endif
@@ -212,8 +225,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -264,15 +276,18 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature($inspection_details->created_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                    $signature = GetSafetySignature(
+                                                        $inspection_details->created_by,
+                                                        $inspection_details->id,
+                                                        SAFETY_GALLERY_INSPECTION,
+                                                    );
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -314,15 +329,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -363,15 +381,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->l1_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->l1_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -411,15 +432,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->l2_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->l2_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -436,15 +460,18 @@
                                                 </div>
                                             @endif
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->approved_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->approved_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>

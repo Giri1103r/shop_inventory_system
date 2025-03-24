@@ -382,7 +382,7 @@ Route::group(['prefix' => 'fire/'], function () {
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function(){
     Route::GET('list',[FloorStretcherController::class,'Index']);
-    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::POST('list',[FloorStretcherController::class,'Index']);
     Route::GET('add',[FloorStretcherController::class,'Add']);
     Route::POST('add/submit',[FloorStretcherController::class,'Store']);
     Route::GET('view/{id}',[FloorStretcherController::class,'View']);
