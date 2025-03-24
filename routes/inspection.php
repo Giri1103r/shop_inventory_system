@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
@@ -11,8 +12,8 @@ use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
-use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 
+use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
@@ -377,4 +378,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
     });
+});
+
+Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function(){
+    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::GET('add',[FloorStretcherController::class,'Add']);
+    Route::POST('add/submit',[FloorStretcherController::class,'Store']);
+    Route::GET('view/{id}',[FloorStretcherController::class,'View']);
+    Route::GET('export/excel',[FloorStretcherController::class,'ExportExcel']);
+    Route::GET('export/pdf',[FloorStretcherController::class,'ExportPdf']);
+    Route::GET('generalpdf/{id}',[FloorStretcherController::class,'ExportPdf']);
+    Route::POST('status',[FloorStretcherController::class,'StatusChange']);
+    Route::POST('delete',[FloorStretcherController::class,'Delete']);
 });
