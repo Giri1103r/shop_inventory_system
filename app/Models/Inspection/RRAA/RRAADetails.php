@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\RRAA;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\TrashScope;

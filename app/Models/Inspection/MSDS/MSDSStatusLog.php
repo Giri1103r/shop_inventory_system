@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\MSDS;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RRAAStatusLog extends Model
+class MSDSStatusLog extends Model
 {
-    protected $table = 'inspection_rraa_status_log';
+    protected $table = 'inspection_msds_status_log';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'rraa_details_id',
+        'msds_details_id',
         'from_status',
         'to_status',
         'remarks',
@@ -23,6 +23,6 @@ class RRAAStatusLog extends Model
 
     public function selectOne($id)
     {
-       return $this->where('rraa_details_id', $id)->get();
+       return $this->where('msds_details_id', $id)->get();
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Work;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\User;
+use Illuminate\Support\Facades\Response;
 
 class SafetyPettyController extends Controller
 {
@@ -113,22 +114,23 @@ class SafetyPettyController extends Controller
             $sfty_petty_id = $sfty_petty_details->id;
             $this->sfty_petty_checklist->store($sfty_petty_id);
             $empId =  Auth::user()->employee_id;
-           
+
             $this->signature->signatureLogUpload(
                 $empId, $sfty_petty_id ,
-                OHC_AMOUNT_GIVENBY_INSPECTION, 
-                'signature_givenby_image' 
+                OHC_AMOUNT_GIVENBY_INSPECTION,
+                'signature_givenby_image'
             );
-    
+
             $this->signature->signatureLogUpload(
                   $empId, $sfty_petty_id ,
-                OHC_AMOUNT_RECEIVEDBY_INSPECTION, 
+                OHC_AMOUNT_RECEIVEDBY_INSPECTION,
                 'signature_receivedby_image'
             );
 
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -179,7 +181,7 @@ class SafetyPettyController extends Controller
 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
-                    'sfty_petty_checklist' => $sfty_petty_checklist  ?? [],
+                    'sfty_petty_checklist' => $sfty_petty_checklist,
                     // 'signature_given_by' => $signature_given_by,
                     'signature_amount' => $signature_amount,
                 );
@@ -188,6 +190,191 @@ class SafetyPettyController extends Controller
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
+        }
+    }
+
+    public function StatusChange(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $this->sfty_petty_details->statuschange($id);
+
+            $this->sfty_petty_checklist->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->sfty_petty_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->document_number;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_date;
+                $export[] = getInspectionStatus($data->inspection_status);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Safety Petty Logbook.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->sfty_petty_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Safety Petty Logbook Details",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('ohcmanagement.safety_petty.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Safety Petty Logbook.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $sfty_petty_details = $this->sfty_petty_details->find($id);
+                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+
+                $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+                $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+                $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+
+                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+
+                $data = [
+                    'sfty_petty_details' => $sfty_petty_details,
+                    'sfty_petty_checklist' => $sfty_petty_checklist,
+                    'signature_amount' => $signature_amount,
+                    'pagetitle' => "Safety Petty Logbook Details",
+                ];
+            }
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ohcmanagement.safety_petty.generalpdf', $data)->render();
+            // dd($html);
+            $mpdf->WriteHTML($html);
+
+            $filename = "Safety Petty Logbook Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $employee_code = $request->employee_code;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->sfty_petty_checklist->uniqueCheck($employee_code);
+            } else {
+                $id = decryptId($id);
+                $record = $this->sfty_petty_checklist->ExistuniqueCheck($employee_code, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 

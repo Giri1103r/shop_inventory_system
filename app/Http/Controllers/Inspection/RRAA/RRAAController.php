@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Inspection;
+namespace App\Http\Controllers\Inspection\RRAA;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\RRAA\RRAAEmail;
 use App\Models\Inspection\Master\Frequency;
 use Illuminate\Http\Request;
-use App\Models\Inspection\RRAADetails;
-use App\Models\Inspection\RRAACheckList;
+use App\Models\Inspection\RRAA\RRAADetails;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\Inspection\Master\ChecklistType;
-use App\Models\Inspection\RRAAStatusLog;
+use App\Models\Inspection\RRAA\RRAAStatusLog;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\AdminController;
-use App\Models\Inspection\RRAASignatureUpload;
+use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
 class RRAAController extends Controller
 {

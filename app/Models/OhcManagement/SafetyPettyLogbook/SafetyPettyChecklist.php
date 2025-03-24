@@ -53,7 +53,7 @@ class SafetyPettyChecklist extends Model
             'employee_code' => $request->employee_code,
             'department' => decryptId($request->department_id),
             'unit' => decryptId($request->unit_id),
-            'date' => $request->date,
+            'date' => DBdateformat($request->date),
             'amount' => $request->amount,
             'description' => $request->description,
             'amount_given_by' => $request->amnt_givenby_id,
@@ -69,6 +69,35 @@ class SafetyPettyChecklist extends Model
 
     public function selectOne($id)
     {
-        return $this->where('safety_petty_logbook_details_id', $id)->get();
+        return $this->where('safety_petty_logbook_details_id', $id)->first();
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+        return $this->where('safety_petty_logbook_details_id', $id)->update($update_data);
+    }
+
+    public function UniqueCheck($data)
+    {
+        return $this->where('employee_code',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('employee_code',  $data)
+            ->where('id', '!=', $id)
+            ->get();
     }
 }

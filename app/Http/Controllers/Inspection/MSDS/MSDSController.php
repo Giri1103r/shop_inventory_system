@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection;
+namespace App\Http\Controllers\Inspection\MSDS;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\MSDS\MSDSEmail;
@@ -9,15 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Inspection\MSDSDetails;
-use App\Models\Inspection\MSDSCheckList;
+use App\Models\Inspection\MSDS\MSDSDetails;
+use App\Models\Inspection\MSDS\MSDSCheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use App\Models\Inspection\MSDSStatusLog;
+use App\Models\Inspection\MSDS\MSDSStatusLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\AdminController;
-use App\Models\Inspection\MSDSSignatureUpload;
+use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 
 class MSDSController extends Controller
 {

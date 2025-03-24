@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Inspection\MSDSController;
-use App\Http\Controllers\Inspection\RRAAController;
+use App\Http\Controllers\Inspection\MSDS\MSDSController;
+use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
@@ -302,13 +302,8 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('status', [SafetyPettyController::class, 'statusChange']);
     Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
     Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
-    Route::get('verification/{id}/{employee_type}', [SafetyPettyController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [SafetyPettyController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [SafetyPettyController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [SafetyPettyController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [SafetyPettyController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [SafetyPettyController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
+    Route::post('/unique', [SafetyPettyController::class, 'uniqueCheck']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {

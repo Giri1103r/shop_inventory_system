@@ -63,7 +63,6 @@ class SafetyPettyDetails extends Model
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
         if ($request->has('status') && $request->status) {
-
             $query = $query->where('status', decryptId($request->status));
         }
         $data_count = $query;
@@ -91,12 +90,65 @@ class SafetyPettyDetails extends Model
       
         $insert_array = array(
             'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
+            'issue_date' => DBdateformat($request->issue_date),
             'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
         );
       
         return $this->create($insert_array);
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('ohc_safety_petty_logbook_details.*');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query =  $query->Where(function ($query) use ($search) { 
+                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
+                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('document_number') && $request->document_number) {
+            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if ($request->has('issue_date') && $request->issue_date) {
+            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if ($request->has('revision_date') && $request->revision_date) {
+            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        }
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', decryptId($request->status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_safety_petty_logbook_details'));
     }
 
 }

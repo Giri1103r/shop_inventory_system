@@ -111,7 +111,7 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Employee Code</label>
-                                                                <input type="text" name="employee_code"
+                                                                <input type="text" name="employee_code" id="employee_code"
                                                                     class="form-control" placeholder="Employee Code"
                                                                     value="">
                                                             </div>
@@ -305,9 +305,9 @@
             // $(document).on('change', '[id^="unit_id-"]', function() {
             //     var unitId = $(this).val();
             //     var formSetCount = $(this).attr('id').split('-')[
-            //     1]; 
+            //     1];
             //     var departmentSelect = $('#department_id-' +
-            //     formSetCount); 
+            //     formSetCount);
 
             //     if (unitId) {
             //         $.ajax({
@@ -462,7 +462,16 @@
                     employee_code: {
                         required: true,
                         noSpaces: true,
-                        uniqueEmployeeCode: true,
+                       // uniqueEmployeeCode: true,
+                       remote: {
+                        url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
+                        type: 'post',
+                        data: {
+                            location_type_name: function() {
+                                return $('#employee_code').val();
+                            }
+                        }
+                    }
                     },
                     department_id: {
                         required: true,
@@ -493,7 +502,10 @@
                         required: true,
                         noSpaces: true,
                     },
-                    signature_image: {
+                    signature_givenby_image: {
+                        required: true,
+                    },
+                    signature_receivedby_image: {
                         required: true,
                     }
                 },
@@ -512,6 +524,7 @@
                     },
                     employee_code: {
                         required: "Employee Code is Required",
+                        remote: "{{ __('Employee Code should be unique') }}",
                     },
                     department_id: {
                         required: "Department is Required",
@@ -537,8 +550,11 @@
                     remark: {
                         required: "Remark is Required",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
+                    signature_givenby_image: {
+                        required: "Signature Given by Image is Required",
+                    },
+                    signature_receivedby_image: {
+                        required: "Signature Received by Image is Required",
                     }
                 },
                 errorElement: 'span',
@@ -562,18 +578,18 @@
             });
 
 
-            $.validator.addMethod("uniqueEmployeeCode", function(value, element) {
-                var employeeCodes = [];
+            // $.validator.addMethod("uniqueEmployeeCode", function(value, element) {
+            //     var employeeCodes = [];
 
-                $("input[name^='employee_code']").each(function() {
-                    var employeeCodeValue = $(this).val();
-                    if (employeeCodeValue) {
-                        employeeCodes.push(employeeCodeValue);
-                    }
-                });
+            //     $("input[name^='employee_code']").each(function() {
+            //         var employeeCodeValue = $(this).val();
+            //         if (employeeCodeValue) {
+            //             employeeCodes.push(employeeCodeValue);
+            //         }
+            //     });
 
-                return employeeCodes.indexOf(value) === employeeCodes.lastIndexOf(value);
-            }, "Employee Code must be unique");
+            //     return employeeCodes.indexOf(value) === employeeCodes.lastIndexOf(value);
+            // }, "Employee Code must be unique");
 
             let form_set_count = 2;
             let serial_number = parseInt("{{ getSPLBCount() }}", 10) + 1;
