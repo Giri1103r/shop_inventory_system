@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SafetyGalleryInspection;
+use App\Models\Inspection\Safety\SignatureUpload;
 
 class SafetyGalleryInsepctionController extends Controller
 {
@@ -25,7 +26,7 @@ class SafetyGalleryInsepctionController extends Controller
     private $unit;
     private $frequency;
     private $statusLog;
-    private $admin;
+    private $signature;
 
     public function __construct()
     {
@@ -33,8 +34,7 @@ class SafetyGalleryInsepctionController extends Controller
         $this->location = new Location();
         $this->unit = new Unit();
         $this->statusLog = new SafetyStatusLog();
-        $this->admin = new AdminController();
-
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -259,7 +259,7 @@ class SafetyGalleryInsepctionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'safetygallery Inspeciton Approved Successfully';
@@ -329,7 +329,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
             $inspection_details = $this->safetygallery->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -354,13 +354,13 @@ class SafetyGalleryInsepctionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+            // $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
             $details = array(
                 'safety_type' => 'Safety Gallery Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
-                'url' => $url,
+                // 'url' => $url,
                 'data' => $inspection_details
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
@@ -390,7 +390,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -464,7 +464,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -538,7 +538,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Safety Gallery Inspeciton Approved Successfully!';
@@ -664,7 +664,7 @@ class SafetyGalleryInsepctionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fork-lift-inspection/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 
@@ -714,7 +714,7 @@ class SafetyGalleryInsepctionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fork-lift-inspection/list'));
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
         }
     }
 

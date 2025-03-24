@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\RRAA;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
-use App\Scopes\TrashScope;
 
-class MSDSDetails extends Model
+class RRAADetails extends Model
 {
-
     use  HasFactory;
 
-    protected $table = 'inspection_msds_details';
+    protected $table = 'inspection_rraa_details';
 
     protected $primaryKey = 'id';
 
@@ -49,7 +48,7 @@ class MSDSDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_msds_details.*');
+        $query = $this->select('inspection_rraa_details.*');
       
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -104,26 +103,12 @@ class MSDSDetails extends Model
         $insert_array = array(
             'document_number' => $request->document_number,
             'issue_date' => $request->issue_date,
-            'revision_date' => todaydate('todaydate'),
+            'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
       
         return $this->create($insert_array);
-    }
-
-    public function updates($id)
-    { 
-        $request = request();
-       
-        $update_data = array(
-            'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
-            'updated_by' => Auth::id()
-        );
-       
-        $result = $this->where('id', $id)->update($update_data);
-        return $result;
     }
 
     public function selectOne($id)
@@ -133,7 +118,6 @@ class MSDSDetails extends Model
 
     public function EHSOfficerUpdate($id)
     {
-
         $request = request();
         if ($request->is_passed == 1) {
             $update_array = [
@@ -153,17 +137,6 @@ class MSDSDetails extends Model
             ];
             $this->where('id', $id)->update($update_array);
         }
-    }
-
-    public function capaSubmit($id)
-    {
-        $request = request();
-        $update_array = [
-            'capa_remarks' => $request->capa_remarks,
-            'updated_by' => Auth::id(),
-            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
-        ];
-        $this->where('id', $id)->update($update_array);
     }
 
     public function capaVerifySubmit($id, $status, $remarks)
@@ -186,6 +159,17 @@ class MSDSDetails extends Model
             ];
             $this->where('id', $id)->update($update_array);
         }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
     }
 
     public function levelOneManagerSubmit($id, $status, $remarks)
@@ -252,7 +236,7 @@ class MSDSDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_msds_details.*');
+        $query = $this->select('inspection_rraa_details.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -281,6 +265,6 @@ class MSDSDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_msds_details'));
+        static::addGlobalScope(new TrashScope('inspection_rraa_details'));
     }
 }

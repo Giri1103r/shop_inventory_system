@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Inspection\Safety\Master;
 
 use Exception;
+use App\Models\UploadLog;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportEquipmentJob;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
@@ -12,6 +15,7 @@ use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Safety\Master\Equipment;
 
 class EquipmentController extends Controller
 {
@@ -20,18 +24,16 @@ class EquipmentController extends Controller
 
     public function __construct()
     {
-        $this->precaution = new Precaution();
+        $this->equipment = new Equipment();
         $this->uploadlog = new UploadLog();
     }
 
     public function index(Request $request)
     {
-
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-
-                    $data =  $this->precaution->list();
+                    $data =  $this->equipment->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -51,12 +53,8 @@ class EquipmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ptw/precautionmaster/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ptw/precautionmaster/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            $btn = '<a href="' . admin_url('safety/master/equipment/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('safety/master/equipment/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
@@ -92,12 +90,10 @@ class EquipmentController extends Controller
     {
         try {
             $rules = [
-                'precaution' => 'required',
-
+                'equipment_name' => 'required',
             ];
             $messages = [
-                'precaution.required' => __('Precaution to be taken is required'),
-
+                'equipment_name.required' => __('equipment to be taken is required'),
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -105,17 +101,15 @@ class EquipmentController extends Controller
             }
 
             try {
-
-                $this->precaution->store();
-
+                $this->equipment->store();
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -124,10 +118,10 @@ class EquipmentController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $precaution = $this->precaution->selectOne($id);
+                $equipment = $this->equipment->selectOne($id);
 
                 $data = array(
-                    'precaution' => $precaution,
+                    'equipment' => $equipment,
                 );
             }
             return view('inspection.safety.master.equipment.view', $data);
@@ -140,10 +134,10 @@ class EquipmentController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $precaution = $this->precaution->find($id);
+            $equipment = $this->equipment->find($id);
 
             $data = array(
-                'precaution' => $precaution,
+                'equipment' => $equipment,
             );
             return view('inspection.safety.master.equipment.edit', $data);
         } catch (Exception $error) {
@@ -157,40 +151,41 @@ class EquipmentController extends Controller
             $id = decryptId($request->id);
 
             $rules = [
-                'precaution' => 'required',
+                'equipment_name' => 'required',
 
             ];
             $messages = [
-                'precaution.required' => __('Precaution to be taken is required'),
+                'equipment_name.required' => __('equipment to be taken is required'),
 
             ];
+            dd($request->all());
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
 
-            $this->precaution->updates($id);
+            $this->equipment->updates($id);
 
             Session::flash('success', __('Your data has been updated successfully'));
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
 
             Session::flash('error', __('Something went wrong try again'));
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $precaution = $request->precaution;
+            $equipment = $request->equipment_name;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->precaution->uniqueCheck($precaution);
+                $record = $this->equipment->uniqueCheck($equipment);
             } else {
                 $id = decryptId($id);
-                $record = $this->precaution->ExistuniqueCheck($precaution, $id);
+                $record = $this->equipment->ExistuniqueCheck($equipment, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -205,9 +200,9 @@ class EquipmentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->precaution->statuschange($id);
+            $this->equipment->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('Precaution to be taken status changed')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Equipment Status is changed')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
@@ -219,9 +214,9 @@ class EquipmentController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $this->precaution->deleterecord($id);
+            $this->equipment->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => __('Precaution to be taken deleted successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Equipment was deleted successfully')], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
@@ -231,14 +226,9 @@ class EquipmentController extends Controller
 
     public function DownloadSample(Request $request)
     {
-        // dd(5676578);
-        $filedetails =  exportsamplefile('precaution_taken');
-
-
-
+        $filedetails =  exportsamplefile('equipment');
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
-
         return Response::download($filePath, $customFileName);
     }
 
@@ -252,13 +242,13 @@ class EquipmentController extends Controller
     public function ImportSubmit(Request $request)
     {
         try {
-            $file = $request->file('precaution_upload');
+            $file = $request->file('equipment_file');
 
             $rules = [
-                'precaution_upload' => 'required',
+                'equipment_file' => 'required',
             ];
             $messages = [
-                'precaution_upload.required' => 'Please upload a file',
+                'equipment_file.required' => 'Please upload a file',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -266,15 +256,10 @@ class EquipmentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-
             if ($file != null) {
-
-                $uploadpath = 'public/uploads/ptw/';
-
-                $folderPath = public_path('uploads/ptw');
-
+                $uploadpath = 'public/uploads/inspection/master/equipment';
+                $folderPath = public_path('uploads/inspection/master/equipment');
                 if (!File::exists($folderPath)) {
-
                     File::makeDirectory($folderPath, 0755, true);
                 }
 
@@ -303,27 +288,24 @@ class EquipmentController extends Controller
 
                 $insert_id =  $this->uploadlog->create($insert_data)->id;
 
-
-
                 $details = [
                     "user_id" => $user_id,
                     "log_id" => $insert_id,
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportPrecautionJob($details));
-                   dispatch((new ImportPrecautionJob($details))->onQueue('precautionimport'));
+                // dispatch(new ImportequipmentJob($details));
+                dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Precaution to be taken uploaded sucessfully'));
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            Session::flash('success', __('Equipment name Uploaded sucessfully'));
+            return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
-
-            Session::flash('error', __('Precaution to be taken upload failed'));
-            return redirect(admin_url('ptw/precautionmaster/list'));
+            Session::flash('error', __('equipment to be taken upload failed'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -331,16 +313,14 @@ class EquipmentController extends Controller
     {
 
         try {
-
-            $allData = $this->precaution->exportdata();
-
+            $allData = $this->equipment->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
             $header = [
                 __("common.sno"),
-                __('Name'),
+                __('inspection.equipment_name'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -348,20 +328,18 @@ class EquipmentController extends Controller
 
             $i = 1;
             foreach ($allData as $data) {
-
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->precaution;
+                $export[] =  $data->equipment_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
-
                 $exportData[] = $export;
 
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Precaution to be taken .xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Equipment Name.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -378,7 +356,7 @@ class EquipmentController extends Controller
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData = $this->precaution->exportdata();
+            $allData = $this->equipment->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -386,7 +364,7 @@ class EquipmentController extends Controller
 
             $header = [
                 __("common.sno"),
-                __('Name'),
+                __('inspection.equipment_name'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -395,7 +373,7 @@ class EquipmentController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Precation to be takens Details",
+                'pagetitle' => "Equipment Name",
             );
 
             $property = [
@@ -417,12 +395,11 @@ class EquipmentController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Precation to be takens Details.pdf";
+            $filename = "Equipment Name.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
         }
     }
-
 }

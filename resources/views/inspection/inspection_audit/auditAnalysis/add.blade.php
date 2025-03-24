@@ -34,12 +34,20 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="msdsAdd" action="{{ admin_url('audit/6s-analysis/list/add/submit') }}">
+                                    <form method="POST" id="msdsAdd"
+                                        action="{{ admin_url('audit/6s-analysis/list/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">MSDS Details</h4>
+                                                <h4 class="text-white">Audit Analysis</h4>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">6S Audit Analysis Report </label>
+                                                    <input type="text" name ="auidt_analysis" class="form-control"
+                                                        placeholder="6S Audit Analysis Report" value="">
+                                                </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
@@ -67,22 +75,17 @@
                                         </div>
 
                                         <div class="row mt-4">
-                                            <div class="row mt-2">
-                                                <div
-                                                    class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                </div>
-                                            </div>
-
+                                         
                                             <div id="form-wrapper">
                                                 <div class="form-set mb-3">
                                                     <div class="card-header-inner">
                                                         <h4 class="text-white">MSDS CheckList</h4>
                                                     </div>
                                                     <div class="d-flex justify-content-end">
+                                                        <button class="btn btn-primary add-row me-3" type="button"
+                                                            id="add-row" style="width: 84px;">
+                                                            Add
+                                                        </button>
                                                         <button type="button" class="btn btn-danger remove-row">
                                                             <i class="fa-solid fa-trash"></i> Remove
                                                         </button>
@@ -163,136 +166,141 @@
 
 
 @push('script')
-<script type="text/javascript" nonce="projectcab">
-    $(document).ready(function() {
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
 
-        $('#resetform').on('click', function(e) {
-            e.preventDefault();
-            location.reload();
-        });
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
 
-        var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date(),
-        });
+            var fromDatepicker = flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+                minDate: new Date(),
+            });
 
-        $.validator.addMethod("noSpaces", function(value, element) {
-            return this.optional(element) || value.trim().length > 0;
-        }, "This field cannot contain only spaces");
+            $.validator.addMethod("noSpaces", function(value, element) {
+                return this.optional(element) || value.trim().length > 0;
+            }, "This field cannot contain only spaces");
 
-        $('#msdsAdd').validate({
-            rules: {
-                document_number: {
-                    required: true,
-                    noSpaces: true,
+            $('#msdsAdd').validate({
+                rules: {
+                    document_number: {
+                        required: true,
+                        noSpaces: true,
+                    },
+                    issue_date: {
+                        required: true,
+                    },
+                    revision_date: {
+                        required: true,
+                    },
+                    'item_code[1]': {
+                        required: true,
+                        uniqueItemCode: true,
+                        noSpaces: true,
+                    },
+                    'name_of_chemical[1]': {
+                        required: true,
+                        noSpaces: true,
+                    },
+                    'msds_availability_status[1]': {
+                        required: true,
+                    },
+                    'remark[1]': {
+                        required: true,
+                        noSpaces: true,
+                    },
                 },
-                issue_date: {
-                    required: true,
+                messages: {
+                    document_number: {
+                        required: "Document Number is Required",
+                    },
+                    issue_date: {
+                        required: "Please Select Issue Date",
+                    },
+                    revision_date: {
+                        required: "Please Select Revision Date",
+                    },
+                    'item_code[1]': {
+                        required: "Item Code is Required",
+                        uniqueItemCode: "Item Code must be unique",
+                    },
+                    'name_of_chemical[1]': {
+                        required: "Name of Chemical is Required",
+                    },
+                    'msds_availability_status[1]': {
+                        required: "MSDS Availability Status is Required",
+                    },
+                    'remark[1]': {
+                        required: "Remark is Required",
+                    },
                 },
-                revision_date: {
-                    required: true,
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
                 },
-                'item_code[1]': {
-                    required: true,
-                    uniqueItemCode: true,
-                    noSpaces: true,
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
                 },
-                'name_of_chemical[1]': {
-                    required: true,
-                    noSpaces: true,
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
                 },
-                'msds_availability_status[1]': {
-                    required: true,
+                submitHandler: function(form) {
+                    form.submit();
                 },
-                'remark[1]': {
-                    required: true,
-                    noSpaces: true,
-                },
-            },
-            messages: {
-                document_number: {
-                    required: "Document Number is Required",
-                },
-                issue_date: {
-                    required: "Please Select Issue Date",
-                },
-                revision_date: {
-                    required: "Please Select Revision Date",
-                },
-                'item_code[1]': {
-                    required: "Item Code is Required",
-                    uniqueItemCode: "Item Code must be unique",
-                },
-                'name_of_chemical[1]': {
-                    required: "Name of Chemical is Required",
-                },
-                'msds_availability_status[1]': {
-                    required: "MSDS Availability Status is Required",
-                },
-                'remark[1]': {
-                    required: "Remark is Required",
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-
-
-        $.validator.addMethod("uniqueItemCode", function(value, element) {
-            var itemCodes = [];
-            
-            $("input[name^='item_code']").each(function() {
-                var itemCodeValue = $(this).val();
-                if (itemCodeValue) {
-                    itemCodes.push(itemCodeValue);  
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
             });
-           
-            return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
-        }, "Item Code must be unique");
 
-        let form_set_count = 2;
-        let serial_number = parseInt("{{ getMSDSCount() }}", 10) + 1;
-        const maxFormSets = 200;
-        const minFormSets = 1;
 
-        $(".add-row").click(function() {
-            let currentFormSets = $('#form-wrapper .form-set').length;
+            $.validator.addMethod("uniqueItemCode", function(value, element) {
+                var itemCodes = [];
 
-            if (currentFormSets >= maxFormSets) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Maximum MSDS CheckList Reached',
-                    text: 'You can only add up to 200 MSDS CheckList.',
-                    confirmButtonColor: '#3085d6'
+                $("input[name^='item_code']").each(function() {
+                    var itemCodeValue = $(this).val();
+                    if (itemCodeValue) {
+                        itemCodes.push(itemCodeValue);
+                    }
                 });
-                return;
-            }
 
-            let newSerialNumber = 'MSDS-' + ('0000' + serial_number).slice(-5);
+                return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
+            }, "Item Code must be unique");
 
-            var newFormSet = `
+            let form_set_count = 2;
+            let serial_number = parseInt("{{ getMSDSCount() }}", 10) + 1;
+            const maxFormSets = 200;
+            const minFormSets = 1;
+
+            // $(".add-row").click(function() {
+            $(document).on('click', ".add-row", function() {
+                let currentFormSets = $('#form-wrapper .form-set').length;
+
+                if (currentFormSets >= maxFormSets) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Maximum MSDS CheckList Reached',
+                        text: 'You can only add up to 200 MSDS CheckList.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+
+                let newSerialNumber = 'MSDS-' + ('0000' + serial_number).slice(-5);
+
+                var newFormSet = `
                 <div class="form-set mb-3">
                     <div class="card-header-inner">
                         <h4 class="text-white">MSDS CheckList</h4>
                     </div>
                     <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary add-row me-3" type="button"
+                            id="add-row" style="width: 84px;">
+                            Add
+                        </button>
                         <button type="button" class="btn btn-danger remove-row">
                             <i class="fa-solid fa-trash"></i> Remove
                         </button>
@@ -339,92 +347,95 @@
                     </div>
                 </div>`;
 
-            $('#form-wrapper').append(newFormSet);
+                $('#form-wrapper').append(newFormSet);
 
-            serial_number++;
+                serial_number++;
 
-            $('select[name^="msds_availability_status["]').each(function() {
-                $(this).select2({
-                    placeholder: "Select MSDS Availability Status",
-                    width: '100%'
+                $('select[name^="msds_availability_status["]').each(function() {
+                    $(this).select2({
+                        placeholder: "Select MSDS Availability Status",
+                        width: '100%'
+                    });
                 });
-            });
 
-            $("input[name='item_code[" + form_set_count + "]']").rules('add', {
-                required: true,
-                uniqueItemCode: true,
-                noSpaces: true,
-                messages: {
-                    required: 'Item Code is required',
-                    uniqueItemCode: 'Item Code must be unique',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-
-            $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
-                required: true,
-                noSpaces: true, 
-                messages: {
-                    required: 'Name of Chemical is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-
-            $("select[name='msds_availability_status[" + form_set_count + "]']").rules('add', {
-                required: true,
-                messages: {
-                    required: 'MSDS Availability Status is required',
-                }
-            });
-
-            $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
-                required: true,
-                noSpaces: true,
-                messages: {
-                    required: 'Remark is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
-                }
-            });
-            form_set_count++;
-            updatePageIndices(); 
-        });
-
-        $(document).on('click', '.remove-row', function() {
-            let currentFormSets = $('#form-wrapper .form-set').length;
-
-            if (currentFormSets <= minFormSets) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Minimum MSDS CheckList Required',
-                    text: 'At least 1 MSDS CheckList is required.',
-                    confirmButtonColor: '#3085d6'
+                $("input[name='item_code[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    uniqueItemCode: true,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Item Code is required',
+                        uniqueItemCode: 'Item Code must be unique',
+                        noSpaces: 'Item Code cannot be empty or only spaces'
+                    }
                 });
-                return;
-            }
-            $(this).closest('.form-set').remove();
-            updatePageIndices();
-        });
 
-        function updatePageIndices() {
-            $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(-5));
+                $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Name of Chemical is required',
+                        noSpaces: 'Item Code cannot be empty or only spaces'
+                    }
+                });
 
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']'); 
-                $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (index + 1) + ']');
-                $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']'); 
-                $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
+                $("select[name='msds_availability_status[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'MSDS Availability Status is required',
+                    }
+                });
+
+                $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Remark is required',
+                        noSpaces: 'Remark cannot be empty or only spaces'
+                    }
+                });
+                form_set_count++;
+                updatePageIndices();
             });
-        }
 
-        $(".submit").on('click', function() {
-            if ($("#msdsAdd").valid()) {
-                $("#msdsAdd").submit();
-            } else {
-                return false;
+            $(document).on('click', '.remove-row', function() {
+                let currentFormSets = $('#form-wrapper .form-set').length;
+
+                if (currentFormSets <= minFormSets) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Minimum MSDS CheckList Required',
+                        text: 'At least 1 MSDS CheckList is required.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+                $(this).closest('.form-set').remove();
+                updatePageIndices();
+            });
+
+            function updatePageIndices() {
+                $('#form-wrapper .form-set').each(function(index) {
+                    $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(
+                        -5));
+
+                    $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index +
+                        1) + ']');
+                    $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']');
+                    $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (
+                        index + 1) + ']');
+                    $(this).find('select[name^="msds_availability_status"]').attr('name',
+                        'msds_availability_status[' + (index + 1) + ']');
+                    $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
+                });
             }
+
+            $(".submit").on('click', function() {
+                if ($("#msdsAdd").valid()) {
+                    $("#msdsAdd").submit();
+                } else {
+                    return false;
+                }
+            });
         });
-    });
-</script>
+    </script>
 @endpush
-

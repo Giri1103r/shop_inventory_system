@@ -235,13 +235,13 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'CAT-' . getautogen($count);
                 break;
-            
+
             case 'gembaWalk':
                 $count = GembaWalk::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'GMB-' . getautogen($count);
                 break;
-                
+
             case 'incident_checklist_subtype':
                 $count = ChecklistSubType::withoutGlobalScopes()->count();
                 $count = $count + 1;
@@ -301,9 +301,7 @@ if (!function_exists('getohctotalCount')) {
 
         switch ($type) {
 
-            case 'requisition':
-                $count = UserMedicineRequisition::where('approve_status', STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
-                break;
+          
             case 'medicine':
                 $count = Medicine::where('status', 1)->count();
                 break;

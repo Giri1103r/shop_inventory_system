@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection;
+namespace App\Http\Controllers\Inspection\MSDS;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\MSDS\MSDSEmail;
@@ -9,13 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Inspection\MSDSDetails;
-use App\Models\Inspection\MSDSCheckList;
+use App\Models\Inspection\MSDS\MSDSDetails;
+use App\Models\Inspection\MSDS\MSDSCheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use App\Models\Inspection\MSDSStatusLog;
+use App\Models\Inspection\MSDS\MSDSStatusLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Admin\AdminController;
+use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 
 class MSDSController extends Controller
 {
@@ -23,12 +25,14 @@ class MSDSController extends Controller
     private $msdsDetails;
     private $msdsCheckList;
     private $statusLog;
+    private $signature;
 
     public function __construct()
     {
         $this->msdsDetails = new MSDSDetails();
         $this->msdsCheckList = new MSDSCheckList();
         $this->statusLog = new MSDSStatusLog();
+        $this->signature = new MSDSSignatureUpload();
     }
 
     public function Index(Request $request)
@@ -144,7 +148,7 @@ class MSDSController extends Controller
 
     public function Store(Request $request)
     {
-       
+
         try {
             $rules = [
                 'document_number' => 'required',
@@ -168,12 +172,12 @@ class MSDSController extends Controller
                 'remark.required' => __('Remark is required'),
 
             ];
-         
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             try {
 
                $msds = $this->msdsDetails->store();
@@ -183,7 +187,7 @@ class MSDSController extends Controller
                $mailsubject = 'MSDS Inspection completed by fire associate';
                $ehsOfficer = GetEHSOfficer();
                $message = 'MSDS Inspection completed by fire associate';
-           
+
                if (count($ehsOfficer) > 0) {
                     foreach ($ehsOfficer as $user) {
 
@@ -191,7 +195,7 @@ class MSDSController extends Controller
 
                         if ($email_id != '' || $email_id != null) {
                             $data = $this->msdsDetails->selectOne($msdsId);
-                            
+
                             $data = array(
                                 'data' => $data,
                                 'mail_subject' => 'MSDS Inspection',
@@ -199,7 +203,7 @@ class MSDSController extends Controller
                             );
 
                             Mail::to($email_id)->queue(new MSDSEmail($data));
-                            
+
                         }
                     }
                 }
@@ -240,7 +244,7 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
 
             $this->msdsDetails->statuschange($id);
-           
+
             $this->msdsCheckList->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -301,6 +305,7 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
             $inspection_updates = $this->msdsDetails->EHSOfficerUpdate($id);
             $inspection_details = $this->msdsDetails->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($request->is_passed == 1) {
                 $message = 'MSDS Inspeciton Approved Successfully';
                 $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
@@ -336,11 +341,11 @@ class MSDSController extends Controller
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
                 'remarks' => $request->remarks,
-            ]; 
+            ];
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-          
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -354,7 +359,6 @@ class MSDSController extends Controller
                             'mail_subject' => 'MSDS Inspection',
                             'message' => $message,
                         );
-
 
                         Mail::to($email_id)->queue(new MSDSEmail($data));
                      }
@@ -376,6 +380,7 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
             $forklift_inspection = $this->msdsDetails->capaSubmit($id);
             $inspection_details = $this->msdsDetails->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -408,7 +413,7 @@ class MSDSController extends Controller
 
             $message = 'CAPA Action completed by Fire Associates';
             $ehsOfficer = GetEHSOfficer();
-          
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -445,6 +450,7 @@ class MSDSController extends Controller
             $remarks = $request->remarks;
             $forklift_inspection = $this->msdsDetails->capaVerifySubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
                 $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
@@ -487,7 +493,7 @@ class MSDSController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-          
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -524,6 +530,7 @@ class MSDSController extends Controller
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->msdsDetails->levelOneManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
                 $web_link =   admin_url('msds/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
@@ -566,7 +573,7 @@ class MSDSController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-          
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -603,6 +610,7 @@ class MSDSController extends Controller
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->msdsDetails->levelTwoManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->msdsDetails->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'MSDS Inspeciton Approved Successfully!';
                 $web_link =   admin_url('msds/view/' . encryptId($inspection_details->id));
@@ -643,7 +651,7 @@ class MSDSController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-          
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -679,7 +687,7 @@ class MSDSController extends Controller
         try {
 
             $allData = $this->msdsDetails->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -796,7 +804,7 @@ class MSDSController extends Controller
                     'msdsCheckList' => $msdsCheckList,
                     'pagetitle' => "MSDS Details",
                 ];
-    
+
             }
 
             $property = [
@@ -825,10 +833,10 @@ class MSDSController extends Controller
     public function edit($id)
     {
         try {
-            $id = decryptId($id); 
+            $id = decryptId($id);
 
             $msdsDetails = $this->msdsDetails->find($id);
-            
+
             $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
             $data = [
@@ -844,7 +852,7 @@ class MSDSController extends Controller
 
     public function update(Request $request)
     {
-       
+
         try {
             $id = decryptId($request->id);
 
@@ -866,18 +874,18 @@ class MSDSController extends Controller
                 'msds_availability_status.required' => __('MSDS Availability Status is required'),
                 'remark.required' => __('Remark is required'),
             ];
-         
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             try {
 
                $msds = $this->msdsDetails->updates($id);
                 $msds_details = $this->msdsDetails->selectOne($id);
                $msdsId = $msds_details->id;
-            
+
                $this->msdsCheckList->updates($msdsId);
 
                Session::flash('success', __('common.updated_msg'));

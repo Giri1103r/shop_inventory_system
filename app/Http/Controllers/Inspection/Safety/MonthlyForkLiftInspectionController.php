@@ -21,6 +21,7 @@ use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
 use App\Models\Inspection\Safety\MonthlyForkLiftInspection;
+use App\Models\Inspection\Safety\SignatureUpload;
 
 class MonthlyForkLiftInspectionController extends Controller
 {
@@ -32,7 +33,7 @@ class MonthlyForkLiftInspectionController extends Controller
     private $unit;
     private $frequency;
     private $statusLog;
-    private $admin;
+    private $signature;
 
     public function __construct()
     {
@@ -44,7 +45,7 @@ class MonthlyForkLiftInspectionController extends Controller
         $this->frequency = new Frequency();
         $this->forklift_type = new ForkLiftType();
         $this->statusLog = new SafetyStatusLog();
-        $this->admin = new AdminController();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -277,7 +278,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
             $inspection_updates = $this->forklift->EHSOfficerUpdate($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
             $inspection_details = $this->forklift->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'ForkLift Inspeciton Approved Successfully';
@@ -347,7 +348,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $forklift_inspection = $this->forklift->capaSubmit($id);
             $inspection_details = $this->forklift->selectOne($id);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -408,7 +409,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $forklift_inspection = $this->forklift->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -482,7 +483,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->forklift->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -555,7 +556,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->forklift->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->admin->signatureUpload($request);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'ForkLift Inspeciton Approved Successfully!';

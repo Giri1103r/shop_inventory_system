@@ -201,7 +201,7 @@
                                                             {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                                 {{ $injury->department_name }}
                                                             @else --}}
-                                                                {{ $injury->injury_person_department_id }}
+                                                            {{ $injury->injury_person_department_id }}
                                                             {{-- @endif --}}
                                                         </td>
                                                         <td>
@@ -217,19 +217,23 @@
 
 
                                                         <td>
+
                                                             @php
                                                                 $imgMapDataDecoded = json_decode(
                                                                     $injury->imgMapdata,
                                                                     true,
                                                                 );
                                                             @endphp
-                                                            @if ($imgMapDataDecoded)
+                                                            @if (isset($imgMapDataDecoded['map']['total']) && is_array($imgMapDataDecoded['map']['total']))
                                                                 <ul>
                                                                     @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
                                                                         <li>{{ ucfirst($key) }}: {{ $value }}</li>
                                                                     @endforeach
                                                                 </ul>
+                                                            @else
+                                                                <p>No data available</p>
                                                             @endif
+
                                                         </td>
                                                     </tr>
                                                 @endforeach

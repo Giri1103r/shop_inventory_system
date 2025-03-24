@@ -40,6 +40,64 @@ class SafetyPettyChecklist extends Model
     protected $attributes = [
         'status' => 1,
         'trash' => 'NO'
-    ]; 
+    ];
 
+    public function store($sfty_petty_id)
+    {
+        $request = request();
+
+        $insert_array = array(
+            'safety_petty_logbook_details_id' => $sfty_petty_id,
+            'serial_number' =>$request->serial_number,
+            'employee_name' => $request->emp_id,
+            'employee_code' => $request->employee_code,
+            'department' => decryptId($request->department_id),
+            'unit' => decryptId($request->unit_id),
+            'date' => DBdateformat($request->date),
+            'amount' => $request->amount,
+            'description' => $request->description,
+            'amount_given_by' => $request->amnt_givenby_id,
+            'amount_received_by' => $request->amnt_receivedby_id,
+            'remark' => $request->remark,
+            'created_by' => Auth::id(),
+        );
+
+        $insertedData =  $this->create($insert_array);
+          
+        return $insertedData;
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('safety_petty_logbook_details_id', $id)->first();
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+        return $this->where('safety_petty_logbook_details_id', $id)->update($update_data);
+    }
+
+    public function UniqueCheck($data)
+    {
+        return $this->where('employee_code',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('employee_code',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\OhcManagement\SafetyPettyLogbook;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyDetails;
@@ -13,18 +14,31 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Master\Work;
+use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\User;
+use Illuminate\Support\Facades\Response;
 
 class SafetyPettyController extends Controller
 {
     private $sfty_petty_details;
     private $sfty_petty_checklist;
     private $employee;
+    private $work;
+    private $unit;
+    private $signature;
+    private $user;
 
     public function __construct()
     {
         $this->sfty_petty_details = new SafetyPettyDetails();
         $this->sfty_petty_checklist = new SafetyPettyChecklist();
         $this->employee = new Employee();
+        $this->work = new Work();
+        $this->unit = new Unit();
+        $this->signature = new OhcSignature();
+        $this->user = new User();
+
     }
 
     public function Index(Request $request)
@@ -81,7 +95,11 @@ class SafetyPettyController extends Controller
     public function add(Request $request)
     {
         try {
-            $data = array();
+            $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+            $unit = $this->unit->getunit();
+            $data = [
+                'unit' => $unit,
+            ];
             return view('ohcmanagement.safety_petty.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -90,61 +108,274 @@ class SafetyPettyController extends Controller
 
     public function Store(Request $request)
     {
-       
         try {
-            $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
-                'serial_number' => 'required',
-                'employee_name' => 'required',
-                'employee_code' => 'required',
-                'department' => 'required',
-                'unit' => 'required',
-                'date' => 'required',
-                'amount' => 'required',
-                'description' => 'required',
-                'amount_given_by' => 'required',
-                'amount_received_by' => 'required',
-                'remark' => 'required',
-            ];
-            $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
-                'serial_number.required' => __('Serial Number is required'),
-                'employee_name.required' => __('Employee Name is required'),
-                'employee_code.required' => __('Employee Code is required'),
-                'department.required' => __('Department is required'),
-                'unit.required' => __('Unit is required'),
-                'date.required' => __('Date is required'),
-                'amount.required' => __('Amount is required'),
-                'description.required' => __('Description is required'),
-                'amount_given_by.required' => __('Amount Given by is required'),
-                'amount_received_by.required' => __('Amount Received by is required'),
-                'remark.required' => __('Remark is required'),
-            ];
-         
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            
-            try {
 
-               $sfty_petty_details = $this->sfty_petty_details->store();
-               $sfty_petty_Id = $sfty_petty_details->id;
-               $this->sfty_petty_checklist->store($sfty_petty_Id);
+            $sfty_petty_details = $this->sfty_petty_details->store();
+            $sfty_petty_id = $sfty_petty_details->id;
+            $this->sfty_petty_checklist->store($sfty_petty_id);
+            $empId =  Auth::user()->employee_id;
 
-                Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
-            }
+            $this->signature->signatureLogUpload(
+                $empId, $sfty_petty_id ,
+                OHC_AMOUNT_GIVENBY_INSPECTION,
+                'signature_givenby_image'
+            );
+
+            $this->signature->signatureLogUpload(
+                  $empId, $sfty_petty_id ,
+                OHC_AMOUNT_RECEIVEDBY_INSPECTION,
+                'signature_receivedby_image'
+            );
+
+            Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
+
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                ];
+            })
+        );
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $sfty_petty_details = $this->sfty_petty_details->find($id);
+                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+
+                $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+                $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+                $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+
+                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+                // $signature_received_by = $this->signature->getLogReceivedby($type,$sub_type_received);
+
+                $data = array(
+                    'sfty_petty_details' => $sfty_petty_details,
+                    'sfty_petty_checklist' => $sfty_petty_checklist,
+                    // 'signature_given_by' => $signature_given_by,
+                    'signature_amount' => $signature_amount,
+                );
+            }
+            return view('ohcmanagement.safety_petty.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
+    }
+
+    public function StatusChange(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $this->sfty_petty_details->statuschange($id);
+
+            $this->sfty_petty_checklist->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->sfty_petty_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->document_number;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_date;
+                $export[] = getInspectionStatus($data->inspection_status);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Safety Petty Logbook.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->sfty_petty_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("common.status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Safety Petty Logbook Details",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('ohcmanagement.safety_petty.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Safety Petty Logbook.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $sfty_petty_details = $this->sfty_petty_details->find($id);
+                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+
+                $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+                $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+                $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+
+                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+
+                $data = [
+                    'sfty_petty_details' => $sfty_petty_details,
+                    'sfty_petty_checklist' => $sfty_petty_checklist,
+                    'signature_amount' => $signature_amount,
+                    'pagetitle' => "Safety Petty Logbook Details",
+                ];
+            }
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ohcmanagement.safety_petty.generalpdf', $data)->render();
+            // dd($html);
+            $mpdf->WriteHTML($html);
+
+            $filename = "Safety Petty Logbook Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $employee_code = $request->employee_code;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->sfty_petty_checklist->uniqueCheck($employee_code);
+            } else {
+                $id = decryptId($id);
+                $record = $this->sfty_petty_checklist->ExistuniqueCheck($employee_code, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
+
 }

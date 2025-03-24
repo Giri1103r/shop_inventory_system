@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type')
-@section('pageurl', admin_url('inspection/master/checklist-type/list'))
+@section('title', 'Equipment Edit')
+@section('pageurl', admin_url('safety/master/equipment/list'))
 
 
 @section('content')
@@ -43,82 +43,38 @@
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
+                                        href="{{ admin_url('safety/master/equipment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="checklistadd"
-                                        action="{{ admin_url('inspection/master/checklist-type/edit/submit') }}"
+                                    <form method="POST" id="equipmentEdit"
+                                        action="{{ admin_url('safety/master/equipment/edit/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($checklist_type->id) }}" name="id"
+                                        <input type="hidden" value="{{ encryptId($equipment->id) }}" name="id"
                                             id="id" />
 
                                         <div class="row">
                                             <div class="form-input col-md-4 mb-2">
-                                                <label class="form-label require">Category Id</label>
-                                                <input type="text" name="checklist_type_category_id" id = "checklist"
-                                                    class="form-control" readonly
-                                                    value="{{ $checklist_type->category_id }}">
+                                                <label class="form-label require">{{__('inspection.equipment_name')}}</label>
+                                                <input type="text" name="equipment_name" id = "equipment_name"
+                                                    class="form-control"
+                                                    value="{{ $equipment->equipment_name }}">
                                             </div>
-
-
-                                            <div class="form-input col-md-4 mb-2">
-                                                <label class="form-label require">Category Name</label>
-                                                <input type="text" name="checklist_category" id = "checklist_category"
-                                                    class="form-control" placeholder="Enter Category Name"
-                                                    value="{{ $checklist_type->category_name }}">
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label for="work_station_id"
-                                                    class="col-sm-5 form-label  required">Questionary</label>
-                                                <select name="questionary_id" id="questionary_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Questionary</option>
-                                                    @foreach ($checklist_options as $checklist_option)
-                                                        <option value="{{ encryptId($checklist_option->id) }}"
-                                                            @if ($checklist_type->questionary == $checklist_option->id) selected @endif>
-                                                            {{ $checklist_option->type }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="form-input col-md-4 mb-2">
-                                                <label class="form-label">Image</label>
-                                                <input type="file" name="checklist_file" id="checklist_file"
-                                                    class="form-control form-control-sm" accept="image/jpeg"
-                                                    placeholder="Enter the image">
-                                                <small>Allowed file types: jpg</small>
-                                                <div id="checklist_file_error" class="text-danger"></div>
-                                                <div>
-                                                    @if (!empty($checklist_images))
-                                                        <a href="{{ asset($checklist_images->file_path) }}" target="_blank">
-                                                            <img src="{{ asset($checklist_images->file_path) }}"
-                                                                alt="Image" style="max-width: 50%;">
-                                                        </a>
-                                                    @endif
-                                                </div>
-                                                {{-- @error('checklist_file')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror --}}
-                                            </div>
-
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('safety/master/equipment/list') }}"></x-button-cancel>
                                         </div>
-
                                     </form>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -153,46 +109,33 @@
                     1];
             }, "File size must be between 50KB and 5MB");
 
-            $('#checklistadd').validate({
+            $('#equipmentEdit').validate({
                 rules: {
-                    checklist_category: {
+                    equipment_name : {
                         required: true,
                         minlength: 3,
                         maxlength: 100,
                         noSpaces: true,
                         remote: {
-                            url: '{{ admin_url('inspection/master/checklist-type/unique') }}',
+                            url: '{{ admin_url('safety/master/equipment/unique') }}',
                             type: 'post',
                             data: {
-                                checklist_category: function() {
-                                    return $('#checklist_category').val();
+                                equipment_name: function() {
+                                    return $('#equipment_name').val();
                                 },
                                 id: function() {
                                     return $('#id').val();
                                 }
                             }
                         }
-                    },
-                    questionary_id: {
-                        required: true,
-                    },
-                    checklist_file: {
-                        extension: "jpg",
-                        filesize: [50, 5120],
-                    },
+                    }
                 },
                 messages: {
-                    checklist_category: {
-                        required: "{{ __('Name is Required') }}",
+                    equipment_name: {
+                        required: "{{ __('Equipment Name is Required') }}",
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
-                        remote: "Name should be unique",
-                    },
-                    questionary_id: {
-                        required: "{{ __('inspection.questionary_required') }}",
-                    },
-                    checklist_file: {
-                        extension: "Only .jpg files are allowed. Please upload a valid image file.",
+                        remote: "Equipment Name should be unique",
                     }
                 },
                 errorElement: 'div',

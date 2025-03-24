@@ -36,7 +36,7 @@ class SafetyInspection extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'inspection.Safety.email.safety_email',
+            view: 'emails.inspection.safety.safety_email',
             with: ['details' => $this->details]
         );
     }

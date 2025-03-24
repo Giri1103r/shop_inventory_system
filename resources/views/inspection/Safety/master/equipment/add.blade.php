@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Precaution to be taken Add')
-@section('pageurl', admin_url('ptw/precautionmaster/list'))
+@section('title', 'Equipment Add')
+@section('pageurl', admin_url('safety/master/equipment/list'))
 
 
 @section('content')
@@ -23,22 +23,22 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ptw/precautionmaster/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('safety/master/equipment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safe_workadd" action="{{ admin_url('ptw/precautionmaster/add/submit') }}">
+                                    <form method="POST" id="equipmentAdd" action="{{ admin_url('safety/master/equipment/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Name</label>
-                                                    <input type="text" name="precaution" id = "precaution" class="form-control"
-                                                        placeholder="Name">
+                                                    <label class="form-label require">{{__('inspection.equipment_name')}}</label>
+                                                    <input type="text" name="equipment_name" id = "equipment_name" class="form-control"
+                                                        placeholder="Equipment Name">
                                                 </div>
                                             </div>
 
@@ -46,11 +46,10 @@
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
-
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                            href="{{ admin_url('ptw/precautionmaster/list') }}"></x-button-cancel>
+                                            href="{{ admin_url('safety/master/equipment/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -70,18 +69,18 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(function() {
-            $('#safe_workadd').validate({
+            $('#equipmentAdd').validate({
                 rules: {
-                    precaution: {
+                    equipment_name: {
                         required: true,
                         minlength: 3,
                         maxlength: 2000,
                         remote: {
-                            url: '{{ admin_url("ptw/precautionmaster/unique") }}',
+                            url: '{{ admin_url("safety/master/equipment/unique") }}',
                             type: 'post',
                             data: {
-                                precaution: function() {
-                                    return $('#precaution').val();
+                                equipment_name: function() {
+                                    return $('#equipment_name').val();
                                 }
                             }
                         }
@@ -89,11 +88,11 @@
 
                 },
                 messages: {
-                    precaution: {
-                        required: "{{ __('Name is Required') }}",
+                    equipment_name: {
+                        required: "{{ __('Equipment Name is Required') }}",
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 2000",
-                        remote: "{{ __('Name should be unique') }}",
+                        remote: "{{ __('Equipment Name should be unique') }}",
 
                     },
 

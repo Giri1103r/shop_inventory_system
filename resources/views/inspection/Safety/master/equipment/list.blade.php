@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type')
-@section('pageurl', admin_url('inspection/master/checklist-type/list'))
+@section('title', 'Equipment List')
+@section('pageurl', admin_url('safety/master/equipment/list'))
 
 
 @section('content')
@@ -11,14 +11,13 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                            {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
+                        <x-button-import href="{{ admin_url('safety/master/equipment/import') }}"></x-button-import>
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('safety/master/equipment/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -27,8 +26,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">{{__('inspection.checklist_type_name')}}</label>
-                                            <input type="text" name="category_name" id="category_name"
+                                            <label for="equipment_name"
+                                                class="form-label ">{{ __('inspection.equipment_name') }}</label>
+                                            <input type="text" name="equipment_name" id="equipment_name"
                                                 class="form-control">
                                         </div>
 
@@ -61,8 +61,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('inspection.checklist_type_id')}}</th>
-                                        <th>{{__('inspection.checklist_type_name')}}</th>
+                                        <th>{{ __('inspection.equipment_name') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -113,14 +112,14 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('inspection/master/checklist-type/list') }}",
+                        url: "{{ admin_url('safety/master/equipment/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.category_name = $('#category_name').val();
+                            d.equipment_name = $('#equipment_name').val();
                             d.status = $('#status').val();
 
                         },
@@ -136,14 +135,9 @@
                             orderable: false,
                             searchable: true,
                         },
-
                         {
-                            data: 'category_id',
-                            name: 'category_id'
-                        },
-                        {
-                            data: 'category_name',
-                            name: 'category_name'
+                            data: 'equipment_name',
+                            name: 'equipment_name'
                         },
                         {
                             data: 'status',
@@ -182,15 +176,15 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#category_name').val();
+                                        equipment_name = $('#equipment_name').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
+                                            "{{ admin_url('safety/master/equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&category_name=' + checklist +
+                                            '&equipment_name=' + equipment_name +
                                             '&status=' + status
                                     }
                                 },
@@ -199,14 +193,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#category_name').val();
+                                        equipment_name = $('#equipment_name').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
+                                            "{{ admin_url('safety/master/equipment/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&category_name=' + checklist +
+                                            '&equipment_name=' + equipment_name +
                                             '&status=' + status
                                     }
                                 },
@@ -243,12 +237,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('inspection.inactive_msg') }}';
+                        var title = '{{ __('inspection.equipment_inactive_msg') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('inspection.active_msg') }}';
+                        var title = '{{ __('inspection.equipment_active_msg') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -266,7 +260,7 @@
                     }).then((result) => {
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/status') }}",
+                                url: "{{ admin_url('safety/master/equipment/status') }}",
                                 type: 'post',
                                 data: {
                                     id: id,
@@ -313,7 +307,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var title = '{{ __('Do You want to Delete the Equipment') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -333,7 +327,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
+                                url: "{{ admin_url('safety/master/equipment/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

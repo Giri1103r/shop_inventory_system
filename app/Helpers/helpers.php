@@ -12,6 +12,7 @@ use App\Models\UploadLogType;
 use App\Models\UserPermission;
 use App\Models\Master\Employee;
 use App\Models\Master\UserRole;
+use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master\ForkLiftType;
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Inspection\MSDS\MSDSCheckList;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
@@ -32,8 +35,6 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Inspection\RRAACheckList;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
@@ -1538,6 +1539,22 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getEquipmentName')) {
+
+        function getEquipmentName($userid)
+        {
+
+            $equipment_name = DB::table('inspection_safety_master_equipment')->select('equipment_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($equipment_name == null) {
+                return '';
+            } else {
+                return $equipment_name->equipment_name;
+            }
+        }
+    }
+
     if (!function_exists('getBloodGroupname')) {
 
         function getBloodGroupname($userid)
@@ -1605,6 +1622,20 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $suggested_by->suggested_by;
+            }
+        }
+    }
+    if (!function_exists('getFirstAider')) {
+
+        function getFirstAider($userid)
+        {
+
+            $certifier_name = DB::table('ohc_master_certified_first_aider')->select('certifier_name')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($certifier_name == null) {
+                return '';
+            } else {
+                return $certifier_name->certifier_name;
             }
         }
     }
@@ -1772,6 +1803,44 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getFloormanager')) {
+        function getFloormanager()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_FLOOR_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+    if (!function_exists('getSafetyOfficer')) {
+        function getSafetyOfficer()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_SAFETY_OFFICER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+    if (!function_exists('getMedicalAssistant')) {
+        function getMedicalAssistant()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICIAL_ASSISTANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
@@ -1862,17 +1931,46 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if (!function_exists('GetSignature')) {
+    if (!function_exists('GetSafetySignature')) {
 
-        function GetSignature($userid)
+        function GetSafetySignature($userid, $id, $type)
         {
 
-            $name = DB::table('users')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
-
+            $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 return '';
             } else {
-                return $name->signature_upload;
+                return $name->file_path;
+            }
+        }
+    }
+
+    if (!function_exists('GetSignature')) {
+        function GetSignature($userid, $id, $type)
+        {
+            switch ($type) {
+                case RRAA_INSPECTION:
+                    $name = DB::table('inspection_rraa_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
+                case MSDS_INSPECTION:
+
+                    $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
+                case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -1904,6 +2002,27 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getohcrequisitionfloorstatus')) {
+        function getohcrequisitionfloorstatus($id)
+        {
+            if ($id == FLOOR_MANAGER_APPROVAL_PENDING) {
+                return 'floor manager Approval Pending';
+            } else if ($id == FLOOR_MANAGER_APPROVED) {
+                return 'floor Manager Approved';
+            } else if ($id == FLOOR_MANAGER_REJECTED) {
+                return 'floor Manager rejected';
+            } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
+                return 'Safet Officer Approval Pending';
+            } else if ($id == SAFETY_OFFICER_APPROVED) {
+                return 'Safet Officer Approved';
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
+                return 'Safet Officer rejected';
+            }
+
+            return 'OHC Creation';
+        }
+    }
+
     if (!function_exists('getShiftname')) {
 
         function getShiftname($shift_id)
@@ -1919,19 +2038,41 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    // Monthly Eye Wash Sequence
+    if (!function_exists('MEWSequence')) {
+        function MEWSequence()
+        {
+            return 'MEW-000001';
+        }
+    }
+
+    if (!function_exists('SafetyWalkCurrentObservation')) {
+        function SafetyWalkCurrentObservation()
+        {
+            return 'CURRENT-OBS-000001';
+        }
+    }
+
+    if (!function_exists('SafetyWalkPreviousObservation')) {
+        function SafetyWalkPreviousObservation()
+        {
+            return 'PREVIOUS-OBS-000001';
+        }
+    }
+
 
     if (!function_exists('getGMInspectionStatus')) {
         function getGMInspectionStatus($id)
         {
-            if ($id == GEMBA_WALK_INSPECTION_START) { 
+            if ($id == GEMBA_WALK_INSPECTION_START) {
                 return 'Gemba Walk Start';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
                 return 'Waiting for CAPA Action';
-            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
                 return 'Waiting for Floor manager Action';
-            }else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
+            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
                 return 'Waiting for EHS Officer Verification';
-            }else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
+            } else if ($id == GEMBA_WALK_INSPECTION_CLOSED) {
                 return 'Inspection Closed';
             }
 
@@ -1966,5 +2107,39 @@ if (!function_exists('getMonth')) {
             }
         }
     }
-    
+
+    // Fire Inspection Hooter Sequence
+    if (!function_exists('HooterSequence')) {
+        function HooterSequence()
+        {
+            return 'HTR-000001';
+        }
+    }
+
+    // Fire Inspection Folder Name
+    if (!function_exists('GetTypeName')) {
+        function GetTypeName($id)
+        {
+            switch ($id) {
+                case HOOTER_INSPECTION:
+                    return 'Hooter-Inspection';
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    // Get Department Name
+    if (!function_exists('GetDeptName')) {
+        function GetDeptName($id)
+        {
+            $data = Department::where('id', $id)->first();
+
+            if ($data) {
+                return $data->department_name;
+            }
+        }
+    }
 }

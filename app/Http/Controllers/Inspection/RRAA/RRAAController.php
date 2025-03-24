@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Inspection;
+namespace App\Http\Controllers\Inspection\RRAA;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\RRAA\RRAAEmail;
 use App\Models\Inspection\Master\Frequency;
 use Illuminate\Http\Request;
-use App\Models\Inspection\RRAADetails;
-use App\Models\Inspection\RRAACheckList;
+use App\Models\Inspection\RRAA\RRAADetails;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\Inspection\Master\ChecklistType;
-use App\Models\Inspection\RRAAStatusLog;
+use App\Models\Inspection\RRAA\RRAAStatusLog;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\Admin\AdminController;
+use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
 class RRAAController extends Controller
 {
@@ -30,6 +32,7 @@ class RRAAController extends Controller
     private $frequency;
     private $category;
     private $statusLog;
+    private $signature;
 
     public function __construct()
     {
@@ -40,6 +43,7 @@ class RRAAController extends Controller
         $this->frequency = new Frequency();
         $this->category = new ChecklistType();
         $this->statusLog = new RRAAStatusLog();
+        $this->signature = new RRAASignatureUpload();
     }
 
     public function Index(Request $request)
@@ -268,7 +272,7 @@ class RRAAController extends Controller
         $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
-            ->get();
+            ->get(); 
 
 
         $mergedResults = $employee_code->merge($work);
@@ -348,6 +352,7 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             $inspection_updates = $this->rraa_details->EHSOfficerUpdate($id);
             $inspection_details = $this->rraa_details->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($request->is_passed == 1) {
                 $message = 'RRAA Inspeciton Approved Successfully';
                 $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
@@ -422,6 +427,7 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             $forklift_inspection = $this->rraa_details->capaSubmit($id);
             $inspection_details = $this->rraa_details->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -491,6 +497,7 @@ class RRAAController extends Controller
             $remarks = $request->remarks;
             $forklift_inspection = $this->rraa_details->capaVerifySubmit($id, $status, $remarks);
             $inspection_details = $this->rraa_details->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
                 $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
@@ -570,6 +577,7 @@ class RRAAController extends Controller
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->rraa_details->levelOneManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->rraa_details->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
                 $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
@@ -649,6 +657,7 @@ class RRAAController extends Controller
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->rraa_details->levelTwoManagerSubmit($id, $status, $remarks);
             $inspection_details = $this->rraa_details->selectOne($id);
+            $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'RRAA Inspeciton Approved Successfully!';
                 $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
