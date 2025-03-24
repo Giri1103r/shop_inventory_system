@@ -43,6 +43,15 @@
                             {{ getDepartment($value->department) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getDepartment($value->) }}
+                            <td style='padding: 7px;border: 0.5px solid'>
+                                {{ getDepartment($value->department) }}
+                            </td>
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ getohcrequisitionfloorstatus($value->approve_status) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>

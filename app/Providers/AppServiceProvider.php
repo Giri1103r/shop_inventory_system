@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
-        defined('ROLE_MEDICIAL_ASSISTANT') or define('ROLE_MEDICIAL_ASSISTANT', 25);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
 
 
 
@@ -309,7 +309,7 @@ class AppServiceProvider extends ServiceProvider
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
-        // Fire File Upload 
+        // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
