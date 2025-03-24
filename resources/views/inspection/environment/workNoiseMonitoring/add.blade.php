@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ambient Noise Monitoring Add')
-@section('pageurl', admin_url('environment/ambient-noise/list'))
+@section('title', 'Work Noise Monitoring Add')
+@section('pageurl', admin_url('environment/work-noise/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/ambient-noise/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -31,20 +31,20 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="addambient"
-                                        action="{{ admin_url('environment/ambient-noise/add/submit') }}">
+                                        action="{{ admin_url('environment/work-noise/add/submit') }}">
                                         @csrf
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Ambient Noise Monitoring</h4>
+                                                    <h4 class="text-white">Work Noise Monitoring</h4>
                                                 </div>
                                             </div>
                                             <div class="row">
 
                                                 <div class="col-md-4 form-input">
-                                                    <label class="form-label">Ambient Noise No</label>
-                                                    <input type="text" class="form-control" name="ambient_noise_no"
-                                                        id="ambient_noise_no" value = "{{ getsequence('ambientNoiseNo') }}"
+                                                    <label class="form-label">Work Noise No</label>
+                                                    <input type="text" class="form-control" name="work_noise_no"
+                                                        id="work_noise_no" value = "{{ getsequence('workNoiseNo') }}"
                                                         readonly>
                                                 </div>
                                                 <div class="col-md-4 form-input">
@@ -74,7 +74,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Ambient Noise Monitoring Details</h4>
+                                                    <h4 class="text-white">Work Noise Monitoring Details</h4>
                                                     <button class="btn btn-primary addmorebutton"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
@@ -91,7 +91,7 @@
                                                         <label class="form-label">SR NO</label>
                                                         <input type="text" class="form-control"
                                                             name="monitoring[1][sr_no]" id="sr_no_1" readonly
-                                                            value="AMBIENT-0001">
+                                                            value="WORK-0001">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
@@ -136,46 +136,26 @@
                                                             class="form-control" id="next_due_date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)
-                                                            (Day)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba_day]"
-                                                            class="form-control" id="noise_level_dba_day_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)
-                                                            (Night)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba_night]"
-                                                            class="form-control" id="noise_level_dba_night_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
                                                         <select class="form-control single-select"
-                                                            name="monitoring[1][date_of_monitoring_dropdown]"
-                                                            style="width: 100%" id="date_of_monitoring_dropdown_1">
-                                                            <option value="">Select Date of Monitoring</option>
+                                                            name="monitoring[1][noise_level_dba_dropdown]"
+                                                            style="width: 100%" id="noise_level_dba_dropdown_1">
+                                                            <option value="">Select NOISE LEVEL (dBA)</option>
                                                             <option value="{{ encryptId(1) }}">Day</option>
                                                             <option value="{{ encryptId(2) }}">Night</option>
                                                         </select>
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                        <input type="text" name="monitoring[1][noise_level_dba_no]"
+                                                            class="form-control" id="noise_level_dba_no_1">
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][date_of_monitoring_date]"
                                                             class="form-control" id="date_of_monitoring_date_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][next_due_date_of_monitoring_dropdown]"
-                                                            style="width: 100%"
-                                                            id="next_due_date_of_monitoring_dropdown_1">
-                                                            <option value="">Select Next Due Date of Monitoring
-                                                            </option>
-                                                            <option value="{{ encryptId(1) }}">Day</option>
-                                                            <option value="{{ encryptId(2) }}">Night</option>
-                                                        </select>
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
@@ -211,7 +191,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('environment/ambient-noise/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('environment/work-noise/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -331,7 +311,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name*='[sr_no]']").val("WORK-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -347,13 +327,7 @@
                         number: "Only numeric values are allowed."
                     }
                 });
-                newRow.find("input[name*='[noise_level_dba_day]']").rules("add", {
-                    number: true,
-                    messages: {
-                        number: "Only numeric values are allowed."
-                    }
-                });
-                newRow.find("input[name*='[noise_level_dba_night]']").rules("add", {
+                newRow.find("input[name*='[noise_level_dba_no]']").rules("add", {
                     number: true,
                     messages: {
                         number: "Only numeric values are allowed."
@@ -386,22 +360,16 @@
                 'monitoring[1][noise_level_dba]': {
                     number: true,
                 },
-                'monitoring[1][noise_level_dba_day]': {
+                'monitoring[1][noise_level_dba_no]': {
                     number: true,
                 },
-                'monitoring[1][noise_level_dba_night]': {
-                    number: true,
-                }
             },
             messages: {
                 'monitoring[1][noise_level_dba]': {
                     number: "Only numeric values are allowed."
 
                 },
-                'monitoring[1][noise_level_dba_day]': {
-                    number: "Only numeric values are allowed."
-                },
-                'monitoring[1][noise_level_dba_night]': {
+                'monitoring[1][noise_level_dba_no]': {
                     number: "Only numeric values are allowed."
                 },
             },

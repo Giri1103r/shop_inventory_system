@@ -45,7 +45,7 @@ class PpeRequest extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ppe_pperequest.*','ppe_pperequest.created_at as ppe_created_at','masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
+        $query = $this->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
 
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
@@ -65,7 +65,7 @@ class PpeRequest extends Model
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } else {
-            $query->where('ppe_pperequest.created_by',Auth::id());
+            $query->where('ppe_pperequest.created_by', Auth::id());
         }
 
         if ($request->search['value'] != null) {
@@ -147,12 +147,12 @@ class PpeRequest extends Model
 
             $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
         }
-        // dd($request->all());
-        
+
+        $department = Department::where('department_name', $request->department)->first();
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => Auth::user()->department_id,
+            'department' =>   $department->id ?? null,
             'unit_id' => Auth::user()->unit_id,
             'request_for' => $request->request_for,
             'item_code' => $request->item_code,

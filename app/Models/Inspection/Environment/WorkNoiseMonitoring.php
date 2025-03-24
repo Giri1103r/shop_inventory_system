@@ -6,10 +6,10 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class AmbientNoiseMonitoring extends Model
+class WorkNoiseMonitoring extends Model
 {
 
-    protected $table = 'inspection_environment_ambient_noise_monitoring';
+    protected $table = 'inspection_environment_work_noise_monitoring';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -21,11 +21,9 @@ class AmbientNoiseMonitoring extends Model
         'noise_level_dba',
         'date_of_monitoring',
         'next_due_date_of_monitoring',
-        'noise_level_dba_day',
-        'noise_level_dba_night',
-        'date_of_monitoring_dropdown',
+        'noise_level_dba_dropdown',
+        'noise_level_dba_no',
         'date_of_monitoring_date',
-        'next_due_date_of_monitoring_dropdown',
         'next_due_date_of_monitoring_date',
         'act_rule',
         'remark',
@@ -41,7 +39,7 @@ class AmbientNoiseMonitoring extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
-   
+
 
     public function store($environmentId)
     {
@@ -58,17 +56,15 @@ class AmbientNoiseMonitoring extends Model
                     'noise_level_dba' =>  $monitorData['noise_level_dba'],
                     'date_of_monitoring' => DBdateformat($monitorData['date_of_monitoring']),
                     'next_due_date_of_monitoring' => DBdateformat($monitorData['next_due_date_of_monitoring']),
-                    'noise_level_dba_day' =>  $monitorData['noise_level_dba_day'],
-                    'noise_level_dba_night' =>  $monitorData['noise_level_dba_night'],
-                    'date_of_monitoring_dropdown' => decryptId($monitorData['date_of_monitoring_dropdown']),
+                    'noise_level_dba_dropdown' =>  decryptId($monitorData['noise_level_dba_dropdown']),
+                    'noise_level_dba_no' =>  $monitorData['noise_level_dba_no'],
                     'date_of_monitoring_date' => DBdateformat($monitorData['date_of_monitoring_date']),
-                    'next_due_date_of_monitoring_dropdown' => decryptId($monitorData['next_due_date_of_monitoring_dropdown']),
                     'next_due_date_of_monitoring_date' => DBdateformat($monitorData['next_due_date_of_monitoring_date']),
                     'act_rule' =>  $monitorData['act_rule'],
                     'remark' =>  $monitorData['remark'],
                     'created_by' => Auth::id(),
                 ];
-                   $this->create($data);
+                $this->create($data);
             }
         }
     }
@@ -77,24 +73,24 @@ class AmbientNoiseMonitoring extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_environment_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no');
-        $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
-        $query = $query->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id');
-        $query = $query->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id');
+        $query = $this->select('inspection_environment_work_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no');
+        $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
+        $query = $query->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id');
+        $query = $query->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id');
         // dd($query);
 
         if ($request->has('ambient_noise_id') && $request->ambient_noise_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
+            $query = $query->where('inspection_environment_work_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.location_id', decryptId($request->location_id));
+            $query = $query->where('inspection_environment_work_noise_monitoring.location_id', decryptId($request->location_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.unit_id', decryptId($request->unit_id));
+            $query = $query->where('inspection_environment_work_noise_monitoring.unit_id', decryptId($request->unit_id));
         }
 
         if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.status', decryptId($request->status));
+            $query = $query->where('inspection_environment_work_noise_monitoring.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -102,9 +98,9 @@ class AmbientNoiseMonitoring extends Model
 
     public function selectOne($envId)
     {
-        $data = $this->select('inspection_environment_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
-            ->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
-            ->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_ambient_noise_monitoring.environment_id', $envId)->where('inspection_environment_ambient_noise_monitoring.status',1)
+        $data = $this->select('inspection_environment_work_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
+            ->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
+            ->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_work_noise_monitoring.environment_id', $envId)->where('inspection_environment_work_noise_monitoring.status', 1)
             ->get();
         return $data;
     }
@@ -126,5 +122,4 @@ class AmbientNoiseMonitoring extends Model
 
         return $this->where('environment_id', $id)->update($update_data);
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +16,7 @@ class GembaWalkChecklistFile extends Model
 
     protected $fillable = [
         'gemba_walk_id',
+        'emp_id',
         'gemba_walk_checklist_id',
         'file_type',
         'file_path',
@@ -60,6 +61,7 @@ class GembaWalkChecklistFile extends Model
             $insert_data = array(
 
                 'gemba_walk_id' => $gembaWalk_id,
+                'emp_id'=>Auth::id(),
                 'file_type'=>1,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
@@ -75,7 +77,6 @@ class GembaWalkChecklistFile extends Model
 
     public function storeVerifiedSignature($gembaWalk_id){
         $request = request();
-        // dd($request);
 
         $intendent = $request->file('gemba_walk_verified_by');
         if ($intendent != null) {
@@ -102,6 +103,7 @@ class GembaWalkChecklistFile extends Model
 
             $insert_data = array(
                 'gemba_walk_id' => $gembaWalk_id,
+                'emp_id'=>Auth::id(),
                 'file_type'=>2,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,

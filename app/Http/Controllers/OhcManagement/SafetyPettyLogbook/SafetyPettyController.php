@@ -97,6 +97,7 @@ class SafetyPettyController extends Controller
         try {
             $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
             $unit = $this->unit->getunit();
+
             $data = [
                 'unit' => $unit,
             ];
@@ -106,6 +107,24 @@ class SafetyPettyController extends Controller
         }
     }
 
+    public function getSignature(Request $request)
+    {
+        $loginId = $request->input('login_id');
+
+        if ($loginId) {
+            $user = User::where('id', $loginId)->first();
+            if ($user && $user->signature_upload) {
+                return response()->json([
+                    'signature_upload' => $user->signature_upload
+                ]);
+            }
+        }
+
+        return response()->json([
+            'signature_upload' => null
+        ]);
+    }
+
     public function Store(Request $request)
     {
         try {
@@ -113,16 +132,15 @@ class SafetyPettyController extends Controller
             $sfty_petty_details = $this->sfty_petty_details->store();
             $sfty_petty_id = $sfty_petty_details->id;
             $this->sfty_petty_checklist->store($sfty_petty_id);
-            $empId =  Auth::user()->employee_id;
+            $empId =  Auth::user()->id;
 
             $this->signature->signatureLogUpload(
                 $empId, $sfty_petty_id ,
                 OHC_AMOUNT_GIVENBY_INSPECTION,
                 'signature_givenby_image'
             );
-
             $this->signature->signatureLogUpload(
-                  $empId, $sfty_petty_id ,
+                $empId, $sfty_petty_id ,
                 OHC_AMOUNT_RECEIVEDBY_INSPECTION,
                 'signature_receivedby_image'
             );
@@ -130,7 +148,6 @@ class SafetyPettyController extends Controller
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -146,18 +163,10 @@ class SafetyPettyController extends Controller
             ->limit(10)
             ->get();
 
-        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
-
-
-        $mergedResults = $employee_code->merge($work);
-
         return response()->json(
-            $mergedResults->map(function ($employee) {
+            $employee_code->map(function ($employee) {
                 return [
-                    'id' => $employee->emp_id,
+                    'id' => $employee->login_id,
                     'text' => $employee->emp_id . ' - ' . $employee->emp_name,
                 ];
             })
@@ -176,14 +185,15 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
-                // $signature_received_by = $this->signature->getLogReceivedby($type,$sub_type_received);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
 
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
+                
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
                     'sfty_petty_checklist' => $sfty_petty_checklist,
-                    // 'signature_given_by' => $signature_given_by,
-                    'signature_amount' => $signature_amount,
+                    'signature_amount_givenby' => $signature_amount_givenby,
+                    'signature_amount_receivedby' => $signature_amount_receivedby,
                 );
             }
             return view('ohcmanagement.safety_petty.view', $data);
@@ -211,11 +221,8 @@ class SafetyPettyController extends Controller
 
     public function ExportExcel(Request $request)
     {
-
         try {
-
             $allData = $this->sfty_petty_details->exportdata();
-            // dd($allData);
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -254,7 +261,6 @@ class SafetyPettyController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -328,12 +334,15 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount = $this->signature->getLogByTypeAndSubType($type,$sub_type_given,$sub_type_received);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
+
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
                     'sfty_petty_checklist' => $sfty_petty_checklist,
-                    'signature_amount' => $signature_amount,
+                    'signature_amount_givenby' => $signature_amount_givenby,
+                    'signature_amount_receivedby' => $signature_amount_receivedby,
                     'pagetitle' => "Safety Petty Logbook Details",
                 ];
             }
@@ -349,13 +358,12 @@ class SafetyPettyController extends Controller
             $mpdf->setAutoTopMargin = 'stretch';
 
             $html = view('ohcmanagement.safety_petty.generalpdf', $data)->render();
-            // dd($html);
+
             $mpdf->WriteHTML($html);
 
             $filename = "Safety Petty Logbook Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

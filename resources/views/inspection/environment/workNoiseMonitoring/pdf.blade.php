@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Ambient Noise Monitoring PDF')
+@section('title', 'Work Noise Monitoring PDF')
 @section('content')
 
     <div style="width:100%;">

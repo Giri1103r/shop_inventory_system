@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
-        defined('ROLE_MEDICIAL_ASSISTANT') or define('ROLE_MEDICIAL_ASSISTANT', 25);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
 
 
 
@@ -186,7 +186,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
 
-        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 5);
+        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
@@ -311,7 +311,7 @@ class AppServiceProvider extends ServiceProvider
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
-        // Fire File Upload 
+        // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {

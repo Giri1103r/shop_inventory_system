@@ -28,13 +28,14 @@ use App\Models\OhcManagement\Master\Medicine;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\IMS\Incident\InitialFireIncident;
-use App\Models\Inspection\GembaWalk;
+use App\Models\Inspection\GembaWalk\GembaWalk;
 use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\environment\Environment;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 
 /*
@@ -254,6 +255,15 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'AUDIT-ASSESSMENT-' . getautogen($count);
                 break;
+            case 'ambientNoiseNo':
+                $count = Environment::where('type',1)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AMBIENT-NOISE-' . getautogen($count);
+                break;
+            case 'workNoiseNo':
+                $count = Environment::where('type',2)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'WORK-NOISE-' . getautogen($count);
             case 'SPLB':
                 $count = SafetyPettyChecklist::withoutGlobalScopes()->count();
                 $count = $count + 1;

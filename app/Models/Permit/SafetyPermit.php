@@ -202,7 +202,7 @@ class SafetyPermit extends Model
 
             $equiment_involved[$id] = $data;
         }
-// Precaution Taken
+        // Precaution Taken
         $precaution_taken = [];
 
         if (!empty($request->precaution_taken) && is_array($request->precaution_taken)) {
@@ -216,26 +216,26 @@ class SafetyPermit extends Model
 
 
         $equipment_checklist = [];
-        if(!empty($request->equipment_checklist) && is_array($request->equipment_checklist)){
+        if (!empty($request->equipment_checklist) && is_array($request->equipment_checklist)) {
 
-            foreach ( $request->equipment_checklist as $index => $data) {
+            foreach ($request->equipment_checklist as $index => $data) {
                 // Decrypt the index (workId)
                 $id = decryptId($index);
 
                 $equipment_checklist[$id] = $data;
             }
         }
-// Instruction
+        // Instruction
         $safework_instruction = [];
 
-        if(!empty($request->safework_instruction) && is_array($request->safework_instruction)){
-        foreach ( $request->safework_instruction as $index => $data) {
-            // Decrypt the index (workId)
-            $id = decryptId($index);
+        if (!empty($request->safework_instruction) && is_array($request->safework_instruction)) {
+            foreach ($request->safework_instruction as $index => $data) {
+                // Decrypt the index (workId)
+                $id = decryptId($index);
 
-            $safework_instruction[$id] = $data;
+                $safework_instruction[$id] = $data;
+            }
         }
-    }
         $protective_equip = !empty($protective_equip) ? json_encode($protective_equip, true) : null;
         $equiment_involved = !empty($equiment_involved) ? json_encode($equiment_involved, true) : null;
         $precaution_taken = !empty($precaution_taken) ? json_encode($precaution_taken, true) : null;
@@ -301,7 +301,7 @@ class SafetyPermit extends Model
     public function updates($id)
     {
         $request = request();
-//  dd($request);
+        //  dd($request);
         $safetypermit = $this->find($id);
 
         $update_array = [];
@@ -335,7 +335,7 @@ class SafetyPermit extends Model
             ? json_encode($protective_equip)
             : $safetypermit->protective_equip;
 
-    //    dd($update_array['protective_equip']);
+        //    dd($update_array['protective_equip']);
         // Equipment Invlved
 
         $equiment_involved = [];
@@ -358,6 +358,7 @@ class SafetyPermit extends Model
         $precaution_taken = [];
         $data = $request->precaution_taken ?? [];
 
+
         foreach ($data as $index => $EquipPrecautionData) {
             $safetydata = decryptId($index);
             $precaution_taken[$safetydata] = $EquipPrecautionData;
@@ -368,7 +369,7 @@ class SafetyPermit extends Model
         $update_array['precaution_taken'] = !empty($precaution_taken) && $precaution_taken !== $existingPrecaution
             ? json_encode($precaution_taken)
             : $safetypermit->precaution_taken;
-
+        // dd($update_array['precaution_taken']);
 
         // Check List
 
@@ -694,13 +695,12 @@ class SafetyPermit extends Model
             })
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
-            // ->leftJoin('masters_employee as shut_down_takenby_employee', 'shut_down_takenby_employee.id', '=', 'ptw_safety.shut_down_takenby')
-            // ->leftJoin('masters_employee as loto_takenby_employee', 'loto_takenby_employee.id', '=', 'ptw_safety.loto_takenby')
+
             ->where('ptw_safety.id', $id)
             ->where('ptw_safety.trash', 'NO')
             ->where('ptw_masters_typeofwork_upload.trash', 'NO')
             ->first();
-// dd($data);
+
         if ($data) {
 
             if (isset($data->sub_permit_names)) {
@@ -723,10 +723,12 @@ class SafetyPermit extends Model
                         ->value('id');
 
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type1')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type1')
                         ->whereIn('id', $checklistIds)
                         ->pluck('id')
                         ->toArray();
@@ -756,15 +758,17 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
-                        $workid = DB::table('ptw_masters_typeofwork')
+                    $workid = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type2')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
 
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type2')
                         ->whereIn('id', $checklistIds)
                         ->pluck('id')
                         ->toArray();
@@ -787,21 +791,23 @@ class SafetyPermit extends Model
 
             $precaution_taken = json_decode($data->precaution_taken, true);
             $mappeprecaution_taken = [];
-
             if ($precaution_taken) {
                 foreach ($precaution_taken as $typeofWorkId => $checklistIds) {
+
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
-                        $workid = DB::table('ptw_masters_typeofwork')
+                    $workid = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type3')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
 
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type3')
                         ->whereIn('id', $checklistIds)
                         ->pluck('id')
                         ->toArray();
@@ -818,7 +824,7 @@ class SafetyPermit extends Model
             }
 
             $data->mapped_precaution_taken = $mappeprecaution_taken;
-
+          
             $equipment_checklist = json_decode($data->equipment_checklist, true);
             $mappeequipment_checklist = [];
 
@@ -827,14 +833,17 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
-                        $workid = DB::table('ptw_masters_typeofwork')
+                    $workid = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type4')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type4')
+
                         ->whereIn('id', $checklistIds)
                         ->pluck('id')
                         ->toArray();
@@ -865,14 +874,16 @@ class SafetyPermit extends Model
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
-                        $workid = DB::table('ptw_masters_typeofwork')
+                    $workid = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('id');
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type5')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
+                        ->where('type', 'type5')
                         ->whereIn('id', $checklistIds)
                         ->pluck('id')
                         ->toArray();
@@ -905,6 +916,7 @@ class SafetyPermit extends Model
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ptw_safety_workman_involved.emp_id')
             ->leftJoin('masters_department', 'masters_department.id', '=', 'ptw_safety_workman_involved.workman_dept')
             ->where('ptw_safety.id', $id)
+            ->where('ptw_safety_workman_involved.status', 1)
             ->get();
 
         return $data;
@@ -1105,5 +1117,4 @@ class SafetyPermit extends Model
 
         return $this->where('id', $id)->update($reassignto);
     }
-
 }

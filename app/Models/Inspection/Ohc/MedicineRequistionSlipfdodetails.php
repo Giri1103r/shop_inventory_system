@@ -71,7 +71,7 @@ class MedicineRequistionSlipfdodetails extends Model
             });
         }
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)) {
             $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());
@@ -179,7 +179,7 @@ class MedicineRequistionSlipfdodetails extends Model
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)) {
             $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());

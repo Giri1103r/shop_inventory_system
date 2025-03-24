@@ -455,6 +455,7 @@ class SafetyPermitController extends Controller
                 'protectiveEquipment' => $protectiveEquipment,
                 'workman' => $workman,
             ];
+            
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -467,7 +468,6 @@ class SafetyPermitController extends Controller
     {
         try {
             $id = decryptId($request->safetypermitid);
-
             $rules = [
                 'date' => 'required|date',
                 'time_from' => 'required',

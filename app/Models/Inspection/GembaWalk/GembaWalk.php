@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -150,7 +150,6 @@ class GembaWalk extends Model
             ->where('file_type', 2)
             ->where('inspection_gemba_walk.id', $id)
             ->get();
-        // dd($data);
 
         return $data;
     }
@@ -169,8 +168,6 @@ class GembaWalk extends Model
     public function updateStatus($gembaWalk_id, $gembaWalk_status)
     {
         $request = request();
-        // dd($request);
-
         $update_array = array(
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),

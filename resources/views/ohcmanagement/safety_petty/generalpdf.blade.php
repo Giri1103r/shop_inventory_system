@@ -253,12 +253,12 @@
             <td width="48%" style="padding:5px;">
                 {{ isset($sfty_petty_checklist->amount_given_by) ? $sfty_petty_checklist->amount_given_by : '' }}</td>
         </tr>
-        @if (isset($signature_amount) && $signature_amount)
+        @if (isset($signature_amount_givenby) && $signature_amount_givenby)
             <tr>
                 <td width="50%" style="padding:5px;"><b>Signature (Amount Given By)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                    <img src="{{ admin_url( $signature_amount_givenby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                 </td>
             </tr>
         @endif
@@ -268,12 +268,12 @@
             <td width="48%" style="padding:5px;">
                 {{ isset($sfty_petty_checklist->amount_received_by) ? $sfty_petty_checklist->amount_received_by : '' }}</td>
         </tr>
-        @if (isset($signature_amount) && $signature_amount)
+        @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
             <tr>
                 <td width="50%" style="padding:5px;"><b>Signature (Amount Received By)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                    <img src="{{ admin_url( $signature_amount_receivedby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                 </td>
             </tr>
         @endif

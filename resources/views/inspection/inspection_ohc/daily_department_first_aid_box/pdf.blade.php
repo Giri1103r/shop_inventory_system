@@ -43,6 +43,19 @@
                             {{ getDepartment($value->department) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getShift($value->shift) }}
+
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ ($value->first_aid_box_no) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getFirstAider($value->first_aider) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ getohcrequisitionfloorstatus($value->approve_status) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,8 +23,6 @@ class GembaWalkStatusLog extends Model
         'updated_at'
 
     ];
-
-
 
     public function selectOne($id){
         return $this->select('inspection_gemba_walk_status_log.*','inspection_gemba_walk_status.status_name','inspection_gemba_walk_status.to_status')
