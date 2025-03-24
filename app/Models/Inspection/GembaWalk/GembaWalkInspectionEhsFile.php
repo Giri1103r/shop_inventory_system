@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,7 +36,6 @@ class GembaWalkInspectionEhsFile extends Model
 
     public function capaFileSubmit($gembaWalk_id,$ehs_id,$upload_status){
         $request = request();
-        // dd($request);
         $floorId = decryptId($request->floor_managerId);
 
         if ($floorId) {
@@ -52,13 +51,7 @@ class GembaWalkInspectionEhsFile extends Model
             }
         }
 
-       
-
-        // dd(11);  
-
         $intendent = $request->file('capa_image');
-
-
 
         if ($intendent != null) {
 

@@ -28,7 +28,7 @@ use App\Models\OhcManagement\Master\Medicine;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\IMS\Incident\InitialFireIncident;
-use App\Models\Inspection\GembaWalk;
+use App\Models\Inspection\GembaWalk\GembaWalk;
 use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;

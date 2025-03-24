@@ -143,12 +143,6 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
     Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
     Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
-
-
-
-
-
-
    
 });
 Route::group(['prefix' => 'environment/'], function () {
