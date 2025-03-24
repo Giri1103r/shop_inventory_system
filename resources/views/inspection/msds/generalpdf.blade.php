@@ -243,7 +243,7 @@
         <br>
     @endforeach
 
-    @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+    @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>

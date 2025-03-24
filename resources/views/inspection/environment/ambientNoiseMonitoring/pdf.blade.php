@@ -25,10 +25,7 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->category_name }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->subcategory_name }}
+                            {{ $value->environment_no }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

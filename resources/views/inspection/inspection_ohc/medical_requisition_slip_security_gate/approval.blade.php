@@ -166,7 +166,7 @@
 
                                 @if (
                                     (checkUserRole(ROLE_SAFETY_OFFICER) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING)
-                                       ||  (checkUserRole(ROLE_MEDICIAL_ASSISTANT) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||(checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
+                                       ||  (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||(checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Safety Officer Approval Pending</h4>

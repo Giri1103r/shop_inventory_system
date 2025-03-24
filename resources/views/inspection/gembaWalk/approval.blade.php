@@ -68,6 +68,29 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        @php
+                                            $approvedSign = $gembaWalk_approved_singnature->first();
+                                        @endphp
+                                        @if ($approvedSign && !empty($approvedSign->signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Signature</label>
+                                                    <div class="view_data">
+                                                        <a href="{{ asset($approvedSign->signature) }}" target="_blank">
+                                                            <img src="{{ asset($approvedSign->signature) }}"
+                                                                alt="Signature Image"
+                                                                style="max-width: 100px; max-height: 100px;">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <small class="text-muted">No signature uploaded yet.</small>
+                                        @endif
+
+
+
                                     </div>
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -191,11 +214,12 @@
                                                             @endforeach
                                                         </ul>
                                                     @else
-                                                        No observations recorded.
+                                                        <p>No observations recorded.</p>
                                                     @endif
                                                 </div>
                                             </div>
                                         </div>
+
 
 
 
@@ -206,7 +230,8 @@
                                                     @if ($gembaWalk)
                                                         <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
                                                             <img src="{{ asset('public/' . $gembaWalk->file_path) }}"
-                                                                alt="image" style="max-width: 100px; max-height: 100px;">
+                                                                alt="image"
+                                                                style="max-width: 100px; max-height: 100px;">
                                                         </a>
                                                     @else
                                                         <small class="text-muted">No file uploaded yet.</small>
@@ -226,7 +251,7 @@
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
                                         </div>
                                     </div>
-                                    <form method="POST" id="forklistassessmentAdd"
+                                    <form method="POST" id="inspectionAdd"
                                         action="{{ admin_url('inspection/gemba-walk/capa/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
@@ -263,7 +288,7 @@
 
                                             <div class="col-md-12">
                                                 <label class="form-label required">Whether the Inspection has been passed
-                                                    Without the Floor Manager Action?</label>
+                                                    to the Floor Manager Action?</label>
                                                 <div class="mb-3 form-input">
                                                     <input type="radio" id="yes" name="is_passed"
                                                         value="1">
@@ -286,7 +311,8 @@
 
                                             <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
                                                 <div class="form-group form-input">
-                                                    <label for="gemba_walk_verified_by" class="form-label">Singnature Upload</label>
+                                                    <label for="gemba_walk_verified_by" class="form-label">Singnature
+                                                        Upload</label>
                                                     <input type="file"
                                                         class="form-control validate-file-accept validate-file-required"
                                                         name="gemba_walk_verified_by" id="gemba_walk_verified_by">
@@ -304,7 +330,9 @@
                                 @endif
 
 
-                                @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION)
+                                @if (
+                                    $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION ||
+                                        $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">CAPA Action</h4>
@@ -325,7 +353,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Date</label>
                                                     <div class="view_data">
-                                                        {{ isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '' }}
+                                                        {{ Displaydateformat(isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '') }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -377,7 +405,7 @@
                                                     <h4 class="text-white">Floor Manager Verification</h4>
                                                 </div>
                                             </div>
-                                            <form method="POST" id="forklistassessmentAdd"
+                                            <form method="POST" id="inspectionAdd"
                                                 action="{{ admin_url('inspection/gemba-walk/floor-manager/review/submit') }}"
                                                 autocomplete="off" enctype="multipart/form-data">
                                                 @csrf
@@ -385,6 +413,13 @@
 
                                                 <input type="hidden" value="{{ encryptId($gembaWalk->gemba_walk_id) }}"
                                                     name="id">
+
+                                                @if (isset($floorID))
+                                                    <input type="hidden" value="{{ encryptId($floorID->id) }}"
+                                                        name="floor_managerId">
+                                                @endif
+
+
 
                                                 <div class="row">
 
@@ -457,7 +492,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Date</label>
                                                         <div class="view_data">
-                                                            {{ isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '' }}
+                                                            {{ Displaydateformat(isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -507,6 +542,7 @@
 
 
                                             <div class="row mt-3">
+                                                
                                                 <div class="card-header-inner">
                                                     <h4 class="text-white">Floor Manager Verification</h4>
                                                 </div>
@@ -523,7 +559,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Date</label>
                                                         <div class="view_data">
-                                                            {{ isset($gembaWalk_ehs_floor_manager_details->date) ? $gembaWalk_ehs_floor_manager_details->date : '' }}
+                                                            {{ Displaydateformat(isset($gembaWalk_ehs_floor_manager_details->date) ? $gembaWalk_ehs_floor_manager_details->date : '') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -564,7 +600,7 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <form method="POST" id="forklistassessmentAdd"
+                                                    <form method="POST" id="inspectionAdd"
                                                         action="{{ admin_url('inspection/gemba-walk/ehs-officer/review/submit') }}"
                                                         autocomplete="off" enctype="multipart/form-data">
                                                         @csrf
@@ -572,6 +608,10 @@
                                                             <input type="hidden"
                                                                 value="{{ encryptId($gembaWalk->gemba_walk_id) }}"
                                                                 name="id">
+                                                            @if (isset($ehsId))
+                                                                <input type="hidden" value="{{ encryptId($ehsId->id) }}"
+                                                                    name="ehs_managerId">
+                                                            @endif
 
                                                             <div class="col-md-4 mb-2">
                                                                 <div class="form-group form-input">
@@ -598,12 +638,24 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-md-4 file-upload-block" id="file-upload-0">
-                                                                <label for="gemba_walk_verified_by" class="form-label">Singnature Upload</label>
-                                                                <input type="file"
-                                                                    class="form-control validate-file-accept validate-file-required"
-                                                                    name="gemba_walk_verified_by" id="gemba_walk_verified_by">
-            
+                                   
+
+                                                            <div class="col-md-4 form-group form-input mb-2">
+                                                                @if (isset(Auth::user()->signature_upload))
+                                                                    <label class="form-label"
+                                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                                @else
+                                                                    <div class="form-input col-md-12 mb-2">
+                                                                        <label class="form-label require">Signature</label>
+                                                                        <input type="file" name="gemba_walk_verified_by" id="gemba_walk_verified_by"
+                                                                            class="form-control form-control-sm" accept="image/*"
+                                                                            placeholder="Enter the image">
+                                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                                        <div id="gemba_walk_verified_by" class="text-danger"></div>
+                                                                    </div>
+                                                                @endif
                                                             </div>
 
 
@@ -660,6 +712,99 @@
 
                 }
             });
+        });
+    </script>
+@endpush
+
+@push('script')
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            flatpickr("#capa_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today"
+            });
+
+
+            $('input[name="is_passed"]').change(function() {
+                if ($('#yes').is(':checked')) {
+                    $('#capa_recomendation').show();
+                    $('#verified_by').hide();
+
+                } else {
+                    $('#capa_recomendation').hide();
+                    $('#verified_by').show();
+
+
+                }
+            });
+
+
+
+
+            $.validator.addMethod("filesize", function(value, element, param) {
+                return this.optional(element) || (element.files[0] && element.files[0].size <= param);
+            }, "File size should not exceed 2MB.");
+
+            $.validator.addMethod("fileExtension", function(value, element, param) {
+                return this.optional(element) || new RegExp("\\.(" + param + ")$", "i").test(value);
+            }, "Only JPG, JPEG, PNG, and GIF files are allowed.");
+
+            $("#inspectionAdd").validate({
+                rules: {
+                    capa_remark: {
+                        required: true,
+                        maxlength: 2000
+                    },
+                    gemba_walk_verified_by: {
+                        required: function() {
+                            return $('#no').is(':checked');
+                        },
+                        filesize: 2048000,
+                        fileExtension: "jpg|jpeg|png|gif"
+                    },
+                    capa_image: {
+                        required: function() {
+                            return $('#yes').is(':checked');
+                        },
+                        filesize: 2048000,
+                        fileExtension: "jpg|jpeg|png|gif"
+                    }
+                },
+                messages: {
+                    capa_remark: {
+                        required: "Remark is required.",
+                        maxlength: "Remark cannot exceed 2000 characters."
+                    },
+                    gemba_walk_verified_by: {
+                        required: "Signature upload is required.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed.",
+                        filesize: "File size should not exceed 2MB."
+                    },
+                    capa_image: {
+                        required: "CAPA image is required when 'YES' is selected.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed.",
+                        filesize: "File size should not exceed 2MB."
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.file-upload-block').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+
+
+
         });
     </script>
 @endpush

@@ -905,6 +905,7 @@ class SafetyPermit extends Model
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ptw_safety_workman_involved.emp_id')
             ->leftJoin('masters_department', 'masters_department.id', '=', 'ptw_safety_workman_involved.workman_dept')
             ->where('ptw_safety.id', $id)
+            ->where('ptw_safety_workman_involved.status', 1)
             ->get();
 
         return $data;

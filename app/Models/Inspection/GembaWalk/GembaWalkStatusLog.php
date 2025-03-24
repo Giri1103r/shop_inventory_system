@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection;
+namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +25,11 @@ class GembaWalkStatusLog extends Model
     ];
 
     public function selectOne($id){
-        return $this->select('*')->where('gemba_walk_id', $id)->get();
+        return $this->select('inspection_gemba_walk_status_log.*','inspection_gemba_walk_status.status_name','inspection_gemba_walk_status.to_status')
+        ->leftjoin('inspection_gemba_walk_status','inspection_gemba_walk_status.id','=','inspection_gemba_walk_status_log.to_status')
+        ->where('inspection_gemba_walk_status_log.gemba_walk_id',$id)
+        ->get();
     }
+
     
 }

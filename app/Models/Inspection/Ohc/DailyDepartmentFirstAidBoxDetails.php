@@ -70,7 +70,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
             });
         }
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
@@ -183,7 +183,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         // dd($query);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
@@ -200,7 +200,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         if (isset($request->approve_status) && $request->approve_status) {
             $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->approve_status) );
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());

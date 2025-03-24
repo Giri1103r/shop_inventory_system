@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Daily Departmental First Aid Box')
+@section('title', 'Work Noise Monitoring PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -24,39 +24,22 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->revision_date) }}
+                            {{ $value->environment_no }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
 
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->) }}
-                            <td style='padding: 7px;border: 0.5px solid'>
-                                {{ getDepartment($value->department) }}
-                            </td>
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getohcrequisitionfloorstatus($value->approve_status) }}
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
+
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>

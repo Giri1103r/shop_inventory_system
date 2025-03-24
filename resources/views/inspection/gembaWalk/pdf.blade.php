@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Daily Departmental First Aid Box')
+@section('title', 'Gemba Walk')
 @section('content')
 
     <div style="width:100%;">
@@ -26,33 +26,20 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
+                            {{ $value->gemba_walk_auto_id }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->revision_date) }}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->issue_date) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
 
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ displaydateformat($value->revision_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->date) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->) }}
-                            <td style='padding: 7px;border: 0.5px solid'>
-                                {{ getDepartment($value->department) }}
-                            </td>
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getohcrequisitionfloorstatus($value->approve_status) }}
+                            {{-- @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp --}}
+                            {{ getGMInspectionStatus($value->gemba_walk_status) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
@@ -11,8 +12,8 @@ use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
-use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 
+use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -139,7 +141,12 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::post('floor-manager/review/submit', [GembaWalkController::class, 'capaReviewSubmit']);
     Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
     Route::post('ehs-officer/review/submit', [GembaWalkController::class, 'ehsReviewSubmit']);
+    Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
+    Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
+    Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
+   
 });
+
 Route::group(['prefix' => 'environment/'], function () {
     Route::group(['prefix' => 'ambient-noise/'], function () {
         Route::get('list', [AmbientNoiseMonitoringController::class, 'index']);
@@ -158,6 +165,25 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::post('status', [AmbientNoiseMonitoringController::class, 'statusChange']);
         Route::post('unique', [AmbientNoiseMonitoringController::class, 'Uniquecheck']);
         Route::get('employeeName', [AmbientNoiseMonitoringController::class, 'employeename']);
+    });
+
+    Route::group(['prefix' => 'work-noise/'], function () {
+        Route::get('list', [WorkNoiseMonitoringController::class, 'index']);
+        Route::post('list', [WorkNoiseMonitoringController::class, 'index']);
+        Route::get('add', [WorkNoiseMonitoringController::class, 'add']);
+        Route::post('add/submit', [WorkNoiseMonitoringController::class, 'store']);
+        Route::get('edit/{id}', [WorkNoiseMonitoringController::class, 'edit']);
+        Route::post('edit/submit', [WorkNoiseMonitoringController::class, 'update']);
+        Route::get('view/{id}', [WorkNoiseMonitoringController::class, 'view']);
+        Route::post('delete', [WorkNoiseMonitoringController::class, 'delete']);
+        Route::get('export/excel', [WorkNoiseMonitoringController::class, 'exportExcel']);
+        Route::get('export/pdf', [WorkNoiseMonitoringController::class, 'exportPdf']);
+        Route::get('sample_download', [WorkNoiseMonitoringController::class, 'DownloadSample']);
+        Route::get('import', [WorkNoiseMonitoringController::class, 'import']);
+        Route::post('import/Submit', [WorkNoiseMonitoringController::class, 'importSubmit']);
+        Route::post('status', [WorkNoiseMonitoringController::class, 'statusChange']);
+        Route::post('unique', [WorkNoiseMonitoringController::class, 'Uniquecheck']);
+        Route::get('employeeName', [WorkNoiseMonitoringController::class, 'employeename']);
     });
 });
 
@@ -368,4 +394,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
     });
+});
+
+Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function(){
+    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::GET('add',[FloorStretcherController::class,'Add']);
+    Route::POST('add/submit',[FloorStretcherController::class,'Store']);
+    Route::GET('view/{id}',[FloorStretcherController::class,'View']);
+    Route::GET('export/excel',[FloorStretcherController::class,'ExportExcel']);
+    Route::GET('export/pdf',[FloorStretcherController::class,'ExportPdf']);
+    Route::GET('generalpdf/{id}',[FloorStretcherController::class,'ExportPdf']);
+    Route::POST('status',[FloorStretcherController::class,'StatusChange']);
+    Route::POST('delete',[FloorStretcherController::class,'Delete']);
 });

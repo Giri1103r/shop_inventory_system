@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidbox as OhcDailyDepartmentFirstAidbox;
+use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidboxEmail;
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -24,7 +25,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Models\Inspection\Ohc\OhcSignature;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class DailyDepartmentFirstAidBoxController extends Controller
 {
@@ -38,6 +40,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
     private $First_aid;
     private $certified_First_aid;
     private $inspection_ohc_status_log;
+    private $signature;
 
     private $inventory;
 
@@ -54,12 +57,12 @@ class DailyDepartmentFirstAidBoxController extends Controller
         $this->daily_department_first_aid_box_details = new DailyDepartmentFirstAidBoxDetails();
         $this->First_aid = new FirstAidLocation();
         $this->certified_First_aid = new CertifiedFirstAider();
+        $this->signature = new OhcSignature();
 
         $this->daily_department_first_aid_box = new DailyDepartmentFirstAidBox();
         $this->inventory = new Inventory();
         $this->user = new User();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
-
     }
 
 
@@ -112,8 +115,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
                             $btn = '';
                             $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING)) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING)) {
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
@@ -204,54 +207,54 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $id = $daily_department_first_aid_box_details->id;
                 $this->inspection_ohc_status_log->store($data);
 
-                 // Safety Officer
+                // Safety Officer
 
-                 $getfloormanager = getfloormanager();
-                 $getfloormanagers = $getfloormanager->pluck('id')->toArray();
-                 $getfloormanagerEmail = $getfloormanager->pluck('email')->toArray();
+                $getfloormanager = getfloormanager();
+                $getfloormanagers = $getfloormanager->pluck('id')->toArray();
+                $getfloormanagerEmail = $getfloormanager->pluck('email')->toArray();
 
-                 // medical officer
+                // medical officer
 
-                 $getmedicalassistant = getMedicalAssistant();
-                 $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
-                 $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
-                 // Select One
-                 $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->Selectone($id);
-                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
-                 // notification and email
+                $getmedicalassistant = getMedicalAssistant();
+                $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
+                $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
+                // Select One
+                $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->Selectone($id);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+                // notification and email
 
-                 $title = "Medical Requisition Slip- Fdo & Security Gate";
-                 $mailsubject = "Medical Requisition Slip- Fdo & Security Gate";
-                 $details = array(
-                     'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate',
-                     'mail_subject' => $mailsubject,
-                     'title' => $title,
-                     'data' => $daily_department_first_aid_box_details,
-                     'checklist' =>   $daily_department_first_aid_box
-                 );
+                $title = "Daily Department First Aid Box";
+                $mailsubject = "Daily Department First Aid Box";
+                $details = array(
+                    'ohc_type' => 'Daily Department First Aid Box',
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'data' => $daily_department_first_aid_box_details,
+                    'checklist' =>   $daily_department_first_aid_box
+                );
 
-                 $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
-                 if (!empty($recipients)) {
-                     Mail::to($recipients)->queue(new OhcDailyDepartmentFirstAidbox($details));
-                 }
+                $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
+                if (!empty($recipients)) {
+                    Mail::to($recipients)->queue(new DailyDepartmentFirstAidboxEmail($details));
+                }
 
-                 $notificationData = array(
-                     'notification_type' => 1,
-                     'module_type' => 1,
-                     'notification_message' => $mailsubject,
-                     'mobile_notification' => json_encode(array(
-                         'title' => $mailsubject,
-                         'message' => "Requestor Created the medicine requisition slip Fdo & Security Gate",
-                         'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                         'id' => $id,
-                         'module' => 1,
-                     )),
-                     'web_link' => admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($id)), // Fixed concatenation
-                     'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
-                     'created_by' => Auth::id(),
-                 );
+                $notificationData = array(
+                    'notification_type' => 1,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Requestor Created the Daily Departmental First Aid box",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($id)), // Fixed concatenation
+                    'assigned_user' => array_to_string(array_merge($getmedicalassistants,   $getfloormanagers)), // Fixed missing parenthesis
+                    'created_by' => Auth::id(),
+                );
 
-                 notificationSave($notificationData);
+                notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -276,9 +279,36 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
 
+                // status log
+
+                $type = OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX;
+                $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $floortype = MEDICAL_ASSISTANT_APPROVAL_PENDING;
+                $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
+                // FOOR MANGER SIGNATURE
+                $floormanagersignature = null;
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
+                }
+                // REQUESTOR SIGNATURE
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+                // APPROVAL SIGNATURE
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'daily_department_first_aid_box' => $daily_department_first_aid_box,
+                    'statuslog' => $statuslog,
+                    'floormanger' => $floormanger,
+                    'floorapproversignatureview' => $floorapproversignatureview,
+                    'signatureview' => $signatureview,
+                    'floormanagersignature' => $floormanagersignature,
                 );
             }
             return view('inspection.inspection_ohc.daily_department_first_aid_box.view', $data);
@@ -286,4 +316,354 @@ class DailyDepartmentFirstAidBoxController extends Controller
             dd($ex);
         }
     }
+
+    public function approval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+
+                // status log
+
+                $type = OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX;
+                $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $floortype = MEDICAL_ASSISTANT_APPROVAL_PENDING;
+                $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
+                // FOOR MANGER SIGNATURE
+                $floormanagersignature = null;
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
+                }
+                // REQUESTOR SIGNATURE
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+                // APPROVAL SIGNATURE
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
+                $data = array(
+                    'medicinerequisition' => $medicinerequisition,
+                    'daily_department_first_aid_box' => $daily_department_first_aid_box,
+                    'statuslog' => $statuslog,
+                    'floormanger' => $floormanger,
+                    'floorapproversignatureview' => $floorapproversignatureview,
+                    'signatureview' => $signatureview,
+                    'floormanagersignature' => $floormanagersignature,
+                );
+            }
+            return view('inspection.inspection_ohc.daily_department_first_aid_box.approval', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+
+                // status log
+
+                $type = OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX;
+                $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $floortype = MEDICAL_ASSISTANT_APPROVAL_PENDING;
+                $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
+                // FOOR MANGER SIGNATURE
+                $floormanagersignature = null;
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
+                }
+                // REQUESTOR SIGNATURE
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+                // APPROVAL SIGNATURE
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
+
+            }
+            $data = [
+                'medicinerequisition' => $medicinerequisition,
+                'daily_department_first_aid_box' => $daily_department_first_aid_box,
+                'statuslog' => $statuslog,
+                'floormanger' => $floormanger,
+                'floorapproversignatureview' => $floorapproversignatureview,
+                'signatureview' => $signatureview,
+                'floormanagersignature' => $floormanagersignature,
+                'pagetitle' => "Daily Department First Aid Box",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.inspection_ohc.daily_department_first_aid_box.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Daily Department First Aid Box.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function floormanagerapproval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+
+            try {
+
+                if ($request->action === "approve") {
+                    $approveStatus = MEDICAL_ASSISTANT_APPROVED;
+                    $nextStatus = MEDICAL_ASSISTANT_APPROVED;
+                } elseif ($request->action == "reject") {
+                    $approveStatus = MEDICAL_ASSISTANT_REJECTED;
+                    $nextStatus = MEDICAL_ASSISTANT_REJECTED;
+                }
+                $details = $this->daily_department_first_aid_box_details->Selectone($id);
+                $data = [
+                    'type' => OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
+                    'from_status' =>  MEDICAL_ASSISTANT_APPROVAL_PENDING,
+                    'to_status' => $approveStatus,
+                    'reference_id' => $id,
+                    'remarks' => $request->floor_remarks,
+                    'created_by' =>  $details->created_by,
+                    'approved_by' => Auth::id(),
+                ];
+
+                $signature_update = $this->signature->signatureUpload(OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
+                $this->inspection_ohc_status_log->store($data);
+
+                $this->daily_department_first_aid_box_details->floormanagerapprovalupdate($id, $nextStatus);
+                if($request->action == "approve"){
+                    $userIds = [
+                        'users' => $details->created_by,
+                    ];
+                    $mailsubject = 'Daily Department First Aid Box Approved';
+                    $notificationData = array(
+                        'notification_type' => 1,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Floor Manager /Medical Assistant Approved the Daily Departmental First Aid Box",
+                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('ohc/first-aid-box/daily-departmental/list'),
+                        'assigned_user' => array_to_string($userIds),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
+                    $title = "Daily Departmental First Aid Box";
+                    $user = $details->created_by;
+                    $email_id = getUseremail($user);
+
+                    $details = array(
+                        'ohc_type' => 'Daily Departmental First Aid Box was Floor Manager/ Medical assistant Approved',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $details
+                    );
+                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
+                } elseif($request->action == "reject"){
+                    $userIds = [
+                        'users' => $details->created_by,
+                    ];
+                    $mailsubject = 'Daily Departmental First Aid Box was Rejected';
+                    $notificationData = array(
+                        'notification_type' => 1,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Floor Manager / Medical assistant rejected the Daily Departmental First Aid Box",
+                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('ohc/first-aid-box/daily-departmental/list'),
+                        'assigned_user' => array_to_string($userIds),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
+                    $title = "Daily Departmental First Aid Box was Rejected";
+                    $user = $details->created_by;
+                    $email_id = getUseremail($user);
+
+                    $details = array(
+                        'ohc_type' => 'Daily Departmental First Aid Box was Floor Manager/ Medical assistant Rejected',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $details
+                    );
+                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
+                }
+
+
+
+                Session::flash('success', 'Your data has been Responded successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->daily_department_first_aid_box_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Unit',
+                'Department',
+                'Date',
+                'Shift',
+                'First Aid Box Number',
+                'First Aider',
+                'Approve Status',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->revision_date;
+                $export[] =  Displaydateformat($data->issue_date);
+                $export[] =  getUnitname($data->unit);
+                $export[] =  getUnitname($data->department);
+                $export[] = Displaydateformat($data->date);
+                $export[] = getShift($data->shift);
+                $export[] = ($data->first_aid_box_no);
+                $export[] = getFirstAider($data->first_aider);
+                $export[] = getohcrequisitionfloorstatus($data->approve_status);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Daily Department First Aid Box.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->daily_department_first_aid_box_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Unit',
+                'Department',
+                'Date',
+                'Approve Status',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Daily Department First Aid Box",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.daily_department_first_aid_box.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Daily Department First Aid Box.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        }
+    }
+
 }

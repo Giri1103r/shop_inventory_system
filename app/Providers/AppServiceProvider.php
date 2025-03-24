@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
-        defined('ROLE_MEDICIAL_ASSISTANT') or define('ROLE_MEDICIAL_ASSISTANT', 25);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
 
 
 
@@ -262,18 +262,21 @@ class AppServiceProvider extends ServiceProvider
 
 
         // Gemba Walk
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION', 1);
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION', 2);
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION', 3);
-        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 4);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION',1);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION',2);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION',3);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED',4);
+        defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED',5);
 
-        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1', 1);
-        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2', 2);
-        defined('GEMBA_WALK_INSPECTION_PASS_1') or define('GEMBA_WALK_INSPECTION_PASS_1', 1);
-        defined('GEMBA_WALK_INSPECTION_PASS_2') or define('GEMBA_WALK_INSPECTION_PASS_2', 2);
-        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
-        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
-        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 0);
+
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1',1);
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2',2);
+        defined('GEMBA_WALK_INSPECTION_PASS_L1') or define('GEMBA_WALK_INSPECTION_PASS_L1',1);
+        defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2',2);
+        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL',3);
+        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS',4);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START',0);
+
 
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
         defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
@@ -306,7 +309,7 @@ class AppServiceProvider extends ServiceProvider
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
-        // Fire File Upload 
+        // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
