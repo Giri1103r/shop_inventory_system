@@ -58,7 +58,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Date</label>
+                                                    <label class="form-label require">Revision Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
                                                         placeholder="Revision Date" value="{{ getDocumentReviewDate('MSDS-0') }}"
                                                         readonly>

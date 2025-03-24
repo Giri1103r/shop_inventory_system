@@ -171,7 +171,7 @@
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '') }}</td>
+                {{ isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>

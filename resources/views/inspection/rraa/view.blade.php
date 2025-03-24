@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Revision Date') }}</label>
+                                    <label class="form-label view_label">{{ __('Revision Data') }}</label>
                                     <div class="view_data">
                                         {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
                                     </div>

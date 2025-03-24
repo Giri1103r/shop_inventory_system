@@ -33,7 +33,7 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->revision_date) }}
+                            {{ $value->revision_date }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

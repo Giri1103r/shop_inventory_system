@@ -215,6 +215,7 @@ class SafetyPettyController extends Controller
         try {
 
             $allData = $this->sfty_petty_details->exportdata();
+            // dd($allData);
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -224,7 +225,7 @@ class SafetyPettyController extends Controller
                 __("common.sno"),
                 'Document Number',
                 'Issue Date',
-                'Revision Date',
+                'Revision Data',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -253,7 +254,7 @@ class SafetyPettyController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/safety-petty-logbook/list'));

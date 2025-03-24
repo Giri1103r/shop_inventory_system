@@ -35,6 +35,8 @@ use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+
 /*
  * Menu bar start
  */
@@ -252,6 +254,11 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'AUDIT-ASSESSMENT-' . getautogen($count);
                 break;
+            case 'SPLB':
+                $count = SafetyPettyChecklist::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'SPLB-' . getautogen($count);
+                break;
             default:
                 $sequence = Str::random(5);
                 break;
@@ -301,7 +308,7 @@ if (!function_exists('getohctotalCount')) {
 
         switch ($type) {
 
-          
+
             case 'medicine':
                 $count = Medicine::where('status', 1)->count();
                 break;
