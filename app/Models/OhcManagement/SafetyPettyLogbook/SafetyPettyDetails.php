@@ -31,14 +31,14 @@ class SafetyPettyDetails extends Model
     protected $attributes = [
         'status' => 1,
         'trash' => 'NO'
-    ]; 
+    ];
 
     public function list()
     {
         $request = request();
         $search = '';
         $query = $this->select('ohc_safety_petty_logbook_details.*');
-      
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -87,14 +87,14 @@ class SafetyPettyDetails extends Model
     public function store()
     {
         $request = request();
-      
+
         $insert_array = array(
             'document_number' => $request->document_number,
             'issue_date' => DBdateformat($request->issue_date),
             'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
         );
-      
+
         return $this->create($insert_array);
     }
 
@@ -123,7 +123,7 @@ class SafetyPettyDetails extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) { 
+            $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
                     ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
                     ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
@@ -132,6 +132,7 @@ class SafetyPettyDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
+
         if ($request->has('issue_date') && $request->issue_date) {
             $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
@@ -143,7 +144,7 @@ class SafetyPettyDetails extends Model
         }
         $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        return $query->get();
     }
 
     protected static function booted()
