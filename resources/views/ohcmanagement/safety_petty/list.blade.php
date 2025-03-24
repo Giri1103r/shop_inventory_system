@@ -16,7 +16,7 @@
 
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/safety-petty-logbook/add') }}">Add</x-button-add>
-                        
+
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -31,11 +31,6 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date" class="form-label ">Issue Date</label>
                                             <input type="text" name="issue_date" id="issue_date"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="revision_date" class="form-label ">Revision Date</label>
-                                            <input type="text" name="revision_date" id="revision_date"
                                                 class="form-control">
                                         </div>
 
@@ -84,7 +79,7 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 
 @stop
 
@@ -104,7 +99,7 @@
             dateFormat: "d-m-Y",
             // minDate: new Date(),
         });
-        
+
     });
 
     $(function() {

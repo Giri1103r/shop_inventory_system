@@ -15,6 +15,7 @@ class GembaWalkInspectionEhsFile extends Model
     protected $table = 'inspection_gemba_walk_ehs_inspection_files';
 
     protected $fillable = [
+        'gemba_walk_id',
         'ehs_id',
         'file_type',
         'file_path',
@@ -33,10 +34,32 @@ class GembaWalkInspectionEhsFile extends Model
     ];
 
 
-    public function capaFileSubmit($ehs_id,$upload_status){
+    public function capaFileSubmit($gembaWalk_id,$ehs_id,$upload_status){
         $request = request();
+        // dd($request);
+        $floorId = decryptId($request->floor_managerId);
+
+        if ($floorId) {
+            $data = $this->where('file_type', 2)
+                ->where('gemba_walk_id', $gembaWalk_id)
+                ->where('id', $floorId)
+                ->first();
+
+            if ($data) {
+                $data->status = 0;
+                $data->trash = 'YES';
+                $data->save();
+            }
+        }
+
+       
+
+        // dd(11);  
 
         $intendent = $request->file('capa_image');
+
+
+
         if ($intendent != null) {
 
             $uploadpath = 'public/uploads/gembaWalkEhs/' . $ehs_id;
@@ -60,7 +83,7 @@ class GembaWalkInspectionEhsFile extends Model
             $user_id = Auth::id();
 
             $insert_data = array(
-
+                'gemba_walk_id'=>$gembaWalk_id,
                 'ehs_id' => $ehs_id,
                 'file_type' => $upload_status,
                 'file_name' => $filenewname,

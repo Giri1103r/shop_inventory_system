@@ -2015,8 +2015,7 @@ if (!function_exists('getMonth')) {
                 return 'Safet Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
                 return 'Safet Officer Approved';
-            }
-            else if ($id == SAFETY_OFFICER_REJECTED) {
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
                 return 'Safet Officer rejected';
             }
 
@@ -2083,6 +2082,32 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getObservationType')) {
+        function getObservationType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Unsafe Act';
+            } elseif ($type_id == 2) {
+                return 'Unsafe Condition';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkStatus')) {
+        function getGembaWalkStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'Closed';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
     // Fire Inspection Hooter Sequence
     if (!function_exists('HooterSequence')) {
         function HooterSequence()
@@ -2092,31 +2117,27 @@ if (!function_exists('getMonth')) {
     }
 
     // Fire Inspection Folder Name
-    if(!function_exists('GetTypeName'))
-    {
+    if (!function_exists('GetTypeName')) {
         function GetTypeName($id)
         {
-            switch($id)
-            {
+            switch ($id) {
                 case HOOTER_INSPECTION:
                     return 'Hooter-Inspection';
                     break;
-                
+
                 default:
                     break;
-            }   
+            }
         }
     }
 
     // Get Department Name
-    if(!function_exists('GetDeptName'))
-    {
+    if (!function_exists('GetDeptName')) {
         function GetDeptName($id)
         {
-            $data = Department::where('id',$id)->first();
+            $data = Department::where('id', $id)->first();
 
-            if($data)
-            {
+            if ($data) {
                 return $data->department_name;
             }
         }

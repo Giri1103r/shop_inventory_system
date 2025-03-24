@@ -34,8 +34,38 @@ class GembaWalkInspectionEhsApproval extends Model
     public function capaSubmit($gembaWalk_id, $capa_type)
     {
         $request = request();
+        $floorId = decryptId($request->floor_managerId);
+        $ehsId = decryptId($request->ehs_managerId);
+
+
+        if ($floorId) {
+            $data = $this->where('type', 2)
+                ->where('gemba_walk_id', $gembaWalk_id)
+                ->where('id', $floorId)
+                ->first();
+
+            if ($data) {
+                $data->status = 0;
+                $data->trash = 'YES';
+                $data->save();
+            }
+        }
+
+        if ($ehsId) {
+            $data = $this->where('type', 3)
+                ->where('gemba_walk_id', $gembaWalk_id)
+                ->where('id', $ehsId)
+                ->first();
+
+            if ($data) {
+                $data->status = 0;
+                $data->trash = 'YES';
+                $data->save();
+            }
+        }
 
         $insert_array = array(
+
             'gemba_walk_id' => $gembaWalk_id,
             'type' => $capa_type,
             'name' => $request->officer_name,
@@ -43,6 +73,7 @@ class GembaWalkInspectionEhsApproval extends Model
             'capa' => $request->is_passed,
             'remarks' => $request->capa_remark,
             'created_by' => Auth::id()
+
         );
 
         return $this->create($insert_array);
@@ -50,44 +81,62 @@ class GembaWalkInspectionEhsApproval extends Model
 
     public function getStatus($gembaWalk_id)
     {
-        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 1)->where('status',1)->first();
+        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 1)->where('status', 1)->first();
     }
 
     public function getApproveStatus($gembaWalk_id)
     {
-        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 4)->where('status',1)->first();
+        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 4)->where('status', 1)->first();
     }
+
+
 
     public function getFloorApproveStatus($gembaWalk_id)
     {
-        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 2)->where('status',1)->first();
+        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 2)->where('status', 1)->first();
     }
 
     public function getEHSReview($gembaWalk_id)
     {
-        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 3)->where('status',1)->first();
+        return  $this->select('remarks', 'capa')->where('gemba_walk_id', $gembaWalk_id)->where('type', 3)->where('status', 1)->first();
     }
 
 
 
-    public function getEHSCapaReview()
+    public function getEHSCapaReview($id)
     {
         $data = $this->select('inspection_gemba_walk_ehs_officer_approval.*', 'inspection_gemba_walk_ehs_inspection_files.file_path')
             ->leftJoin('inspection_gemba_walk_ehs_inspection_files', 'inspection_gemba_walk_ehs_inspection_files.ehs_id', '=', 'inspection_gemba_walk_ehs_officer_approval.id')
+            ->where('inspection_gemba_walk_ehs_officer_approval.type', 1)
+
+            ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
             ->first();
 
         return $data;
     }
 
-
-    public function getEHSFloormanagerReview()
+    public function getEHSFloormanagerReview($id)
     {
         $data = $this->select('inspection_gemba_walk_ehs_officer_approval.*', 'inspection_gemba_walk_ehs_inspection_files.file_path')
             ->leftJoin('inspection_gemba_walk_ehs_inspection_files', 'inspection_gemba_walk_ehs_inspection_files.ehs_id', '=', 'inspection_gemba_walk_ehs_officer_approval.id')
             ->where('inspection_gemba_walk_ehs_officer_approval.type', 2)
+            ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
             ->first();
 
         return $data;
     }
 
+    public function getEHSOfficerReview($id)
+    {
+        $data = $this->select('inspection_gemba_walk_ehs_officer_approval.*', 'inspection_gemba_walk_ehs_inspection_files.file_path')
+            ->leftJoin('inspection_gemba_walk_ehs_inspection_files', 'inspection_gemba_walk_ehs_inspection_files.ehs_id', '=', 'inspection_gemba_walk_ehs_officer_approval.id')
+            ->where('inspection_gemba_walk_ehs_officer_approval.type', 4)
+            ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
+            ->first();
+
+        return $data;
+    }
 }

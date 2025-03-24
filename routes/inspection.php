@@ -140,6 +140,16 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::post('floor-manager/review/submit', [GembaWalkController::class, 'capaReviewSubmit']);
     Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
     Route::post('ehs-officer/review/submit', [GembaWalkController::class, 'ehsReviewSubmit']);
+    Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
+    Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
+    Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
+
+
+
+
+
+
+   
 });
 Route::group(['prefix' => 'environment/'], function () {
     Route::group(['prefix' => 'ambient-noise/'], function () {
