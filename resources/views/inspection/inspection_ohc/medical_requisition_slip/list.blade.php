@@ -101,7 +101,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var IssueDatepicker = flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
 
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({

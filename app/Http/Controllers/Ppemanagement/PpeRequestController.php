@@ -11,12 +11,14 @@ use App\Mail\PpeRequestHodApprovalEmail;
 use App\Mail\PpeRequestRequestorEmail;
 use App\Mail\PpeRequestStoremanagerEmail;
 use App\Models\ApproveStatus;
+use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
+use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use App\Models\Master\Worktemp;
 use App\Models\Statuslog;
@@ -48,6 +50,8 @@ class PpeRequestController extends Controller
     private $approvestatus;
     private $department;
     private $work;
+    private $unit;
+    private $company;
 
     public function __construct()
     {
@@ -62,6 +66,9 @@ class PpeRequestController extends Controller
         $this->approvestatus = new ApproveStatus();
         $this->department = new Department();
         $this->work = new Work();
+        $this->unit = new Unit();
+        $this->company = new Company();
+
     }
     public function index(Request $request)
     {
@@ -231,17 +238,38 @@ class PpeRequestController extends Controller
 
     public function fetchEmployeeDetails($emp_id)
     {
-
-        $employee = $this->work->select('emp_name', 'department')
+        $employee = $this->work->select('emp_name', 'department','unit','company')
             ->where('emp_id', $emp_id)
-            // ->where('emp_id','!=',Auth::user()->employee_id)
             ->first();
 
-        $departments = $this->department->select('id', 'department_name')->where('status', '1')->first();
+
+        $department = null;
+        if ($employee && $employee->department) {
+            $department = $this->department->select('id', 'department_name')
+                ->where('id', $employee->department)
+                ->where('status', '1')
+                ->first();
+        }
+        $unit = null;
+        if ($employee && $employee->unit) {
+            $unit = $this->unit->select('id', 'unit_name')
+                ->where('id', $employee->unit)
+                ->where('status', '1')
+                ->first();
+        }
+        $company = null;
+        if ($employee && $employee->company) {
+            $company = $this->company->select('id', 'company_name')
+                ->where('id', $employee->company)
+                ->where('status', '1')
+                ->first();
+        }
 
         return response()->json([
             'employee' => $employee,
-            'departments' => $departments
+            'departments' => $department,
+            'units' => $unit,
+            'companys' => $company
         ]);
     }
 
@@ -347,7 +375,7 @@ class PpeRequestController extends Controller
                     'approve_link' => url('ppe_request/hodapproval/view/' . encryptID($id)),
                     'reject_link' => url('ppe_request/hodapproval/view/' . encryptID($id))
                 ];
-                if(!empty($hod)){
+                if (!empty($hod)) {
                     Mail::to($hod)->queue(new PpeRequestRequestorEmail($details));
                 }
 
@@ -572,7 +600,7 @@ class PpeRequestController extends Controller
                 foreach ($ehsofficer as $officer) {
                     $officer_email = $officer->email;
                     if (!empty($officer_email)) {
-                    Mail::to($officer_email)->queue(new PpeRequestHodApprovalEmail($details));
+                        Mail::to($officer_email)->queue(new PpeRequestHodApprovalEmail($details));
                     }
                 }
 
@@ -598,8 +626,7 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                if(!empty($requestor))
-                {
+                if (!empty($requestor)) {
                     Mail::to($requestor)->queue(new PpeRejectRequestEmail($details));
                 }
 
@@ -731,7 +758,7 @@ class PpeRequestController extends Controller
 
             if ($action == 'approve') {
 
-                if(!empty($recipients)){
+                if (!empty($recipients)) {
                     Mail::to($recipients)->queue(new PpeEhsRequestEmail($details));
                 }
 
@@ -755,10 +782,8 @@ class PpeRequestController extends Controller
                             $email_id = $user->email;
                             if ($email_id != '' || $email_id != null) {
                                 Mail::to($email_id)->queue(new PpeRequestStoremanagerEmail($Storedetails));
-
                             }
                         }
-
                     }
 
                     $id = $empDetails->id;
@@ -814,7 +839,7 @@ class PpeRequestController extends Controller
 
                 notificationSave($notificationData);
             } else {
-                if(!empty($recipients)){
+                if (!empty($recipients)) {
                     Mail::to($recipients)->queue(new PpeRequestEhsRejectEmail($details));
                 }
 
@@ -851,7 +876,7 @@ class PpeRequestController extends Controller
             Session::flash('success', 'PPE Request has successfully responded');
             return redirect()->to(admin_url('ppe_request/list'));
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
 
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect()->to(admin_url('ppe_request/list'));

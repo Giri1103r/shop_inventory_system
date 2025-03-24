@@ -59,9 +59,9 @@ class PpeExemption extends Model
         } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query
-                  ->orderBy('ppe_ppeexemption.id', 'DESC');
+                ->orderBy('ppe_ppeexemption.id', 'DESC');
         } else {
-            $query->where('ppe_ppeexemption.created_by',Auth::id());
+            $query->where('ppe_ppeexemption.created_by', Auth::id());
         }
 
         $org_total = $query;
@@ -133,15 +133,17 @@ class PpeExemption extends Model
     public function store()
     {
         $request = request();
-
-
+     
+        $unit = Unit::where('unit_name', $request->unit)->first();
+        $department = Department::where('department_name', $request->department)->first();
+        $company = Company::where('company_name', $request->company)->first();
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' => Auth::user()->department_id,
-            'unit' => $request->unit,
-            'company' => $request->company,
-            'request_for'=>$request->request_for,
+            'department' =>  $department->id ?? null,
+            'unit' => $unit->id ?? NULL,
+            'company' => $company->id ?? null,
+            'request_for' => $request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'approve_status' => STATUS_EHS_APPROVAL_PENDING,
@@ -161,16 +163,16 @@ class PpeExemption extends Model
             'emp_name' => $request->emp_name,
             'department' => Auth::user()->department_id,
             'unit' => $request->unit,
-            'company'=>$request->company,
+            'company' => $request->company,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
             'reason' => $request->reason,
             'approve_status' => STATUS_EHS_APPROVAL_PENDING,
-            'created_by'=>Auth::id(),
-            'updated_by'=>Auth::id(),
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id(),
 
         ];
-        return $this->where('id',$id)->update($update_array);
+        return $this->where('id', $id)->update($update_array);
     }
 
     public function laststatus()
@@ -197,12 +199,12 @@ class PpeExemption extends Model
         if ($type == 1) {
             $update_data = array(
                 'status' => 0,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         } else {
             $update_data = array(
                 'status' => 1,
-                'updated_by'=>Auth::id(),
+                'updated_by' => Auth::id(),
             );
         }
 
@@ -244,7 +246,7 @@ class PpeExemption extends Model
         $date = Carbon::now();
 
 
-       $this->where('to_date', '>', $date)->update(['status' => 0]);
+        $this->where('to_date', '>', $date)->update(['status' => 0]);
     }
 
 
@@ -260,12 +262,11 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole )|| in_array(ROLE_EHS_HEAD, $userRole) ) {
-        } elseif(in_array(ROLE_HOD, $userRole)){
-           $departmentId = $user->department_id;
-           $query->where('ppe_ppeexemption.department',$departmentId);
-        }
-        else {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
+        } elseif (in_array(ROLE_HOD, $userRole)) {
+            $departmentId = $user->department_id;
+            $query->where('ppe_ppeexemption.department', $departmentId);
+        } else {
             $query->where('ppe_ppeexemption.emp_id', $empId);
         }
 
@@ -300,7 +301,7 @@ class PpeExemption extends Model
         }
 
         if ($request->has('to_date') && !empty($request->to_date)) {
-            $toDate =$request->to_date;
+            $toDate = $request->to_date;
             $query->where('ppe_ppeexemption.to_date', '<=', $toDate);
         }
         if ($request->has('approve_status') && $request->approve_status) {
@@ -319,7 +320,7 @@ class PpeExemption extends Model
         return  $query->orderBy('id', 'DESC')->get();
     }
 
-    public function findDepartment($department ,$id)
+    public function findDepartment($department, $id)
     {
 
         return $this->where('id', $id)->where('department', $department)->pluck('department')->first();
@@ -425,7 +426,8 @@ class PpeExemption extends Model
     }
 
 
-    public function monthwiseexemption(){
+    public function monthwiseexemption()
+    {
         $request = request();
 
 
@@ -455,5 +457,4 @@ class PpeExemption extends Model
 
         return $results;
     }
-
 }
