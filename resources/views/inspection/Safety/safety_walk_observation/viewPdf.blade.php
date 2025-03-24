@@ -1,8 +1,9 @@
+=
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Safety Equipment List | KARAM</title>
+    <title>Safety Walk Observation | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +124,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Safety Equipment List </td>
+                    Safety Walk Observation </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Equipment List
+                    Safety Walk Observation
                 </td>
             </tr>
         </table>
@@ -177,6 +178,41 @@
             </td>
         </tr>
         <tr>
+            <td width="50%" style="padding:5px;"><b>Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($inspection_details->date) ? $inspection_details->date : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift Id</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShiftname(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Month</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($inspection_details->month) ? $inspection_details->month : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Safety Walk Taken By</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($inspection_details->safety_walk_taken_by) ? $inspection_details->safety_walk_taken_by : '' }}
+            </td>
+        </tr>
+        <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -196,78 +232,125 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Equipment List Details
+                    Safety Walk Observation
                 </td>
             </tr>
         </table>
     </div>
+
+
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.equipment_name') }}
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DATE OF
+                    OBSERVATION
                 </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.item_code') }}
-                </th>
-                <th rowspan="2"
-                    style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.standard_norms') }}
-                </th>
-                <th rowspan="2"
-                    style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.equipment_category') }}
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.unit_of_measurement') }}
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">OBSERVATION
                 </th>
             </tr>
             <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.minimum_order_value') }}
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">PICTURE
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.economic_order_quantity') }}
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.observation_status') }}
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.remarks') }}
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    RECOMENDED ACTION</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    RESPONSIBILITY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DATE OF
+                    COMPLIANCE</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    STATUS</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">REMARKS
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($inspection as $details)
+
+            @if ($last_month_observation_details !== false)
+                <tr>
+                    <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">
+                        Previous
+                        Month Observation</td>
+                </tr>
+                @php
+                    $i = 1;
+                @endphp
+                @foreach ($last_month_observation_details as $details)
+                    @foreach ($details as $details)
+                        <tr>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $i }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ getLocationName($details->location) }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ Displaydateformat($details->observation_date) }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
+
+                            <td style="border: 2px solid black; padding: 8px;"><img
+                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt="" />
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->responsibility }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                @if ($details->observation_status == 1)
+                                    Active
+                                @elseif($details->observation_status == 0)
+                                    Inactive
+                                @else
+                                    Unknown
+                                @endif
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
+                        </tr>
+                        @php
+
+                            $i++;
+                        @endphp
+                    @endforeach
+                @endforeach
+            @endif
+
+            <tr>
+                <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">Current
+                    Month Observation</td>
+            </tr>
+            @foreach ($inspection as $detail)
                 <tr>
                     <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getEquipmentName($details->equipment_id) }}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($detail->location) }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->item_code }}</td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->standard_norms == STANDARD)
-                            Standard
-                        @elseif ($details->standard_norms == NORMS)
-                            Norms
-                        @endif
+                        {{ Displaydateformat($detail->observation_date) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
+                    <td style="border: 2px solid black; padding: 8px;"><img
+                            src="{{ GetSafetyWalkImage($detail->id) }}" alt="">
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->equipment_category }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->measurement_unit }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->minimum_order_level }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->economic_order_quantity }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->recomended_action }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                    </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->observation_status == 1)
+                        {{ Displaydateformat($detail->date_of_compliance) }}</td>
+
+                    <td style="border: 2px solid black; padding: 8px;">
+                        @if ($detail->observation_status == 1)
                             Active
-                        @elseif($details->observation_status == 0)
-                            Deactive
+                        @elseif($detail->observation_status == 0)
+                            Inactive
+                        @else
+                            Unknown
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->remark }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
+
         </tbody>
     </table>
+
+
     <br>
 
 </body>

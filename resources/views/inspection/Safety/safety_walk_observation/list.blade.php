@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Equipment List')
+@section('title', 'Safety Walk Observation')
 @section('pageurl', admin_url('safety/safety-walk-observation/list'))
 
 
@@ -159,8 +159,8 @@
                             name: 'revision_data',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'observation_status',
+                            name: 'observation_status',
                         },
                         {
                             data: 'action',
@@ -285,7 +285,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-walk-observation/list/status') }}",
+                                url: "{{ admin_url('safety/safety-walk-observation/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -353,7 +353,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-walk-observation/list/delete') }}",
+                                url: "{{ admin_url('safety/safety-walk-observation/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

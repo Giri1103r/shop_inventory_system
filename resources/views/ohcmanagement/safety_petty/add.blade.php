@@ -305,9 +305,9 @@
             // $(document).on('change', '[id^="unit_id-"]', function() {
             //     var unitId = $(this).val();
             //     var formSetCount = $(this).attr('id').split('-')[
-            //     1]; 
+            //     1];
             //     var departmentSelect = $('#department_id-' +
-            //     formSetCount); 
+            //     formSetCount);
 
             //     if (unitId) {
             //         $.ajax({

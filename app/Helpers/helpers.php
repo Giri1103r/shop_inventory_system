@@ -2015,8 +2015,7 @@ if (!function_exists('getMonth')) {
                 return 'Safet Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
                 return 'Safet Officer Approved';
-            }
-            else if ($id == SAFETY_OFFICER_REJECTED) {
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
                 return 'Safet Officer rejected';
             }
 
@@ -2035,6 +2034,21 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $shift_name->shift;
+            }
+        }
+    }
+
+    if (!function_exists('GetSafetyWalkImage')) {
+
+        function GetSafetyWalkImage($id)
+        {
+
+            $safetyImage = DB::table('inspection_safety_walk_observation_files')->where('safety_walk_observation_id', $id)->where('trash', 'NO')->first();
+
+            if ($safetyImage == null) {
+                return false;
+            } else {
+                return $safetyImage->file_path;
             }
         }
     }
@@ -2092,31 +2106,27 @@ if (!function_exists('getMonth')) {
     }
 
     // Fire Inspection Folder Name
-    if(!function_exists('GetTypeName'))
-    {
+    if (!function_exists('GetTypeName')) {
         function GetTypeName($id)
         {
-            switch($id)
-            {
+            switch ($id) {
                 case HOOTER_INSPECTION:
                     return 'Hooter-Inspection';
                     break;
-                
+
                 default:
                     break;
-            }   
+            }
         }
     }
 
     // Get Department Name
-    if(!function_exists('GetDeptName'))
-    {
+    if (!function_exists('GetDeptName')) {
         function GetDeptName($id)
         {
-            $data = Department::where('id',$id)->first();
+            $data = Department::where('id', $id)->first();
 
-            if($data)
-            {
+            if ($data) {
                 return $data->department_name;
             }
         }

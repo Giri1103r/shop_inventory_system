@@ -253,10 +253,11 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('add', [SafetyWalkObservationController::class, 'add']);
         Route::post('add/submit', [SafetyWalkObservationController::class, 'store']);
         Route::get('view/{id}', [SafetyWalkObservationController::class, 'view']);
-        Route::GET('get/equipment', [SafetyWalkObservationController::class, 'GetEquipment']);
+        Route::get('approval/{id}', [SafetyWalkObservationController::class, 'approval']);
         Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
         Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
+        Route::post('verify/submit', [SafetyWalkObservationController::class, 'approvalSubmit']);
     });
 
     Route::group(['prefix' => 'ohc-plant-summary/'], function () {

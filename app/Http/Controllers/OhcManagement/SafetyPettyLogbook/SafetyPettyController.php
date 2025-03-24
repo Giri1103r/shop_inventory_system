@@ -113,16 +113,16 @@ class SafetyPettyController extends Controller
             $sfty_petty_id = $sfty_petty_details->id;
             $this->sfty_petty_checklist->store($sfty_petty_id);
             $empId =  Auth::user()->employee_id;
-           
+
             $this->signature->signatureLogUpload(
                 $empId, $sfty_petty_id ,
-                OHC_AMOUNT_GIVENBY_INSPECTION, 
-                'signature_givenby_image' 
+                OHC_AMOUNT_GIVENBY_INSPECTION,
+                'signature_givenby_image'
             );
-    
+
             $this->signature->signatureLogUpload(
                   $empId, $sfty_petty_id ,
-                OHC_AMOUNT_RECEIVEDBY_INSPECTION, 
+                OHC_AMOUNT_RECEIVEDBY_INSPECTION,
                 'signature_receivedby_image'
             );
 
@@ -144,18 +144,10 @@ class SafetyPettyController extends Controller
             ->limit(10)
             ->get();
 
-        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
-
-
-        $mergedResults = $employee_code->merge($work);
-
         return response()->json(
-            $mergedResults->map(function ($employee) {
+            $employee_code->map(function ($employee) {
                 return [
-                    'id' => $employee->emp_id,
+                    'id' => $employee->login_id,
                     'text' => $employee->emp_id . ' - ' . $employee->emp_name,
                 ];
             })

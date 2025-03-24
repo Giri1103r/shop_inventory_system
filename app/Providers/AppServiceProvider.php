@@ -242,6 +242,13 @@ class AppServiceProvider extends ServiceProvider
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
+
+        //SAFETY WALK OBSERVATION
+        defined('OBSERVATION_PENDING') or define('OBSERVATION_PENDING', 1);
+        defined('OBSERVATION_REJECTED') or define('OBSERVATION_REJECTED', 2);
+        defined('OBSERVATION_APPROVED') or define('OBSERVATION_APPROVED', 3);
+
+
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);
         defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
@@ -306,7 +313,7 @@ class AppServiceProvider extends ServiceProvider
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
-        // Fire File Upload 
+        // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
