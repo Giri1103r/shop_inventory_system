@@ -35,6 +35,7 @@ use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\environment\Environment;
 /*
  * Menu bar start
  */
@@ -251,6 +252,16 @@ if (!function_exists('getsequence')) {
                 $count = AuditAssessment::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AUDIT-ASSESSMENT-' . getautogen($count);
+                break;
+            case 'ambientNoiseNo':
+                $count = Environment::where('type',1)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AMBIENT-NOISE-' . getautogen($count);
+                break;
+            case 'workNoiseNo':
+                $count = Environment::where('type',2)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'WORK-NOISE-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

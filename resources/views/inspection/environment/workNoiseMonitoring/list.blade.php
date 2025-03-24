@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ambient Noise Monitoring')
-@section('pageurl', admin_url('environment/ambient-noise/list'))
+@section('title', 'Work Noise Monitoring')
+@section('pageurl', admin_url('environment/work-noise/list'))
 
 
 @section('content')
@@ -16,7 +16,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('environment/ambient-noise/add') }}">Add</x-button-add>
+                            href="{{ admin_url('environment/work-noise/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -26,10 +26,10 @@
                                     <div class="row">
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="environment_no" class="form-label">Ambient Noise Monitoring Id                                            </label>
+                                            <label for="environment_no" class="form-label">Work Noise Monitoring Id                                            </label>
                                             <select name="environment_no" id="environment_no" class=" form-control single-select"
                                                 style="width: 100%">
-                                                <option value="">Selecte Ambient Noise Monitoring </option>
+                                                <option value="">Selecte Work Noise Monitoring </option>
                                                 @foreach ($environmentList as $list)
                                                     <option value="{{ encryptId($list->id) }}">
                                                         {{ $list->environment_no }}</option>
@@ -66,7 +66,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Ambient Noise Monitoring Id</th>
+                                        <th>Work Noise Monitoring Id</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -113,7 +113,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('environment/ambient-noise/list') }}",
+                        url: "{{ admin_url('environment/work-noise/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -187,7 +187,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('environment/ambient-noise/export/pdf') }}" +
+                                            "{{ admin_url('environment/work-noise/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&environment_no=' + environment_no +
                                             '&status=' + status
@@ -203,7 +203,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('environment/ambient-noise/export/excel') }}" +
+                                            "{{ admin_url('environment/work-noise/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&environment_no=' + environment_no +
                                             '&status=' + status
@@ -268,7 +268,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('environment/ambient-noise/status') }}",
+                                url: "{{ admin_url('environment/work-noise/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -336,7 +336,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('environment/ambient-noise/delete') }}",
+                                url: "{{ admin_url('environment/work-noise/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
