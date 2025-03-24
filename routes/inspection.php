@@ -20,9 +20,9 @@ use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
-use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {

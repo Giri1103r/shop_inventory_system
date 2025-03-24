@@ -94,7 +94,8 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Employee Name</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->employee_name) ? $sfty_petty_checklist->employee_name : '' }}
+                                            {{-- @dd(getUsername($sfty_petty_checklist->employee_name)) --}}
+                                            {{ getUsername($sfty_petty_checklist->employee_name) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -138,7 +139,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Given By</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->amount_given_by) ? $sfty_petty_checklist->amount_given_by : '' }}
+                                            {{ getUsername($sfty_petty_checklist->amount_given_by) }}
                                         </div>
                                     </div>
 
@@ -154,7 +155,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Received By</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->amount_received_by) ? $sfty_petty_checklist->amount_received_by : '' }}
+                                            {{ getUsername($sfty_petty_checklist->amount_received_by) }}
                                         </div>
                                     </div>
                                     @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)

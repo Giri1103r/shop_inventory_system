@@ -35,7 +35,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
