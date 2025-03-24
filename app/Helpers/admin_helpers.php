@@ -35,6 +35,7 @@ use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\audit\AuditAnalysis;
 /*
  * Menu bar start
  */
@@ -251,6 +252,11 @@ if (!function_exists('getsequence')) {
                 $count = AuditAssessment::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AUDIT-ASSESSMENT-' . getautogen($count);
+                break;
+            case 'audit_analysis':
+                $count = AuditAnalysis::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AUDIT-ANALYSIS-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

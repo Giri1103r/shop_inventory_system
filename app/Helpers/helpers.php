@@ -35,6 +35,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\MSDSCheckList;
 use App\Models\Inspection\RRAACheckList;
 use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\audit\AuditAnalysis;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1396,6 +1397,14 @@ if (!function_exists('getMonth')) {
         function getMSDSCount()
         {
             $data = MSDSCheckList::get()->count();
+            return $data;
+        }
+    }
+    if (!function_exists('getAnalysisCount')) {
+
+        function getAnalysisCount()
+        {
+            $data = AuditAnalysis::get()->count();
             return $data;
         }
     }
