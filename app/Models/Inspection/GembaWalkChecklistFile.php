@@ -75,6 +75,7 @@ class GembaWalkChecklistFile extends Model
 
     public function storeVerifiedSignature($gembaWalk_id){
         $request = request();
+        // dd($request);
 
         $intendent = $request->file('gemba_walk_verified_by');
         if ($intendent != null) {

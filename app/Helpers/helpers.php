@@ -1940,4 +1940,31 @@ if (!function_exists('getMonth')) {
             return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
         }
     }
+
+    if (!function_exists('getObservationType')) {
+        function getObservationType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Unsafe Act';
+            } elseif ($type_id == 2) {
+                return 'Unsafe Condition';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkStatus')) {
+        function getGembaWalkStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'Closed';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+    
 }
