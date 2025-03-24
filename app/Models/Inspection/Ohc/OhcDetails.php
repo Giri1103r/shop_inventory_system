@@ -164,7 +164,7 @@ class OhcDetails extends Model
         $file = $request->file('signature_image');
         if ($file != null) {
 
-            $destinationPath = 'public/uploads/signatureupload';
+            $destinationPath = 'uploads/signatureupload';
 
             if (!File::exists(public_path($destinationPath))) {
                 File::makeDirectory(public_path($destinationPath), 0777, true, true);

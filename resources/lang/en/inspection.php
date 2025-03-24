@@ -13,7 +13,7 @@ return [
     'active_msg' => 'Do you want to Activate the checklist type?',
     'doc_no' => 'Document Number',
     'issue_date' => 'Issue Date',
-    'rev_date' => 'Revision & Date',
+    'rev_date' => 'Revision & Data',
     'inspection_date' => 'Date of Inspection',
     'location' => 'Location',
     'next_due' => 'Next Due on',
@@ -54,9 +54,64 @@ return [
     'capa_reverifcation_remarks' => 'Capa Reverifcation Remarks',
     'ehs_officer_reverification' => 'EHS Officer Reverification',
     'status_log' => 'Status Log',
+
+    'msds' => 'MSDS',
+    'ser_no' => 'Serial Number',
+    'item_code' => 'Item Code',
+    'name_of_chemical' => 'Name of Chemical',
+    'msds_avl_sts' => 'MSDS Availability Status',
+
+    'rraa' => 'RRAA',
     'resource_code' => 'Resource Code',
     'safety_gallery_inspection' => 'Safety Gallery Inspection',
+    'signature' => 'Signature',
 
+    // Monthly Eye Wash Inspection
+    'sr_no' => 'Serial No',
+    'resource_code' => 'Resource Code',
+    'condition' => 'Condition',
+    'value' => 'Value',
+    'hfsov' => 'Hands Free Stay Open Value',
+    'foot_pedal_value' => 'Foot Pedal Value',
+    'eyewash_heads' => 'Eye Wash Heads',
+    'receptacle' => 'Receptacle',
+    'water' => 'Water',
+    'quality' => 'Quality',
+    'pressure' => 'Pressure',
+    'temperature' => 'Temperature',
+    'equipment_name' => 'Equipment Name',
+    'equipment_inactive_msg' => 'Do you want to Inactive the Equipment',
+    'equipment_active_msg' => 'Do you want to Active the Equipment',
 
+    // Fire Inspection
+    'department' => 'Department',
+    'check_items' => 'Check Items',
+    'quantity' => 'Quantity',
+    'observations' => 'Check If Observations Needed',
+    'obs' => 'Observation',
+    'shifts' => 'Shift',
+    'upload_image' => 'Device Image',
+    'observation_required' => 'Is Observation Required ?',
+    'checked_obs' => 'Required Inspections',
+
+    //Safety Equipment List
+    'standard_norms' => 'Standard/Norms',
+    'equipment_category' => 'Equipment Category',
+    'unit_of_measurement' => 'Unit Of Measurement',
+    'minimum_order_value' => 'Minimum Order Quantity',
+    'economic_order_quantity' => 'Economic Order Quantity',
+    'observation_status' => 'Observation Status',
+    'fire_safety_equipment' => 'Fire Safety Equipment',
+
+    //Safety Walk Observation
+    'safety_walk_taken_by' => 'Safety Walk Taken By',
+    'observation' => 'Observation',
+    'recomended_action' => 'Recomended Action',
+    'employee' => 'Employee',
+    'date_of_compliance' => 'Date of Compliance',
+    'previous_month_observation' => 'Previous Month Obervation',
+    'current_month_observation' => 'Current Month Obervation',
+    //ohc safety petty logbook
+    'safety_petty_logbook' => 'Safety Petty Logbook',
 
 ];

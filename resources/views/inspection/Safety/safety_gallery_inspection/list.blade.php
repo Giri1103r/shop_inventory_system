@@ -198,7 +198,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/list/export/pdf') }}" +
+                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -218,7 +218,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/list/export/excel') }}" +
+                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -349,7 +349,6 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
                         if (result.value) {
                             $.ajax({
                                 url: "{{ admin_url('safety/safety-gallery-inspection/list/delete') }}",

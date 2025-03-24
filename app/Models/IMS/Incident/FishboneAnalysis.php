@@ -69,12 +69,10 @@ class FishboneAnalysis extends Model
     public function storeFishbone($accident_id, $incident_id, $fire_id, $investigation_id)
     {
         $request = request();
-// dd($request);
-        // Get Fishbone data from the request
+
         $fishboneData = $request->input('fishbone', []);
-        $imageData = $request->input('fishbone_image'); // Get base64 image
-// dd($imageData);
-        // Prepare data to save in JSON format
+        $imageData = $request->input('fishbone_image');
+
         $dataToSave = [
             'incident_id' => $incident_id,
             'accident_id' => $accident_id,
@@ -82,34 +80,40 @@ class FishboneAnalysis extends Model
             'investigation_id' => $investigation_id,
             'created_by' => Auth::id(),
             'created_at' => now(),
-            'fishbone' => json_encode($fishboneData) // Convert fishbone data to JSON
+            'fishbone' => json_encode($fishboneData)
         ];
 
-        // Save Fishbone Image
         if ($imageData) {
             $image = str_replace('data:image/png;base64,', '', $imageData);
             $image = str_replace(' ', '+', $image);
             $imageDataDecoded = base64_decode($image);
 
-            // Generate a unique filename
             $fileName = 'fishbone_' . time() . '.png';
-            $directory = public_path('uploads/initial/incident/fishbone_images/' . $incident_id);
 
-            // Ensure the directory exists
+            if ($incident_id) {
+                $directory = public_path('uploads/initial/incident/fishbone_images/' . $incident_id);
+            } elseif ($accident_id) {
+                $directory = public_path('uploads/initial/incident/fishbone_images/' . $accident_id);
+            } elseif ($fire_id) {
+                $directory = public_path('uploads/initial/incident/fishbone_images/' . $fire_id);
+            }
+
             if (!File::exists($directory)) {
                 File::makeDirectory($directory, 0755, true);
             }
 
-            // Save image in file system
             $filePath = $directory . "/" . $fileName;
             file_put_contents($filePath, $imageDataDecoded);
 
-            // Store the image path in the database (without 'public/' for accessibility)
-            $dataToSave['fishbone_image'] = 'public/uploads/initial/incident/fishbone_images/' . $incident_id . "/" . $fileName;
+            if ($incident_id) {
+                $dataToSave['fishbone_image'] = 'public/uploads/initial/incident/fishbone_images/' . $incident_id . "/" . $fileName;
+            } elseif ($accident_id) {
+                $dataToSave['fishbone_image'] = 'public/uploads/initial/incident/fishbone_images/' . $accident_id . "/" . $fileName;
+            } elseif ($fire_id) {
+                $dataToSave['fishbone_image'] = 'public/uploads/initial/incident/fishbone_images/' . $fire_id . "/" . $fileName;
+            }
         }
-// dd($dataToSave);
 
-        // Save to database (assuming a Fishbone model)
         $this->create($dataToSave);
     }
 }

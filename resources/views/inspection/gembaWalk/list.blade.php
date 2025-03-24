@@ -11,7 +11,7 @@
                 <h4 class="card-title"></h4>
                 <div class="d-flex justify-content-end p-2">
 
-                    {{-- <x-button-filter dataId="" class="search me-1" href=""></x-button-filter> --}}
+                    <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                     {{-- @if (CheckUserPermission('import')) --}}
                         {{-- <x-button-import href="{{ admin_url('inspection/checklist-type/import') }}"></x-button-import> --}}
                     {{-- @endif --}}
@@ -21,24 +21,40 @@
                     {{-- @endif --}}
                 </div>
 
-                {{-- <div id="search" class="collapse">
+                <div id="search" class="collapse">
                     <form action="" id="formsearch">
                         <div class="card-body">
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-3 mb-3 form-input">
-                                        <label for="checklist" class="form-label ">Work Name</label>
-                                        <input type="text" name="checklist" id="checklist"
+                                        <label for="document_number" class="form-label ">Document Number</label>
+                                        <input type="text" name="document_number" id="document_number"
+                                            class="form-control">
+                                    </div>
+                                     <div class="col-md-3 mb-3 form-input">
+                                        <label for="issue_date" class="form-label ">Issue Date</label>
+                                        <input type="text" name="issue_date" id="issue_date"
+                                            class="form-control">
+                                    </div>
+                                    <div class="col-md-3 mb-3 form-input">
+                                        <label for="revision_date" class="form-label ">Revision Date</label>
+                                        <input type="text" name="revision_date" id="revision_date"
                                             class="form-control">
                                     </div>
 
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                        <select name="status" id="status" style="width: 100%"
+                                   <div class="col-md-3 mb-3 form-input">
+                                        <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                        <select name="inspection_status" id="inspection_status" style="width: 100%"
                                             class="form-control single-select">
                                             <option value="">Select Status</option>
-                                            <option value="{{ encryptId(1) }}">Active</option>
-                                            <option value="{{ encryptId(0) }}">In-Active</option>
+                                            <option value="{{encryptId('1')}}">Waiting For CAPA Action</option>
+                                            <option value="{{encryptId('2')}}">Waiting for Floor Manager Verification</option>
+                                            <option value="{{encryptId('3')}}">Waiting for EHS Officer Verification</option>
+                                            <option value="{{encryptId('4')}}">Closed</option>
+                                            <option value="{{encryptId('5')}}">EHS Officer Rejected - Resubmit to Floor Manager Verification
+                                            </option>
+
+                                            
                                         </select>
                                     </div>
                                     <div class="col-md-3 mt-3">
@@ -51,7 +67,7 @@
                         </div>
                     </form>
                     <hr>
-                </div> --}}
+                </div>
 
 
                 <div class="card-body">
@@ -88,6 +104,14 @@
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+
+            var fromDatepicker = flatpickr("#issue_date", {
+            dateFormat: "d-m-Y",
+        });
+
+        var fromDatepicker = flatpickr("#revision_date", {
+            dateFormat: "d-m-Y",
+        });
         });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
@@ -140,11 +164,11 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.sr_no = $('#sr_no').val();
-                        d.unit_id = $('#unit_id').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        d.doc_no = $('#document_number').val();
+                        d.issue_date = $('#issue_date').val();
+                        d.revision_date = $('#revision_date').val();
+                       d.inspection_status = $('#inspection_status').val();
+
 
                     },
                     error: function(xhr, error, code) {
@@ -173,8 +197,8 @@
                     },
                    
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'gemba_walk_status',
+                        name: 'gemba_walk_status'
                     },
                     {
                         data: 'created_by',
@@ -213,22 +237,23 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var unit_id = $('#unit_id').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var doc_no = $('#document_number').val();
+                                    var issue_date = $('#issue_date').val();
+                                    var revision_date = $('#revision_date').val();
+                                    var inspection_status = $('#inspection_status').val();
+
+                                   
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
+                                        "{{ admin_url('inspection/gemba-walk/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&sr_no=' + sr_no +
-                                        '&unit_id=' + unit_id +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&status=' + status
+                                       '&document_number=' + document_number +
+                                        '&issue_date=' + issue_date +
+                                        '&revision_date=' + revision_date +
+                                        '&inspection_status=' + inspection_status 
+
                                 }
                             },
                             {
@@ -237,21 +262,22 @@
                                 action: function(e, dt, button, config) {
 
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var unit_id = $('#unit_id').val();
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var status = $('#status').val();
+                                    var doc_no = $('#document_number').val();
+                                    var issue_date = $('#issue_date').val();
+                                    var revision_date = $('#revision_date').val();
+                                    var inspection_status = $('#inspection_status').val();
+
+
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
+                                        "{{ admin_url('inspection/gemba-walk/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&sr_no=' + sr_no +
-                                        '&unit_id=' + unit_id +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&status=' + status
+                                        '&document_number=' + document_number +
+                                        '&issue_date=' + issue_date +
+                                        '&revision_date=' + revision_date +
+                                        '&revision_date=' + revision_date 
+
                                 }
                             },
                         ]

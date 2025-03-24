@@ -28,7 +28,7 @@ use App\Models\OhcManagement\Master\Medicine;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\IMS\Incident\InitialFireIncident;
-use App\Models\Inspection\GembaWalk;
+use App\Models\Inspection\GembaWalk\GembaWalk;
 use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
@@ -36,6 +36,8 @@ use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\environment\Environment;
+use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+
 /*
  * Menu bar start
  */
@@ -236,13 +238,13 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'CAT-' . getautogen($count);
                 break;
-            
+
             case 'gembaWalk':
                 $count = GembaWalk::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'GMB-' . getautogen($count);
                 break;
-                
+
             case 'incident_checklist_subtype':
                 $count = ChecklistSubType::withoutGlobalScopes()->count();
                 $count = $count + 1;
@@ -262,6 +264,10 @@ if (!function_exists('getsequence')) {
                 $count = Environment::where('type',2)->withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'WORK-NOISE-' . getautogen($count);
+            case 'SPLB':
+                $count = SafetyPettyChecklist::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'SPLB-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);
@@ -312,9 +318,7 @@ if (!function_exists('getohctotalCount')) {
 
         switch ($type) {
 
-            case 'requisition':
-                $count = UserMedicineRequisition::where('approve_status', STATUS_OHC_PARAMEDICS_APPROVAL_PENDING)->count();
-                break;
+
             case 'medicine':
                 $count = Medicine::where('status', 1)->count();
                 break;

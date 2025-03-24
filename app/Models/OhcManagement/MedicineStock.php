@@ -112,7 +112,7 @@ class MedicineStock extends Model
             'expire_date' =>DBdateformat($request->expire_date),
             'pack_id' =>$request->pack_id,
             'status'=>0,
-            'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
+
             'created_by' => Auth::id(),
         ];
 
@@ -132,7 +132,7 @@ class MedicineStock extends Model
             'expire_date' =>DBdateformat($request->expire_date),
             'pack_id' =>$request->pack_id,
             'status'=>0,
-            'approve_status'=>STATUS_OHC_MEDICINE_APPROVAL_PENDING,
+          
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
 

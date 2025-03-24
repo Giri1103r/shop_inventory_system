@@ -141,7 +141,9 @@ class AccidentReportController extends Controller
                             if ($row->accident_status == 3) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
                             }
-                            if ($row->accident_status == 4  && $row->risk_analysis != 2) {
+
+
+                            if ($row->accident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -167,7 +169,6 @@ class AccidentReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -268,6 +269,7 @@ class AccidentReportController extends Controller
             try {
                 $accident_report =  $this->accident_report->store();
                 $accident_status = STATUS_ACCIDENT_REPORT;
+
                 $user_role = ROLE_EHS_HEAD;
                 $mailsubject = 'Accident has been submitted';
                 $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
@@ -291,8 +293,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -306,6 +308,7 @@ class AccidentReportController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                
                 $insert_array = array(
                     'ims_type' => 2,
                     'ims_id' => $incidentDetails->id,
@@ -315,18 +318,19 @@ class AccidentReportController extends Controller
                     'remarks' => null,
                     'approved_by' => Auth::id(),
                 );
+                
                 $this->Statuslog->create($insert_array);
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -347,7 +351,7 @@ class AccidentReportController extends Controller
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->accident_report->getrisklevel($id);
                 $getEHSApprovalAccident = $this->accident_report->getEHSApprovalAccident($id);
-
+                $status_log = $this->Statuslog->selectOne($id, 2);
                 $data = array(
                     'accident_report' => $accident_report,
                     'getEHSVerify' => $getEHSVerify,
@@ -358,6 +362,7 @@ class AccidentReportController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalAccident' => $getEHSApprovalAccident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.incident.accidentReport.view', $data);
@@ -426,7 +431,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -581,7 +586,6 @@ class AccidentReportController extends Controller
             }
             return view('ims.incident.accidentReport.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
         }
     }
 
@@ -609,9 +613,11 @@ class AccidentReportController extends Controller
 
 
             if ($ehsReview->team_member) {
+                
                 $teamMemberIds = explode(',', $ehsReview->team_member);
 
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
+                $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Investigation Assigned';
 
                 // Fetch incident details once, not inside the loop
@@ -633,8 +639,8 @@ class AccidentReportController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -644,7 +650,7 @@ class AccidentReportController extends Controller
                         'module' => 1,
                     )),
                     'web_link' => admin_url('accidentReport/investigation/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => array_to_string($teamMemberIds),
+                    'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -656,7 +662,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -664,7 +670,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -707,7 +713,6 @@ class AccidentReportController extends Controller
     public function investigationSubmit(Request $request)
     {
         try {
-
             $incident_id = null;
             $fire_id = null;
             $accident_id = decryptId($request->accident_id);
@@ -762,8 +767,8 @@ class AccidentReportController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -795,7 +800,7 @@ class AccidentReportController extends Controller
 
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
@@ -833,7 +838,9 @@ class AccidentReportController extends Controller
 
             return view('ims.incident.accidentReport.uauc_riskanalysis', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('accidentReport/list'));
         }
     }
     public function uaucSubmit(Request $request)
@@ -879,8 +886,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -931,8 +938,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -961,7 +968,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1001,8 +1008,8 @@ class AccidentReportController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1030,7 +1037,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1043,12 +1050,14 @@ class AccidentReportController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $accident_status = STATUS_ACTION_PENDING;
             $accident_id = $ehsReview->accident_report_id;
+            $this->accident_report->chooseAssigneeUpdate($accident_id, $ehsReview->team_member);
             $accident = $this->accident_report->updateStatus($accident_id, $accident_status);
 
             if ($ehsReview->team_member) {
                 $teamMemberIds = explode(',', $ehsReview->team_member);
 
                 $employees = Employee::whereIn('id', $teamMemberIds)->get(['emp_name', 'email', 'login_id']);
+                $loginIds = $employees->pluck('login_id')->toArray();
                 $mailsubject = 'Action Submission Pending';
 
                 // Fetch incident details once, not inside the loop
@@ -1070,8 +1079,8 @@ class AccidentReportController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1081,7 +1090,7 @@ class AccidentReportController extends Controller
                         'module' => 1,
                     )),
                     'web_link' => admin_url('accidentReport/review/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => array_to_string($teamMemberIds),
+                    'assigned_user' => implode(',', $loginIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -1093,7 +1102,7 @@ class AccidentReportController extends Controller
                     'from_status' => $incidentDetails->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1102,7 +1111,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1141,8 +1150,8 @@ class AccidentReportController extends Controller
 
 
             $notificationData = array(
-                'notification_type' => 3,
-                'module_type' => 1,
+                'notification_type' => 5,
+                'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1169,7 +1178,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1218,8 +1227,8 @@ class AccidentReportController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1239,7 +1248,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1268,8 +1277,8 @@ class AccidentReportController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                    'notification_type' => 5,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1289,7 +1298,7 @@ class AccidentReportController extends Controller
                     'from_status' => $accident_report->accident_status,
                     'to_status' => $accident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
             }
@@ -1297,7 +1306,7 @@ class AccidentReportController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('accidentReport/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('accidentReport/list'));
         }
@@ -1363,7 +1372,7 @@ class AccidentReportController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+
             report($ex);
         }
     }
@@ -1397,8 +1406,9 @@ class AccidentReportController extends Controller
             $header = [
                 __("common.sno"),
                 'Sr. No',
-                'Source, Situation, Act,Activity, Product,Services',
-                'Type of Hazard',
+                'Unit',
+                'Shift',
+                'Approve Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -1410,16 +1420,9 @@ class AccidentReportController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->accident_report_no;
-                $export[] =  $data->services;
-                if ($data->hazard_type == 1) {
-                    $export[] = 'P - Physical Hazard';
-                } elseif ($data->hazard_type == 2) {
-                    $export[] = 'C - Chemical Hazard';
-                } elseif ($data->hazard_type == 3) {
-                    $export[] = 'B - Behavioral Hazard';
-                } elseif ($data->hazard_type == 4) {
-                    $export[] = 'O - Other Hazard';
-                }
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  $data->shift;
+                $export[] =  $data->status_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -1454,8 +1457,9 @@ class AccidentReportController extends Controller
             $header = [
                 __("common.sno"),
                 'Sr. No',
-                'Source, Situation, Act,Activity, Product,Services',
-                'Type of Hazard',
+                'Unit',
+                'Shift',
+                'Approve Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -1499,7 +1503,7 @@ class AccidentReportController extends Controller
             $addInjury = $this->accident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -1521,6 +1525,7 @@ class AccidentReportController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '1')->first();
+
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -1544,6 +1549,8 @@ class AccidentReportController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $acc_id = decryptId($accident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('accident_id', $acc_id)->where('hiramoc_id', '2')->first();
+
+
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc

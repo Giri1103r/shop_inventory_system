@@ -69,7 +69,13 @@ class UserMedicineFirstAid extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_management_user_medicine_first_aid.created_at', '<=', $endDate);
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_management_user_medicine_first_aid.id', 'DESC');
+        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_user_medicine_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_management_user_medicine_first_aid.created_by', Auth::id());
+        }
 
         $org_total_counts = $query->count();
 
@@ -147,6 +153,11 @@ class UserMedicineFirstAid extends Model
     {
         $request = request();
         $search = '';
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $unit_id = ($user->unit_id);
+
+        $empId = $user->employee_id;
         $query = $this->select('ohc_management_user_medicine_first_aid.*', 'masters_department.department_name', 'masters_unit.unit_name')
             ->join('masters_department', 'ohc_management_user_medicine_first_aid.department_id', '=', 'masters_department.id')
             ->join('masters_unit', 'ohc_management_user_medicine_first_aid.unit_id', '=', 'masters_unit.id')
@@ -160,6 +171,13 @@ class UserMedicineFirstAid extends Model
                 $query->orWhere('unit_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
+        }
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_management_user_medicine_first_aid.id', 'DESC');
+        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_user_medicine_first_aid.id', 'DESC');
+        } else {
+            $query->where('ohc_management_user_medicine_first_aid.created_by', Auth::id())->where('ohc_management_user_medicine_first_aid.unit_id',$unit_id);
         }
         if ($request->has('status') && $request->status) {
 

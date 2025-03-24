@@ -267,9 +267,28 @@
                     first_aid_box_no: {
                         required: true,
                         minlength: 3,
-                        maxlength: 20,
+                        maxlength: 30,
                         pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-location/first-aid-box') }}',
+                            type: 'POST',
+                            type: 'post',
+                            data: {
+                                first_aid_box_no: function() {
+                                    return $('#first_aid_box_no').val();
+                                },
 
+                                unit_id: function() {
+                                    return $('#unit_id').val();
+                                },
+                                department_id: function() {
+                                    return $('#department_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                },
+                            }
+                        }
                     },
                 },
                 messages: {
@@ -284,7 +303,7 @@
                         required: "First Aid Box Number is required.",
                         minlength: "First Aid Box Number must be at least 3 characters long.",
                         maxlength: "First Aid Box Number must not exceed 30 characters.",
-
+                        remote: "First Aid Box Number Must Be Unique according to unit and department",
                     },
                     department_id: {
                         required: "Department is required.",

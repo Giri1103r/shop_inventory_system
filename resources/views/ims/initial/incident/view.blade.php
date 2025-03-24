@@ -435,7 +435,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Risk Analysis</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
                                             </div>
                                         </div>
                                         @if ($getInvestigation->risk_analysis == 2)
@@ -661,189 +661,248 @@
                                     @endif
                                 </div>
                             @endif
-
-                            @if ($incident_report->incident_status >= STATUS_RISKANALYSIS_PENDING)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">UAUC</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label for="name" class="form-label">UAUC</label>
-                                            <div class="view_data">
-                                                @if ($incident_report->ua_uc_yes_no == 1)
-                                                    Yes
-                                                @else
-                                                    No
-                                                @endif
+                            @if ($getInvestigation->root_cause_analysis != 3)
+                                @if ($incident_report->incident_status >= STATUS_RISKANALYSIS_PENDING)
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">UAUC</h4>
                                             </div>
                                         </div>
-
-                                        @if ($incident_report->ua_uc_yes_no == 1)
+                                        <div class="row">
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label for="name" class="form-label">UA/UC</label>
+                                                <label for="name" class="form-label">UAUC</label>
                                                 <div class="view_data">
-                                                    @php
-                                                        $ua_uc_values = explode(',', $incident_report->ua_or_uc);
-                                                    @endphp
-
-                                                    <span>UA: {!! in_array('1', $ua_uc_values)
-                                                        ? '<i class="fas fa-check text-success"></i>'
-                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
-                                                    <br>
-                                                    <span>UC: {!! in_array('2', $ua_uc_values)
-                                                        ? '<i class="fas fa-check text-success"></i>'
-                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    @if ($incident_report->ua_uc_yes_no == 1)
+                                                        Yes
+                                                    @else
+                                                        No
+                                                    @endif
                                                 </div>
+                                            </div>
+
+                                            @if ($incident_report->ua_uc_yes_no == 1)
+                                                <div class="mb-3 col-md-12 form-input">
+                                                    <label for="name" class="form-label">UA/UC</label>
+                                                    <div class="view_data">
+                                                        @php
+                                                            $ua_uc_values = explode(',', $incident_report->ua_or_uc);
+                                                        @endphp
+
+                                                        <span>UA: {!! in_array('1', $ua_uc_values)
+                                                            ? '<i class="fas fa-check text-success"></i>'
+                                                            : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                        <br>
+                                                        <span>UC: {!! in_array('2', $ua_uc_values)
+                                                            ? '<i class="fas fa-check text-success"></i>'
+                                                            : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    </div>
 
 
+                                                </div>
+                                                <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label">Description of UAUC</label>
+                                                    <div class="view_data">
+                                                        {{ $incident_report->description_uauc }}
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($getInvestigation->risk_analysis != 2 && $incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Risk Level</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label for="name" class="form-label">Risk Level</label>
+                                                <div class="view_data">
+                                                    @if ($getrisklevel->risk_level == 1)
+                                                        Low
+                                                    @elseif($getrisklevel->risk_level == 2)
+                                                        Medium
+                                                    @else
+                                                        High
+                                                    @endif
+                                                </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of UAUC</label>
+                                                <label class="form-label">Description of CA</label>
                                                 <div class="view_data">
-                                                    {{ $incident_report->description_uauc }}
+                                                    {{ $getrisklevel->description_ca }}
                                                 </div>
                                             </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
 
-                            @if ($incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Risk Level</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label for="name" class="form-label">Risk Level</label>
-                                            <div class="view_data">
-                                                @if ($getrisklevel->risk_level == 1)
-                                                    Low
-                                                @elseif($getrisklevel->risk_level == 2)
-                                                    Medium
+                                @endif
+
+                                @if (
+                                    $incident_report->incident_status >= STATUS_ACTION_PENDING &&
+                                        $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Head Verify</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Verifier Name</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->reviewer_name }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($getEHSVerify->date) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="team_id" class="form-label">Choose Assignee</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->team_member_names }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="team_id" class="form-label">Target Date</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($getEHSVerify->target_date) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSVerify->remark }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if (
+                                    $incident_report->incident_status >= STATUS_EHSAPPROVAL_PENDING &&
+                                        $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Action submission</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Submission By</label>
+                                                <div class="view_data">
+                                                    {{ getUsername($incident_report->action_submission_by) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($incident_report->action_submission_date) }}
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Action Taken</label>
+                                                <div class="view_data">
+                                                    {{ $incident_report->action_submission_description }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+                                @if ($incident_report->incident_status >= STATUS_INCIDENT_CLOSED)
+                                    <div class="card-body ">
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">EHS Approval</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label for="name" class="form-label">Approval By</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSApprovalincident->reviewer_name }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($getEHSApprovalincident->date) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Remark</label>
+                                                <div class="view_data">
+                                                    {{ $getEHSApprovalincident->remark }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Status logs</h4>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Approved By</th>
+                                                    <th>Remarks</th>
+                                                    <th>Date</th>
+
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @if ($status_log->isEmpty())
+                                                    <tr>
+                                                        <td class="text-center" colspan="5">No data is available</td>
+                                                    </tr>
                                                 @else
-                                                    High
+                                                    @foreach ($status_log as $status)
+                                                        <tr>
+                                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
+                                                            </td>
+                                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}
+                                                            </td>
+                                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+
                                                 @endif
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Description of CA</label>
-                                            <div class="view_data">
-                                                {{ $getrisklevel->description_ca }}
-                                            </div>
-                                        </div>
+                                            </tbody>
+                                        </table>
 
                                     </div>
                                 </div>
-                            @endif
 
-                            @if (
-                                $incident_report->incident_status >= STATUS_ACTION_PENDING &&
-                                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Verify</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Verifier Name</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->reviewer_name }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSVerify->date) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Choose Assignee</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->team_member_names }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->remark }}
-                                            </div>
-                                        </div>
 
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if (
-                                $incident_report->incident_status >= STATUS_EHSAPPROVAL_PENDING &&
-                                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Action submission</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Submission By</label>
-                                            <div class="view_data">
-                                                {{ getUsername($incident_report->action_submission_by) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($incident_report->action_submission_date) }}
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Action Taken</label>
-                                            <div class="view_data">
-                                                {{ $incident_report->action_submission_description }}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endif
-                            @if ($incident_report->incident_status >= STATUS_INCIDENT_CLOSED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Approval</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Approval By</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalincident->reviewer_name }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSApprovalincident->date) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalincident->remark }}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -853,235 +912,3 @@
     </div>
 
 @stop
-
-@push('script')
-    <script type="text/javascript" nonce="projectcab">
-        $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-            flatpickr("#target_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today" // Allows only future dates
-            });
-
-
-            $('#team_id').select2({
-                placeholder: "Select Team Members",
-                allowClear: true,
-                closeOnSelect: true,
-                ajax: {
-                    url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
-                    type: "GET",
-                    dataType: "json",
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term // Search query
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
-                    }
-                },
-                minimumInputLength: 3,
-                width: '100%',
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-            // $('#team_id').select2({
-            //     placeholder: "Select Team members",
-            //     allowClear: true,
-            //     closeOnSelect: false,
-            // });
-
-            $('#ehs_head_review').validate({
-                rules: {
-                    "team_id[]": {
-                        required: true,
-                    },
-                    remark: {
-                        required: true,
-                        maxlength: 1000
-                    }
-                },
-                messages: {
-                    "team_id[]": {
-                        required: "Please select a team member.",
-                    },
-                    remark: {
-                        required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    if ($('#vp_approval').data('conflict') === true) {
-                        return false;
-                    } else {
-                        form.submit(); // Submit the form when valid
-                    }
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-
-                    });
-                }
-            });
-            $('#ehs_head_verify').validate({
-                rules: {
-                    "team_member[]": {
-                        required: true,
-                    },
-                    target_date: {
-                        required: true,
-                    },
-                    remark: {
-                        required: true,
-                        maxlength: 1000
-                    }
-                },
-                messages: {
-                    "team_member[]": {
-                        required: "Please select a Assignee.",
-                    },
-                    target_date: {
-                        required: "Please provide Target Date.",
-
-                    },
-                    remark: {
-                        required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    if ($('#vp_approval').data('conflict') === true) {
-                        return false;
-                    } else {
-                        form.submit(); // Submit the form when valid
-                    }
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-
-                    });
-                }
-            });
-            $('#action_submission').validate({
-                rules: {
-
-                    action_submission_description: {
-                        required: true,
-                        maxlength: 1000
-                    }
-                },
-                messages: {
-
-                    action_submission_description: {
-                        required: "Please provide Action Taken.",
-                        maxlength: "Action Taken cannot exceed 1000 characters."
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    if ($('#vp_approval').data('conflict') === true) {
-                        return false;
-                    } else {
-                        form.submit(); // Submit the form when valid
-                    }
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-
-                    });
-                }
-            });
-            $('#ehs_approval').validate({
-                rules: {
-
-                    remark: {
-                        required: true,
-                        maxlength: 1000
-                    }
-                },
-                messages: {
-
-                    remark: {
-                        required: "Please provide remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    if ($('#vp_approval').data('conflict') === true) {
-                        return false;
-                    } else {
-                        form.submit(); // Submit the form when valid
-                    }
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {
-
-                    });
-                }
-            });
-        });
-    </script>
-@endpush

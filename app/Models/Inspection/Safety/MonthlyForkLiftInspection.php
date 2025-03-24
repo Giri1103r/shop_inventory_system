@@ -38,6 +38,7 @@ class MonthlyForkLiftInspection extends Model
         'approved_by',
         'l1_manager_verification',
         'l2_manager_verification',
+        'capa_ehs_remarks',
         'status',
         'trash',
         'created_by',
@@ -45,7 +46,7 @@ class MonthlyForkLiftInspection extends Model
         'created_at',
         'updated_at',
         'responses',
-        'capa_ehs_remarks'
+        
     ];
 
     protected $attributes = [
@@ -79,6 +80,10 @@ class MonthlyForkLiftInspection extends Model
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+
+        }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
@@ -93,8 +98,8 @@ class MonthlyForkLiftInspection extends Model
                 case "document_number":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.document_number', $columnorder);
                     break;
-                case "status":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.status', $columnorder);
+                case "inspection_status":
+                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.inspection_status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.created_by', $columnorder);
@@ -124,6 +129,8 @@ class MonthlyForkLiftInspection extends Model
 
         return $datas;
     }
+
+
 
     public function store()
     {
@@ -253,6 +260,37 @@ class MonthlyForkLiftInspection extends Model
             ];
             $this->where('id', $id)->update($update_array);
         }
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_forklift_inpsection_monthly.*');
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
+                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
     }
 
 

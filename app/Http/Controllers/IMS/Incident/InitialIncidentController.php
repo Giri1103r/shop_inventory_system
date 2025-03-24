@@ -155,7 +155,7 @@ class InitialIncidentController extends Controller
                             // $employees = Employee::select('id','login_id')->where('id',  $getEHSVerify->team_member)->first();
 
 
-                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN)) ) {
+                            if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
                             }
 
@@ -182,8 +182,9 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+
                 }
             }
         }
@@ -214,6 +215,7 @@ class InitialIncidentController extends Controller
             report($ex);
         }
     }
+    
     public function employeename(Request $request)
     {
         $name = $request->input('search');
@@ -323,7 +325,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -353,14 +355,14 @@ class InitialIncidentController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
 
-                dd($ex);
+
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -399,6 +401,8 @@ class InitialIncidentController extends Controller
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
 
+                $status_log = $this->Statuslog->selectOne($id, 1);
+
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -410,6 +414,7 @@ class InitialIncidentController extends Controller
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'getEHSApprovalincident' => $getEHSApprovalincident,
+                    'status_log' => $status_log,
                 );
             }
             return view('ims.initial.incident.view', $data);
@@ -495,7 +500,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -554,7 +559,6 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
         }
     }
 
@@ -632,7 +636,7 @@ class InitialIncidentController extends Controller
 
                 // Use incidentDetails for notification data
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -655,7 +659,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -665,7 +669,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -728,6 +732,8 @@ class InitialIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', '1')->first();
+
+          
             // dd($newHiraList,$inc_id);
 
             $selectedhira = $this->hiramoc
@@ -751,7 +757,8 @@ class InitialIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services')->where('status', '1')->where('hira_status', 2)->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', 2)->first();
-            // dd($newHiraList,$inc_id);
+
+           
 
             $selectedhira = $this->hiramoc
                 ->select('id', 'moc_id', 'incident_id', 'hiramoc_status')
@@ -771,7 +778,6 @@ class InitialIncidentController extends Controller
     public function saveHira(Request $request)
     {
         try {
-
 
 
             $HiraMoc = new HiraMoc();
@@ -848,7 +854,7 @@ class InitialIncidentController extends Controller
 
             // Use incidentDetails for notification data
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -877,7 +883,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -979,7 +985,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1031,7 +1037,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1061,7 +1067,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1102,7 +1108,7 @@ class InitialIncidentController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -1132,7 +1138,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1146,6 +1152,7 @@ class InitialIncidentController extends Controller
             $ehsReview = $this->ehs_review->store($approve_type);
             $incident_status = STATUS_ACTION_PENDING;
             $incident_id = $ehsReview->inicdent_report_id;
+            $this->initialincident->chooseAssigneeUpdate($incident_id,$ehsReview->team_member);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
             if ($ehsReview->team_member) {
                 $teamMemberIds = explode(',', $ehsReview->team_member);
@@ -1172,7 +1179,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1194,7 +1201,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $incidentDetails->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsReview->remark,
                     'approved_by' => Auth::id(),
                 );
                 $this->Statuslog->create($insert_array);
@@ -1202,7 +1209,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1241,7 +1248,7 @@ class InitialIncidentController extends Controller
             }
 
             $notificationData = array(
-                'notification_type' => 3,
+                'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -1270,7 +1277,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1316,7 +1323,7 @@ class InitialIncidentController extends Controller
                     }
                 }
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1337,7 +1344,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $initialincident->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1368,7 +1375,7 @@ class InitialIncidentController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 3,
+                    'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -1389,7 +1396,7 @@ class InitialIncidentController extends Controller
                     'from_status' => $initialincident->incident_status,
                     'to_status' => $incident_status,
                     'is_reject' => null,
-                    'remarks' => null,
+                    'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
 
@@ -1398,7 +1405,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1520,8 +1527,6 @@ class InitialIncidentController extends Controller
             $filename = "Incident.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
-            dd($ex);
             report($ex);
         }
     }
@@ -1628,9 +1633,9 @@ class InitialIncidentController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Initial Incident.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
         }
     }

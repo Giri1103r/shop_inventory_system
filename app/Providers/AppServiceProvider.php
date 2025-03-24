@@ -80,6 +80,12 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_FIRE_ASSOCIATES') or define('ROLE_FIRE_ASSOCIATES', 18);
         defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
         defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
+        defined('ROLE_FLOOR_MANAGER') or define('ROLE_FLOOR_MANAGER', 21);
+        defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
+        defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
+        defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
+
 
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
@@ -113,9 +119,8 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
         defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
-
-
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
+
 
 
         // Safety Permit
@@ -179,7 +184,13 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
-        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 6);
+        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
+
+        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 5);
+
+        defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
+        defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
+
 
 
         // IMS  EHS_REVIEW
@@ -213,11 +224,11 @@ class AppServiceProvider extends ServiceProvider
         defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
 
         //Checklist
-        defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
-        defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', getCheckListType('SAFETY_GALLERY_INSPECTION_CHECKLIST'));
-        defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
-        defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
-        defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
+        // defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
+        // defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', getCheckListType('SAFETY_GALLERY_INSPECTION_CHECKLIST'));
+        // defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
+        // defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
+        // defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
 
 
         //Safety
@@ -231,12 +242,75 @@ class AppServiceProvider extends ServiceProvider
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
+        // INSPECTION OHC
+        defined('OHC_CREATION') or define('OHC_CREATION', 1);
+        defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
+        defined('FLOOR_MANAGER_APPROVED') or define('FLOOR_MANAGER_APPROVED', 3);
+        defined('FLOOR_MANAGER_REJECTED') or define('FLOOR_MANAGER_REJECTED', 4);
+        defined('SAFETY_OFFICER_APPROVAL_PENDING') or define('SAFETY_OFFICER_APPROVAL_PENDING', 5);
+        defined('SAFETY_OFFICER_APPROVED') or define('SAFETY_OFFICER_APPROVED', 6);
+        defined('SAFETY_OFFICER_REJECTED') or define('SAFETY_OFFICER_REJECTED', 7);
+        defined('MEDICAL_ASSISTANT_APPROVAL_PENDING') or define('MEDICAL_ASSISTANT_APPROVAL_PENDING', 8);
+        defined('MEDICAL_ASSISTANT_APPROVED') or define('MEDICAL_ASSISTANT_APPROVED', 9);
+        defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
+
+
+
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 5);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
+
+
+        // Gemba Walk
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION',1);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION',2);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION',3);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED',4);
+        defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED',5);
+
+
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1',1);
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2',2);
+        defined('GEMBA_WALK_INSPECTION_PASS_L1') or define('GEMBA_WALK_INSPECTION_PASS_L1',1);
+        defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2',2);
+        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL',3);
+        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS',4);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START',0);
+
+
+        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
+        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
 
         //Status Log
+        defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
+        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 4);
+
+
+        // Monthly Eye Wash
+        defined('GOOD') or define('GOOD',1);
+        defined('FAIR') or define('FAIR',2);
+        defined('POOR') or define('POOR',3);
+
+        //Standard/Norms
+        defined('STANDARD') or define('STANDARD',1);
+        defined('NORMS') or define('NORMS',2);
+
+        defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
+        defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
+        defined('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST') or define('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST',3);
+
+        // Fire
+        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+
+        // OPTIONS
+        defined('YES') or define('YES',1);
+        defined('NO') or define('NO',2);
+
+        // Fire File Upload
+        defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
 

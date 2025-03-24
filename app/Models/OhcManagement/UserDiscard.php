@@ -52,8 +52,17 @@ class UserDiscard extends Model
             });
         }
 
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $unit_id = ($user->unit_id);
 
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_management_discard.id', 'DESC');
+        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_discard.id', 'DESC');
+        } else {
+            $query->where('ohc_management_discard.created_by', Auth::id())->where('unit_id',$unit_id);
+        }
 
 
         if ($request->has('unit_id') && $request->unit_id) {
@@ -158,9 +167,13 @@ class UserDiscard extends Model
     {
         $request = request();
 
+
         $user = Auth::user();
         $userRole = string_to_array($user->role);
-        $empId = $user->employee_id;
+        $unit_id = ($user->unit_id);
+
+
+
         $search = '';
         $query = $this->select(
             'ohc_management_discard.id as discard_id',
@@ -183,7 +196,13 @@ class UserDiscard extends Model
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ohc_management_discard.id', 'DESC');
+        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+            $query->orderBy('ohc_management_discard.id', 'DESC');
+        } else {
+            $query->where('ohc_management_discard.created_by', Auth::id())->where('ohc_management_discard.unit_id',$unit_id);
+        }
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));

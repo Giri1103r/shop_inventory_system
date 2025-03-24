@@ -77,7 +77,7 @@
                                             <p>No file is uploaded</p>
                                         @endif
                                     </div>
-                                
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
                                         <div class="view_data">
@@ -103,7 +103,7 @@
                                         CheckUserrole(ROLE_SUPERADMIN)))
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Doctor Approval</h4>
+                                            <h4 class="text-white">Doctor Approval Pending</h4>
                                         </div>
                                     </div>
                                     <div class="basic-form">
@@ -154,7 +154,7 @@
                                      $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING )
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Verification</h4>
+                                            <h4 class="text-white">Doctor Approval Pending</h4>
                                         </div>
                                     </div>
                                     <div class="row">

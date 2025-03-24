@@ -108,7 +108,6 @@
                                                         @endphp
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
-
                                                                 @if ($index == 0)
                                                                     <td rowspan="{{ $rowCount }}"
                                                                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
@@ -120,9 +119,8 @@
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
                                                                 @foreach ($getoption as $option)
-
-                                                                    <td class="form-input"
-                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                    <td style="border: 1px solid black; padding: 8px; text-align: center;"
+                                                                        class="form-input">
                                                                         <input type="radio"
                                                                             name="checklist[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
                                                                             value="{{ trim($option) }}"

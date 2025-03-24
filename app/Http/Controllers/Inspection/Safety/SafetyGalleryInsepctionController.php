@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Http\Controllers\Admin\AdminController;
+use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SafetyGalleryInspection;
+use App\Models\Inspection\Safety\SignatureUpload;
 
 class SafetyGalleryInsepctionController extends Controller
 {
@@ -21,6 +26,7 @@ class SafetyGalleryInsepctionController extends Controller
     private $unit;
     private $frequency;
     private $statusLog;
+    private $signature;
 
     public function __construct()
     {
@@ -28,6 +34,7 @@ class SafetyGalleryInsepctionController extends Controller
         $this->location = new Location();
         $this->unit = new Unit();
         $this->statusLog = new SafetyStatusLog();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -111,6 +118,9 @@ class SafetyGalleryInsepctionController extends Controller
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
+                            $btn .= '<a href="' . admin_url('safety/safety-gallery-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'issue_date'])
@@ -156,28 +166,42 @@ class SafetyGalleryInsepctionController extends Controller
     {
         try {
             $safety_gallery_inspection = $this->safetygallery->store();
+            $id = $safety_gallery_inspection->id;
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $userIds = [
-                'users' => $ehsOfficers,
-            ];
-            $mailsubject = 'Safety Inspection';
+            $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Safety Inspection done by Fire Associates",
+                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $safety_gallery_inspection->id,
                     'module' => 1,
                 )),
                 'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
-                'assigned_user' => array_to_string($userIds),
+                'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Safety Gallery Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/safety-gallery-inspection/verification/' . encryptId($id) . '/ehs');
+                $details = array(
+                    'safety_type' => 'Safety Gallery Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $safety_gallery_inspection
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $safety_gallery_inspection->id,
@@ -235,6 +259,7 @@ class SafetyGalleryInsepctionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'safetygallery Inspeciton Approved Successfully';
@@ -265,6 +290,21 @@ class SafetyGalleryInsepctionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            $title = $message;
+            $user = $inspection_details->created_by;
+            $email_id = getUseremail($user);
+            $url = admin_url('safety/safety-gallery-inspection/monthly/verification/' . encryptId($id) . '/capa');
+            $details = array(
+                'safety_type' => 'Safety Gallery Inspection',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyInspection($details));
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
@@ -289,6 +329,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
             $inspection_details = $this->safetygallery->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -300,7 +341,7 @@ class SafetyGalleryInsepctionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "CAPA Action done by Fire Associates",
+                    'message' => "CAPA Action Completed by the Fire Associates",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_details->id,
                     'module' => 1,
@@ -310,6 +351,20 @@ class SafetyGalleryInsepctionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            $user = $inspection_details->verified_by;
+            $email_id = getUseremail($user);
+            // $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+            $details = array(
+                'safety_type' => 'Safety Gallery Inspection',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => 'CAPA Action Completed by the Fire Associates',
+                // 'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyInspection($details));
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
@@ -335,12 +390,14 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
-                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $users = $user ? $user->pluck('id')->toArray() : [];
+                $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
@@ -348,9 +405,7 @@ class SafetyGalleryInsepctionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
-            $userIds = [
-                'users' => $users,
-            ];
+
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -364,10 +419,26 @@ class SafetyGalleryInsepctionController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
+                'assigned_user' => array_to_string($users),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            foreach ($users as $user) {
+                $title = $message;
+                $email_id = getUseremail($user);
+                $url = $web_link;
+                $details = array(
+                    'safety_type' => 'Safety Gallery Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
@@ -393,12 +464,14 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
-                $users = $user ? $user->pluck('id')->toArray() : 1;
+                $users = $user ? $user->pluck('id')->toArray() : [];
+                $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
@@ -406,9 +479,7 @@ class SafetyGalleryInsepctionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
-            $userIds = [
-                'users' => $users,
-            ];
+
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -422,10 +493,26 @@ class SafetyGalleryInsepctionController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
+                'assigned_user' => array_to_string($users),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            foreach ($users as $user) {
+                $title = $message;
+                $email_id = getUseremail($user);
+                $url = $web_link;
+                $details = array(
+                    'safety_type' => 'Safety Gallery Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
@@ -451,20 +538,19 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Safety Gallery Inspeciton Approved Successfully!';
                 $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
-            $users = $inspection_details->created_by;
-            $userIds = [
-                'users' => $users,
-            ];
+
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -478,11 +564,25 @@ class SafetyGalleryInsepctionController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
+                'assigned_user' => array_to_string($users),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-            notificationSave($notificationData);
+            foreach ($users as $user) {
+                $title = $message;
+                $email_id = getUseremail($user);
+                $url = $web_link;
+                $details = array(
+                    'safety_type' => 'Safety Gallery Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
                 'inspection_id' => $inspection_details->id,
@@ -517,6 +617,146 @@ class SafetyGalleryInsepctionController extends Controller
                 $isUnique = $this->safetygallery->existUniqueCheck($data);
                 return response()->json($isUnique);
             }
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->safetygallery->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->issue_date;
+                $export[] = $data->revision_data;
+                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Safety Gallery Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->safetygallery->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Issue Date',
+                'Revision Date',
+                __("inspection.inspection_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Safety Gallery Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.safety.pdf.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Safety Gallery Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/safety-gallery-inspection/list'));
+        }
+    }
+
+
+    public function exportViewPdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $status_log = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+                $forklift_details = $this->safetygallery->selectOne($id);
+
+                $data = [
+                    'status_log' => $status_log,
+                    'forklift_details' => $forklift_details,
+                    'pagetitle' => "Safety Gallery Inspection",
+                ];
+            }
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.safety.safety_gallery_inspection.viewpdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Safety Gallery Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 }

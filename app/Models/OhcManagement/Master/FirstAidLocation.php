@@ -138,22 +138,23 @@ class FirstAidLocation extends Model
             ->get();
     }
 
-    public function firstaidboxuniqueCheck($first_aid_box_no, $unit_id,$department_id)
+    public function firstaidboxuniqueCheck($first_aid_box_no, $unit_id,$department)
     {
 
         return $this->where('first_aid_box_no', $first_aid_box_no)
         ->where('unit_id', $unit_id)
-        ->where('department_id', $department_id)
+        ->where('department_id', $department)
         ->get();
     }
 
-    public function firstaidboxexistUniqueCheck($first_aid_box_no, $unit_id,$department_id,$id)
+    public function firstaidboxexistUniqueCheck($first_aid_box_no, $unit_id,$department,$id)
     { return $this->where('first_aid_box_no', $first_aid_box_no)
         ->where('unit_id', $unit_id)
-        ->where('department_id', $department_id)
+        ->where('department_id', $department)
         ->where('id', '!=', $id)
         ->get();
     }
+
 
     public function store()
     {
@@ -288,7 +289,7 @@ class FirstAidLocation extends Model
 
         $data = $this->where('status',1)
 
-            ->first();
+            ->get();
 
         return $data;
     }

@@ -37,7 +37,7 @@ class AuditAssessment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit.*');
+        $query = $this->select('inspection_audit.*','masters_employee.emp_name')->leftjoin('masters_employee','masters_employee.id','=','inspection_audit.floor_executive');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -54,7 +54,7 @@ class AuditAssessment extends Model
         // if (isset($request->category_id) && $request->category_id) {
         //     $query = $query->where('inspection_audit.category_id', 'LIKE', '%' . $request->category_id . '%');
         // }
-
+        $query->orderBy('id', 'desc');
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -89,15 +89,8 @@ class AuditAssessment extends Model
 
     public function selectOne($id)
     {
-        $data = $this->select('inspection_audit.*')->where('id', $id)->first();
-
-        if ($data && isset($data->checklist)) {
-            $data->checklist = json_decode($data->checklist, true);
-        }
-
-        return $data;
+        return  $this->where('id', $id)->first();
     }
-
 
 
     public function exportdata()

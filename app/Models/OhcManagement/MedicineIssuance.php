@@ -44,6 +44,27 @@ class MedicineIssuance extends Model
 
         return $insertedData;
     }
+    public function unitstore($medicine_issuance_unit)
+    {
+        $request = request();
+
+        $insertedData = [];
+
+        foreach ($request->medicine_id as $index => $medicine) {
+            $insert_array = [
+                'reference_id' => $medicine_issuance_unit->id,
+                'medicine_id' => decryptId($medicine),
+                'quantity' => $request->quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'created_by' => Auth::id(),
+            ];
+
+
+            $insertedData[] = $this->create($insert_array);
+        }
+
+        return $insertedData;
+    }
 
     public function updates($id)
     {
@@ -112,13 +133,14 @@ class MedicineIssuance extends Model
     {
   $data=    $this
             ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
-            ->whereIn('reference_id', $ids)
+            ->whereIn('medicine_id', $ids)
             ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
             ->whereMonth('ohc_management_medicine_issuance.created_at', $selectedMonth)
             ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
             ->get();
 
             return $data;
+
     }
 
     public function getYearlyissuedDate($selectedYear, $ids)

@@ -148,8 +148,8 @@
                             name: 'floor_name'
                         },
                         {
-                            data: 'floor_executive',
-                            name: 'floor_executive'
+                            data: 'emp_name',
+                            name: 'emp_name'
                         },
                         {
                             data: 'status',

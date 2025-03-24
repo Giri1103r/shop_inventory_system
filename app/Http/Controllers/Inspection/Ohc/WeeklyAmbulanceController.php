@@ -44,7 +44,7 @@ class WeeklyAmbulanceController extends Controller
     public function __construct()
     {
         $this->weekly_ambulance_details = new WeeklyAmbulance();
-     
+
         $this->upload_log = new UploadLog();
         $this->unit = new Unit();
         $this->department = new Department();
@@ -64,9 +64,6 @@ class WeeklyAmbulanceController extends Controller
                 try {
 
                     $data = $this->weekly_ambulance_details->list();
-
-
-
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -198,7 +195,7 @@ class WeeklyAmbulanceController extends Controller
             $id = decryptId($request->id);
 
             $this->weekly_ambulance_details->statuschange($id);
-           
+
 
             return response()->json(['status' => 'success', 'msg' => 'Your Status Changed Successfully'], 200);
         } catch (Exception $ex) {

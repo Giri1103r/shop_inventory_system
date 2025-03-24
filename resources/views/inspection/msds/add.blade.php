@@ -58,9 +58,9 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Date</label>
+                                                    <label class="form-label require">Revision Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date" value="{{ todaydate('todaydate') }}"
+                                                        placeholder="Revision Date" value="{{ getDocumentReviewDate('MSDS-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -70,10 +70,7 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
+                                                   
                                                 </div>
                                             </div>
 
@@ -83,6 +80,10 @@
                                                         <h4 class="text-white">MSDS CheckList</h4>
                                                     </div>
                                                     <div class="d-flex justify-content-end">
+                                                        <button class="btn btn-primary add-row me-3" type="button"
+                                                        id="add-row" style="width: 84px;">
+                                                        Add
+                                                    </button>
                                                         <button type="button" class="btn btn-danger remove-row">
                                                             <i class="fa-solid fa-trash"></i> Remove
                                                         </button>
@@ -272,7 +273,8 @@
         const maxFormSets = 200;
         const minFormSets = 1;
 
-        $(".add-row").click(function() {
+        // $(".add-row").click(function() {
+        $(document).on('click',".add-row",function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
 
             if (currentFormSets >= maxFormSets) {
@@ -293,6 +295,10 @@
                         <h4 class="text-white">MSDS CheckList</h4>
                     </div>
                     <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary add-row me-3" type="button"
+                            id="add-row" style="width: 84px;">
+                            Add
+                        </button>
                         <button type="button" class="btn btn-danger remove-row">
                             <i class="fa-solid fa-trash"></i> Remove
                         </button>
@@ -382,9 +388,9 @@
                 noSpaces: true,
                 messages: {
                     required: 'Remark is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Remark cannot be empty or only spaces'
                 }
-            });
+            }); 
             form_set_count++;
             updatePageIndices(); 
         });

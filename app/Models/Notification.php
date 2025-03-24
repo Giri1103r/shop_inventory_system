@@ -132,7 +132,7 @@ class Notification extends Model
 
                 $query->where(function ($query) use ($assignedUserId) {
                     $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                        ->whereIn('notification_type', [1,3,4])
+                        ->whereIn('notification_type', [1,3,4,5,9])
                         ->where('template_notification.trash', 'NO');
                 });
             }
@@ -178,6 +178,20 @@ class Notification extends Model
             }
 
         }elseif (Auth::user()->role == ROLE_PARAMEDICS) {
+            $nomination = DB::table('users')
+                ->select('id')
+                ->where('employee_id', Auth::user()->employee_id)
+                ->first();
+
+            if ($nomination) {
+                $assignedUserId = $nomination->id;
+
+                $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                    ->where('notification_type', 4)
+                    ->where('template_notification.trash', 'NO');
+            }
+
+        }elseif (Auth::user()->role == ROLE_CERTIFIED_FIRST_AIDER) {
             $nomination = DB::table('users')
                 ->select('id')
                 ->where('employee_id', Auth::user()->employee_id)

@@ -46,8 +46,9 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId(5) }}">Safety Officer Approval Pending</option>
+                                                <option value="{{ encryptId(6) }}">Safety Officer Approved</option>
+                                                <option value="{{ encryptId(7) }}">Safety Officer Rejected</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -96,7 +97,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var IssueDatepicker = flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
 
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -163,8 +168,8 @@
 
 
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'approve_status',
+                            name: 'approve_status'
                         },
                         {
                             data: 'created_date',
@@ -198,7 +203,7 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
+
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -208,7 +213,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/pdf') }}" +
+                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/pdf') }}"+
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -228,6 +234,7 @@
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/excel') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +

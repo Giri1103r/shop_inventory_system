@@ -74,6 +74,7 @@ class FirstAidTreatment extends Model
                 ->where('medicine_id', $medicine)
                 ->where('trash', 'NO')
                 ->first();
+               
             if ($existingRecord) {
                 $existingRecord->update($update_data);
             } else {

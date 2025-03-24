@@ -118,10 +118,10 @@ class MedicineRequisitionController extends Controller
                             if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) || (checkUserRole(ROLE_PARAMEDICS) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)) {
+                            if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-issuance/add/' . encryptId($row->id)) . '" class="" title="Action"><i class="fas fa-share-square " style="color: #0013ff;"></i></a> ';
                             }
 
@@ -162,7 +162,7 @@ class MedicineRequisitionController extends Controller
                 'medicine' => $medicine,
                 'unit' => $unit
             );
-dd( $medicine);
+
             return view('ohcmanagement.medicine_requisition.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -249,14 +249,14 @@ dd( $medicine);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
@@ -315,7 +315,7 @@ dd( $medicine);
                 $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
                 $this->medicine_requisition->updates($id);
 
-                $mailsubject = 'paramedics  Request the Medicine';
+                $mailsubject = 'Paramedics Request the Medicine';
                 $user_role = ROLE_EHS_HEAD;
 
                 // Fetch users with the specified role
@@ -455,7 +455,7 @@ dd( $medicine);
             $createdBy = $this->user_medicine_requisition->where('id', $id)->pluck('created_by');
             $user = $this->user->where('id', $createdBy)->where('status', 1)->first();
             if ($request->action == 'approve') {
-                $mailsubject = 'Paramedics Approved the medicine';
+                $mailsubject = 'EHS Head Approved the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {
@@ -488,7 +488,7 @@ dd( $medicine);
                 );
                 notificationSave($notificationData);
             } else {
-                $mailsubject = 'Paramedics Rejected the medicine';
+                $mailsubject = 'EHS Head Rejected the medicine';
                 $email_id = $user->email;
 
                 if (!empty($email_id)) {

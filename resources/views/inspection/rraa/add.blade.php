@@ -60,7 +60,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Revision Date</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date" value="{{ todaydate('todaydate') }}"
+                                                        placeholder="Revision Date" value="{{ getDocumentReviewDate('RRAA-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -70,10 +70,7 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
+
                                                 </div>
                                             </div>
 
@@ -83,6 +80,10 @@
                                                         <h4 class="text-white">RRAA CheckList</h4>
                                                     </div>
                                                     <div class="d-flex justify-content-end">
+                                                        <button class="btn btn-primary add-row me-3" type="button"
+                                                            id="add-row" style="width: 84px;">
+                                                            Add
+                                                        </button>
                                                         <button type="button" class="btn btn-danger remove-row">
                                                             <i class="fa-solid fa-trash"></i> Remove
                                                         </button>
@@ -248,7 +249,7 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
-        
+
         function initEmployeeSelect2() {
             $('.emp-select').select2({
                 ajax: {
@@ -379,7 +380,8 @@
         const maxFormSets = 200;
         const minFormSets = 1;
 
-        $(".add-row").click(function() {
+        // $(".add-row").click(function() {
+        $(document).on('click',".add-row",function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
 
             if (currentFormSets >= maxFormSets) {
@@ -400,6 +402,10 @@
                         <h4 class="text-white">RRAA CheckList</h4>
                     </div>
                     <div class="d-flex justify-content-end">
+                         <button class="btn btn-primary add-row me-3" type="button"
+                            id="add-row" style="width: 84px;">
+                            Add
+                        </button>
                         <button type="button" class="btn btn-danger remove-row">
                             <i class="fa-solid fa-trash"></i> Remove
                         </button>
@@ -583,7 +589,7 @@
                 noSpaces: true,
                 messages: {
                     required: 'Remark is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Remark cannot be empty or only spaces'
                 }
             });
 
@@ -606,21 +612,21 @@
             }
             $(this).closest('.form-set').remove();
             updatePageIndices();
-          
+
         });
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5)); 
-                
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']'); 
+                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5));
+
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']');
                 $(this).find('input[name^="ohs_compliance_index"]').attr('name', 'ohs_compliance_index[' + (index + 1) + ']');
-                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']'); 
-                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']'); 
-                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']'); 
-                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']'); 
-                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']'); 
+                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']');
+                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']');
+                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']');
+                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']');
+                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }
