@@ -60,8 +60,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Revision Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Data" value="{{ getDocumentReviewDate('SPLB-0') }}"
-                                                        readonly>
+                                                        placeholder="Revision Data"
+                                                        value="{{ getDocumentReviewDate('SPLB-0') }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -84,7 +84,7 @@
                                                                 <label class="form-label require">Serial Number</label>
                                                                 <input type="text" name="serial_number"
                                                                     class="form-control" placeholder="Serial Number"
-                                                                    value="{{getsequence('SPLB')}}" readonly>
+                                                                    value="{{ getsequence('SPLB') }}" readonly>
                                                             </div>
                                                         </div>
 
@@ -92,8 +92,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Employee Name </label>
                                                                 <select name="emp_id" id="emp_id"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
+                                                                    class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Employee Name</option>
                                                                 </select>
                                                             </div>
@@ -102,9 +101,9 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Employee Code</label>
-                                                                <input type="text" name="employee_code" id="employee_code"
-                                                                    class="form-control" placeholder="Employee Code"
-                                                                    value="">
+                                                                <input type="text" name="employee_code"
+                                                                    id="employee_code" class="form-control"
+                                                                    placeholder="Employee Code" value="">
                                                             </div>
                                                         </div>
 
@@ -126,8 +125,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department</label>
                                                                 <select name="department_id" id="department_id"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
+                                                                    class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Department</option>
                                                                 </select>
                                                             </div>
@@ -161,23 +159,10 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2 mt-2">
-                                                            @if (isset(Auth::user()->signature_upload))
-                                                                <label class="form-label"
-                                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                                <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
-                                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                            @else
-                                                                <div class="form-input col-md-12 mb-2">
-                                                                    <label class="form-label require">Signature</label>
-                                                                    <input type="file" name="signature_givenby_image" id="signature_upload"
-                                                                        class="form-control form-control-sm" accept="image/*"
-                                                                        placeholder="Enter the image">
-                                                                    <small>Allowed file types: jpg, jpeg, png</small>
-                                                                    <div id="signature_upload" class="text-danger"></div>
-                                                                </div>
-                                                            @endif
+                                                        <div class="col-md-4 form-group form-input mb-2 mt-2"
+                                                            id="signature_givenby" style="display:none;">
                                                         </div>
+
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Amount Received
@@ -185,27 +170,13 @@
                                                                 <select name="amnt_receivedby_id" id="amnt_receivedby_id"
                                                                     class="form-control single-select"
                                                                     style="width: 100%">
-                                                                    <option value="">Select Amount Received by</option>
+                                                                    <option value="">Select Amount Received by
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
-
-                                                        <div class="col-md-4 form-group form-input mb-2 mt-2">
-                                                            @if (isset(Auth::user()->signature_upload))
-                                                                <label class="form-label"
-                                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                                <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
-                                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                            @else
-                                                                <div class="form-input col-md-12 mb-2">
-                                                                    <label class="form-label require">Signature</label>
-                                                                    <input type="file" name="signature_receivedby_image" id="signature_upload"
-                                                                        class="form-control form-control-sm" accept="image/*"
-                                                                        placeholder="Enter the image">
-                                                                    <small>Allowed file types: jpg, jpeg, png</small>
-                                                                    <div id="signature_upload" class="text-danger"></div>
-                                                                </div>
-                                                            @endif
+                                                        <div class="col-md-4 form-group form-input mb-2 mt-2"
+                                                            id="signature_receivedby" style="display:none;">
                                                         </div>
 
                                                         <div class="col-md-12 mt-2">
@@ -371,6 +342,89 @@
                 selectionCssClass: 'form-control'
             });
 
+            function updateGivenBySignatureField(loginId) {
+                $.ajax({
+                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+                    method: 'GET',
+                    data: {
+                        login_id: loginId
+                    },
+                    success: function(response) {
+                        $("#signature_givenby").empty();
+
+                        if (response.signature_upload) {
+                            $("#signature_givenby").html(
+                                '<label class="form-label" style="display: block;">Signature</label>' +
+                                '<img src="{{ admin_url('public/') }}' + response
+                                .signature_upload +
+                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+                            );
+                        } else {
+                            $("#signature_givenby").html(
+                                '<label class="form-label require">Signature</label>' +
+                                '<input type="file" name="signature_givenby_image" id="signature_givenby" ' +
+                                'class="form-control form-control-sm" accept="image/*">' +
+                                '<small>Allowed file types: jpg, jpeg, png</small>' +
+                                '<div id="signature_givenby_error" class="text-danger"></div>'
+                            );
+                        }
+
+                        $("#signature_givenby").show();
+                    }
+                });
+            }
+
+            function updateReceivedBySignatureField(loginId) {
+                $.ajax({
+                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+                    method: 'GET',
+                    data: {
+                        login_id: loginId
+                    },
+                    success: function(response) {
+                        $("#signature_receivedby").empty();
+
+                        if (response.signature_upload) {
+                            $("#signature_receivedby").html(
+                                '<label class="form-label" style="display: block;">Signature</label>' +
+                                '<img src="{{ admin_url('public/') }}' + response
+                                .signature_upload +
+                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+                            );
+                        } else {
+                            $("#signature_receivedby").html(
+                                '<label class="form-label require">Signature</label>' +
+                                '<input type="file" name="signature_receivedby_image" id="signature_receivedby" ' +
+                                'class="form-control form-control-sm" accept="image/*">' +
+                                '<small>Allowed file types: jpg, jpeg, png</small>' +
+                                '<div id="signature_receivedby_error" class="text-danger"></div>'
+                            );
+                        }
+
+                        $("#signature_receivedby").show();
+                    }
+                });
+            }
+
+            $('#amnt_givenby_id').on('select2:select', function(e) {
+                var loginId = $(this).val();
+                console.log("Selected employee ID for Given By: " + loginId);
+                if (loginId) {
+                    updateGivenBySignatureField(loginId);
+                } else {
+                    $('#signature_givenby').hide();
+                }
+            });
+
+            $('#amnt_receivedby_id').on('select2:select', function(e) {
+                var loginId = $(this).val();
+                if (loginId) {
+                    updateReceivedBySignatureField(loginId);
+                } else {
+                    $('#signature_receivedby').hide();
+                }
+            });
+
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
@@ -393,15 +447,15 @@
                     employee_code: {
                         required: true,
                         noSpaces: true,
-                       remote: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
-                        type: 'post',
-                        data: {
-                            location_type_name: function() {
-                                return $('#employee_code').val();
+                        remote: {
+                            url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#employee_code').val();
+                                }
                             }
                         }
-                    }
                     },
                     department_id: {
                         required: true,

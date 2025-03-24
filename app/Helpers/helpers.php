@@ -35,7 +35,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2012,11 +2012,18 @@ if (!function_exists('getMonth')) {
             } else if ($id == FLOOR_MANAGER_REJECTED) {
                 return 'floor Manager rejected';
             } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
-                return 'Safet Officer Approval Pending';
+                return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
-                return 'Safet Officer Approved';
+                return 'Safety Officer Approved';
             } else if ($id == SAFETY_OFFICER_REJECTED) {
-                return 'Safet Officer rejected';
+                return 'Safety Officer rejected';
+
+            } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
+                return 'Medical Assistant /Floor Manager  Approval Pending';
+            } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
+                return 'Medical Assistant /Floor Manager rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
+                return 'Medical Assistant /Floor Manager Approved';
             }
 
             return 'OHC Creation';
@@ -2034,6 +2041,21 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $shift_name->shift;
+            }
+        }
+    }
+
+    if (!function_exists('GetSafetyWalkImage')) {
+
+        function GetSafetyWalkImage($id)
+        {
+
+            $safetyImage = DB::table('inspection_safety_walk_observation_files')->where('safety_walk_observation_id', $id)->where('trash', 'NO')->first();
+
+            if ($safetyImage == null) {
+                return false;
+            } else {
+                return $safetyImage->file_path;
             }
         }
     }

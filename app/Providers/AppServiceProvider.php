@@ -186,12 +186,13 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
 
-        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 5);
+        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
 
-
+        defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -241,6 +242,13 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_OFFICER_REJECTED') or define('EHS_OFFICER_REJECTED', 7);
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
+
+
+        //SAFETY WALK OBSERVATION
+        defined('OBSERVATION_PENDING') or define('OBSERVATION_PENDING', 1);
+        defined('OBSERVATION_REJECTED') or define('OBSERVATION_REJECTED', 2);
+        defined('OBSERVATION_APPROVED') or define('OBSERVATION_APPROVED', 3);
+
 
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);
@@ -297,9 +305,10 @@ class AppServiceProvider extends ServiceProvider
         defined('STANDARD') or define('STANDARD',1);
         defined('NORMS') or define('NORMS',2);
 
-        defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
-        defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
-        defined('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST') or define('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST',3);
+        // defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
+        // defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
+        // defined('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST') or define('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST',3);
+        // defined('OHC_FLOOR_STRECTHER_CHECKLIST') or define('OHC_FLOOR_STRECTHER_CHECKLIST',4);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);

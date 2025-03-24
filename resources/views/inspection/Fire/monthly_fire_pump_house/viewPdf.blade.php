@@ -191,57 +191,44 @@
     <br>
     @php
         $user_response = json_decode($forklift_details->responses, true);
+        $srNo = 1;
     @endphp
 
-        <table style="width:100%;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Sr. No</th>
-                    <th colspan="3"
-                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Check Points</th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Reports</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($user_response as $subcategory => $questions)
-                    @php
-                        $rowCount = count($questions);
-                        $firstRow = true;
-                        $srNo = 1;
-                    @endphp
-                    @foreach ($questions as $questionId => $answer)
-                        <tr>
-                            @if ($firstRow)
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    {{ $srNo }}</td>
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                    {{ GetSubChecklistTypeName($subcategory) }}
-                                </td>
-                                @php
-                                    $srNo++;
-                                    $firstRow = false;
-                                @endphp
+    <table border="1" cellspacing="0" cellpadding="8" width="100%">
+        <thead>
+            <tr>
+                <th style="background-color: #ccc; text-align: center;">Sr. No</th>
+                <th style="background-color: #ccc; text-align: center;">Check Points</th>
+                <th style="background-color: #ccc; text-align: center;">Response</th>
+                <th style="background-color: #ccc; text-align: center;">Remarks</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($user_response as $subcategory => $questions)
+                @foreach ($questions as $questionId => $answer)
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">{{ $srNo }}</td>
+                        <td>{{ GetChecklistTypeDate($questionId) }}</td>
+                        <td style="text-align: center;">
+                            @php
+                                $responseText = $answer['response'] ?? '-';
+                            @endphp
+                            @if ($responseText == 'YES')
+                                <span style="color: green; font-size: 20px;">✓</span>
+                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
+                                <span style="color: red; font-size: 20px;">X</span>
+                            @else
+                                {{ $responseText }}
                             @endif
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                {{ GetChecklistTypeDate($questionId) }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                @if ($answer == 'YES')
-                                    <span style="color: green; font-size: 20px;">✓</span>
-                                @elseif ($answer == 'NO' || $answer == 'N/A')
-                                    <span style="color: red; font-size: 20px;">X</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-            </tbody>
+                        </td>
+                        <td style="text-align: center;">{{ $answer['remark'] ?? '-' }}</td>
+                    </tr>
+                    @php $srNo++; @endphp
+                @endforeach
             @endforeach
-        </table>
+        </tbody>
+    </table>
+
 
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)

@@ -107,6 +107,27 @@
                                             {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
                                         </div>
                                     </div>
+                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label" style="display: block;">
+                                                {{ __('inspection.signature') }}
+                                            </label>
+                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label" style="display: block;">
+                                                {{ __('inspection.signature') }}
+                                            </label>
+                                            <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        </div>
+                                    </div>
+                                @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">

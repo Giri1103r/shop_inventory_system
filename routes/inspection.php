@@ -20,9 +20,9 @@ use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
-use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -279,10 +279,11 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('add', [SafetyWalkObservationController::class, 'add']);
         Route::post('add/submit', [SafetyWalkObservationController::class, 'store']);
         Route::get('view/{id}', [SafetyWalkObservationController::class, 'view']);
-        Route::GET('get/equipment', [SafetyWalkObservationController::class, 'GetEquipment']);
+        Route::get('approval/{id}', [SafetyWalkObservationController::class, 'approval']);
         Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
         Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
+        Route::post('verify/submit', [SafetyWalkObservationController::class, 'approvalSubmit']);
     });
 
     Route::group(['prefix' => 'ohc-plant-summary/'], function () {
@@ -355,7 +356,8 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
     Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
-    Route::post('/unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {
@@ -397,7 +399,7 @@ Route::group(['prefix' => 'fire/'], function () {
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function(){
     Route::GET('list',[FloorStretcherController::class,'Index']);
-    Route::GET('list',[FloorStretcherController::class,'Index']);
+    Route::POST('list',[FloorStretcherController::class,'Index']);
     Route::GET('add',[FloorStretcherController::class,'Add']);
     Route::POST('add/submit',[FloorStretcherController::class,'Store']);
     Route::GET('view/{id}',[FloorStretcherController::class,'View']);
