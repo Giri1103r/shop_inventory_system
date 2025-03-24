@@ -11,15 +11,17 @@ use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
-use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
+use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 
+use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
+use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
+use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -243,6 +245,30 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+    });
+
+    Route::group(['prefix' => 'safety-walk-observation/'], function () {
+        Route::get('list', [SafetyWalkObservationController::class, 'index']);
+        Route::post('list', [SafetyWalkObservationController::class, 'index']);
+        Route::get('add', [SafetyWalkObservationController::class, 'add']);
+        Route::post('add/submit', [SafetyWalkObservationController::class, 'store']);
+        Route::get('view/{id}', [SafetyWalkObservationController::class, 'view']);
+        Route::GET('get/equipment', [SafetyWalkObservationController::class, 'GetEquipment']);
+        Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
+        Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
+    });
+
+    Route::group(['prefix' => 'ohc-plant-summary/'], function () {
+        Route::get('list', [OHSPlantSummaryReportController::class, 'index']);
+        Route::post('list', [OHSPlantSummaryReportController::class, 'index']);
+        Route::get('add', [OHSPlantSummaryReportController::class, 'add']);
+        Route::post('add/submit', [OHSPlantSummaryReportController::class, 'store']);
+        Route::get('view/{id}', [OHSPlantSummaryReportController::class, 'view']);
+        Route::GET('get/equipment', [OHSPlantSummaryReportController::class, 'GetEquipment']);
+        Route::get('export/excel', [OHSPlantSummaryReportController::class, 'exportExcel']);
+        Route::get('export/pdf', [OHSPlantSummaryReportController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [OHSPlantSummaryReportController::class, 'exportViewPdf']);
     });
 });
 

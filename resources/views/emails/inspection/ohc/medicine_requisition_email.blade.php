@@ -66,7 +66,7 @@
                                 <b>Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ dispalydateformat($details['data']->data) }}</td>
+                                valign="top"> {{ displaydateformat($details['data']->date) }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
@@ -78,7 +78,7 @@
                         <tr>
                             @if (isset($details['data']->verified_by))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    <b>Verified By</b>
+                                    <b>Verified By(Floor Manager)</b>
                                 </td>
                                 <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                     valign="top"> {{ getUsername($details['data']->verified_by) }}</td>
@@ -87,7 +87,7 @@
                         <tr>
                             @if (isset($details['data']->approved_by))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    <b>Approved By</b>
+                                    <b>Approved By(Medical Assistant / safety officer)</b>
                                 </td>
                                 <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                     valign="top"> {{ getUsername($details['data']->approved_by) }}</td>

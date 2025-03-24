@@ -154,7 +154,7 @@ class FirstAidLocation extends Model
         ->where('id', '!=', $id)
         ->get();
     }
-   
+
 
     public function store()
     {
@@ -289,7 +289,7 @@ class FirstAidLocation extends Model
 
         $data = $this->where('status',1)
 
-            ->first();
+            ->get();
 
         return $data;
     }

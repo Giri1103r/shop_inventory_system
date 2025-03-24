@@ -103,7 +103,9 @@ class MedicalRequisitionSlipController extends Controller
                                 case SAFETY_OFFICER_APPROVED:
                                     $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Safety Officer Approved</span>";
                                     break;
-
+                                    case SAFETY_OFFICER_REJECTED:
+                                        $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Safety Officer Rejected</span>";
+                                        break;
                                 default:
                                     $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
                             }
@@ -184,6 +186,10 @@ class MedicalRequisitionSlipController extends Controller
                 // Store user medicine requisition
                 $medicine_requisition_floor_details = $this->medicine_requisition_floor_details->store();
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store($medicine_requisition_floor_details);
+                // signature
+                $id = ($medicine_requisition_floor_details->id);
+                $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FLOOR, $id);
+
                 $data = [
                     'type' => OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
                     'from_status' => OHC_CREATION,
@@ -203,7 +209,7 @@ class MedicalRequisitionSlipController extends Controller
                 $mailsubject = 'Medicine Requistion Slip Floor';
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -225,7 +231,8 @@ class MedicalRequisitionSlipController extends Controller
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
-                        'data' => $details
+                        'data' => $details,
+
                     );
                     Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
                 }
@@ -260,8 +267,8 @@ class MedicalRequisitionSlipController extends Controller
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
 
                 $safetyofficer = $this->inspection_ohc_status_log->safetyofficer($id, $safetytype, $type);
-
                 $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
+
                 $safetyofficersignature = null;
                 $floormanagersignature = null;
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
@@ -270,12 +277,31 @@ class MedicalRequisitionSlipController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
                 }
+
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+
+                $approversignatureview = null; // Initialize the variable
+
+                if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
+                    $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
+                }
+
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
                     'statuslog' => $statuslog,
                     'safetyofficer' => $safetyofficer,
                     'floormanger' => $floormanger,
+                    'floorapproversignatureview' => $floorapproversignatureview,
+                    'signatureview' => $signatureview,
+                    'approversignatureview' => $approversignatureview,
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
 
@@ -296,10 +322,11 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
-                $safetyofficer = $this->inspection_ohc_status_log->safetyofficer($id, $safetytype, $type);
 
+                $safetyofficer = $this->inspection_ohc_status_log->safetyofficer($id, $safetytype, $type);
                 $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
 
                 $safetyofficersignature = null;
@@ -311,11 +338,31 @@ class MedicalRequisitionSlipController extends Controller
                     $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
                 }
 
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+
+                $approversignatureview = null; // Initialize the variable
+
+                if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
+                    $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
+                }
+
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
+
                 $data = array(
-                    'medicinerequisition' => $medicinerequisition,
+                 'medicinerequisition' => $medicinerequisition,
                     'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+                    'statuslog' => $statuslog,
                     'safetyofficer' => $safetyofficer,
                     'floormanger' => $floormanger,
+                    'floorapproversignatureview' => $floorapproversignatureview,
+                    'signatureview' => $signatureview,
+                    'approversignatureview' => $approversignatureview,
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
 
@@ -338,10 +385,13 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
+
                 $safetyofficer = $this->inspection_ohc_status_log->safetyofficer($id, $safetytype, $type);
                 $floormanger = $this->inspection_ohc_status_log->floormanger($id, $floortype, $type);
+
                 $safetyofficersignature = null;
                 $floormanagersignature = null;
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
@@ -350,15 +400,34 @@ class MedicalRequisitionSlipController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floormanagersignature = $this->signature->floormanagersignature($id, $floormanger, $type);
                 }
+
+                $requestorsignature =   $medicinerequisition->created_by;
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $signatureview = $this->user->where('id', $requestorsignature)->first();
+
+                $approversignatureview = null; // Initialize the variable
+
+                if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
+                    $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
+                }
+
+                $floorapproversignatureview = null; // Initialize the variable
+
+                if (!empty($floormanger) && !empty($floormanger->approved_by)) {
+                    $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
+                }
             }
             $data = [
-                'medicinerequisition' => $medicinerequisition,
-                'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
-                'safetyofficer' => $safetyofficer,
-                'floormanger' => $floormanger,
-                'statuslog' => $statuslog,
-                'safetyofficersignature' => $safetyofficersignature,
-                'floormanagersignature' => $floormanagersignature,
+              'medicinerequisition' => $medicinerequisition,
+                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+                    'statuslog' => $statuslog,
+                    'safetyofficer' => $safetyofficer,
+                    'floormanger' => $floormanger,
+                   'signatureview' => $signatureview,
+                    'floorapproversignatureview' => $floorapproversignatureview,
+                    'approversignatureview' => $approversignatureview,
+                    'safetyofficersignature' => $safetyofficersignature,
+                    'floormanagersignature' => $floormanagersignature,
 
                 'pagetitle' => "Medicine Requisition Slip Floor",
             ];
@@ -417,12 +486,19 @@ class MedicalRequisitionSlipController extends Controller
 
                 $this->medicine_requisition_floor_details->floormanagerapprovalupdate($id, $nextStatus);
                 if ($request->action == "approve") {
-                    $safetyofficer = getSafetyOfficer();
-                    $safetyofficers = $safetyofficer->pluck('id')->toArray();
+                    $getsafetyofficer = getSafetyOfficer();
+                $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
+                $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
+
+                // medical officer
+
+                $getmedicalassistant = getMedicalAssistant();
+                $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
+                $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     $notificationData = array(
-                        'notification_type' => 11,
+                        'notification_type' => 1,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -433,30 +509,31 @@ class MedicalRequisitionSlipController extends Controller
                             'module' => 1,
                         )),
                         'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
-                        'assigned_user' => array_to_string($safetyofficers),
+                        'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
                         'created_by' => Auth::id(),
                     );
                     notificationSave($notificationData);
-                    foreach ($safetyofficer as $user) {
-                        $email_id = getUseremail($user);
-                        $title = "Medicine Requistion Slip Floor";
-                        $details = array(
-                            'ohc_type' => 'medicine requisition slip floor',
-                            'email' => $email_id,
-                            'mail_subject' => $mailsubject,
-                            'title' => $title,
-                            'data' => $details
-                        );
-                        Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    $title = "Medicine Requisition slip floor";
+                    $mailsubject = "Medicine Requisition slip floor was Approved";
+                    $details = array(
+                        'ohc_type' => 'Medicine Requisition slip floor Floor manager was Approved',
+
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $details
+                    );
+                    $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
+                    if (!empty($recipients)) {
+                        Mail::to($recipients)->queue(new MedicineRequistionFloorEmail($details));
                     }
                 } else if ($request->action == "reject") {
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $userIds = [
                         'users' => $details->created_by,
                     ];
-                    $mailsubject = 'Medicine Requistion Slip Floor Rejected';
+                    $mailsubject = 'Medicine Requistion Slip Floor  Floor manager Rejected';
                     $notificationData = array(
-                        'notification_type' => 11,
+                        'notification_type' => 1,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -476,11 +553,10 @@ class MedicalRequisitionSlipController extends Controller
                     $email_id = getUseremail($user);
 
                     $details = array(
-                        'ohc_type' => 'Medicine Requistion Slip Floor',
+                        'ohc_type' => 'Medicine Requistion Slip Floor was Rejected',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
-
                         'data' => $details
                     );
                     Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
@@ -509,9 +585,12 @@ class MedicalRequisitionSlipController extends Controller
 
 
             try {
-                if ($request->action === "approve") {
+                if ($request->action == "approve") {
                     $approveStatus = SAFETY_OFFICER_APPROVED;
                     $nextStatus = SAFETY_OFFICER_APPROVED;
+                } else if ($request->action == "reject") {
+                    $approveStatus = SAFETY_OFFICER_REJECTED;
+                    $nextStatus = SAFETY_OFFICER_REJECTED;
                 }
 
                 $details = $this->medicine_requisition_floor_details->Selectone($id);
@@ -530,38 +609,75 @@ class MedicalRequisitionSlipController extends Controller
                 $this->inspection_ohc_status_log->store($data);
                 $this->medicine_requisition_floor_details->safetyofficerapprovalupdate($id, $nextStatus);
                 $details = $this->medicine_requisition_floor_details->Selectone($id);
-                $userIds = [
-                    'users' => $details->created_by,
-                ];
-                $mailsubject = 'Medicine Requistion Slip Floor Approved';
-                $notificationData = array(
-                    'notification_type' => 11,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "Safety Officer Approved by the medicine requistion slip floor",
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/medical-requisition-slip/list'),
-                    'assigned_user' => array_to_string($userIds),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-                $title = "Medicine Requistion Slip Floor";
-                $user = $details->created_by;
-                $email_id = getUseremail($user);
+                if($request->action == "approve"){
+                    $userIds = [
+                        'users' => $details->created_by,
+                    ];
+                    $mailsubject = 'Medicine Requistion Slip Floor Approved';
+                    $notificationData = array(
+                        'notification_type' => 1,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Safety Officer Approved by the medicine requistion slip floor",
+                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('ohc/medical-requisition-slip/list'),
+                        'assigned_user' => array_to_string($userIds),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
+                    $title = "Medicine Requistion Slip Floor";
+                    $user = $details->created_by;
+                    $email_id = getUseremail($user);
 
-                $details = array(
-                    'ohc_type' => 'Medicine Requistion Slip Floor',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'data' => $details
-                );
-                Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    $details = array(
+                        'ohc_type' => 'Medicine Requistion Slip Floor was Safety officer  / Medical assistant Approved',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $details
+                    );
+                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                } elseif($request->action == "reject"){
+                    $userIds = [
+                        'users' => $details->created_by,
+                    ];
+                    $mailsubject = 'Medicine Requistion Slip Floor was Rejected';
+                    $notificationData = array(
+                        'notification_type' => 1,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Safety Officer rejected by the medicine requistion slip floor",
+                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('ohc/medical-requisition-slip/list'),
+                        'assigned_user' => array_to_string($userIds),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
+                    $title = "Medicine Requistion Slip Floor was Rejected";
+                    $user = $details->created_by;
+                    $email_id = getUseremail($user);
+
+                    $details = array(
+                        'ohc_type' => 'Medicine Requistion Slip Floor was Safety officer  / Medical assistant Rejected',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $details
+                    );
+                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                }
+
+
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
                 dd($ex);
@@ -686,7 +802,7 @@ class MedicalRequisitionSlipController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }

@@ -103,6 +103,14 @@ return [
     'observation_status' => 'Observation Status',
     'fire_safety_equipment' => 'Fire Safety Equipment',
 
+    //Safety Walk Observation
+    'safety_walk_taken_by' => 'Safety Walk Taken By',
+    'observation' => 'Observation',
+    'recomended_action' => 'Recomended Action',
+    'employee' => 'Employee',
+    'date_of_compliance' => 'Date of Compliance',
+    'previous_month_observation' => 'Previous Month Obervation',
+    'current_month_observation' => 'Current Month Obervation',
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',
 

@@ -27,14 +27,14 @@ class DailyDepartmentFirstAidBox extends Model
         'updated_at'
     ];
 
-    public function store($OhcDetails)
+    public function store($daily_department_first_aid_box_details)
     {
         $request = request();
 
-       
+
         foreach ($request->medicine_id as $index => $medicine) {
             $insert_array = [
-                'reference_id' => $OhcDetails->id,
+                'reference_id' => $daily_department_first_aid_box_details->id,
                 'medicine_id' => decryptId($medicine),
                 'freeze_quantity' => $request->freeze_quantity[$index] ?? 0,  // Default to 0 if missing
                 'available_quantity' => $request->available_quantity[$index] ?? 0,

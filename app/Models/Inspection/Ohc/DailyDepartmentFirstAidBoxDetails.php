@@ -2,16 +2,17 @@
 
 namespace App\Models\Inspection\Ohc;
 
+
+
 use App\Models\Master\Employee;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
-class MedicineRequistionSlipfloordetails extends Model
+class DailyDepartmentFirstAidBoxDetails extends Model
 {
-    protected $table = 'inspection_ohc_medicine_requisition_slip_floor_details';
-
+    protected $table = 'inspection_ohc_daily_department_first_aid_box_details';
     protected $primaryKey = 'id';
     protected $fillable = [
         'doc_no',
@@ -51,7 +52,7 @@ class MedicineRequistionSlipfloordetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
+        $query = $this->select('inspection_ohc_daily_department_first_aid_box_details.*');
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
@@ -70,21 +71,21 @@ class MedicineRequistionSlipfloordetails extends Model
         }
 
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
-            $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+            $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
-            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
         }
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->approve_status) && $request->approve_status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status) );
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->approve_status) );
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -92,25 +93,25 @@ class MedicineRequistionSlipfloordetails extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', $columnorder);
+                    $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.revision_date', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.doc_no', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.status', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
                     break;
             }
         }
@@ -119,7 +120,7 @@ class MedicineRequistionSlipfloordetails extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -151,10 +152,10 @@ class MedicineRequistionSlipfloordetails extends Model
             'next_due' => !empty($request->next_due_on) ? DBdateformat($request->next_due_on) : null,
             'revision_date' => $request->review_date,
             'first_aid_box_no' => $request->first_aid_box_no,
-            'first_aider' => $request->first_aider,
+            'first_aider' => decryptId($request->first_aider),
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
             'created_by' => Auth::id(),
-            'approve_status' => FLOOR_MANAGER_APPROVAL_PENDING,
+            'approve_status' => MEDICAL_ASSISTANT_APPROVAL_PENDING,
         ];
 
         return self::create($insert_array);
@@ -178,26 +179,26 @@ class MedicineRequistionSlipfloordetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
+        $query = $this->select('inspection_ohc_daily_department_first_aid_box_details.*');
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         // dd($query);
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
-            $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+            $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
-            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
         }
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->approve_status) && $request->approve_status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status) );
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->approve_status) );
         }
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICIAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
@@ -209,33 +210,32 @@ class MedicineRequistionSlipfloordetails extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', $columnorder);
+                    $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.revision_date', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.doc_no', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.status', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+                    $query = $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
                     break;
             }
         }
 
-        $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
 
 
         return   $query->get();
     }
-
 }
