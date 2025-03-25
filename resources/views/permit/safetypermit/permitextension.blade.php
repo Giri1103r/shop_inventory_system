@@ -94,8 +94,8 @@
             }
 
             let formattedSelectedDate = formatDate(selectedDate);
-            let formattedToDate = formatDate(toDate);
-            let currentDate = new Date().toISOString().split('T')[0]; 
+            let formattedToDate = (toDate);
+            let currentDate = new Date().toISOString().split('T')[0];
 
             flatpickr("#time_to", {
                 enableTime: true,
@@ -105,7 +105,7 @@
                 dateFormat: "H:i",
                 maxTime: "18:00",
                 onOpen: function(selectedDates, dateStr, instance) {
-                    let minTime = (formattedSelectedDate === currentDate) ? toTime : "09:00";
+                    let minTime = (formattedSelectedDate === formattedToDate) ? toTime : "09:00";
                     instance.set("minTime", minTime);
                 },
             });
