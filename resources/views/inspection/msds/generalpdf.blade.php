@@ -184,6 +184,23 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;"> {{ displayDateformat($msdsDetails->created_at) }}</td>
         </tr>
+        @php
+            $signature = GetSignature(
+                $inspection_details->created_by,
+                $inspection_details->id,
+                MSDS_INSPECTION,
+            );
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> 
+                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;">
+                </td>
+            </tr>
+        @endif
     </table>
 
     <br>

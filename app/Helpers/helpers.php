@@ -1422,12 +1422,12 @@ if (!function_exists('getMonth')) {
 
     if (!function_exists('getFIRCount')) {
 
-    function getFIRCount()
-    {
-        $data = FirstAidRecordChecklist::get()->count();
-        return $data;
+        function getFIRCount()
+        {
+            $data = FirstAidRecordChecklist::get()->count();
+            return $data;
+        }
     }
-}
 
 
     if (!function_exists('getCategoryname')) {
@@ -1950,6 +1950,9 @@ if (!function_exists('getMonth')) {
             $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 $name = User::where('id', $id)->first();
+                if ($name == null) {
+                    return null;
+                }
                 return $name->signature_upload;
             } else {
                 return $name->file_path;
@@ -1965,15 +1968,20 @@ if (!function_exists('getMonth')) {
                     $name = DB::table('inspection_rraa_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         $name = User::where('id', $id)->first();
+                        if ($name == null) {
+                            return null;
+                        }
                         return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
                 case MSDS_INSPECTION:
-
                     $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         $name = User::where('id', $id)->first();
+                        if ($name == null) {
+                            return null;
+                        }
                         return $name->signature_upload;
                     } else {
                         return $name->file_path;
@@ -1981,7 +1989,11 @@ if (!function_exists('getMonth')) {
                 case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
                     $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
-                        return '';
+                        $name = User::where('id', $id)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
@@ -1989,6 +2001,9 @@ if (!function_exists('getMonth')) {
                     $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         $name = User::where('id', $id)->first();
+                        if ($name == null) {
+                            return null;
+                        }
                         return $name->signature_upload;
                     } else {
                         return $name->file_path;

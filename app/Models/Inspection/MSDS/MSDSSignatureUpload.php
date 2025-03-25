@@ -42,7 +42,7 @@ class MSDSSignatureUpload extends Model
         try {
             $id = Auth::id();
             $request = Request();
-            $file = $request->file('signature_image');
+            // $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
                 $upload_path = 'public/uploads/inspection/msds/signatureupload';
@@ -79,7 +79,7 @@ class MSDSSignatureUpload extends Model
         try {
            
             $request = Request();
-            $file = $request->file('signature_image');
+            // $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
                 $upload_path = 'public/uploads/inspection/msds/signatureupload';
@@ -103,7 +103,7 @@ class MSDSSignatureUpload extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
-
+// dd( $insert_array);
                 $this->create($insert_array);
             }
         } catch (Exception $ex) {

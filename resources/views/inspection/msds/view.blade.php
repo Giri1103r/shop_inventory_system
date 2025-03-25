@@ -76,7 +76,7 @@
                                     </div>
                                     @php
                                         $signature = GetSignature(
-                                            $inspection_details->verified_by,
+                                            $inspection_details->created_by,
                                             $inspection_details->id,
                                             MSDS_INSPECTION,
                                         );
@@ -87,7 +87,7 @@
                                                 <label class="form-label"
                                                     style="display: block;">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                    style="width: 150px; margin-top: -10px;" />
+                                                    style="width: 150px; margin-top: -10px;">
                                             </div>
                                         </div>
                                     @endif

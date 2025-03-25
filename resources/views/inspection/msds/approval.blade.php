@@ -67,7 +67,7 @@
                                     </div>
                                     @php
                                         $signature = GetSignature(
-                                            $inspection_details->verified_by,
+                                            $inspection_details->created_by,
                                             $inspection_details->id,
                                             MSDS_INSPECTION,
                                         );
