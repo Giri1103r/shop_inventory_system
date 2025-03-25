@@ -185,9 +185,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
                 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
@@ -335,9 +335,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
