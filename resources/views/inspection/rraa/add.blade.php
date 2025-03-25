@@ -236,7 +236,7 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            minDate: new Date(),
+            // minDate: new Date(),
         });
 
         $.validator.addMethod("noSpaces", function(value, element) {
@@ -309,6 +309,9 @@
                 revision_date: {
                     required: true,
                 },
+                signature_image: {
+                    required: true,
+                },
                 'category[1]': {
                     required: true,
                 },
@@ -348,6 +351,9 @@
                 },
                 revision_date: {
                     required: "Please Select Revision Date",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 },
                 'category[1]': {
                     required: "Category is Required",
