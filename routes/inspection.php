@@ -449,17 +449,17 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::post('level-two/verify/submit', [FirstAidRecordController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
 });
-Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'],function (){
-    Route::GET('list',[MonthlyMedicineStoreController::class,'Index']);
-    Route::POST('list',[MonthlyMedicineStoreController::class,'Index']);
-    Route::GET('add',[MonthlyMedicineStoreController::class,'Add']);
-    Route::POST('add/submit',[MonthlyMedicineStoreController::class,'Store']);
-    Route::GET('view/{id}',[MonthlyMedicineStoreController::class,'View']);
-    Route::GET('export/excel',[MonthlyMedicineStoreController::class,'ExportExcel']);
-    Route::GET('export/pdf',[MonthlyMedicineStoreController::class,'ExportPdf']);
-    Route::GET('exportViewpdf/{id}',[MonthlyMedicineStoreController::class,'ExportViewPDF']);
+Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
+    Route::GET('list', [MonthlyMedicineStoreController::class, 'Index']);
+    Route::POST('list', [MonthlyMedicineStoreController::class, 'Index']);
+    Route::GET('add', [MonthlyMedicineStoreController::class, 'Add']);
+    Route::POST('add/submit', [MonthlyMedicineStoreController::class, 'Store']);
+    Route::GET('view/{id}', [MonthlyMedicineStoreController::class, 'View']);
+    Route::GET('export/excel', [MonthlyMedicineStoreController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [MonthlyMedicineStoreController::class, 'ExportPdf']);
+    Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
 });
-Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function(){
+Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {
     Route::get('list', [HealthInstrumentCalibrationController::class, 'index']);
     Route::post('list', [HealthInstrumentCalibrationController::class, 'index']);
     Route::get('add', [HealthInstrumentCalibrationController::class, 'add']);
