@@ -341,7 +341,7 @@
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
-                                                        MONTHLY_FORKLIFT_INSPECTION,
+                                                        EYE_WASH_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -424,7 +424,7 @@
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
-                                                        MONTHLY_FORKLIFT_INSPECTION,
+                                                        EYE_WASH_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -476,7 +476,7 @@
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
-                                                        MONTHLY_FORKLIFT_INSPECTION,
+                                                        EYE_WASH_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -529,7 +529,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
+                                                    EYE_WASH_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -589,7 +589,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
+                                                    EYE_WASH_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
