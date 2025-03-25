@@ -1049,7 +1049,8 @@
                     },
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1059,6 +1060,7 @@
                     remark: {
                         required: "Please provide a remark.",
                         maxlength: "Remark cannot exceed 1000 characters."
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1097,7 +1099,8 @@
                     },
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1110,7 +1113,8 @@
                     },
                     remark: {
                         required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
+                        maxlength: "Remark cannot exceed 1000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1183,14 +1187,16 @@
 
                     remark: {
                         required: true,
-                        maxlength: 1000
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
 
                     remark: {
                         required: "Please provide remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
+                        maxlength: "Remark cannot exceed 1000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',

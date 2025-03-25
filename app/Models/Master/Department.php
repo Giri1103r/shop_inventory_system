@@ -144,7 +144,7 @@ class Department extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
-    public function ajaxList($department_id , $unitId = '')
+    public function ajaxList($department_id, $unitId = '')
     {
         $query = $this->select('id', 'department_name')->where('status', 1);
 
@@ -296,13 +296,27 @@ class Department extends Model
         return $data;
     }
 
-    public function getdepartment(){
-        return Department::where('trash','NO')->where('status','!=',0)->get();
+    public function getdepartment()
+    {
+        return Department::where('trash', 'NO')->where('status', '!=', 0)->get();
     }
 
     public function getunitDeparment($unitId)
     {
-       return Department::select('id','department_name')->where('unit_id',$unitId)->where('status',1)->where('trash','NO')->get();
+        return Department::select('id', 'department_name')->where('unit_id', $unitId)->where('status', 1)->where('trash', 'NO')->get();
+    }
+
+    public function getAlldepartment()
+    {
+        $data =  $this->get();
+        $decryptedArray = [];
+        foreach ($data as $data) {
+            $decryptedArray[] = [
+                'id' => encryptId($data->id),
+                'department_name' => $data->department_name,
+            ];
+        }
+        return $decryptedArray;
     }
 
 
@@ -317,8 +331,9 @@ class Department extends Model
         });
     }
 
-    public function getunitwiseDepartment(){
+    public function getunitwiseDepartment()
+    {
         $unitId = Auth::user()->unit_id;
-        return $this->where('unit_id',$unitId)->where('trash','NO')->get();
+        return $this->where('unit_id', $unitId)->where('trash', 'NO')->get();
     }
 }

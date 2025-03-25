@@ -36,7 +36,7 @@ use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\environment\Environment;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 /*
  * Menu bar start

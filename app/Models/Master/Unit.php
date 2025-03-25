@@ -218,7 +218,7 @@ class Unit extends Model
     }
 
 
-    public function ajaxList($unit_id , $locationId = '')
+    public function ajaxList($unit_id, $locationId = '')
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
 
@@ -262,8 +262,9 @@ class Unit extends Model
         }
         return $list;
     }
-    public function getunit(){
-        return Unit::where('trash','NO')->where('status','!=',0)->get();
+    public function getunit()
+    {
+        return Unit::where('trash', 'NO')->where('status', '!=', 0)->get();
     }
     protected static function booted()
     {
@@ -276,16 +277,32 @@ class Unit extends Model
         });
     }
 
-    public function getuserunit(){
+    public function getuserunit()
+    {
 
-        return Unit::where('trash','NO')->where('id','!=', 1)->where('status','!=',0)->get();
+        return Unit::where('trash', 'NO')->where('id', '!=', 1)->where('status', '!=', 0)->get();
     }
 
-    public function getUnitcount(){
+    public function getUnitcount()
+    {
         return $this->where('status', 1)->where('trash', 'NO')->pluck('id');
     }
 
-    public function getUnitList(){
-        return $this->select('id','unit_name')->where('status',1)->get();
+    public function getUnitList()
+    {
+        return $this->select('id', 'unit_name')->where('status', 1)->get();
+    }
+
+    public function getAllUnit()
+    {
+        $data =  $this->get();
+        $decryptedArray = [];
+        foreach ($data as $data) {
+            $decryptedArray[] = [
+                'id' => encryptId($data->id),
+                'unit_name' => $data->unit_name,
+            ];
+        }
+        return $decryptedArray;
     }
 }

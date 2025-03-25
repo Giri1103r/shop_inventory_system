@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\OhcManagement\SafetyPettyLogbook;
+namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyDetails;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +14,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Work;
 use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
 
@@ -88,8 +88,7 @@ class SafetyPettyController extends Controller
         }
 
         $data = [];
-
-        return view('ohcmanagement.safety_petty.list', $data);
+        return view('inspection.inspection_ohc.safety_petty.list', $data);
     }
 
     public function add(Request $request)
@@ -101,7 +100,7 @@ class SafetyPettyController extends Controller
             $data = [
                 'unit' => $unit,
             ];
-            return view('ohcmanagement.safety_petty.add', $data);
+            return view('inspection.inspection_ohc.safety_petty.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -175,6 +174,7 @@ class SafetyPettyController extends Controller
 
     public function view(Request $request)
     {
+       
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
@@ -185,9 +185,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
                 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
@@ -195,8 +195,9 @@ class SafetyPettyController extends Controller
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                 );
+              
             }
-            return view('ohcmanagement.safety_petty.view', $data);
+            return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -306,7 +307,7 @@ class SafetyPettyController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('ohcmanagement.safety_petty.pdf', $data);
+            $view = view('inspection.inspection_ohc.safety_petty.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -334,9 +335,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_checklist->amount_given_by);
+                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_checklist->amount_received_by);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
@@ -357,7 +358,7 @@ class SafetyPettyController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('ohcmanagement.safety_petty.generalpdf', $data)->render();
+            $html = view('inspection.inspection_ohc.safety_petty.generalpdf', $data)->render();
 
             $mpdf->WriteHTML($html);
 

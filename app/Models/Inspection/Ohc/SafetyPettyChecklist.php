@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\OhcManagement\SafetyPettyLogbook;
+namespace App\Models\Inspection\Ohc;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -269,18 +269,10 @@ class RRAAController extends Controller
             ->limit(10)
             ->get();
 
-        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get(); 
-
-
-        $mergedResults = $employee_code->merge($work);
-
         return response()->json(
-            $mergedResults->map(function ($employee) {
+            $employee_code->map(function ($employee) {
                 return [
-                    'id' => $employee->emp_id,
+                    'id' => $employee->login_id,
                     'text' => $employee->emp_id . ' - ' . $employee->emp_name,
                 ];
             })

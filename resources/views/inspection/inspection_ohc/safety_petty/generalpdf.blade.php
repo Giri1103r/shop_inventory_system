@@ -207,7 +207,7 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Employee Name</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ isset($sfty_petty_checklist->employee_name) ? $sfty_petty_checklist->employee_name : '' }}</td>
+            <td width="48%" style="padding:5px;"> {{ getUsername($sfty_petty_checklist->employee_name) }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Employee Code</b></td>
@@ -251,7 +251,7 @@
             <td width="50%" style="padding:5px;"><b>Amount Given By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->amount_given_by) ? $sfty_petty_checklist->amount_given_by : '' }}</td>
+                {{ getUsername($sfty_petty_checklist->amount_given_by) }}</td>
         </tr>
         @if (isset($signature_amount_givenby) && $signature_amount_givenby)
             <tr>
@@ -266,7 +266,7 @@
             <td width="50%" style="padding:5px;"><b>Amount Received by</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->amount_received_by) ? $sfty_petty_checklist->amount_received_by : '' }}</td>
+                {{ getUsername($sfty_petty_checklist->amount_received_by) }}</td>
         </tr>
         @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
             <tr>

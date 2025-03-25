@@ -320,7 +320,7 @@
                     services: {
                         required: "Source, Situation, Act,Activity, Product,Services is required.",
                         minlength: "Incident Short Name must be exactly 2 characters.",
-                        maxlength: "Incident Short Name must be exactly 2000 characters.",
+                        maxlength: "Incident Short Name must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     narration: {
