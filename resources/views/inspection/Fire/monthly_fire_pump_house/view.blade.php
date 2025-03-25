@@ -176,7 +176,7 @@
                                                         $signature = GetSafetySignature(
                                                             $inspection_details->verified_by,
                                                             $inspection_details->id,
-                                                            SAFETY_GALLERY_INSPECTION,
+                                                            MONTHLY_FIRE_PUMP,
                                                         );
                                                     @endphp
                                                 @endif
@@ -215,7 +215,7 @@
                                                             $signature = GetSafetySignature(
                                                                 $inspection_details->approved_by,
                                                                 $inspection_details->id,
-                                                                SAFETY_GALLERY_INSPECTION,
+                                                                MONTHLY_FIRE_PUMP,
                                                             );
                                                         @endphp
                                                     @endif
@@ -279,7 +279,7 @@
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
-                                                        SAFETY_GALLERY_INSPECTION,
+                                                        MONTHLY_FIRE_PUMP,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -332,7 +332,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -384,7 +384,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -435,7 +435,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -463,7 +463,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->approved_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))

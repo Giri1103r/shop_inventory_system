@@ -266,7 +266,7 @@
                                                     $signature = GetSafetySignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        SAFETY_GALLERY_INSPECTION,
+                                                        HOOTER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -305,7 +305,7 @@
                                                         $signature = GetSafetySignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            SAFETY_GALLERY_INSPECTION,
+                                                            HOOTER_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -368,7 +368,7 @@
                                                 $signature = GetSafetySignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    HOOTER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -421,7 +421,7 @@
                                             $signature = GetSafetySignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -473,7 +473,7 @@
                                             $signature = GetSafetySignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -524,7 +524,7 @@
                                             $signature = GetSafetySignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -551,7 +551,7 @@
                                             $signature = GetSafetySignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
