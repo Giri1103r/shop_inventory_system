@@ -169,22 +169,30 @@
                                                             </td>
 
                                                             @foreach ($getoption as $option)
-                                                            <td style="text-align: center;">
-                                                                @if ($option == 'Ok')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i> <!-- Green check for Ok -->
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i> <!-- Red cross if Ok is not selected -->
+                                                                <td style="text-align: center;">
+                                                                    @if ($option == 'Ok')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                            <!-- Green check for Ok -->
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                            <!-- Red cross if Ok is not selected -->
+                                                                        @endif
+                                                                    @elseif ($option == 'Not-Ok')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                            <!-- Red check for Not-Ok -->
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                            <!-- Red cross if Ok is not selected -->
+                                                                        @endif
                                                                     @endif
-                                                                @elseif ($option == 'Not-Ok')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i> <!-- Red check for Not-Ok -->
-                                                                    @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i> <!-- Red cross if Ok is not selected -->
-                                                                @endif
-                                                                @endif
-                                                            </td>
-                                                        @endforeach
+                                                                </td>
+                                                            @endforeach
 
 
 
@@ -202,7 +210,297 @@
                                     </div>
                                 </div>
 
+                                <div class="row mt-3">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                    </div>
+                                    <div class="row mb-2">
+                                        @if (isset($weekAmbualance->verified_by))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($weekAmbualance->verified_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $signature = GetSignature(
+                                                    $weekAmbualance->verified_by,
+                                                    $weekAmbualance->id,
+                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                );
+                                            @endphp
+                                        @endif
+                                        @if (isset($weekAmbualance->created_at))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset(Auth::user()->signature_upload))
+                                            <label class="form-label"
+                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;">
+                                        @elseif(isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if ($weekAmbualance->approved_by)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername($weekAmbualance->approved_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if (isset($weekAmbualance->capa_recomendation))
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $weekAmbualance->capa_recomendation }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">{{ __('inspection.remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $weekAmbualance->remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    @if (isset($weekAmbualance->capa_remarks))
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
+                                        </div>
 
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($weekAmbualance->created_by) }}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $signature = GetSignature(
+                                                    $weekAmbualance->created_by,
+                                                    $weekAmbualance->id,
+                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                );
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $weekAmbualance->capa_remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @if ($weekAmbualance->capa_ehs_remarks)
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+                                            </h4>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($weekAmbualance->verified_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $signature = GetSignature(
+                                                    $weekAmbualance->verified_by,
+                                                    $weekAmbualance->id,
+                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                );
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $weekAmbualance->capa_ehs_remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                @if (isset($weekAmbualance->level_one_manager_remarks))
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Level One Manager Action</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUserName($weekAmbualance->l1_manager_verified_by) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if (isset(Auth::user()->signature_upload))
+                                            <label class="form-label"
+                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;">
+                                        @elseif(isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $weekAmbualance->level_one_manager_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if (isset($weekAmbualance->level_two_manager_remarks))
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
+                                            </h4>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_two_manager') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUserName($weekAmbualance->l2_manager_verified_by) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @php
+                                            $signature = GetSignature(
+                                                $weekAmbualance->l2_manager_verified_by,
+                                                $weekAmbualance->id,
+                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                            );
+                                        @endphp
+                                        @if (isset(Auth::user()->signature_upload))
+                                            <label class="form-label"
+                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;">
+                                        @elseif(isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 150px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $weekAmbualance->level_two_manager_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
