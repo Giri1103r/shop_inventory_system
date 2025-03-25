@@ -274,13 +274,10 @@ class ForkLiftInspectionController extends Controller
             if (Auth::check()) {
                 $inspection_details = $this->forklift->selectOne($id);
                 $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
-                $last_month_inspection = $this->forklift->GetLastMonthObservation($id);
-                $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $current_month_inspection,
-                    'last_month_observation_details' => $last_month_observation_details,
                     'pagetitle' => "Forklift Inspection",
                 ];
             }

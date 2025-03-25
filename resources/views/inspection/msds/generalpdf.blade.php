@@ -168,10 +168,10 @@
             <td width="48%" style="padding:5px;"> {{ Displaydateformat(isset($msdsDetails->issue_date) ? $msdsDetails->issue_date : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Data</b></td>
+            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($msdsDetails->revision_date) ? $msdsDetails->revision_date : '' }}</td>
+                {{ Displaydateformat(isset($msdsDetails->revision_date) ? $msdsDetails->revision_date : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
@@ -243,7 +243,7 @@
         <br>
     @endforeach
 
-    @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION)
+    @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
