@@ -1,49 +1,38 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\RRAA;
+namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\RRAA\RRAAEmail;
-use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\Ohc\FirstAidRecordDetails;
+use App\Models\Inspection\Ohc\FirstAidRecordSignatureUpload;
+use App\Models\Inspection\Ohc\FirstAidRecordStatusLog;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
-use App\Models\Inspection\RRAA\RRAADetails;
-use App\Models\Inspection\RRAA\RRAACheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Master\Employee;
-use App\Models\Master\Work;
-use App\Models\Inspection\Master\ChecklistType;
-use App\Models\Inspection\RRAA\RRAAStatusLog;
-use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\Admin\AdminController;
-use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
-class RRAAController extends Controller
+class FirstAidRecordController extends Controller
 {
-
-    private $rraa_details;
-    private $rraa_checkList;
-    private $employee;
-    private $work;
-    private $frequency;
-    private $category;
+    private $first_aid_details;
+    private $first_aid_checklist;
     private $statusLog;
     private $signature;
+    private $unit;
 
     public function __construct()
     {
-        $this->rraa_details = new RRAADetails();
-        $this->rraa_checkList = new RRAACheckList();
-        $this->employee = new Employee();
-        $this->work = new Work();
-        $this->frequency = new Frequency();
-        $this->category = new ChecklistType();
-        $this->statusLog = new RRAAStatusLog();
-        $this->signature = new RRAASignatureUpload();
+        $this->first_aid_details = new FirstAidRecordDetails();
+        $this->first_aid_checklist = new FirstAidRecordChecklist();
+        $this->statusLog = new FirstAidRecordStatusLog();
+        $this->signature = new FirstAidRecordSignatureUpload();
+        $this->unit = new Unit();
+
     }
 
     public function Index(Request $request)
@@ -51,7 +40,7 @@ class RRAAController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->rraa_details->list();
+                    $data =  $this->first_aid_details->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -108,23 +97,23 @@ class RRAAController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-record/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-record/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-record/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-record/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-record/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
                             return $btn;
@@ -144,20 +133,18 @@ class RRAAController extends Controller
 
         $data = [];
 
-        return view('inspection.rraa.list', $data);
+        return view('inspection.inspection_ohc.first_aid_record.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $frequency = $this->frequency->getFrequency();
-            $category = $this->category->getAll();
-          
+            $unit = $this->unit->getunit();
+
             $data = [
-                'frequency' => $frequency,
-                'category' => $category,
+                'unit' => $unit,
             ];
-            return view('inspection.rraa.add', $data);
+            return view('inspection.inspection_ohc.first_aid_record.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -166,97 +153,93 @@ class RRAAController extends Controller
     public function Store(Request $request)
     {
         try {
-            $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
-                'serial_number' => 'required',
-                'category' => 'required',
-                'ohs_compliance_index' => 'required',
-                'frequency' => 'required',
-                'scope' => 'required',
-                'emp_id' => 'required',
-                'authority' => 'required',
-                'accountability' => 'required',
-                'remark' => 'required',
 
-            ];
-            $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
-                'serial_number.required' => __('Serial Number is required'),
-                'category.required' => __('category is required'),
-                'ohs_compliance_index.required' => __('OHS Compliance Index is required'),
-                'frequency.required' => __('Frequency is required'),
-                'scope.required' => __('scope is required'),
-                'emp_id.required' => __('Responsibility is required'),
-                'authority.required' => __('authority is required'),
-                'accountability.required' => __('accountability is required'),
-                'remark.required' => __('remark is required'),
+            $first_aid_details = $this->first_aid_details->store();
+            $first_aid_detail_id = $first_aid_details->id; 
+            $this->first_aid_checklist->store($first_aid_detail_id);
 
-            ];
-       
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-           
-            try {
-
-               $rraa = $this->rraa_details->store();
-               $rraa_id = $rraa->id;
-               $this->rraa_checkList->store($rraa_id);
-
-                $this->signature->signatureStore(RRAA_INSPECTION,$rraa->id);
-
-               $mailsubject = 'RRAA Inspection completed by fire associate';
-               $ehsOfficer = GetEHSOfficer();
-               $message = 'RRAA Inspection completed by fire associate';
+            $mailsubject = 'First Aid Record Inspection completed by fire associate';
+            $ehsOfficer = GetEHSOfficer();
+            $message = 'First Aid Record Inspection completed by fire associate';
                
-               if (count($ehsOfficer) > 0) {
-                    foreach ($ehsOfficer as $user) {
-                        $email_id = $user->email;
-                        if ($email_id != '' || $email_id != null) {
-                            $data = $this->rraa_details->selectOne($rraa_id);
-                            $data = array(
-                                'data' => $data,
-                                'mail_subject' => 'RRAA Inspection',
-                                'message' => $message,
-                            );
-                            Mail::to($email_id)->queue(new RRAAEmail($data));
-                            
-                        }
+            if (count($ehsOfficer) > 0) {
+                foreach ($ehsOfficer as $user) {
+                    $email_id = $user->email;
+                    if ($email_id != '' || $email_id != null) {
+                        $data = $this->first_aid_details->selectOne($first_aid_detail_id);
+                        $data = array(
+                            'data' => $data,
+                            'mail_subject' => 'First Aid Record Inspection',
+                            'message' => $message,
+                        );
+                        Mail::to($email_id)->queue(new RRAAEmail($data));
                     }
                 }
-
-                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-                $notificationData = array(
-                    'notification_type' => RRAA_INSPECTION,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => $message,
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $rraa->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($rraa->id)),
-                    'assigned_user' => array_to_string($ehsOfficers),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-
-                Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
             }
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $notificationData = array(
+                'notification_type' => RRAA_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $first_aid_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('ohc/first-aid-record/view/' . encryptId($first_aid_details->id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            Session::flash('success', __('Your data has been created successfully'));
+            
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
+        }
+    }
+
+    public function StatusChange(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $this->first_aid_details->statuschange($id);
+           
+            $this->first_aid_checklist->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $first_aid_details = $this->first_aid_details->find($id);
+                $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+                $status_log = $this->statusLog->selectOne($id);
+                $inspection_details = $this->first_aid_details->selectOne($id);
+
+                $data = array(
+                    'first_aid_details' => $first_aid_details,
+                    'first_aid_checklist' => $first_aid_checklist  ?? [],
+                    'status_log' => $status_log,
+                    'inspection_details' => $inspection_details,
+                );
+            }
+            return view('inspection.inspection_ohc.first_aid_record.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
         }
     }
 
@@ -279,62 +262,23 @@ class RRAAController extends Controller
         );
     }
 
-    public function StatusChange(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $this->rraa_details->statuschange($id);
-           
-            $this->rraa_checkList->statuschange($id);
-
-            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    public function view(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            if (Auth::check()) {
-                $rraa_details = $this->rraa_details->find($id);
-                $rraa_checkList = $this->rraa_checkList->selectOne($id);
-                $status_log = $this->statusLog->selectOne($id);
-                $inspection_details = $this->rraa_details->selectOne($id);
-
-                $data = array(
-                    'rraa_details' => $rraa_details,
-                    'rraa_checkList' => $rraa_checkList  ?? [],
-                    'status_log' => $status_log,
-                    'inspection_details' => $inspection_details,
-                );
-            }
-            return view('inspection.rraa.view', $data);
-        } catch (Exception $ex) {
-            report($ex);
-        }
-    }
-
     public function approvals(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $rraa_details = $this->rraa_details->find($id);
-            $rraa_checkList = $this->rraa_checkList->selectOne($id);
+            $inspection_details = $this->first_aid_details->selectOne($id);
+            $first_aid_details = $this->first_aid_details->find($id);
+            $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
             $data = [
                 'inspection_details' => $inspection_details,
-                'rraa_details' => $rraa_details,
-                'rraa_checkList' => $rraa_checkList,
+                'first_aid_details' => $first_aid_details,
+                'first_aid_checklist' => $first_aid_checklist,
             ];
-            return view('inspection.rraa.approval', $data);
+            return view('inspection.inspection_ohc.first_aid_record.approval', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -342,16 +286,16 @@ class RRAAController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->rraa_details->EHSOfficerUpdate($id);
-            $inspection_details = $this->rraa_details->selectOne($id);
+            $inspection_updates = $this->first_aid_details->EHSOfficerUpdate($id);
+            $inspection_details = $this->first_aid_details->selectOne($id);
             $signature_update = $this->signature->signatureUpload();
             if ($request->is_passed == 1) {
-                $message = 'RRAA Inspeciton Approved Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
+                $message = 'First Aid Record Inspeciton Approved Successfully';
+                $web_link =   admin_url('ohc/first-aid-record/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
@@ -375,7 +319,7 @@ class RRAAController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
+                'first_aid_record_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
@@ -391,11 +335,11 @@ class RRAAController extends Controller
                      $email_id = $user->email;
 
                      if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
+                         $data = $this->first_aid_details->selectOne($id);
 
                         $data = array(
                             'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
+                            'mail_subject' => 'First Aid Record Inspection',
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
@@ -405,11 +349,11 @@ class RRAAController extends Controller
              }
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', __('Something Went Wrong!'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -417,8 +361,8 @@ class RRAAController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $forklift_inspection = $this->rraa_details->capaSubmit($id);
-            $inspection_details = $this->rraa_details->selectOne($id);
+            $forklift_inspection = $this->first_aid_details->capaSubmit($id);
+            $inspection_details = $this->first_aid_details->selectOne($id);
             $signature_update = $this->signature->signatureUpload();
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
@@ -436,13 +380,13 @@ class RRAAController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
             $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
+                'first_aid_record_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'created_by' => Auth::id(),
@@ -459,11 +403,11 @@ class RRAAController extends Controller
                      $email_id = $user->email;
 
                      if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
+                         $data = $this->first_aid_details->selectOne($id);
 
                         $data = array(
                             'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
+                            'mail_subject' => 'First Aid Record Inspection',
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
@@ -473,11 +417,11 @@ class RRAAController extends Controller
              }
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -487,18 +431,18 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $forklift_inspection = $this->rraa_details->capaVerifySubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
+            $forklift_inspection = $this->first_aid_details->capaVerifySubmit($id, $status, $remarks);
+            $inspection_details = $this->first_aid_details->selectOne($id);
             $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : 1;
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
@@ -523,7 +467,7 @@ class RRAAController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
+                'first_aid_record_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
@@ -539,11 +483,11 @@ class RRAAController extends Controller
                      $email_id = $user->email;
 
                      if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
+                         $data = $this->first_aid_details->selectOne($id);
 
                         $data = array(
                             'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
+                            'mail_subject' => 'First Aid Record Inspection',
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
@@ -553,11 +497,11 @@ class RRAAController extends Controller
              }
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -567,18 +511,18 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $forklift_inspection = $this->rraa_details->levelOneManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
+            $forklift_inspection = $this->first_aid_details->levelOneManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->first_aid_details->selectOne($id);
             $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : 1;
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
@@ -603,7 +547,7 @@ class RRAAController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
+                'ohc_first_aid_record_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
@@ -619,11 +563,11 @@ class RRAAController extends Controller
                      $email_id = $user->email;
 
                      if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
+                         $data = $this->first_aid_details->selectOne($id);
 
                         $data = array(
                             'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
+                            'mail_subject' => 'First Aid Record Inspection',
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
@@ -633,11 +577,11 @@ class RRAAController extends Controller
              }
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -647,16 +591,16 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $forklift_inspection = $this->rraa_details->levelTwoManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
+            $forklift_inspection = $this->first_aid_details->levelTwoManagerSubmit($id, $status, $remarks);
+            $inspection_details = $this->first_aid_details->selectOne($id);
             $signature_update = $this->signature->signatureUpload();
             if ($status == 1) {
-                $message = 'RRAA Inspeciton Approved Successfully!';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
+                $message = 'First Aid Record Inspeciton Approved Successfully!';
+                $web_link =   admin_url('ohc/first-aid-record/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('ohc/first-aid-record/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
             $users = $inspection_details->created_by;
@@ -681,7 +625,7 @@ class RRAAController extends Controller
             );
             notificationSave($notificationData);
             $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
+                'first_aid_record_details_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
@@ -697,11 +641,11 @@ class RRAAController extends Controller
                      $email_id = $user->email;
 
                      if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
+                         $data = $this->first_aid_details->selectOne($id);
 
                         $data = array(
                             'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
+                            'mail_subject' => 'First Aid Record Inspection',
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
@@ -711,11 +655,11 @@ class RRAAController extends Controller
              }
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -725,7 +669,7 @@ class RRAAController extends Controller
 
         try {
 
-            $allData = $this->rraa_details->exportdata();
+            $allData = $this->first_aid_details->exportdata();
             
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -758,7 +702,7 @@ class RRAAController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('RRAA.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('First Aid Record.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -767,7 +711,7 @@ class RRAAController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -776,7 +720,7 @@ class RRAAController extends Controller
 
         try {
 
-            $allData = $this->rraa_details->exportdata();
+            $allData = $this->first_aid_details->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -795,7 +739,7 @@ class RRAAController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "RRAA Details",
+                'pagetitle' => "First Aid Record Details",
             );
 
             $property = [
@@ -810,18 +754,18 @@ class RRAAController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.rraa.pdf', $data);
+            $view = view('inspection.inspection_ohc.first_aid_record.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "RRAA.pdf";
+            $filename = "First Aid Record.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+            return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
 
@@ -831,17 +775,17 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $rraa_details = $this->rraa_details->find($id);
-                $rraa_checkList = $this->rraa_checkList->selectOne($id);
+                $first_aid_details = $this->first_aid_details->find($id);
+                $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
                 $status_log = $this->statusLog->selectOne($id);
-                $inspection_details = $this->rraa_details->selectOne($id);
+                $inspection_details = $this->first_aid_details->selectOne($id);
 
                 $data = array(
-                    'rraa_details' => $rraa_details,
-                    'rraa_checkList' => $rraa_checkList  ?? [],
+                    'first_aid_details' => $first_aid_details,
+                    'first_aid_checklist' => $first_aid_checklist  ?? [],
                     'status_log' => $status_log,
                     'inspection_details' => $inspection_details,
-                    'pagetitle' => "RRAA Details",
+                    'pagetitle' => "First Aid Record Details",
                 );
             }
 
@@ -857,10 +801,10 @@ class RRAAController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.rraa.generalpdf', $data)->render();
+            $html = view('inspection.inspection_ohc.first_aid_record.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "RRAA Details.pdf";
+            $filename = "First Aid Record Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

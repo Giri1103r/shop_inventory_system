@@ -34,7 +34,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="msdsAdd" action="{{ admin_url('msds/add/submit') }}">
+                                    <form method="POST" id="msdsAdd" action="{{ admin_url('msds/add/submit') }}" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -64,7 +64,24 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <div class="col-md-4 form-group form-input mt-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div> 
 
                                         <div class="row mt-4">
                                             <div class="row mt-2">

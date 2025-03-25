@@ -65,6 +65,23 @@
                                             {{ displaydateformat(isset($msdsDetails->created_at) ? $msdsDetails->created_at : '') }}
                                         </div>
                                     </div>
+                                    @php
+                                        $signature = GetSignature(
+                                            $inspection_details->verified_by,
+                                            $inspection_details->id,
+                                            MSDS_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 @foreach ($msdsCheckList as $item)

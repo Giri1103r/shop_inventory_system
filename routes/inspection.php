@@ -22,6 +22,7 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
@@ -422,4 +423,26 @@ Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('generalpdf/{id}', [FloorStretcherController::class, 'ExportPdf']);
     Route::POST('status', [FloorStretcherController::class, 'StatusChange']);
     Route::POST('delete', [FloorStretcherController::class, 'Delete']);
+});
+
+
+Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
+    Route::get('list', [FirstAidRecordController::class, 'index']);
+    Route::post('list', [FirstAidRecordController::class, 'index']);
+    Route::get('add', [FirstAidRecordController::class, 'add']);
+    Route::post('add/submit', [FirstAidRecordController::class, 'store']);
+    Route::get('view/{id}', [FirstAidRecordController::class, 'view']);
+    Route::post('delete', [FirstAidRecordController::class, 'delete']);
+    Route::get('export/excel', [FirstAidRecordController::class, 'exportExcel']);
+    Route::get('export/pdf', [FirstAidRecordController::class, 'exportPdf']);
+    Route::post('status', [FirstAidRecordController::class, 'statusChange']);
+    Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
+    Route::get('employeeid', [FirstAidRecordController::class, 'employeeid']);
+    Route::get('verification/{id}/{employee_type}', [FirstAidRecordController::class, 'approvals']);
+    Route::post('ehsofficer/verify/submit', [FirstAidRecordController::class, 'EHSOfficerSubmit']);
+    Route::post('capa/submit', [FirstAidRecordController::class, 'CAPASubmit']);
+    Route::post('capa/reverify/submit', [FirstAidRecordController::class, 'CAPAVerifySubmit']);
+    Route::post('level-one/verify/submit', [FirstAidRecordController::class, 'levelOneManagerSubmit']);
+    Route::post('level-two/verify/submit', [FirstAidRecordController::class, 'levelTwoManagerSubmit']);
+    Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
 });
