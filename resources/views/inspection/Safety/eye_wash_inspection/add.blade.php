@@ -358,6 +358,9 @@
                         shift_id: {
                             required: true,
                         },
+                        signature_image:{
+                            required:true,
+                        },
                         next_due: {
                             required: true,
                         },
@@ -431,6 +434,9 @@
                         },
                         inspection_date: {
                             required: "Inspeciton Date is required",
+                        },
+                        signature_image: {
+                            required: "Signature is required",
                         },
                         location_id: {
                             required: "Location is required",
