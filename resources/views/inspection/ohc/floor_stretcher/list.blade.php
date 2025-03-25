@@ -71,7 +71,6 @@
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('inspection.shifts') }}</th>
                                         <th>{{ __('inspection.unit') }}</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -159,10 +158,6 @@
                         {
                             data: 'shift',
                             name: 'shift',
-                        },
-                        {
-                            data: 'status',
-                            name: 'status',
                         },
                         {
                             data: 'action',

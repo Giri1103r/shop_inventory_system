@@ -95,7 +95,7 @@
                                                 <div
                                                     class="card-header-inner d-flex justify-content-between align-items-center">
                                                     <h4 class="text-white">Checklist Details</h4>
-                                                    <button type="button" class="btn btn-primary addChecklistDetails">Add
+                                                    <button type="button" class="btn mb-2 btn-primary addChecklistDetails">Add
                                                         More</button>
                                                 </div>
                                                 <div id="gemba_walk_checklist">

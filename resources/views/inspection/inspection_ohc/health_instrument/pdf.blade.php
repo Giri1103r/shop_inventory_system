@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Weekly Ambulance Inspection Checklist')
+@section('title', 'Health Instrument Calibration')
 @section('content')
 
     <div style="width:100%;">
@@ -26,34 +26,22 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
+                            {{ $value->doc_no }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->revision_date) }}
-                        </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->issue_date) }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->next_due) }}
+                            {{ displaydateformat($value->revision_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date_of_inspection) }}
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
+
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getShift($value->shift) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($value->location) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getInspectionStatus($value->approve_status) }}
-                        </td>
-                     
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

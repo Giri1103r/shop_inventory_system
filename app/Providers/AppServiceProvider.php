@@ -185,7 +185,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
-
+        defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
@@ -267,6 +267,7 @@ class AppServiceProvider extends ServiceProvider
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
         defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
+        defined('OHC_INSPECTION') or define('OHC_INSPECTION',8);
 
 
         // Gemba Walk

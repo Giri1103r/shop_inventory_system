@@ -755,18 +755,19 @@ class SafetyPermit extends Model
 
             if ($equiment_involved) {
                 foreach ($equiment_involved as $typeofWorkId => $checklistIds) {
+
                     $workName = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('work_name');
                     $workid = DB::table('ptw_masters_typeofwork')
                         ->where('id', $typeofWorkId)
                         ->value('id');
+
                     $checkpoints = DB::table('ptw_masters_typeofwork_checklist')
                         ->where('type', 'type2')
                         ->whereIn('id', $checklistIds)
                         ->pluck('check_points')
                         ->toArray();
-
                     $checkid = DB::table('ptw_masters_typeofwork_checklist')
                         ->where('type', 'type2')
                         ->whereIn('id', $checklistIds)
