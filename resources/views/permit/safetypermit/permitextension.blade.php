@@ -79,28 +79,38 @@
 
 @push('script')
     <script>
-
-
-
-
-
         $(document).ready(function() {
-
             @if ($showAlert)
                 Swal.fire({
                     title: 'Permit Extended',
-                    text: 'This safety permit has already extended.',
+                    text: 'This safety permit has already been extended.',
                     icon: 'info',
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Redirect to the specified URL
                         window.location.href = "{{ admin_url('safetypermit/list') }}";
                     }
                 });
             @endif
-            // Initialize flatpickr
+
+            // Get necessary values
             const toTime = "{{ $totime }}";
+            const toDate = "{{ $safetypermit->date }}";
+            let selectedDate = $("#date").val();
+
+
+            function formatDate(dateStr) {
+                if (!dateStr) return "";
+                let date = new Date(dateStr);
+                if (isNaN(date.getTime())) return "";
+                return date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
+            }
+
+            let formattedSelectedDate = formatDate(selectedDate);
+            let formattedToDate = formatDate(toDate);
+            let currentDate = new Date().toISOString().split('T')[0];
+
+            // Initialize flatpickr
             flatpickr("#time_to", {
                 enableTime: true,
                 noCalendar: true,
@@ -109,29 +119,25 @@
                 dateFormat: "H:i",
                 maxTime: "18:00",
                 onOpen: function(selectedDates, dateStr, instance) {
-
-                    instance.set("minTime", toTime);
+                    let minTime = (formattedToDate === currentDate) ? toTime : "09:00";
+                    instance.set("minTime", minTime);
                 },
             });
 
-
-
-
+            // jQuery Validator
             $.validator.addMethod(
                 "validTimeTo",
                 function(value, element) {
-                    const maxTime = "18:00";
-                    return value <= maxTime;
+                    return value <= "18:00";
                 },
                 "Time cannot exceed 18:00."
             );
-
 
             $("#permitextension").validate({
                 rules: {
                     time_to: {
                         required: true,
-                        validTimeTo: true, // Use custom rule
+                        validTimeTo: true,
                     },
                     extension_remarks: {
                         required: true,
@@ -176,7 +182,9 @@
             });
         });
 
-         $(document).ready(function() {
+
+
+        $(document).ready(function() {
             let permitDate = "{{ $safetypermit->date }}";
             console.log("Raw permitDate:", permitDate);
 
