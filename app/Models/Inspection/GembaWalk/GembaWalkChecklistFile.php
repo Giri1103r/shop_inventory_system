@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use Str;
 
 use Illuminate\Support\Facades\Auth;
+
 class GembaWalkChecklistFile extends Model
 {
     use  HasFactory;
@@ -25,7 +26,7 @@ class GembaWalkChecklistFile extends Model
         'file_extension',
         'created_by',
         'updated_by',
-        
+
     ];
 
     protected $attributes = [
@@ -33,7 +34,8 @@ class GembaWalkChecklistFile extends Model
         'trash' => 'NO'
     ];
 
-    public function storeSignature($gembaWalk_id){
+    public function storeSignature($gembaWalk_id)
+    {
         $request = request();
         $intendent = $request->file('gemba_walk_prepared_by');
         if ($intendent != null) {
@@ -61,8 +63,8 @@ class GembaWalkChecklistFile extends Model
             $insert_data = array(
 
                 'gemba_walk_id' => $gembaWalk_id,
-                'emp_id'=>Auth::id(),
-                'file_type'=>1,
+                'emp_id' => Auth::id(),
+                'file_type' => 1,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
                 'file_path' => $path,
@@ -72,10 +74,10 @@ class GembaWalkChecklistFile extends Model
             );
             $this->create($insert_data);
         }
-
     }
 
-    public function storeVerifiedSignature($gembaWalk_id){
+    public function storeVerifiedSignature($gembaWalk_id)
+    {
         $request = request();
 
         $intendent = $request->file('gemba_walk_verified_by');
@@ -103,8 +105,8 @@ class GembaWalkChecklistFile extends Model
 
             $insert_data = array(
                 'gemba_walk_id' => $gembaWalk_id,
-                'emp_id'=>Auth::id(),
-                'file_type'=>2,
+                'emp_id' => Auth::id(),
+                'file_type' => 2,
                 'file_name' => $filenewname,
                 'file_orgname' => $fileName,
                 'file_path' => $path,
@@ -114,8 +116,5 @@ class GembaWalkChecklistFile extends Model
             );
             $this->create($insert_data);
         }
-
-      
-
     }
 }

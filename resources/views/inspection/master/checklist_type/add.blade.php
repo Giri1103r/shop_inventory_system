@@ -134,6 +134,8 @@
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
 
+            
+
             $.validator.addMethod("filesize", function(value, element, param) {
                 if (this.optional(element)) {
                     return true;
