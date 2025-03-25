@@ -1951,7 +1951,7 @@ if (!function_exists('getMonth')) {
 
             $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
-                $name = User::where('id', $id)->first();
+                $name = User::where('id', $userid)->first();
                 if ($name == null) {
                     return null;
                 }
