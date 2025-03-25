@@ -169,6 +169,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = $safety_gallery_inspection->id;
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,

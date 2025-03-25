@@ -184,6 +184,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $inspection_id = $store_eyewash_inspection->id;
             $inspection_details = $this->eye_wash->selectOne($inspection_id);
             $store_inspection_details = $this->eye_wash_details->store($inspection_id);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $store_eyewash_inspection->id);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();

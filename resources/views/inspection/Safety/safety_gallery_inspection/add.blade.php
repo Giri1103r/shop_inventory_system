@@ -248,6 +248,9 @@
                             unit_id: {
                                 required: true,
                             },
+                            signature_image: {
+                                required: true,
+                            },
                             resource_code: {
                                 required: true,
                                 remote: {
@@ -279,6 +282,9 @@
                             },
                             unit_id: {
                                 required: "Unit is required",
+                            },
+                            signature_image: {
+                                required: "Signature is Required",
                             },
                             resource_code: {
                                 required: 'Recource Code is requried',
