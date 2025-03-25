@@ -303,7 +303,7 @@ class FloorStretcherController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_details = $this->floor_strecther->selectOne($id);
+            $inspection_detail = $this->floor_strecther->selectOne($id);
             $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
             $inspection_file = $this->floor_files->getFiles($id, $inspection_type);
 
@@ -317,7 +317,7 @@ class FloorStretcherController extends Controller
             ];
 
             $data = array(
-                'inspection_details' => $inspection_details,
+                'inspection_detail' => $inspection_detail,
                 'inspection_file' => $inspection_file,
                 'pagetitle' => "Checklist Of Floor Stretcher Inspection",
             );
