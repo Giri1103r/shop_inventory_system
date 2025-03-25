@@ -36,93 +36,106 @@
                                         <div class="row">
 
                                             @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Request For</label>
-                                                        <div class="gap-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_myself" class="form-check-input"
-                                                                    value="1">
-                                                                <span class="form-check-label">Myself</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_worker" class="form-check-input"
-                                                                    value="2">
-                                                                <span class="form-check-label">Worker</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="text-danger"></div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Request For</label>
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for"
+                                                                id="request_for_myself" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Myself</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for"
+                                                                id="request_for_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3" id="emp_id_container">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <select name="emp_id" id="emp_id"
-                                                            class="form-select single-select form-select-sm"
-                                                            style="width: 100%">
-                                                            <option value="">Select the worker</option>
-                                                        </select>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3" id="emp_id_container">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <select name="emp_id" id="emp_id"
+                                                        class="form-select form-select-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the employee</option>
+
+                                                    </select>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm" id="emp_name" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee
+                                                        Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm" id="emp_name" readonly>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm" readonly>
+                                                    <div class="text-danger"></div>
                                                 </div>
-                                            @else
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <input type="text" name="emp_id"
-                                                            class="form-control form-control-sm "id="emp_id"
-                                                            value="{{ $employee->employee_id }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            </div>
 
-                                                    </div>
+
+                                            <input type="hidden" name="unit" id="unit"
+                                                class="form-control form-control-sm" readonly>
+                                            <input type="hidden" name="company" id="company"
+                                                class="form-control form-control-sm" readonly>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
+                                                    <div class="text-danger"></div>
+
                                                 </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm " id="emp_name"
-                                                            value="{{ $employee->name }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee
+                                                        Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
+                                                    <div class="text-danger"></div>
 
-                                                    </div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->department) }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                    <div class="text-danger"></div>
 
-                                                    </div>
                                                 </div>
-                                            @endif
+                                            </div>
+                                            <input type="hidden" name="company" id="company"
+                                                class="form-control form-control-sm"
+                                                value="{{ getCompanyname($employee->company_id) }}" readonly>
+                                            <input type="hidden" name="unit" id="unit"
+                                                class="form-control form-control-sm"
+                                                value="{{ getUnitname($employee->unit_id) }}" readonly>
+                                        @endif
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
