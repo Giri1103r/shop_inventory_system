@@ -112,6 +112,23 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @php
+                                            $signature = GetSafetySignature(
+                                                $inspection->created_by,
+                                                $inspection->id,
+                                                HOOTER_INSPECTION,
+                                            );
+                                        @endphp
+                                        @if (isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 100px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <hr>
                                     <div class="form-observation">
@@ -603,8 +620,8 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/hooter-inspection/capa/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/hooter-inspection/capa/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
                                             name="id">
