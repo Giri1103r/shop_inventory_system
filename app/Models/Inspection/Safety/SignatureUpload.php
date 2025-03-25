@@ -40,10 +40,9 @@ class SignatureUpload extends Model
         'trash' => 'NO'
     ];
 
-    public function signatureUpload($type)
+    public function signatureUpload($type, $id)
     {
         try {
-            $id = Auth::id();
             $request = Request();
             $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
@@ -61,9 +60,8 @@ class SignatureUpload extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-                    'checklist_id' => $id,
                     'emp_id' => Auth::id(),
-                    'inspection_id' => decryptId($request->id),
+                    'inspection_id' => $id,
                     'type' => $type,
                     'file_path' => $url,
                     'file_name' => $file_name,

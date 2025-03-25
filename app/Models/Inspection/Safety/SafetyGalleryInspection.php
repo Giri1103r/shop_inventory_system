@@ -69,7 +69,7 @@ class SafetyGalleryInspection extends Model
             $query = $query->where('inspection_safety_gallery.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_safety_gallery.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_safety_gallery.revision_data', 'LIKE', '%' . $request->rev_date . '%');
@@ -287,7 +287,7 @@ class SafetyGalleryInspection extends Model
             $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');

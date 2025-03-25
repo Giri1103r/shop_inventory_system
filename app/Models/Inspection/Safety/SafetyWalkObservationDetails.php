@@ -37,6 +37,7 @@ class SafetyWalkObservationDetails extends Model
     {
         $request = request();
 
+
         $location = $request->location;
         $observation = $request->observation;
         $recomended_action = $request->recomended_action;

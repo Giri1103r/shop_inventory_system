@@ -109,6 +109,23 @@
                                                         id = "safety_walk_taken_by" class="form-control" value="">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                         <hr>
                                         {{-- Current Month Observation --}}
@@ -149,18 +166,17 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[1]" id = "date_of_observation"
-                                                            class="form-control date_of_observation" >
+                                                        <input type="text" name="date_of_observation[1]"
+                                                            id = "date_of_observation"
+                                                            class="form-control date_of_observation">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.observation') }}</label>
-                                                        <input type="text" name="observation[1]"
-                                                            id = "observation"
-                                                            class="form-control "
-                                                            placeholder="Observation">
+                                                        <input type="text" name="observation[1]" id = "observation"
+                                                            class="form-control " placeholder="Observation">
                                                     </div>
                                                 </div>
                                                 <div class="form-input col-md-4 mb-2">
@@ -309,6 +325,9 @@
                             rev_date: {
                                 required: true,
                             },
+                            signature_image:{
+                                required: true,
+                            },
                             "inspection_date": {
                                 required: true,
                             },
@@ -368,6 +387,9 @@
                             },
                             rev_date: {
                                 required: "Revision Date required",
+                            },
+                            signature_image:{
+                                required: "Signature is required",
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",
@@ -756,7 +778,7 @@
                 if (currentFormSets <= minFormCurrentSets) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Minimum  Current Month Observtion Required',
+                        title: 'Minimum  Observtion Required',
                         text: 'At least one Observation is required.',
                         confirmButtonColor: '#3085d6'
                     });

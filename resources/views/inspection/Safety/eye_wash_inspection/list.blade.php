@@ -101,6 +101,10 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({

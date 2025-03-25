@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation')
+@section('title', 'Forklift Inspection')
 @section('pageurl', admin_url('safety/safety-walk-observation/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -47,7 +47,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->revision_data }}
+                                                    {{ $inspection_details->rev_data }}
                                                 </div>
                                             </div>
                                         </div>
@@ -59,156 +59,187 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.location') }}</label>
-                                                <div class="view_data">
-                                                    {{ getShiftname($inspection_details->shift_id) }}
+                                        @php
+                                            $signature = GetSafetySignature(
+                                                $inspection_details->created_by,
+                                                $inspection_details->id,
+                                                FORKLIFT_INSPECTION,
+                                            );
+                                        @endphp
+                                        @if (isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">Month</label>
-                                                <div class="view_data">
-                                                    {{ $inspection_details->month }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.unit') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUnitname($inspection_details->unit) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.safety_walk_taken_by') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection_details->safety_walk_taken_by }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    @foreach ($inspection as $details)
-                                        <div class="form-wrapper">
-                                            <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Safety Walk Observation</h4>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $loop->iteration }}
+                                        @endif
+
+                                        <hr>
+                                        @foreach ($inspection as $details)
+                                            <div class="form-wrapper">
+                                                <div class="row mt-4 form-set">
+                                                    <div class="card-header-inner p-2">
+                                                        <h4 class="text-white">Forklift Inspection</h4>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label ">{{ __('inspection.sr_no') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $loop->iteration }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getLocationName($details->location) }}
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.department') }}</label>
+                                                            <div class="view_data">
+                                                                {{ getDepartment($details->department_id) }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.date_of_observation') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($details->observation_date) }}
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label ">{{ __('inspection.unit') }}</label>
+                                                            <div class="view_data">
+                                                                {{ getUnitname($details->unit_id) }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.observation') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->observation }}
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.identification_no') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->identification_no }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.recomended_action') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->recomended_action }}
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.observation') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->observation }}
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.corrective_action') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->correction_preventive_action }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.employee') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUsername($details->responsibility) }}
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.employee') }}</label>
+                                                            <div class="view_data">
+                                                                {{ getUsername($details->responsibility) }}
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
+                                                            <div class="view_data">
+                                                                {{ Displaydateformat($details->date_of_compliance) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.observation_status') }}</label>
+                                                            <div class="view_data">
+                                                                @if ($details->observation_status == 1)
+                                                                    Active
+                                                                @elseif($details->observation_status == 0)
+                                                                    Inactive
+                                                                @else
+                                                                    Unknown
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->remarks }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
+                                            </div>
+                                        @endforeach
+                                        @if (isset($inspection_details->approval_remarks))
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Approval</h4>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
+                                                            class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($details->date_of_compliance) }}
+                                                            {{ getUserName($inspection_details->updated_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.observation_status') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->water == 1)
-                                                                Active
-                                                            @elseif($details->water == 0)
-                                                                Inactive
-                                                            @else
-                                                                Unknown
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->remarks }}
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $images = GetSafetyWalkImage($details->id);
+                                                    $signature = GetSafetySignature(
+                                                        $inspection_details->updated_by,
+                                                        $inspection_details->id,
+                                                        FORKLIFT_INSPECTION,
+                                                    );
                                                 @endphp
-
-                                                {{-- @dd($images); --}}
-                                                <div class="col-md-4 mb-2">
-                                                    @if ($images !== false)
-                                                        <label class="form-label "
-                                                            style="display: block;">{{ __('inspection.image') }}</label>
-                                                        <img src="{{ admin_url($images) }}" style="width: 100px;" />
-                                                    @endif
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->approval_remarks }}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
-
             </div>
-        </div>
 
-    @stop
-    @push('script')
-    @endpush
+        @stop
+        @push('script')
+        @endpush

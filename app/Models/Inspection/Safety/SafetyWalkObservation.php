@@ -22,6 +22,8 @@ class SafetyWalkObservation extends Model
         'month',
         'unit',
         'safety_walk_taken_by',
+        'approval_remarks',
+        'observation_status',
         'status',
         'trash',
         'created_by',
@@ -55,7 +57,7 @@ class SafetyWalkObservation extends Model
             $query = $query->where('inspection_safety_walk_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_safety_walk_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -146,7 +148,7 @@ class SafetyWalkObservation extends Model
             $query = $query->where('inspection_safety_walk_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_safety_walk_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_safety_walk_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
@@ -188,18 +190,22 @@ class SafetyWalkObservation extends Model
         return $last_month_record;
     }
 
-    public function approvalSubmit($id, $status)
+    public function approvalSubmit($id, $status, $remarks)
     {
         $request = Request();
         if ($status == 1) {
             $update_array = [
                 'updated_by' => Auth::id(),
                 'observation_status' => OBSERVATION_APPROVED,
+                'approval_remarks' => $remarks,
+
             ];
         } else {
             $update_array = [
                 'updated_by' => Auth::id(),
                 'observation_status' => OBSERVATION_REJECTED,
+                'approval_remarks' => $remarks,
+
             ];
         }
         $this->where('id', $id)->update($update_array);

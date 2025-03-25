@@ -254,6 +254,8 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('exportViewPdf/{id}', [ForkLiftInspectionController::class, 'exportViewPdf']);
         Route::get('get/department', [ForkLiftInspectionController::class, 'GetDepartment']);
         Route::get('get/unit', [ForkLiftInspectionController::class, 'GetUnit']);
+        Route::get('approval/{id}', [ForkLiftInspectionController::class, 'approval']);
+        Route::post('verify/submit', [ForkLiftInspectionController::class, 'approvalSubmit']);
     });
 
 
