@@ -192,6 +192,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
 
         defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('OHC_TYPE_MONTHLY_MEDICINE_STORE') or define('OHC_TYPE_MONTHLY_MEDICINE_STORE',19);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
 
         // IMS  EHS_REVIEW
@@ -200,7 +201,7 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_APPROVAL') or define('EHS_APPROVAL', 3);
 
         // IMS Incident
-
+        
         defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
         defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
         defined('STATUS_UAUC_PENDING') or define('STATUS_UAUC_PENDING', 3);
@@ -267,7 +268,7 @@ class AppServiceProvider extends ServiceProvider
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
         defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
-        defined('OHC_INSPECTION') or define('OHC_INSPECTION',8);
+        defined('OHC_INSPECTION') or define('OHC_INSPECTION',12);
 
 
         // Gemba Walk
