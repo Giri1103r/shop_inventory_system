@@ -79,6 +79,41 @@
 
 @push('script')
     <script>
+        $(document).on('change', '#date', function() {
+            const toTime = "{{ $totime }}";
+            const toDate = "{{ $safetypermit->date }}";
+            let selectedDate = $(this).val(); // Get selected date
+
+            function formatDate(dateStr) {
+                if (!dateStr) return "";
+                let parts = dateStr.split("-");
+                if (parts.length === 3) {
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+                return "";
+            }
+
+            let formattedSelectedDate = formatDate(selectedDate);
+            let formattedToDate = formatDate(toDate);
+            let currentDate = new Date().toISOString().split('T')[0]; 
+
+            flatpickr("#time_to", {
+                enableTime: true,
+                noCalendar: true,
+                time_24hr: true,
+                minuteIncrement: 5,
+                dateFormat: "H:i",
+                maxTime: "18:00",
+                onOpen: function(selectedDates, dateStr, instance) {
+                    let minTime = (formattedSelectedDate === currentDate) ? toTime : "09:00";
+                    instance.set("minTime", minTime);
+                },
+            });
+
+            console.log("Selected Date:", formattedSelectedDate);
+            console.log("To Date:", formattedToDate);
+        });
+
         $(document).ready(function() {
             @if ($showAlert)
                 Swal.fire({
@@ -93,36 +128,8 @@
                 });
             @endif
 
-            // Get necessary values
-            const toTime = "{{ $totime }}";
-            const toDate = "{{ $safetypermit->date }}";
-            let selectedDate = $("#date").val();
 
 
-            function formatDate(dateStr) {
-                if (!dateStr) return "";
-                let date = new Date(dateStr);
-                if (isNaN(date.getTime())) return "";
-                return date.toISOString().split('T')[0]; // Convert to YYYY-MM-DD
-            }
-
-            let formattedSelectedDate = formatDate(selectedDate);
-            let formattedToDate = formatDate(toDate);
-            let currentDate = new Date().toISOString().split('T')[0];
-
-            // Initialize flatpickr
-            flatpickr("#time_to", {
-                enableTime: true,
-                noCalendar: true,
-                time_24hr: true,
-                minuteIncrement: 5,
-                dateFormat: "H:i",
-                maxTime: "18:00",
-                onOpen: function(selectedDates, dateStr, instance) {
-                    let minTime = (formattedToDate === currentDate) ? toTime : "09:00";
-                    instance.set("minTime", minTime);
-                },
-            });
 
             // jQuery Validator
             $.validator.addMethod(
