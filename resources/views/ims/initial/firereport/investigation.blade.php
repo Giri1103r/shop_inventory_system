@@ -1218,12 +1218,12 @@
                             },
                             minlength: 3,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                         remark: {
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                     },
                     messages: {

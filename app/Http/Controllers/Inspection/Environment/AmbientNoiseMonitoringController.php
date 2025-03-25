@@ -13,6 +13,8 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Inspection\environment\AmbientNoiseMonitoring;
+use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\environment\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 
@@ -22,12 +24,16 @@ class AmbientNoiseMonitoringController extends Controller
     private $unit;
     private $ambient_noise_monitoring;
     private $upload_log;
+    private $environment;
+    private $static_docno;
 
     public function __construct()
     {
         $this->ambient_noise_monitoring = new AmbientNoiseMonitoring();
         $this->unit = new Unit();
         $this->location = new Location();
+        $this->environment = new Environment();
+        $this->static_docno = new InspectionStaticDocno();
     }
 
     public function index(Request $request)
@@ -35,7 +41,8 @@ class AmbientNoiseMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data  = $this->ambient_noise_monitoring->list();
+                    $type = 1;
+                    $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -59,7 +66,7 @@ class AmbientNoiseMonitoringController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('environment/ambient-noise/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                            $btn .= '<a href="' . admin_url('environment/ambient-noise/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                           
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             // }
                             return $btn;
@@ -71,17 +78,15 @@ class AmbientNoiseMonitoringController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
-        $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-        $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', '1')->where('status', '1')->get();
 
         $data = array(
-            'locationList' => $unitList,
-            'unitList' => $locationList,
+            'environmentList' => $environmentList,
         );
         return view('inspection.environment.ambientNoiseMonitoring.list', $data);
     }
@@ -90,11 +95,14 @@ class AmbientNoiseMonitoringController extends Controller
     {
         try {
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
-            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                ['type', "AmbientNoise"],
+                ['status', '1']
+            ])->first();
             
             $data = array(
-                'locationList' => $unitList,
-                'unitList' => $locationList,
+                'locationList' => $locationList,
+                'staticDocno' => $staticDocno,
             );
             return view('inspection.environment.ambientNoiseMonitoring.add', $data);
         } catch (Exception $ex) {
@@ -106,29 +114,32 @@ class AmbientNoiseMonitoringController extends Controller
     {
         try {
             $rules = [
-                'checklist_type_id' => 'required',
-                'checklist_sub_type_id' => 'required',
+                'ambient_noise_no' => 'required',
             ];
             $messages = [
-                'checklist_type_id.required' => "Checklist Type Name is Required",
-                'checklist_sub_type_id.requred' => "Checklist Sub Type Name is Required",
+                'ambient_noise_no.required' => "Ambient Noise No is Required",
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            try {
 
-                $checklist_sub_type_data =   $this->ambient_noise_monitoring->store();
-                $SubTypeDataName =   $this->ambient_noise_monitoringName->store($checklist_sub_type_data->id);
+            try {
+                $env_no = $request->ambient_noise_no;
+                $type = 1;
+                $environment =   $this->environment->store($env_no, $type);
+ 
+                $this->ambient_noise_monitoring->store($environment->id);
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('environment/ambient-noise/list'));
         } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('environment/ambient-noise/list'));
         }
@@ -158,11 +169,17 @@ class AmbientNoiseMonitoringController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_type =   $this->ambient_noise_monitoring->selectOne($id);
-                $checklist_image = $this->checklist_file->selectChecklistTypeImage($id);
-
+                $type = 1;
+                $environmentData =   $this->environment->selectOne($id,$type);
+                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
+                $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                    ['type', "AmbientNoise"],
+                    ['status', '1']
+                ])->first();
                 $data = array(
-                    'checklist_type' => $checklist_type,
+                    'environmentData' => $environmentData,
+                    'ambientNoiseDataList' => $ambientNoiseDataList,
+                    'staticDocno' => $staticDocno,
                 );
             }
             return view('inspection.environment.ambientNoiseMonitoring.view', $data);
@@ -173,78 +190,14 @@ class AmbientNoiseMonitoringController extends Controller
         }
     }
 
-    public function Edit($id)
-    {
-        try {
-            $id = decryptId($id);
-            $checklistTypeList  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
-            $checklistSubTypeDataList =   $this->ambient_noise_monitoring->find($id);
-            $checklistSubTypeDataNameList  = $this->ambient_noise_monitoringName->where('checklist_sub_type_data_id', $id)->where('status', '1')->get();
-
-            $data = array(
-                'checklistTypeList' => $checklistTypeList,
-                'checklistSubTypeDataList' => $checklistSubTypeDataList,
-                'checklistSubTypeDataNameList' => $checklistSubTypeDataNameList,
-            );
-            return view('inspection.environment.ambientNoiseMonitoring.edit', $data);
-        } catch (Exception $error) {
-            dd($error->getMessage());
-        }
-    }
-
-    public function Update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $rules = [
-                'checklist_type_id' => 'required',
-                'checklist_sub_type_id' => 'required',
-            ];
-            $messages = [
-                'checklist_type_id.required' => "Checklist Type Name is Required",
-                'checklist_sub_type_id.requred' => "Checklist Sub Type Name is Required",
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $checklist_sub_type_data =   $this->ambient_noise_monitoring->updates($id);
-            $SubTypeDataName =   $this->ambient_noise_monitoringName->updates($id);
-
-            Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('environment/ambient-noise/list'));
-        } catch (Exception $ex) {
-            dd($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('environment/ambient-noise/list'));
-        }
-    }
-    public function deleteChecklist($id)
-    {
-        try {
-
-            $subtype_dataName = $this->ambient_noise_monitoringName->findOrFail($id);
-            $update_data = array(
-                'status' => 0,
-                'trash' => 'YES',
-            );
-
-            $subtype_dataName->update($update_data);
-
-            return response()->json(['status' => 'success', 'msg' => 'Your data has been deleted successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
 
     public function StatusChange(Request $request)
     {
 
         try {
             $id = decryptId($request->id);
-
+            $type = 1;
+            $environmentID = $this->environment->statuschange($id,$type);
             $this->ambient_noise_monitoring->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
@@ -257,12 +210,11 @@ class AmbientNoiseMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-
-            $allData =   $this->ambient_noise_monitoring->exportdata();
+            $type = 1;
+            $allData =   $this->environment->exportdata($type);
             $header = [
                 __("common.sno"),
-                __("Checklist Type Name"),
-                __("Checklist Sub Type Name"),
+                __("Ambient Noise Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -273,8 +225,7 @@ class AmbientNoiseMonitoringController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->category_name;
-                $export[] =  $data->subcategory_name;
+                $export[] = $data->environment_no;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -284,7 +235,7 @@ class AmbientNoiseMonitoringController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Data.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Ambient Noise Monitoring.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -299,13 +250,12 @@ class AmbientNoiseMonitoringController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-
-            $allData =   $this->ambient_noise_monitoring->exportdata();
+            $type = 1;
+            $allData =   $this->environment->exportdata($type);
 
             $header = [
                 __("common.sno"),
-                __("Checklist Type Name"),
-                __("Checklist Sub Type Name"),
+                __("Ambient Noise Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -314,7 +264,7 @@ class AmbientNoiseMonitoringController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Checklist Sub Type Data",
+                'pagetitle' => "Ambient Noise Monitoring",
             );
 
             $property = [
@@ -336,7 +286,7 @@ class AmbientNoiseMonitoringController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Checklist Sub Type Data Details.pdf";
+            $filename = "Ambient Noise Monitoring Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
@@ -344,13 +294,4 @@ class AmbientNoiseMonitoringController extends Controller
     }
 
 
-    public function DownloadSample()
-    {
-
-        $filedetails =  exportsamplefile('checklist_type');
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        return redirect(url($filePath));
-    }
 }

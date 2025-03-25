@@ -1156,7 +1156,7 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1207,7 +1207,7 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1301,7 +1301,7 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {

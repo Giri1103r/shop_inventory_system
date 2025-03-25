@@ -383,7 +383,7 @@
                                                             <label for= "isolationpanel_checkbox" class="form-label mb-0"
                                                                 style="margin-right: 58px;">Isolation fire panel</label>
                                                             <input type="hidden" name="isolationpanel_checkbox"
-                                                                value="{{$safetypermit->isolationpanel_checkbox}}">
+                                                                value="{{ $safetypermit->isolationpanel_checkbox }}">
 
                                                             <input type="checkbox" class="shutdowncheckbox"
                                                                 id="isolationpanel_checkbox"
@@ -580,8 +580,8 @@
                                                                 <div
                                                                     style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                     <input type="checkbox" class="protective-checkbox"
-                                                                        name="protective_equip[{{ encryptId($job)  }}][]"
-                                                                        value="{{ $details['checkpoints'][$index] }}"
+                                                                        name="protective_equip[{{ encryptId($job) }}][]"
+                                                                        value="{{ $details['checkid'][$index] }}"
                                                                         id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                         @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
 
@@ -667,7 +667,7 @@
                                                                                 <input type="checkbox"
                                                                                     class="equiment_involved"
                                                                                     name="equiment_involved[{{ encryptId($job) }}][]"
-                                                                                    value="{{ $details['checkpoints'][$index] }}"
+                                                                                    value="{{ $details['checkid'][$index] }}"
                                                                                     id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                                     @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
                                                                                 <label class="form-label"
@@ -702,13 +702,12 @@
                                                         @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
                                                             <div style="flex-wrap: wrap; gap: 10px;">
                                                                 @foreach ($details['checkpoint_names'] as $index => $checkpoint_name)
-                                                                    <!-- Only display label if checkbox is checked and checkpoint exists -->
                                                                     @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index])
                                                                         <div
                                                                             style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                             <input type="checkbox" class=""
                                                                                 name="precaution_taken[{{ encryptId($job) }}][]"
-                                                                                value="{{ $details['checkpoints'][$index] ?? '' }}"
+                                                                                value="{{ $details['checkid'][$index] ?? '' }}"
                                                                                 id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] ?? '' }}"
                                                                                 checked>
                                                                             <label class="form-label"
@@ -740,7 +739,7 @@
                                                                         style="flex: 1 1 calc(33% - 10px);align-items: center; gap: 5px;">
                                                                         @php
                                                                             $checkpointValue =
-                                                                                $details['checkpoints'][$index] ?? null;
+                                                                                $details['checkid'][$index] ?? null;
                                                                         @endphp
                                                                         <input type="checkbox" class="equipment_checklist"
                                                                             name="equipment_checklist[{{ encryptId($job) }}][]"
@@ -792,8 +791,8 @@
                                                                         style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                         <input type="checkbox" class=""
                                                                             name="safework_instruction[{{ encryptId($job) }}][]"
-                                                                            value="{{ $details['checkpoints'][$index] }}"
-                                                                            id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
+                                                                            value="{{ $details['checkid'][$index] }}"
+                                                                            id="checkpoint-{{ $job }}-{{ $details['checkid'][$index] }}"
                                                                             @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
                                                                         <label class="form-label"
                                                                             for="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}">
@@ -1705,12 +1704,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-                    if (Array.isArray(selectedEquipmentsInvolved)) {
-                        isAlreadyInvolved = selectedEquipmentsInvolved
-                            .some(function(existingItem) {
-                                return existingItem.checkpoint_names.includes(equipmentName);
-                            });
-                    } else if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(
@@ -1866,12 +1860,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-                    if (Array.isArray(selectedEquipmentsInvolved)) {
-                        isAlreadyInvolved = selectedEquipmentsInvolved
-                            .some(function(existingItem) {
-                                return existingItem.checkpoint_names.includes(equipmentName);
-                            });
-                    } else if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(
@@ -1881,7 +1870,7 @@
                             });
                     }
 
-
+                    console.log("Generating Checkbox: ", item.id, equipmentName);
                     if (!isAlreadyInvolved && !EquipmentInvolveMap.has(equipmentName)) {
                         const isChecked = isDefaultChecked ? 'checked' : '';
                         const checkpointHtml = `
@@ -1896,6 +1885,7 @@
                         ${isChecked}>
                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                 </div>`;
+            
                         container.append(checkpointHtml);
 
 
@@ -1989,6 +1979,8 @@
             });
         });
 
+
+
         $(document).ready(function() {
             function togglePrecaution() {
                 const container = $('#getprecaution-container');
@@ -2023,12 +2015,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-                    if (Array.isArray(selectedEquipmentsInvolved)) {
-                        isAlreadyInvolved = selectedEquipmentsInvolved
-                            .some(function(existingItem) {
-                                return existingItem.checkpoint_names.includes(equipmentName);
-                            });
-                    } else if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(
@@ -2153,12 +2140,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-                    if (Array.isArray(selectedEquipmentsInvolved)) {
-                        isAlreadyInvolved = selectedEquipmentsInvolved
-                            .some(function(existingItem) {
-                                return existingItem.checkpoint_names.includes(equipmentName);
-                            });
-                    } else if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(
@@ -2281,12 +2263,7 @@
                     const isDefaultChecked = item.default_enable == 1;
 
                     let isAlreadyInvolved = false;
-                    if (Array.isArray(selectedEquipmentsInvolved)) {
-                        isAlreadyInvolved = selectedEquipmentsInvolved
-                            .some(function(existingItem) {
-                                return existingItem.checkpoint_names.includes(equipmentName);
-                            });
-                    } else if (typeof selectedEquipmentsInvolved === 'object') {
+                    if (typeof selectedEquipmentsInvolved === 'object') {
                         Object.values(selectedEquipmentsInvolved)
                             .forEach(function(value) {
                                 if (value.checkpoint_names && value.checkpoint_names.includes(

@@ -77,8 +77,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift" id="shift"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select {{ __('inspection.shifts') }}
@@ -123,6 +122,10 @@
                                                                 {{ $option }}
                                                             </th>
                                                         @endforeach
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                            Remarks
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -140,13 +143,13 @@
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                     {{ $i }}
                                                                 </td>
-                                                                @if ($index == 0)
+                                                                {{-- @if ($index == 0)
                                                                     <td rowspan="{{ $rowCount }}"
                                                                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                         {{ $checklist->subcategory_name }}
                                                                     </td>
-                                                                @endif
-                                                                <td colspan="2"
+                                                                @endif --}}
+                                                                <td colspan="3"
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
@@ -159,6 +162,11 @@
                                                                             class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
+                                                                <td style="border: 1px solid black; padding: 8px; text-align: center;"
+                                                                    class="form-input">
+                                                                    <textarea class="form-control" name="remarks[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                        id="" rows="2" style="resize:none;"></textarea>
+                                                                </td>
                                                                 @php
                                                                     $i++;
                                                                 @endphp
@@ -168,9 +176,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                
+
                                         <hr>
-                                        <div class="submit-button" style="text-align: right;">
+                                        <div class="submit-button " style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
@@ -233,6 +241,11 @@
                             resource_code: {
                                 required: true,
                             },
+                            "remarks[*][*]": {
+                                required: true,
+                                minlength: 3,
+                                maxlength: 100,
+                            },
 
                         },
                         messages: {
@@ -253,8 +266,13 @@
                             unit_id: {
                                 required: "Unit is required",
                             },
-                            resource_code:{
+                            resource_code: {
                                 required: 'Recource Code is requried',
+                            },
+                            "remarks[*][*]": {
+                                required: "Remarks is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
                             }
 
                         },
@@ -283,6 +301,19 @@
                                     .message);
                             });
                         }
+                    });
+                    
+                    $('textarea[name^="remarks"]').each(function() {
+                        $(this).rules("add", {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 255,
+                            messages: {
+                                required: "Remarks is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 255",
+                            }
+                        });
                     });
                 });
             });

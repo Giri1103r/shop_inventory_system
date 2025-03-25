@@ -94,7 +94,8 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Employee Name</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->employee_name) ? $sfty_petty_checklist->employee_name : '' }}
+                                            {{-- @dd(getUsername($sfty_petty_checklist->employee_name)) --}}
+                                            {{ getUsername($sfty_petty_checklist->employee_name) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -138,15 +139,15 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Given By</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->amount_given_by) ? $sfty_petty_checklist->amount_given_by : '' }}
+                                            {{ getUsername($sfty_petty_checklist->amount_given_by) }}
                                         </div>
                                     </div>
-                                    {{-- @dd($signature_given_by) --}}
-                                    @if (isset($signature_amount) && $signature_amount)
+
+                                    @if (isset($signature_amount_givenby) && $signature_amount_givenby)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">Signature (Amount Given By)</label>
-                                                <img src="{{ admin_url( $signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                                <img src="{{ admin_url( $signature_amount_givenby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
                                     @endif
@@ -154,14 +155,14 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Received By</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->amount_received_by) ? $sfty_petty_checklist->amount_received_by : '' }}
+                                            {{ getUsername($sfty_petty_checklist->amount_received_by) }}
                                         </div>
                                     </div>
-                                    @if (isset($signature_amount) && $signature_amount)
+                                    @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">Signature (Amount Received By)</label>
-                                                <img src="{{ admin_url($signature_amount->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                                <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
                                     @endif

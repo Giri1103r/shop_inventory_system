@@ -13,12 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                            <x-button-import href="{{ admin_url('environment/ambient-noise/import') }}"></x-button-import>
-                        {{-- @endif --}}
+
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('environment/ambient-noise/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('environment/ambient-noise/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -26,28 +24,19 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                            
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
-                                            <select name="checklist_type_id" id="checklist_type_id" class=" form-control single-select"
+                                            <label for="environment_no" class="form-label">Ambient Noise Monitoring Id                                            </label>
+                                            <select name="environment_no" id="environment_no" class=" form-control single-select"
                                                 style="width: 100%">
-                                                <option value="">Select Checklist Type Name</option>
-                                                @foreach ($checklistTypeList as $list)
+                                                <option value="">Selecte Ambient Noise Monitoring </option>
+                                                @foreach ($environmentList as $list)
                                                     <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->category_name }}</option>
+                                                        {{ $list->environment_no }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name </label>
-                                            <select name="checklist_sub_type_id" id="checklist_sub_type_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Checklist Sub Type Name</option>
-
-                                            </select>
-                                        </div>
-                                       
-
+                                      
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -77,8 +66,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Checklist Type Name</th>
-                                        <th>Checklist Sub Type Name</th>
+                                        <th>Ambient Noise Monitoring Id</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -98,32 +86,7 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
-            $(document).on('change', '#checklist_type_id', function() {
-                let checklistTypeId = $(this).val();
-
-                if (checklistTypeId) {
-                    $.ajax({
-                        url: "{{ admin_url('inspection/master/checklist-sub-type/ajax-list') }}/" + checklistTypeId + "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
-                            $.each(data, function(key, value) {
-                                $('#checklist_sub_type_id').append('<option value="' + value.id + '">' + value
-                                    .name + '</option>');
-                            });
-                            $('#checklist_sub_type_id').trigger('change.');
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching Checklist Sub Type Name. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
-                    $('#checklist_sub_type_id').trigger('change.');
-                }
-            });
-    
+         
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -157,8 +120,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist_type_id = $('#checklist_type_id').val();
-                            d.checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                            d.environment_no = $('#environment_no').val();
                             d.status = $('#status').val();
 
                         },
@@ -175,12 +137,8 @@
                             searchable: false
                         },
                         {
-                            data: 'category_name',
-                            name: 'category_name'
-                        },
-                        {
-                            data: 'subcategory_name',
-                            name: 'subcategory_name'
+                            data: 'environment_no',
+                            name: 'environment_no'
                         },
                         {
                             data: 'status',
@@ -223,8 +181,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist_type_id = $('#checklist_type_id').val();
-                                        checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                                        environment_no = $('#environment_no').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -232,8 +189,7 @@
                                         window.location.href =
                                             "{{ admin_url('environment/ambient-noise/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist_type_id=' + checklist_type_id +
-                                            '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&environment_no=' + environment_no +
                                             '&status=' + status
                                     }
                                 },
@@ -242,16 +198,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist_type_id = $('#checklist_type_id').val();
-                                        checklist_sub_type_id = $('#checklist_sub_type_id').val();
+                                        environment_no = $('#environment_no').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('environment/ambient-noise/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist_type_id=' + checklist_type_id +
-                                            '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&environment_no=' + environment_no +
                                             '&status=' + status
                                     }
                                 },

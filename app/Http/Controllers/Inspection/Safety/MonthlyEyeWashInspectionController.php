@@ -241,8 +241,15 @@ class MonthlyEyeWashInspectionController extends Controller
     public function GetLocations(Request $request)
     {
         try {
-            $locations = $this->location->getLocationName();
-            return response()->json($locations);
+            $data = $this->location->getLocationName();
+            $decryptedArray = [];
+            foreach ($data as $data) {
+                $decryptedArray[] = [
+                    'id' => encryptId($data->id),
+                    'location_name' => $data->location_name,
+                ];
+            }
+            return response()->json($decryptedArray);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['error' => 'Please try again after sometimes'], 406);

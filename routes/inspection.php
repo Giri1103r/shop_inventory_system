@@ -20,10 +20,12 @@ use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
-use App\Http\Controllers\OhcManagement\SafetyPettyLogbook\SafetyPettyController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
+use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
+use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -144,8 +146,8 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
     Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
     Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
-   
 });
+
 Route::group(['prefix' => 'environment/'], function () {
     Route::group(['prefix' => 'ambient-noise/'], function () {
         Route::get('list', [AmbientNoiseMonitoringController::class, 'index']);
@@ -164,6 +166,25 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::post('status', [AmbientNoiseMonitoringController::class, 'statusChange']);
         Route::post('unique', [AmbientNoiseMonitoringController::class, 'Uniquecheck']);
         Route::get('employeeName', [AmbientNoiseMonitoringController::class, 'employeename']);
+    });
+
+    Route::group(['prefix' => 'work-noise/'], function () {
+        Route::get('list', [WorkNoiseMonitoringController::class, 'index']);
+        Route::post('list', [WorkNoiseMonitoringController::class, 'index']);
+        Route::get('add', [WorkNoiseMonitoringController::class, 'add']);
+        Route::post('add/submit', [WorkNoiseMonitoringController::class, 'store']);
+        Route::get('edit/{id}', [WorkNoiseMonitoringController::class, 'edit']);
+        Route::post('edit/submit', [WorkNoiseMonitoringController::class, 'update']);
+        Route::get('view/{id}', [WorkNoiseMonitoringController::class, 'view']);
+        Route::post('delete', [WorkNoiseMonitoringController::class, 'delete']);
+        Route::get('export/excel', [WorkNoiseMonitoringController::class, 'exportExcel']);
+        Route::get('export/pdf', [WorkNoiseMonitoringController::class, 'exportPdf']);
+        Route::get('sample_download', [WorkNoiseMonitoringController::class, 'DownloadSample']);
+        Route::get('import', [WorkNoiseMonitoringController::class, 'import']);
+        Route::post('import/Submit', [WorkNoiseMonitoringController::class, 'importSubmit']);
+        Route::post('status', [WorkNoiseMonitoringController::class, 'statusChange']);
+        Route::post('unique', [WorkNoiseMonitoringController::class, 'Uniquecheck']);
+        Route::get('employeeName', [WorkNoiseMonitoringController::class, 'employeename']);
     });
 });
 
@@ -223,6 +244,20 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('exportViewPdf/{id}', [MonthlyForkLiftInspectionController::class, 'exportViewPdf']);
     });
 
+    Route::group(['prefix' => 'forklift-inspection/'], function () {
+        Route::get('list', [ForkLiftInspectionController::class, 'index']);
+        Route::post('list', [ForkLiftInspectionController::class, 'index']);
+        Route::get('add', [ForkLiftInspectionController::class, 'add']);
+        Route::post('add/submit', [ForkLiftInspectionController::class, 'store']);
+        Route::get('view/{id}', [ForkLiftInspectionController::class, 'view']);
+        Route::get('export/excel', [ForkLiftInspectionController::class, 'exportExcel']);
+        Route::get('export/pdf', [ForkLiftInspectionController::class, 'exportPdf']);
+        Route::get('exportViewPdf/{id}', [ForkLiftInspectionController::class, 'exportViewPdf']);
+        Route::get('get/department', [ForkLiftInspectionController::class, 'GetDepartment']);
+        Route::get('get/unit', [ForkLiftInspectionController::class, 'GetUnit']);
+    });
+
+
     Route::group(['prefix' => 'safety-gallery-inspection/'], function () {
         Route::get('list', [SafetyGalleryInsepctionController::class, 'index']);
         Route::post('list', [SafetyGalleryInsepctionController::class, 'index']);
@@ -259,10 +294,11 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('add', [SafetyWalkObservationController::class, 'add']);
         Route::post('add/submit', [SafetyWalkObservationController::class, 'store']);
         Route::get('view/{id}', [SafetyWalkObservationController::class, 'view']);
-        Route::GET('get/equipment', [SafetyWalkObservationController::class, 'GetEquipment']);
+        Route::get('approval/{id}', [SafetyWalkObservationController::class, 'approval']);
         Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
         Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
+        Route::post('verify/submit', [SafetyWalkObservationController::class, 'approvalSubmit']);
     });
 
     Route::group(['prefix' => 'ohc-plant-summary/'], function () {
@@ -335,7 +371,8 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::post('unique', [SafetyPettyController::class, 'Uniquecheck']);
     Route::get('employeeid', [SafetyPettyController::class, 'employeeid']);
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
-    Route::post('/unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
+    Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {
@@ -375,17 +412,17 @@ Route::group(['prefix' => 'fire/'], function () {
     });
 });
 
-Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function(){
-    Route::GET('list',[FloorStretcherController::class,'Index']);
-    Route::GET('list',[FloorStretcherController::class,'Index']);
-    Route::GET('add',[FloorStretcherController::class,'Add']);
-    Route::POST('add/submit',[FloorStretcherController::class,'Store']);
-    Route::GET('view/{id}',[FloorStretcherController::class,'View']);
-    Route::GET('export/excel',[FloorStretcherController::class,'ExportExcel']);
-    Route::GET('export/pdf',[FloorStretcherController::class,'ExportPdf']);
-    Route::GET('generalpdf/{id}',[FloorStretcherController::class,'ExportPdf']);
-    Route::POST('status',[FloorStretcherController::class,'StatusChange']);
-    Route::POST('delete',[FloorStretcherController::class,'Delete']);
+Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
+    Route::GET('list', [FloorStretcherController::class, 'Index']);
+    Route::POST('list', [FloorStretcherController::class, 'Index']);
+    Route::GET('add', [FloorStretcherController::class, 'Add']);
+    Route::POST('add/submit', [FloorStretcherController::class, 'Store']);
+    Route::GET('view/{id}', [FloorStretcherController::class, 'View']);
+    Route::GET('export/excel', [FloorStretcherController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [FloorStretcherController::class, 'ExportPdf']);
+    Route::GET('generalpdf/{id}', [FloorStretcherController::class, 'ExportPdf']);
+    Route::POST('status', [FloorStretcherController::class, 'StatusChange']);
+    Route::POST('delete', [FloorStretcherController::class, 'Delete']);
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function(){

@@ -235,7 +235,7 @@
                 <td width="50%" style="padding:5px;"><b>Responsibility</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($item->responsibility) ? $item->responsibility : '' }}
+                    {{ getUsername($item->responsibility) }}
                 </td>
             </tr>
             <tr>

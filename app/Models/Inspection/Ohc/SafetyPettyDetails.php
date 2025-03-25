@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\OhcManagement\SafetyPettyLogbook;
+namespace App\Models\Inspection\Ohc;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\TrashScope;

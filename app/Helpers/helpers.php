@@ -35,7 +35,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1965,7 +1965,14 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
                 case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
-                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        return '';
+                    } else {
+                        return $name->file_path;
+                    }
+                case OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST:
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         return '';
                     } else {
@@ -2012,11 +2019,18 @@ if (!function_exists('getMonth')) {
             } else if ($id == FLOOR_MANAGER_REJECTED) {
                 return 'floor Manager rejected';
             } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
-                return 'Safet Officer Approval Pending';
+                return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
-                return 'Safet Officer Approved';
+                return 'Safety Officer Approved';
             } else if ($id == SAFETY_OFFICER_REJECTED) {
-                return 'Safet Officer rejected';
+                return 'Safety Officer rejected';
+
+            } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
+                return 'Medical Assistant /Floor Manager  Approval Pending';
+            } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
+                return 'Medical Assistant /Floor Manager rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
+                return 'Medical Assistant /Floor Manager Approved';
             }
 
             return 'OHC Creation';
@@ -2038,6 +2052,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSafetyWalkImage')) {
+
+        function GetSafetyWalkImage($id)
+        {
+
+            $safetyImage = DB::table('inspection_safety_walk_observation_files')->where('safety_walk_observation_id', $id)->where('trash', 'NO')->first();
+
+            if ($safetyImage == null) {
+                return false;
+            } else {
+                return $safetyImage->file_path;
+            }
+        }
+    }
+
     // Monthly Eye Wash Sequence
     if (!function_exists('MEWSequence')) {
         function MEWSequence()
@@ -2046,17 +2075,10 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if (!function_exists('SafetyWalkCurrentObservation')) {
-        function SafetyWalkCurrentObservation()
+    if (!function_exists('forkliftInspection')) {
+        function forkliftInspection()
         {
-            return 'CURRENT-OBS-000001';
-        }
-    }
-
-    if (!function_exists('SafetyWalkPreviousObservation')) {
-        function SafetyWalkPreviousObservation()
-        {
-            return 'PREVIOUS-OBS-000001';
+            return 'FORKLIFT-INS-000001';
         }
     }
 
