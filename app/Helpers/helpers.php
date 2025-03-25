@@ -2015,6 +2015,9 @@ if (!function_exists('getMonth')) {
                 return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
                 return 'Safety Officer Approved';
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
+                return 'Safety Officer rejected';
+
             } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
                 return 'Medical Assistant /Floor Manager  Approval Pending';
             } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
@@ -2042,6 +2045,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSafetyWalkImage')) {
+
+        function GetSafetyWalkImage($id)
+        {
+
+            $safetyImage = DB::table('inspection_safety_walk_observation_files')->where('safety_walk_observation_id', $id)->where('trash', 'NO')->first();
+
+            if ($safetyImage == null) {
+                return false;
+            } else {
+                return $safetyImage->file_path;
+            }
+        }
+    }
+
     // Monthly Eye Wash Sequence
     if (!function_exists('MEWSequence')) {
         function MEWSequence()
@@ -2050,17 +2068,10 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if (!function_exists('SafetyWalkCurrentObservation')) {
-        function SafetyWalkCurrentObservation()
+    if (!function_exists('forkliftInspection')) {
+        function forkliftInspection()
         {
-            return 'CURRENT-OBS-000001';
-        }
-    }
-
-    if (!function_exists('SafetyWalkPreviousObservation')) {
-        function SafetyWalkPreviousObservation()
-        {
-            return 'PREVIOUS-OBS-000001';
+            return 'FORKLIFT-INS-000001';
         }
     }
 

@@ -317,8 +317,8 @@
                     services: {
                         required: true,
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
 
                     narration: {
@@ -327,8 +327,8 @@
                     hazard_description: {
                         required: true,
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     hazard_type: {
                         required: true,
@@ -339,8 +339,8 @@
                     risk_consequence: {
                         required: true,
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     likelihood: {
                         required: true,
@@ -351,8 +351,8 @@
                     current_controls: {
                         required: true,
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     type_controls: {
                         required: true,
@@ -365,30 +365,30 @@
                     },
                     additionl_control: {
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     nature_change: {
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     implement_change: {
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                     control_change: {
                         minlength: 2,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        maxlength: 1000,
+                        pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                     },
                 },
                 messages: {
                     services: {
                         required: "Source, Situation, Act,Activity, Product,Services is required.",
                         minlength: "Incident Short Name must be exactly 2 characters.",
-                        maxlength: "Incident Short Name must be exactly 2000 characters.",
+                        maxlength: "Incident Short Name must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     narration: {
@@ -426,22 +426,22 @@
                     },
                     additionl_control: {
                         minlength: "Additional control Measures Required must be exactly 2 characters.",
-                        maxlength: "Additional control Measures Required must be exactly 2000 characters.",
+                        maxlength: "Additional control Measures Required must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     nature_change: {
                         minlength: "Nature of Change must be exactly 2 characters.",
-                        maxlength: "Nature of Change must be exactly 2000 characters.",
+                        maxlength: "Nature of Change must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     implement_change: {
                         minlength: "Implement of Change must be exactly 2 characters.",
-                        maxlength: "Implement of Change must be exactly 2000 characters.",
+                        maxlength: "Implement of Change must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     control_change: {
                         minlength: "Control of Change must be exactly 2 characters.",
-                        maxlength: "Control of Change must be exactly 2000 characters.",
+                        maxlength: "Control of Change must be exactly 1000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                 },

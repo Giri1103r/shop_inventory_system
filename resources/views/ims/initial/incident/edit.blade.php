@@ -595,7 +595,8 @@
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        pattern: /^[a-zA-Z0-9\s\-_'",”%+\/!\\()]+$/
+
                     },
                     // 'evidence[]': {
                     //     required: true,

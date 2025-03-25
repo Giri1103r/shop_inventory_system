@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation')
-@section('pageurl', admin_url('safety/safety-walk-observation/list'))
+@section('title', 'Forklift Inspection')
+@section('pageurl', admin_url('safety/forklift-inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/safety-walk-observation/add') }}">Add</x-button-add>
+                            href="{{ admin_url('safety/forklift-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -121,7 +121,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/safety-walk-observation/list') }}",
+                        url: "{{ admin_url('safety/forklift-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -199,7 +199,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-walk-observation/export/pdf') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -219,7 +219,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-walk-observation/export/excel') }}" +
+                                            "{{ admin_url('safety/forklift-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -285,7 +285,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-walk-observation/status') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -353,7 +353,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/safety-walk-observation/delete') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

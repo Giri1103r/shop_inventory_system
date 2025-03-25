@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation Add')
-@section('pageurl', admin_url('safety-walk-observation/list'))
+@section('title', 'Forklift Inspection Add')
+@section('pageurl', admin_url('safety/forklift-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,15 +20,15 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('safety/safety-walk-observation/list') }}"></x-button-back>
+                                        href="{{ admin_url('safety/forklift-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="safetyWalkAdd"
-                                        action="{{ admin_url('safety/safety-walk-observation/add/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('safety/forklift-inspection/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -52,7 +52,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FSE-0') }}"
+                                                        class="form-control" value="{{ getDocumentReviewDate('FI-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -64,51 +64,6 @@
                                                         class="form-control" value="">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                    <select name="shift_id" id="shift_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Shift
-                                                        </option>
-                                                        @foreach ($shift as $shift)
-                                                            <option value="{{ encryptId($shift->id) }}">
-                                                                {{ $shift->shift }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 mb-3 form-input">
-                                                <label for="emp_name" class="form-label ">Month</label>
-                                                <div class="input-group date form-input  custom-height">
-                                                    <input type="text" class="form-control " name="month"
-                                                        id="month" autocomplete="off">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit" id="unit"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unit as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.safety_walk_taken_by') }}</label>
-                                                    <input type="text" name="safety_walk_taken_by"
-                                                        id = "safety_walk_taken_by" class="form-control" value="">
-                                                </div>
-                                            </div>
                                         </div>
                                         <hr>
                                         {{-- Current Month Observation --}}
@@ -116,7 +71,7 @@
                                             <div class="row mt-4 form-set-current">
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">
-                                                        {{ __('inspection.current_month_observation') }}
+                                                        {{ __('inspection.forklift_inspection_report') }}
                                                     </h4>
                                                 </div>
 
@@ -134,13 +89,13 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location[1]"
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <select name="department[1]" id="department[1]"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}">
-                                                                    {{ $location->location_name }}</option>
+                                                            <option value="">Select department</option>
+                                                            @foreach ($departments as $department)
+                                                                <option value="{{ encryptId($department->id) }}">
+                                                                    {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -148,36 +103,40 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[1]" id = "date_of_observation"
-                                                            class="form-control date_of_observation" >
+                                                            class="form-label require">{{ __('inspection.unit') }}</label>
+                                                        <select name="unit[1]" id="unit[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($unit as $unit)
+                                                                <option value="{{ encryptId($unit->id) }}">
+                                                                    {{ $unit->unit_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
+                                                        <input type="text" name="identification_no[1]"
+                                                            id = "identification_no" class="form-control identification_no"
+                                                            value="{{ forkliftInspection() }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.observation') }}</label>
-                                                        <input type="text" name="observation[1]"
-                                                            id = "observation"
-                                                            class="form-control "
-                                                            placeholder="Observation">
+                                                        <input type="text" name="observation[1]" id = "observation"
+                                                            class="form-control " placeholder="Observation">
                                                     </div>
                                                 </div>
-                                                <div class="form-input col-md-4 mb-2">
-                                                    <label class="form-label">Image</label>
-                                                    <input type="file" name="checklist_file[1]" id="checklist_file"
-                                                        class="form-control form-control-sm"
-                                                        accept="image/jpeg, image/png" placeholder="Enter the image">
-                                                    <small>Allowed file types: .jpg, .jpeg, .png</small>
-                                                    <div id="checklist_file_error" class="text-danger"></div>
-                                                </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.recomended_action') }}</label>
-                                                        <input type="text" name="recomended_action[1]"
-                                                            id = "unit_of_measurement" class="form-control">
+                                                            class="form-label require">{{ __('inspection.corrective_action') }}</label>
+                                                        <input type="text" name="corrective_action[1]"
+                                                            id = "corrective_action" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -205,8 +164,8 @@
                                                         <select name="observation_status[1]" id="observation_status[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Observation Status</option>
-                                                            <option value="{{ encryptId(1) }}">Active</option>
-                                                            <option value="{{ encryptId(0) }}">Deactive</option>
+                                                            <option value="{{ encryptId(1) }}">Open</option>
+                                                            <option value="{{ encryptId(0) }}">Closed</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -227,7 +186,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/safety-walk-observation/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('safety/forklift-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -248,32 +207,15 @@
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
-                    location.reload();
-                });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr("#inspection_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
-                });
-                flatpickr(".date_of_observation", {
-                    dateFormat: "d-m-Y",
+                    department.reload();
                 });
 
                 flatpickr(".date_of_compliance", {
                     dateFormat: "d-m-Y",
                     minDate: new Date(),
                 });
-
-
-                $('#month').datepicker({
-                    format: 'MM',
-                    minViewMode: 1,
-                    autoclose: true
+                flatpickr("#issue_date", {
+                    dateFormat: "d-m-Y",
                 });
 
                 $(function() {
@@ -312,31 +254,23 @@
                             "inspection_date": {
                                 required: true,
                             },
-                            "shift_id": {
+                            "department[1]": {
                                 required: true,
                             },
-                            "month": {
+                            "unit[1]": {
                                 required: true,
                             },
-                            "unit": {
-                                required: true,
-                            },
-                            "safety_walk_taken_by": {
-                                required: true,
-                            },
-
-
-
-
-                            "location[1]": {
-                                required: true,
-                            },
-
+                            // "identification_no[1]": {
+                            //     required: true,
+                            // },
                             "observation[1]": {
                                 required: true,
                             },
+                            "corrective_action[1]": {
+                                required: true,
+                            },
 
-                            "recomended_action[1]": {
+                            "emp_id[1]": {
                                 required: true,
                             },
 
@@ -347,15 +281,9 @@
                             "observation_status[1]": {
                                 required: true,
                             },
-
                             "remarks[1]": {
                                 required: true,
                             },
-
-                            "emp_id[1]": {
-                                required: true,
-                            }
-
                         },
                         messages: {
                             doc_no: {
@@ -364,7 +292,7 @@
                                 maxlength: "Maximum Characters should not exceed 100",
                             },
                             issue_date: {
-                                required: "Date Of Audit is required",
+                                required: "Issue date is required",
                             },
                             rev_date: {
                                 required: "Revision Date required",
@@ -372,55 +300,36 @@
                             "inspection_date": {
                                 required: "Inspection Date is required",
                             },
-                            "shift_id": {
-                                required: "Shift is required",
+                            "department[1]": {
+                                required: "Department is required",
                             },
-                            "month": {
-                                required: "Month is required",
-                            },
-                            "unit": {
+                            "unit[1]": {
                                 required: "Unit is required",
                             },
-                            "safety_walk_taken_by": {
-                                required: "Safety Walk Taken By is required",
-                            },
-
-
-
-
-                            "location[1]": {
-                                required: "Location is required",
-
-                            },
-
+                            // "identification_no[1]": {
+                            //     required: "Identification Number is required",
+                            // },
                             "observation[1]": {
                                 required: "Observation is required",
-
                             },
-
-                            "recomended_action[1]": {
-                                required: "Recomended Action is required",
-
+                            "corrective_action[1]": {
+                                required: "Corrective Action and preventive Action is required",
                             },
-
+                            "emp_id[1]": {
+                                required: "Employee is required",
+                            },
                             "date_of_compliance[1]": {
                                 required: "Date of Compliance is required",
 
                             },
-
                             "observation_status[1]": {
                                 required: "Observation Status is required",
 
                             },
-
                             "remarks[1]": {
                                 required: "Remarks is required",
+
                             },
-
-                            "emp_id[1]": {
-                                required: "Employee is required",
-                            }
-
                         },
                         errorElement: 'span',
                         errorPlacement: function(error, element) {
@@ -486,8 +395,6 @@
             let current_serial_number = 2;
 
 
-
-
             $(document).on('click', '#add-row-current', function() {
 
                 let currentFormSets = $('.form-wrapper-current .form-set-current').length;
@@ -500,12 +407,12 @@
                     });
                     return;
                 }
-                let newSerialNumber = 'CURRENT-OBS-' + ('00000' + current_serial_number).slice(-5);
+                let newSerialNumber = 'FORKLIFT-INS-' + ('00000' + current_serial_number).slice(-5);
 
                 var newCurrentFormSet = `
                         <div class="row mt-4 form-set-current">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">{{ __('inspection.current_month_observation') }}</h4>
+                                                    <h4 class="text-white">{{ __('inspection.forklift_inspection_report') }}</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end gap-0 m-2">
@@ -523,46 +430,45 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
-                                                            class=" form-control single-select location-select" style="width: 100%">
-                                                            <option value="">Select location</option>
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <select name="department[${form_set_count}]" id="department[${form_set_count}]"
+                                                            class=" form-control single-select department-select" style="width: 100%">
+                                                            <option value="">Select department</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                  <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.unit') }}</label>
+                                                        <select name="unit[${form_set_count}]" id="unit[${form_set_count}]"
+                                                            class=" form-control single-select unit" style="width: 100%">
+                                                            <option value="">Select Unit</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                  <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[${form_set_count}]"
-                                                            class="form-control date_of_observation" >
+                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
+                                                        <input type="text" name="identification_no[${form_set_count}]"
+                                                            id = "identification_no[${form_set_count}]" class="form-control identification_no" value="${newSerialNumber}">
                                                     </div>
-                                                </div>
-                                                 <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.observation') }}</label>
-                                                        <input type="text" name="observation[${form_set_count}]" id = "observation"
-                                                            class="form-control" placeholder="Observation">
-                                                    </div>
-                                                </div>
-                                                <div class="form-input col-md-4 mb-2">
-                                                    <label class="form-label">Image</label>
-                                                    <input type="file" name="checklist_file[${form_set_count}]" id="checklist_file"
-                                                        class="form-control form-control-sm"  accept="image/jpeg, image/png"
-                                                        placeholder="Enter the image">
-                                                    <small>Allowed file types: jpg</small>
-                                                    <div id="checklist_file_error" class="text-danger"></div>
-                                                    {{-- @error('checklist_file')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror --}}
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.recomended_action') }}</label>
-                                                        <input type="text" name="recomended_action[${form_set_count}]"
-                                                            id = "unit_of_measurement" class="form-control">
+                                                            class="form-label">{{ __('inspection.observation') }}</label>
+                                                        <input type="text" name="observation[${form_set_count}]" id = "observation[${form_set_count}]"
+                                                            class="form-control " placeholder="Observation">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.corrective_action') }}</label>
+                                                        <input type="text" name="corrective_action[${form_set_count}]"
+                                                            id = "corrective_action[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -570,7 +476,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
                                                        <select name="emp_id[${form_set_count}]" id="emp_id[${form_set_count}]"
-                                                            class="form-control single-select emp_id" style="width: 100%">
+                                                            class="form-control single-select responsibility_id" style="width: 100%">
                                                             <option value="">Select Employee Name</option>
                                                         </select>
                                                     </div>
@@ -589,10 +495,10 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.observation_status') }}</label>
                                                         <select name="observation_status[${form_set_count}]" id="observation_status[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
+                                                            class=" form-control single-select observation_status" style="width: 100%">
                                                             <option value="">Select Observation Status</option>
-                                                            <option value="{{ encryptId(1) }}">Active</option>
-                                                            <option value="{{ encryptId(0) }}">DeActive</option>
+                                                            <option value="{{ encryptId(1) }}">OPEN</option>
+                                                            <option value="{{ encryptId(0) }}">CLOSED</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -600,8 +506,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
-
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control remarks" style="resize: none;"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -609,39 +514,47 @@
 
                 let newFormCurrentSetElement = $(newCurrentFormSet); // Convert string to jQuery object
 
-                let locationSelect = newFormCurrentSetElement.find('select[name^="location"]');
-                GetLocation(locationSelect);
+                let departmentSelect = newFormCurrentSetElement.find('select[name^="department"]');
+                Getdepartment(departmentSelect);
+
+                let locationSelect = newFormCurrentSetElement.find('select[name^="unit"]');
+                Getunit(locationSelect);
 
                 $('.form-wrapper-current').append(newFormCurrentSetElement);
 
-                $("select[name='location[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='department[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Please select the Location',
+                        required: 'Please select the department',
                     }
                 });
 
+                $(".unit").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Unit',
+                    }
+                });
                 $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
                     required: true,
-                    uniqueItemCode: true,
                     messages: {
                         required: 'Please Enter the Observation',
                     }
                 });
-                $("input[name='date_of_observation[" + form_set_current_count + "]']").rules('add', {
-                    required: true,
-                    uniqueItemCode: true,
-                    messages: {
-                        required: 'Please Select the Observation Date',
-                    }
-                });
-                $("input[name='recomended_action[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='corrective_action[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Please Enter the Recomended Action',
+                        required: 'Please Enter the Corrective  and Preventive Action',
                     }
                 });
 
+
+                $(".responsibility_id").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Employee',
+                    }
+                });
 
                 $("input[name='date_of_compliance[" + form_set_current_count + "]']").rules('add', {
                     required: true,
@@ -650,28 +563,26 @@
                     }
                 });
 
-                $("input[name='observation_status[" + form_set_current_count + "]']").rules('add', {
+                $(".observation_status").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Please Select the Observation Status',
+                        required: 'Please Select the Observation',
                     }
                 });
 
-                $("input[name='remarks[" + form_set_current_count + "]']").rules('add', {
+                $(".remarks").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Enter the Remarks',
                     }
                 });
 
+
                 flatpickr(".date_of_compliance", {
                     dateFormat: "d-m-Y",
                     minDate: new Date(),
                 });
 
-                flatpickr(".date_of_observation", {
-                    dateFormat: "d-m-Y",
-                });
 
 
                 current_serial_number++;
@@ -708,17 +619,34 @@
             });
 
 
-            function GetLocation(selectElement) {
+            function Getdepartment(selectElement) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ admin_url('safety/eye-wash-inspection/monthly/get/locations') }}",
+                    url: "{{ admin_url('safety/forklift-inspection/get/department') }}",
                     success: function(response) {
 
                         if (response.length > 0) {
-                            let options = `<option value="">Select Location</option>`;
-                            response.forEach(location => {
+                            let options = `<option value="">Select Department</option>`;
+                            response.forEach(department => {
                                 options +=
-                                    `<option value="${location.id}">${location.location_name}</option>`;
+                                    `<option value="${department.id}">${department.department_name}</option>`;
+                            });
+                            $(selectElement).html(options).trigger('change');
+                        }
+                    }
+                });
+            }
+
+            function Getunit(selectElement) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ admin_url('safety/forklift-inspection/get/unit') }}",
+                    success: function(response) {
+                        if (response.length > 0) {
+                            let options = `<option value="">Select Unit</option>`;
+                            response.forEach(unit => {
+                                options +=
+                                    `<option value="${unit.id}">${unit.unit_name}</option>`;
                             });
                             $(selectElement).html(options).trigger('change');
                         }
@@ -729,17 +657,17 @@
             function updateCurrentPageIndices() {
                 $('.form-wrapper-current .form-set-current').each(function(index) {
                     let idx = index + 1;
-                    let newSerialNumber = 'CURRENT-OBS-' + ('000000' + idx).slice(-6);
-                    $(this).find("input[name^='sr_no']").val(newSerialNumber);
+                    let newSerialNumber = 'FORKLIFT-INS-' + ('000000' + idx).slice(-6);
+                    $(this).find("input[name^='identification_no']").val(newSerialNumber);
 
-                    $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
-                    $(this).find('input[name^="date_of_observation"]').attr('name', 'date_of_observation[' + idx + ']');
+                    $(this).find('input[name^="identification_no"]').attr('name', 'identification_no[' + idx + ']');
+                    $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
+                    $(this).find('input[name^="unit"]').attr('name', 'unit[' + idx + ']');
                     $(this).find('input[name^="observation"]').attr('name', 'observation[' + idx + ']');
-                    $(this).find('select[name^="recomended_action"]').attr('name', 'recomended_action[' + idx + ']');
-                    $(this).find('input[name^="date_of_compliance"]').attr('name', 'date_of_compliance[' + idx +
-                        ']');
-                    $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx +
+                    $(this).find('select[name^="corrective_action"]').attr('name', 'corrective_action[' + idx + ']');
+                    $(this).find('input[name^="date_of_compliance"]').attr('name', 'date_of_compliance[' + idx + ']');
+                    $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx + ']');
+                    $(this).find('input[name^="emp_id"]').attr('name', 'emp_id[' + idx +
                         ']');
                     $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 

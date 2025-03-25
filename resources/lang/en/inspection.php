@@ -107,14 +107,21 @@ return [
     'safety_walk_taken_by' => 'Safety Walk Taken By',
     'observation' => 'Observation',
     'recomended_action' => 'Recomended Action',
-    'employee' => 'Employee',
+    'employee' => 'Responsibility',
     'date_of_compliance' => 'Date of Compliance',
     'previous_month_observation' => 'Previous Month Obervation',
     'current_month_observation' => 'Current Month Obervation',
+    'date_of_observation' => 'Observation Date',
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',
+    'approval' => 'Approval',
 
 
-    // Floor Stretcher 
+    // Floor Stretcher
     'dept/location' => 'Department / Location',
+
+    //ForkLift Inspection Report
+    'forklift_inspection_report' => 'ForkLift Inspection Report',
+    'corrective_action' => 'Corrective and Preventive Action',
+
 ];
