@@ -51,11 +51,9 @@
                             {{ getUnitname($value->unit) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
+                            {{ getInspectionStatus($value->approve_status) }}
                         </td>
+                     
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

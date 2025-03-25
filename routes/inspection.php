@@ -12,7 +12,6 @@ use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
-
 use App\Http\Controllers\Inspection\Ohc\MonthlyMedicineStoreController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
@@ -25,6 +24,7 @@ use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -255,6 +255,8 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('exportViewPdf/{id}', [ForkLiftInspectionController::class, 'exportViewPdf']);
         Route::get('get/department', [ForkLiftInspectionController::class, 'GetDepartment']);
         Route::get('get/unit', [ForkLiftInspectionController::class, 'GetUnit']);
+        Route::get('approval/{id}', [ForkLiftInspectionController::class, 'approval']);
+        Route::post('verify/submit', [ForkLiftInspectionController::class, 'approvalSubmit']);
     });
 
 
@@ -434,4 +436,15 @@ Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'],function (){
     Route::GET('export/excel',[MonthlyMedicineStoreController::class,'ExportExcel']);
     Route::GET('export/pdf',[MonthlyMedicineStoreController::class,'ExportPdf']);
     Route::GET('exportViewpdf/{id}',[MonthlyMedicineStoreController::class,'ExportViewPDF']);
+});
+Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function(){
+    Route::get('list', [HealthInstrumentCalibrationController::class, 'index']);
+    Route::post('list', [HealthInstrumentCalibrationController::class, 'index']);
+    Route::get('add', [HealthInstrumentCalibrationController::class, 'add']);
+    Route::post('add/submit', [HealthInstrumentCalibrationController::class, 'store']);
+    Route::get('view/{id}', [HealthInstrumentCalibrationController::class, 'view']);
+    Route::get('generalpdf/{id}', [HealthInstrumentCalibrationController::class, 'generalpdf']);
+    Route::get('export/pdf', [HealthInstrumentCalibrationController::class, 'exportPdf']);
+    Route::get('export/excel', [HealthInstrumentCalibrationController::class, 'exportExcel']);
+    Route::post('status', [HealthInstrumentCalibrationController::class, 'statusChange']);
 });

@@ -185,7 +185,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
-
+        defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
@@ -294,8 +294,11 @@ class AppServiceProvider extends ServiceProvider
         //Status Log
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
+        defined('FORKLIFT_INSPECTION') or define('FORKLIFT_INSPECTION', 3);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
-        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 4);
+        defined('OHS_SUMMARY_REPORT') or define('OHS_SUMMARY_REPORT', 5);
+        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 6);
+        defined('SAFETY_WALK_OBSERVATION') or define('SAFETY_WALK_OBSERVATION', 7);
 
 
         // Monthly Eye Wash

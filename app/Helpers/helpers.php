@@ -1938,7 +1938,8 @@ if (!function_exists('getMonth')) {
 
             $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
-                return '';
+                $name = User::where('id', $id)->first();
+                return $name->signature_upload;
             } else {
                 return $name->file_path;
             }
@@ -1952,7 +1953,8 @@ if (!function_exists('getMonth')) {
                 case RRAA_INSPECTION:
                     $name = DB::table('inspection_rraa_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
-                        return '';
+                        $name = User::where('id', $id)->first();
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
@@ -1960,14 +1962,23 @@ if (!function_exists('getMonth')) {
 
                     $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
-                        return '';
+                        $name = User::where('id', $id)->first();
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
                 case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
-                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
                         return '';
+                    } else {
+                        return $name->file_path;
+                    }
+                case OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST:
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        $name = User::where('id', $id)->first();
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
@@ -2017,7 +2028,6 @@ if (!function_exists('getMonth')) {
                 return 'Safety Officer Approved';
             } else if ($id == SAFETY_OFFICER_REJECTED) {
                 return 'Safety Officer rejected';
-
             } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
                 return 'Medical Assistant /Floor Manager  Approval Pending';
             } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
@@ -2094,6 +2104,21 @@ if (!function_exists('getMonth')) {
             return 'Inspection Creation';
 
             return '<span class="badge ' . $badgeClass . '">' . $status . '</span>';
+        }
+    }
+
+    if (!function_exists('getObservationStatus')) {
+        function getObservationStatus($id)
+        {
+            if ($id == OBSERVATION_APPROVED) {
+                return 'Observation Approved';
+            } else if ($id == OBSERVATION_REJECTED) {
+                return 'Observation Rejected';
+            } else if ($id == OBSERVATION_PENDING) {
+                return 'Observation Pending';
+            }
+
+            return 'Unknown';
         }
     }
 

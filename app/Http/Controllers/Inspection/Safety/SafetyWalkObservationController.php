@@ -14,6 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
+use App\Models\Inspection\Safety\SignatureUpload;
 
 class SafetyWalkObservationController extends Controller
 {
@@ -22,6 +23,7 @@ class SafetyWalkObservationController extends Controller
     private $shift;
     private $unit;
     private $location;
+    private $signature;
 
     public function __construct()
     {
@@ -30,6 +32,7 @@ class SafetyWalkObservationController extends Controller
         $this->shift = new Shift();
         $this->unit = new Unit();
         $this->location = new Location();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -122,6 +125,7 @@ class SafetyWalkObservationController extends Controller
 
             $safety_walk_observation =  $this->safety_walk->Store();
             $safety_walk_observation_details = $this->observation_details->store($safety_walk_observation->id);
+            $signature_update = $this->signature->signatureUpload(SAFETY_WALK_OBSERVATION, $safety_walk_observation->id);
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
@@ -200,7 +204,7 @@ class SafetyWalkObservationController extends Controller
                 $export[] =  $data->doc_no;
                 $export[] =  displaydateformat($data->issue_date);
                 $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);
+                $export[] =  getObservationStatus($data->observation_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -233,7 +237,7 @@ class SafetyWalkObservationController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                "Status",
+                "Observation Status",
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -317,37 +321,37 @@ class SafetyWalkObservationController extends Controller
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->remarks;
-            $eye_wash_inspection = $this->safety_walk->approvalSubmit($id, $status);
+            $remarks = $request->capa_remarks;
+            $eye_wash_inspection = $this->safety_walk->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->safety_walk->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(SAFETY_WALK_OBSERVATION, $id);
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             if ($status == 1) {
-                $message = 'APPROVED';
-                $web_link =   admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
                 $to_status = OBSERVATION_APPROVED;
             } else {
-                $message = 'REJECTED';
-                $web_link =   admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
                 $to_status = OBSERVATION_REJECTED;
             }
-            // $mailsubject = 'SAFETY INSPECTION';
-            // $notificationData = array(
-            //     'notification_type' => SAFETY_INSPECTION,
-            //     'module_type' => 1,
-            //     'notification_message' => $mailsubject,
-            //     'mobile_notification' => json_encode(array(
-            //         'title' => $mailsubject,
-            //         'message' => $message,
-            //         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-            //         'id' => $inspection_details->id,
-            //         'module' => 1,
-            //     )),
-            //     'web_link' =>  $web_link,
-            //     'assigned_user' => array_to_string($users),
-            //     'created_by' => Auth::id(),
-            // );
-
-
-            // notificationSave($notificationData);
+            $web_link =   admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {

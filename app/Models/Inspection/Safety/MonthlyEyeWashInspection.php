@@ -69,7 +69,7 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where('inspection_monthly_eyewash.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_monthly_eyewash.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_monthly_eyewash.revision_data', 'LIKE', '%' . $request->rev_date . '%');
@@ -273,8 +273,8 @@ class MonthlyEyeWashInspection extends Model
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->where('inspection_monthly_eyewash.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_monthly_eyewash.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
