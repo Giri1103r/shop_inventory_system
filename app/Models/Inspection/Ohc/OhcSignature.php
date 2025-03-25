@@ -123,10 +123,9 @@ class OhcSignature extends Model
 
     public function signatureLogUpload($empId, $sfty_petty_id, $type, $fileInputName)
     {
-        // dd($empId, $sfty_petty_id, $type, $fileInputName);
         try {
             $signatures = request()->file($fileInputName);
-            // dd($signatures);
+
             if (is_array($signatures)) {
                 foreach ($signatures as $signature) {
                     if ($signature) {
@@ -143,7 +142,7 @@ class OhcSignature extends Model
                         $file_path = $upload_path . '/' . $file_name;
                         $file_extension = $signature->getClientOriginalExtension();
 
-                      $data=  DB::table('inspection_ohc_signatureupload')->insert([
+                        DB::table('inspection_ohc_signatureupload')->insert([
                             'emp_id' => $empId,
                             'ohc_id' => $sfty_petty_id,
                             'type' => OHC_SAFETY_PETTY_LOGBOOK_INSPECTION,
@@ -154,7 +153,7 @@ class OhcSignature extends Model
                             'file_extension' => $file_extension,
                             'created_by' => Auth::id(),
                         ]);
-                        dd($data);
+
                     }
                 }
             } else {
@@ -187,7 +186,6 @@ class OhcSignature extends Model
 
             return true;
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -208,11 +206,11 @@ class OhcSignature extends Model
 
     public function getGivenBy($type, $sub_type,$id)
     {
-      $data =  $this->where('ohc_id', $id)
+        $data =  $this->where('ohc_id', $id)
                     ->where('type', $type)
                     ->where('sub_type', $sub_type)
                     ->first();
-        // dd($data);
+
         return $data;
     }
     public function getReceivedBy($type, $sub_type,$id)
