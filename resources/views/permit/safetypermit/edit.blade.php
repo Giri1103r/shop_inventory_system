@@ -581,7 +581,7 @@
                                                                     style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                     <input type="checkbox" class="protective-checkbox"
                                                                         name="protective_equip[{{ encryptId($job) }}][]"
-                                                                        value="{{ $details['checkpoints'][$index] }}"
+                                                                        value="{{ $details['checkid'][$index] }}"
                                                                         id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                         @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
 
@@ -667,7 +667,7 @@
                                                                                 <input type="checkbox"
                                                                                     class="equiment_involved"
                                                                                     name="equiment_involved[{{ encryptId($job) }}][]"
-                                                                                    value="{{ $details['checkpoints'][$index] }}"
+                                                                                    value="{{ $details['checkid'][$index] }}"
                                                                                     id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
                                                                                     @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
                                                                                 <label class="form-label"
@@ -707,7 +707,7 @@
                                                                             style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                             <input type="checkbox" class=""
                                                                                 name="precaution_taken[{{ encryptId($job) }}][]"
-                                                                                value="{{ $details['checkpoints'][$index] ?? '' }}"
+                                                                                value="{{ $details['checkid'][$index] ?? '' }}"
                                                                                 id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] ?? '' }}"
                                                                                 checked>
                                                                             <label class="form-label"
@@ -739,7 +739,7 @@
                                                                         style="flex: 1 1 calc(33% - 10px);align-items: center; gap: 5px;">
                                                                         @php
                                                                             $checkpointValue =
-                                                                                $details['checkpoints'][$index] ?? null;
+                                                                                $details['checkid'][$index] ?? null;
                                                                         @endphp
                                                                         <input type="checkbox" class="equipment_checklist"
                                                                             name="equipment_checklist[{{ encryptId($job) }}][]"
@@ -791,8 +791,8 @@
                                                                         style="flex: 1 1 calc(33% - 10px); align-items: center; gap: 5px;">
                                                                         <input type="checkbox" class=""
                                                                             name="safework_instruction[{{ encryptId($job) }}][]"
-                                                                            value="{{ $details['checkpoints'][$index] }}"
-                                                                            id="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}"
+                                                                            value="{{ $details['checkid'][$index] }}"
+                                                                            id="checkpoint-{{ $job }}-{{ $details['checkid'][$index] }}"
                                                                             @if (isset($details['checkpoints'][$index]) && $details['checkpoints'][$index]) checked @endif>
                                                                         <label class="form-label"
                                                                             for="checkpoint-{{ $job }}-{{ $details['checkpoints'][$index] }}">
@@ -1870,7 +1870,7 @@
                             });
                     }
 
-
+                    console.log("Generating Checkbox: ", item.id, equipmentName);
                     if (!isAlreadyInvolved && !EquipmentInvolveMap.has(equipmentName)) {
                         const isChecked = isDefaultChecked ? 'checked' : '';
                         const checkpointHtml = `
@@ -1885,6 +1885,7 @@
                         ${isChecked}>
                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                 </div>`;
+            
                         container.append(checkpointHtml);
 
 
@@ -1977,6 +1978,8 @@
                 }
             });
         });
+
+
 
         $(document).ready(function() {
             function togglePrecaution() {

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Forklift Inspection')
+@section('title', 'Monthly Forklift Inspection')
 @section('pageurl', admin_url('safety/forklift-inspection/monthly/list'))
 
 
@@ -99,6 +99,10 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
             });
 
             $(function() {

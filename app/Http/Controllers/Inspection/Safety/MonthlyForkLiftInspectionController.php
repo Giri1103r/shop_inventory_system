@@ -184,6 +184,7 @@ class MonthlyForkLiftInspectionController extends Controller
         try {
             $forklift_inspection = $this->forklift->store();
             $id = $forklift_inspection->id;
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'SAFETY INSPECTION';
@@ -259,10 +260,13 @@ class MonthlyForkLiftInspectionController extends Controller
     public function approvals(Request $request)
     {
         try {
+
             $id = decryptId($request->id);
+            $approval_type = $request->employee_type;
             $inspection_details = $this->forklift->selectOne($id);
             $data = [
                 'inspection_details' => $inspection_details,
+                'approval_type' => $approval_type,
             ];
             return view('inspection.Safety.forklift_inspection_monthly.approval', $data);
         } catch (Exception $ex) {
@@ -278,7 +282,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
             $inspection_updates = $this->forklift->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
             $inspection_details = $this->forklift->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'ForkLift Inspeciton Approved Successfully';
@@ -348,7 +352,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $forklift_inspection = $this->forklift->capaSubmit($id);
             $inspection_details = $this->forklift->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -409,7 +413,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $forklift_inspection = $this->forklift->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -421,7 +425,7 @@ class MonthlyForkLiftInspectionController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
             $mailsubject = 'SAFETY INSPECTION';
@@ -483,7 +487,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $forklift_inspection = $this->forklift->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -495,7 +499,7 @@ class MonthlyForkLiftInspectionController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
             $mailsubject = 'SAFETY INSPECTION';
@@ -556,7 +560,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $forklift_inspection = $this->forklift->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
             $inspection_details = $this->forklift->selectOne($id);
             if ($status == 1) {
                 $message = 'ForkLift Inspeciton Approved Successfully!';

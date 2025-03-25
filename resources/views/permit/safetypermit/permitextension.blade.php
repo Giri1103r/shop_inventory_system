@@ -37,8 +37,7 @@
                                             <div class="col-md-4 mb-3">
                                                 <label for="date" class="form-label require">Date</label>
                                                 <input type="text" class="form-control form-control-sm" id="date"
-                                                    name="date" readonly
-                                                    value="{{ Displaydateformat($safetypermit->date) }}">
+                                                    name="date">
                                             </div>
 
                                             <div class="col-md-4">
@@ -81,6 +80,77 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            let permitDate = "{{ $safetypermit->date }}";
+            console.log("Raw permitDate:", permitDate);
+
+            let permitDateObj;
+
+
+            if (permitDate.includes('-')) {
+                let permitDateParts = permitDate.split('-');
+                if (permitDateParts[0].length === 4) {
+
+                    permitDateObj = new Date(permitDate);
+                } else {
+
+                    permitDateObj = new Date(permitDateParts[2], permitDateParts[1] - 1, permitDateParts[0]);
+                }
+            } else {
+                permitDateObj = new Date(permitDate);
+            }
+
+        
+
+            let currentDateObj = new Date();
+            currentDateObj.setHours(0, 0, 0, 0);
+
+            console.log("Current Date Object:", currentDateObj);
+
+            let minDate, maxDate;
+
+
+            let yesterday = new Date(currentDateObj);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            let tomorrow = new Date(currentDateObj);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            if (
+                permitDateObj.getDate() === yesterday.getDate() &&
+                permitDateObj.getMonth() === yesterday.getMonth() &&
+                permitDateObj.getFullYear() === yesterday.getFullYear()
+            ) {
+
+                minDate = currentDateObj;
+                maxDate = currentDateObj;
+            } else if (
+                permitDateObj.getDate() === currentDateObj.getDate() &&
+                permitDateObj.getMonth() === currentDateObj.getMonth() &&
+                permitDateObj.getFullYear() === currentDateObj.getFullYear()
+            ) {
+
+                minDate = permitDateObj;
+                maxDate = tomorrow;
+            } else {
+
+                minDate = permitDateObj;
+                maxDate = currentDateObj;
+            }
+
+
+
+            $("#date").flatpickr({
+                enableTime: false,
+                dateFormat: "d-m-Y",
+                minDate: minDate,
+                maxDate: maxDate
+            });
+        });
+
+
+
+
+        $(document).ready(function() {
 
             @if ($showAlert)
                 Swal.fire({
@@ -109,6 +179,8 @@
                     instance.set("minTime", toTime);
                 },
             });
+
+
 
 
             $.validator.addMethod(

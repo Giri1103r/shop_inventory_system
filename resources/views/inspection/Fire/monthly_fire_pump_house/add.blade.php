@@ -178,7 +178,7 @@
                                         </div>
 
                                         <hr>
-                                        <div class="submit-button" style="text-align: right;">
+                                        <div class="submit-button " style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel

@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Forklift Inspection')
+@section('title', 'Health Instrument Calibration')
 @section('content')
 
     <div style="width:100%;">
@@ -33,11 +33,14 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->rev_data }}
+                            {{ displaydateformat($value->revision_date) }}
                         </td>
-    
-                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
-                            {{ getObservationStatus($value->observation_status) }}
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
+
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
