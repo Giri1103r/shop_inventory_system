@@ -151,7 +151,9 @@
                                                 {{ $getEHSReview->team_member_names }}
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-12 form-input">
                                             <label class="form-label">Remark</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->remark }}
@@ -705,7 +707,9 @@
                                                     {{ $getEHSVerify->team_member_names }}
                                                 </div>
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label">Remark</label>
                                                 <div class="view_data">
                                                     {{ $getEHSVerify->remark }}
@@ -769,7 +773,9 @@
                                                     {{ Displaydateformat($getEHSApprovalAccident->date) }}
                                                 </div>
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label">Remark</label>
                                                 <div class="view_data">
                                                     {{ $getEHSApprovalAccident->remark }}
@@ -796,8 +802,8 @@
                                                     <th>From Status</th>
                                                     <th>To Status</th>
                                                     <th>Approved By</th>
-                                                    <th>Remarks</th>
-                                                    <th>Date</th>
+                                                    <th style="width: 80%;">Remarks</th>
+                                                    <th style="width: 40%;">Date</th>
 
                                                 </tr>
                                             </thead>
