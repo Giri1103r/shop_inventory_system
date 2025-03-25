@@ -156,24 +156,25 @@
     </div>
 
     <table width="100%" style="width:100%;">
-       
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($inspection_detail->issue_date) ? $inspection_detail->issue_date : '') }}
+            </td>
         </tr>
-        
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}</td>
+                {{ getUsername(isset($inspection_detail->created_by) ? $inspection_detail->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_details->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_detail->created_at) }}</td>
         </tr>
     </table>
 
@@ -190,7 +191,7 @@
         </table>
     </div>
     @php
-        $inspection_details = json_decode($inspection_details->responses, true);
+        $inspection_details = json_decode($inspection_detail->responses, true);
         $srNo = 1;
         $checkpoint_keys = ['fs_first', 'fs_second', 'fs_third', 'fs_fourth', 'fs_fifth', 'fs_sixth'];
     @endphp
@@ -253,6 +254,19 @@
                     @php $srNo++; @endphp
                 @endforeach
             @endforeach
+            @php
+                $signature = GetSignature($inspection_detail->created_by, $inspection_detail->id, OHC_TYPE_FLOOR_STRETCHER);
+            @endphp
+            <tr>
+                <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                    Auditor Name: {{ getUsername(isset($inspection_detail->created_by))}}
+                </td>
+                <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                    {{ __('inspection.signature') }}: 
+                    <img src="{{ admin_url($signature) }}" alt="Signature" style="width:70px; vertical-align: middle;">
+                </td>
+            </tr>
+            
         </tbody>
     </table>
 

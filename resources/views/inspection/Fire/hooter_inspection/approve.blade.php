@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 HOOTER_INSPECTION,
@@ -342,7 +342,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
+                                                    $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
                                                         HOOTER_INSPECTION,
@@ -424,7 +424,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
+                                                    $signature = GetSignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
                                                         HOOTER_INSPECTION,
@@ -476,7 +476,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
+                                                    $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
                                                         HOOTER_INSPECTION,
@@ -529,7 +529,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
                                                     HOOTER_INSPECTION,
@@ -580,7 +580,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
                                                     HOOTER_INSPECTION,
