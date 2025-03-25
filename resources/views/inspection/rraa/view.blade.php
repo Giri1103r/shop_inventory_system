@@ -173,7 +173,7 @@
                         </div>
                         @endforeach
 
-                        @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                        {{-- @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -263,7 +263,7 @@
                                 @endif
                             </div>
                         </div>
-                        @endif
+                        @endif --}}
 
                         @if (isset($inspection_details->capa_remarks))
                         <div class="card-body ">
