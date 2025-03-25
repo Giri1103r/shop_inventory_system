@@ -41,12 +41,13 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">Active</option>
-                                                <option value="{{encryptId('2')}}">InActive</option>
+                                                <option value="{{ encryptId('1') }}">Active</option>
+                                                <option value="{{ encryptId('2') }}">InActive</option>
 
                                             </select>
                                         </div>
@@ -95,6 +96,9 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -155,8 +159,8 @@
                             name: 'issue_date',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'rev_data',
+                            name: 'rev_data',
                         },
                         {
                             data: 'observation_status',

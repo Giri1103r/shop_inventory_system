@@ -92,6 +92,23 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @php
+                                            $signature = GetSafetySignature(
+                                                $inspection_details->created_by,
+                                                $inspection_details->id,
+                                                SAFETY_WALK_OBSERVATION,
+                                            );
+                                        @endphp
+                                        @if (isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 100px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -167,9 +184,9 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.observation_status') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->water == 1)
+                                                            @if ($details->observation_status == 1)
                                                                 Active
-                                                            @elseif($details->water == 0)
+                                                            @elseif($details->observation_status == 0)
                                                                 Inactive
                                                             @else
                                                                 Unknown
@@ -228,7 +245,7 @@
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
@@ -240,6 +257,12 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
+                                            </div>
+
+                                            <div class="col-md-12 mb-2 form-input" id="capa_remarks">
+                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                    name="capa_remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-approve></x-button-approve>
@@ -259,4 +282,48 @@
 
 @stop
 @push('script')
+    <script>
+        $('#forklistassessmentAdd').validate({
+            rules: {
+                capa_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                capa_remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+    </script>
 @endpush

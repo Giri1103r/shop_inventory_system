@@ -259,7 +259,7 @@ class SafetyGalleryInsepctionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'safetygallery Inspeciton Approved Successfully';
@@ -329,7 +329,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
             $inspection_details = $this->safetygallery->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -390,7 +390,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -464,7 +464,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -538,7 +538,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Safety Gallery Inspeciton Approved Successfully!';
