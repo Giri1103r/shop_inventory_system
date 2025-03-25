@@ -184,6 +184,8 @@ class MSDSController extends Controller
                $msdsId = $msds->id;
                $this->msdsCheckList->store($msdsId);
 
+               $this->signature->signatureStrore(MSDS_INSPECTION,$msds->id);
+
                $mailsubject = 'MSDS Inspection completed by fire associate';
                $ehsOfficer = GetEHSOfficer();
                $message = 'MSDS Inspection completed by fire associate';
