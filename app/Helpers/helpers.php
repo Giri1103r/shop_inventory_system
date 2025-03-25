@@ -35,6 +35,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 if (!function_exists('get_encryptVal')) {
@@ -1418,6 +1419,16 @@ if (!function_exists('getMonth')) {
             return $data;
         }
     }
+
+    if (!function_exists('getFIRCount')) {
+
+    function getFIRCount()
+    {
+        $data = FirstAidRecordChecklist::get()->count();
+        return $data;
+    }
+}
+
 
     if (!function_exists('getCategoryname')) {
 
