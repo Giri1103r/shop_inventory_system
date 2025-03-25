@@ -455,9 +455,10 @@ class SafetyPermitController extends Controller
                 'protectiveEquipment' => $protectiveEquipment,
                 'workman' => $workman,
             ];
-            
+
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
+           
             report($ex);
             Session::flash('error', 'Something Went Wrong Please try again after some time');
             return redirect('safetypermit/list');
@@ -467,6 +468,8 @@ class SafetyPermitController extends Controller
     public function update(Request $request)
     {
         try {
+
+
             $id = decryptId($request->safetypermitid);
             $rules = [
                 'date' => 'required|date',

@@ -205,10 +205,10 @@ class RRAAController extends Controller
             try {
 
                $rraa = $this->rraa_details->store();
-             
                $rraa_id = $rraa->id;
-               
                $this->rraa_checkList->store($rraa_id);
+
+                $this->signature->signatureStore(RRAA_INSPECTION,$rraa->id);
 
                $mailsubject = 'RRAA Inspection completed by fire associate';
                $ehsOfficer = GetEHSOfficer();

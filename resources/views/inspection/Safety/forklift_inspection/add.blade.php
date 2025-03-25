@@ -61,8 +61,25 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="">
+                                                        class="form-control inspection_date" value="">
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                         <hr>
@@ -119,7 +136,8 @@
                                                         <label
                                                             class="form-label">{{ __('inspection.identification_no') }}</label>
                                                         <input type="text" name="identification_no[1]"
-                                                            id = "identification_no" class="form-control identification_no"
+                                                            id = "identification_no"
+                                                            class="form-control identification_no"
                                                             value="{{ forkliftInspection() }}">
                                                     </div>
                                                 </div>
@@ -144,7 +162,8 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
                                                         <select name="emp_id[1]" id="emp_id[1]"
-                                                            class="form-control single-select emp_id" style="width: 100%">
+                                                            class="form-control single-select responsibility_id"
+                                                            style="width: 100%">
                                                             <option value="">Select Employee Name</option>
                                                         </select>
                                                     </div>
@@ -214,6 +233,9 @@
                     dateFormat: "d-m-Y",
                     minDate: new Date(),
                 });
+                flatpickr(".inspection_date", {
+                    dateFormat: "d-m-Y",
+                });
                 flatpickr("#issue_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -249,6 +271,9 @@
                                 required: true,
                             },
                             rev_date: {
+                                required: true,
+                            },
+                            signature_image:{
                                 required: true,
                             },
                             "inspection_date": {
@@ -296,6 +321,9 @@
                             },
                             rev_date: {
                                 required: "Revision Date required",
+                            },
+                            signature_image: {
+                                required: "Signature is required",
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",
@@ -356,7 +384,7 @@
                     });
                 });
 
-                $('.emp_id').select2({
+                $('.responsibility_id').select2({
                     ajax: {
                         url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
                         dataType: 'json',
@@ -584,12 +612,11 @@
                 });
 
 
-
                 current_serial_number++;
                 form_set_current_count++;
                 updateCurrentPageIndices();
 
-                $('.emp_id').select2({
+                $('.responsibility_id').select2({
                     ajax: {
                         url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
                         dataType: 'json',
@@ -684,7 +711,7 @@
                 if (currentFormSets <= minFormCurrentSets) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Minimum  Current Month Observtion Required',
+                        title: 'Minimum Observtion Required',
                         text: 'At least one Observation is required.',
                         confirmButtonColor: '#3085d6'
                     });

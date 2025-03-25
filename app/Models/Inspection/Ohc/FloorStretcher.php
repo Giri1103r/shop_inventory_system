@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Ohc;
 
 use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class FloorStretcher extends Model
@@ -17,6 +18,7 @@ class FloorStretcher extends Model
         'frequency',
         'unit',
         'shift',
+        'responses',
         'created_by',
         'updated_by',
         'created_at',
@@ -101,6 +103,32 @@ class FloorStretcher extends Model
         return $datas;
     }
 
+    public function store()
+    {
+        $request = request();
+
+        $json_data = [
+            'resource_code' => $request->resource_code,
+            'response' => $request->response,
+            'remarks' => $request->remarks,
+        ];
+
+        $data = array(
+            'issue_date' => $request->inspection_date,
+            'unit' => decryptId($request->unit_id),
+            'shift' => decryptId($request->shift_id),
+            'frequency' => decryptId($request->frequency_id),
+            'responses' => json_encode($json_data),
+            'created_by' => Auth::id(),
+        ); 
+
+        return $this->create($data);
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id',$id)->where('status',1)->where('trash','NO')->first();
+    }
 
     public function exportdata()
     {

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Ohc Floor Stretcher Checklist Add')
-@section('pageurl', admin_url('ohc/floor-stretcher/checklist/list'))
+@section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,20 +20,20 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/floor-stretcher/checklist/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/floor_stretcher/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form mx-3">
-                                    <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('ohc/floor-stretcher/checklist/add/submit') }}"
+                                    <form method="POST" id="safetygalleryAdd"
+                                        action="{{ admin_url('ohc/floor_stretcher/checklist/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
-                                                                        
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -55,7 +55,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
@@ -83,54 +83,224 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <table class="container p-5 table-responsive">
+                                                <thead>
+                                                    <tr>
+                                                        <th rowspan="2"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.sr_no') }}
+                                                        </th>
+                                                        <th rowspan="2"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:12%;"
+                                                            class="require">
+                                                            {{ __('inspection.resource_code') }}
+                                                        </th>
+                                                        <th rowspan="2"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:12%;"
+                                                            class="require">
+                                                            {{ __('inspection.dept/location') }}
+                                                        </th>
+                                                        <th colspan="6"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:48%;"
+                                                            class="require">
+                                                            {{ __('inspection.checkpoints') }}
+                                                        </th>
+                                                        <th rowspan="2"
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:20%;"
+                                                            class="require">
+                                                            {{ __('inspection.remarks') }}
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_first') }}
+                                                        </th>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_second') }}
+                                                        </th>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_third') }}
+                                                        </th>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_fourth') }}
+                                                        </th>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_fifth') }}
+                                                        </th>
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width:8%;"
+                                                            class="require">
+                                                            {{ __('inspection.fs_sixth') }}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($checklist_details as $key => $details)
+                                                        @foreach ($details as $index => $checklist)
+                                                            <tr>
+                                                                <td
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    {{ $loop->iteration }}
+                                                                </td>
+                                                                <td
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <input type="text"
+                                                                        name="resource_code[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                        class="form-control">
+                                                                </td>
+                                                                <td
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    {{ $checklist->checklist_name }}
+                                                                </td>
+                                                                <td style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;"
+                                                                    class="form-input">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                                                                    <div
+                                                                        style="display: flex; flex-direction: column; gap: 5px;">
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
+                                                                                value="YES"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio"
+                                                                                name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
+                                                                                value="NO"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="form-input"
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; text-align: center;">
+                                                                    <textarea class="form-control" name="remarks[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                        rows="4" style="resize:none;"></textarea>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+
 
                                         </div>
-                                        <hr>
-                                        <div class="form-wrapper">
-                                            <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Floor Stretcher Checklist</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
-                                                        <input type="text" name="resource_code[1]"
-                                                            id = "resource_code" class="form-control">
+                                        <div class="row m-2">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
                                                     </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.dept/location') }}</label>
-                                                        <input type="text" name="dept_location[1]" id="dept_location"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-
+                                                @endif
                                             </div>
                                         </div>
 
 
-                                        <div class="submit-button" style="text-align: right;">
+
+                                        <div class="submit-button m-2" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
@@ -163,102 +333,48 @@
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
-                });
             });
             $(function() {
-                $.validator.addMethod("noSpaces", function(value, element) {
-                    return this.optional(element) || value.trim().length > 0;
-                }, "This field cannot contain only spaces");
 
-                $('#eyewashAdd').validate({
+
+                $('#safetygalleryAdd').validate({
                     rules: {
-                        doc_no: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            noSpaces: true,
-                        },
+
                         issue_date: {
                             required: true,
                         },
                         inspection_date: {
                             required: true,
                         },
-                        location_id: {
-                            required: true,
-                        },
-                        shift_id: {
-                            required: true,
-                        },
-                        next_due: {
+                        shift: {
                             required: true,
                         },
                         unit_id: {
                             required: true,
                         },
+                        resource_code: {
+                            required: true,
+                        },
                         frequency_id: {
                             required: true,
                         },
-                        identification_no: {
+                        "remarks[*][*]": {
                             required: true,
                             minlength: 3,
                             maxlength: 100,
-                            noSpaces: true,
-                        },
-                        forklift_type: {
-                            required: true,
-                        },
-                        "check_items[1]": {
-                            required: true,
-                        },
-                        "quantity[1]": {
-                            required: true,
-                        },
-                        "department[1]": {
-                            required: true,
-                        },
-                        "resource_code[1]": {
-                            required: true,
-                        },
-                        "remarks[1]": {
-                            required: true,
-                        },
-                        device_image: {
-                            required: true,
-                            extension: "jpg",
-                            filesize: 2097152
-                        },
-                        observation: {
-                            required: true,
                         },
 
                     },
                     messages: {
-                        doc_no: {
-                            required: "Document Number is Required",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
-                        },
+
                         issue_date: {
                             required: "Date Of Audit is required",
-                        },
-                        rev_date: {
-                            required: "Revision Date required",
                         },
                         inspection_date: {
                             required: "Inspeciton Date is required",
                         },
-                        location_id: {
-                            required: "Location is required",
-                        },
-                        shift_id: {
+                        shift: {
                             required: "Shift is required",
-                        },
-                        next_due: {
-                            required: "Next due is required",
                         },
                         unit_id: {
                             required: "Unit is required",
@@ -266,30 +382,14 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
-                        "quantity[1]": {
-                            required: "Please add the quantity",
+                        resource_code: {
+                            required: 'Recource Code is requried',
                         },
-                        "department[1]": {
-                            required: "Please Select The Department",
-                        },
-                        "check_items[1]": {
-                            required: "Please add the checkitems",
-                        },
-                        "resource_code[1]": {
-                            required: "Please add the resource code",
-                        },
-                        "remarks[1]": {
-                            required: "Please add remarks",
-                        },
-                        device_image: {
-                            required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 2MB."
-                        },
-                        observation: {
-                            required: "Please add observation",
-                        },
-
+                        "remarks[*][*]": {
+                            required: "Remarks is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        }
 
                     },
                     errorElement: 'span',
@@ -304,286 +404,33 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
+                        console.log('test');
                         form.submit();
 
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
-                    }
-                });
-            });
-
-            let form_set_count = 2;
-            let formIndex = 1;
-            const minFormSets = 1;
-            const maxFormSets = 200;
-            let serial_number = 2;
-            const maxObsSets = 5;
-
-            $(document).ready(function() {
-                $(document).on('click', '#add-row', function() {
-                    let currentFormSets = $('.form-wrapper .form-set').length;
-
-
-
-                    if (currentFormSets >= maxFormSets) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Maximum Hooter Inspection CheckList Reached',
-                            text: 'You can only add up to 200 Hooter Inspection CheckList.',
-                            confirmButtonColor: '#3085d6'
+                        console.log(errors + " field(s) are invalid");
+                        validator.errorList.forEach(function(error) {
+                            console.log("Field: " + error.element.name + ", Error: " +
+                                error
+                                .message);
                         });
-                        return;
-                    }
-
-                    let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
-
-                    var newFormSet = `
-                        <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hooter Inspection Checklist</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                                            class="form-control" value="{{ HooterSequence() }}" readonly>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
-                                                        <input type="text" name="resource_code[${form_set_count}]"
-                                                            id = "resource_code" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.check_items') }}</label>
-                                                        <textarea name="check_items[${form_set_count}]" id="check_items" class="form-control" style="resize: none;" rows="4"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-8 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.observations') }}</label>
-                                                         <!-- Checkboxes -->
-                                                        <div class="mt-1">
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="blinking_light[${form_set_count}]" id="blinking_light[${form_set_count}]"
-                                                                    value="YES">
-                                                                <label class="form-check-label" for="blinking_light">Blinking Light</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="connection[${form_set_count}]" id="connection[${form_set_count}]"
-                                                                    value="YES">
-                                                                <label class="form-check-label" for="connection">Connection</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[${form_set_count}]" id="auditbility[${form_set_count}]"
-                                                                    value="YES">
-                                                                <label class="form-check-label" for="auditbility">Audibility</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                    `;
-
-                    let newFormSetElement = $(newFormSet);
-
-                    let locationSelect = newFormSetElement.find('select[name^="department"]');
-                    GetDepartment(locationSelect);
-
-                    $('.form-wrapper').append(newFormSetElement);
-
-                    $("select[name='department[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the department',
-                        }
-                    });
-
-                    $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the resource code',
-                        }
-                    });
-
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the quantity',
-                        }
-                    });
-
-                    $("textarea[name='check_items[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the check items',
-                        }
-                    });
-
-                    $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please add the remarks',
-                        }
-                    });
-
-
-                    serial_number++;
-                    form_set_count++;
-                    updatePageIndices();
-
-                });
-
-                $(document).on('click', '#add-obs', function() {
-                    let observationFormsets = $('.form-observation .form-obs').length;
-
-                    if (currentFormSets >= maxObsSets) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Maximum Hooter Inspection Observation Limit Reached',
-                            text: 'You can only add up to 5 Hooter Inspection Observation.',
-                            confirmButtonColor: '#3085d6'
-                        });
-                        return;
-                    }
-
-                    var newObsSet = `
-                        <div class="row mt-4 form-obs">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hooter Inspection Observation</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
-
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                    `;
-
-                });
-            });
-
-            function GetDepartment(selectElement) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ admin_url('ohc/floor-stretcher/checklist/get/department') }}",
-                    success: function(response) {
-                        if (response.length > 0) {
-                            let options = `<option value="">Select Department</option>`;
-                            response.forEach(department => {
-                                options +=
-                                    `<option value="${department.id}">${department.department_name}</option>`;
-                            });
-                            $(selectElement).html(options).trigger('change');
-                        }
                     }
                 });
-            }
 
-            function updatePageIndices() {
-                $('.form-wrapper .form-set').each(function(index) {
-                    let idx = index + 1;
-                    let newSerialNumber = 'HTR-' + ('000000' + idx).slice(-6);
-                    $(this).find("input[name^='sr_no']").val(newSerialNumber);
-
-                    $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
-                    $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
-                    $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
-                    $(this).find('textarea[name^="check_items"]').attr('name', 'check_items[' + idx + ']');
-                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
-
-                    $(this).find('select').select2();
-                });
-            }
-
-
-            $(document).on('click', '.remove-row', function() {
-                let currentFormSets = $('.form-wrapper .form-set').length;
-
-                if (currentFormSets <= minFormSets) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Minimum One CheckList Required',
-                        text: 'At least One Hooter Inspection Checklist is required.',
-                        confirmButtonColor: '#3085d6'
+                $('textarea[name^="remarks"]').each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        messages: {
+                            required: "Remarks is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 255",
+                        }
                     });
-                    return;
-                }
-                $(this).closest('.form-set').remove();
-                updatePageIndices();
-
+                });
             });
         </script>
     @endpush

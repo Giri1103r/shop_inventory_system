@@ -131,8 +131,9 @@ class AdminController extends Controller
         try {
             $id = Auth::id();
 
-            $file = $request->file('signature_image');
-            if ($file != null) {
+            if ($request->hasFile('signature_image')) {
+                $file = $request->file('signature_image');
+
 
                 $destinationPath = 'uploads/signatureupload';
 
@@ -140,34 +141,29 @@ class AdminController extends Controller
                     File::makeDirectory(public_path($destinationPath), 0777, true, true);
                 }
 
-                $ppe_file_path = null;
+                $signature_image_name = time() . '_' . $file->getClientOriginalName();
 
-                if ($request->hasFile('signature_image')) {
-                    $signature_image = $request->file('signature_image');
-
-                    $signature_image_name = time() . '_' . $signature_image->getClientOriginalName();
-                    $signature_image->move(public_path($destinationPath), $signature_image_name);
-
-                    $signature_image_path = $destinationPath . '/' . $signature_image_name;
-                }
+                $file->move(public_path($destinationPath), $signature_image_name);
+                $signature_image_path = 'public/' . $destinationPath . '/' . $signature_image_name;
 
                 $update_data['signature_upload'] = $signature_image_path;
 
                 User::where('id', $id)->update($update_data);
                 Employee::where('login_id', $id)->update($update_data);
+
+                Session::flash('success', 'User Signature is updated successfully!');
+            } else {
+                Session::flash('error', 'No file was uploaded.');
             }
 
-
-
-            Session::flash('success', 'User Signature is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
-            Session::flash('error', 'Something Went wrong please try again After some time!');
+            Session::flash('error', 'Something went wrong. Please try again later.');
             return redirect(admin_url('profile'));
         }
     }
+
     public function Update(Request $request)
     {
         try {

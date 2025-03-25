@@ -92,6 +92,23 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @php
+                                            $signature = GetSafetySignature(
+                                                $inspection_details->created_by,
+                                                $inspection_details->id,
+                                                SAFETY_WALK_OBSERVATION,
+                                            );
+                                        @endphp
+                                        @if (isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 100px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -200,6 +217,54 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                    {{-- @dd($inspection_details); --}}
+                                    @if (isset($inspection_details->approval_remarks))
+                                        <div class="card-header-inner p-2">
+                                            <h4 class="text-white">Approval</h4>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($inspection_details->updated_by) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection_details->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->updated_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_WALK_OBSERVATION,
+                                                );
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection_details->approval_remarks }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>

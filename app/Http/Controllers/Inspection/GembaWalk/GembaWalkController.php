@@ -151,6 +151,49 @@ class GembaWalkController extends Controller
     public function Store(Request $request)
     {
         try {
+             $rules = [
+                'document_no' => 'required',
+                'document_upload_date' => 'required',
+                'document_revision_date' => 'required',
+                'gemba_walk.*.gemba_walk_report_no' => 'required',
+                'gemba_walk.*.location_id' => 'required',
+                'gemba_walk.*.unit_id' => 'required',
+                'gemba_walk.*.date_of_observation' => 'required',
+                'gemba_walk.*.observation_type' => 'required|integer',
+                'gemba_walk.*.checklist_description' => 'nullable|string',
+                'gemba_walk.*.hazard' => 'nullable|string',
+                'gemba_walk.*.checklist_capa' => 'nullable|string',
+                'gemba_walk.*.date_of_compliance' => 'nullable',
+                'gemba_walk.*.responsibility_id' => 'nullable',
+                'gemba_walk.*.current_status' => 'nullable|string',
+                'gemba_walk.*.checklist_remark' => 'nullable|string',
+                'gemba_walk.*.checklist_observation.*' => 'nullable|string',
+            ];
+
+            $messages = [
+                'document_no.required' => 'Document number is required.',
+                'document_upload_date.required' => 'Please provide the document upload date.',
+                'document_revision_date.required' => 'Please provide the document revision date.',
+                'gemba_walk.*.gemba_walk_report_no.required' => 'Gemba Walk Report Number is required.',
+                'gemba_walk.*.location_id.required' => 'Location ID is required.',
+                'gemba_walk.*.unit_id.required' => 'Unit ID is required.',
+                'gemba_walk.*.date_of_observation.required' => 'Date of observation is required.',
+                'gemba_walk.*.date_of_observation.date_format' => 'Date of observation must be in the format dd-mm-yyyy.',
+                'gemba_walk.*.observation_type.required' => 'Observation type is required.',
+                'gemba_walk.*.observation_type.integer' => 'Observation type must be a number.',
+                'gemba_walk.*.checklist_description.string' => 'Checklist description must be a valid text.',
+                'gemba_walk.*.hazard.string' => 'Hazard must be a valid text.',
+                'gemba_walk.*.checklist_capa.string' => 'Checklist CAPA must be a valid text.',
+                'gemba_walk.*.date_of_compliance.date_format' => 'Date of compliance must be in the format dd-mm-yyyy.',
+                'gemba_walk.*.checklist_remark.string' => 'Checklist remark must be a valid text.',
+                'gemba_walk.*.checklist_observation.*.string' => 'Checklist observation must be a valid text.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $gembaWalk = $this->gembaWalk->store();
 
@@ -247,7 +290,6 @@ class GembaWalkController extends Controller
                     'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details
 
                 );
-                // dd($data);
             }
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
