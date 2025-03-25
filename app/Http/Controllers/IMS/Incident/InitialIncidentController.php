@@ -200,7 +200,6 @@ class InitialIncidentController extends Controller
 
     public function Add(Request $request)
     {
-
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();

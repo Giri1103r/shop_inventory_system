@@ -391,7 +391,9 @@
                                             {{ $getEHSReview->team_member_names }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label">Remark</label>
                                         <div class="view_data">
                                             {{ $getEHSReview->remark }}
@@ -1713,7 +1715,7 @@
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
                                             <!--
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -1725,8 +1727,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                </div>-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </div>-->
             </div>
         </div>
     </div>
@@ -2347,7 +2349,7 @@
                             required: true,
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                           pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         details: {
                             required: function(element) {
@@ -2355,19 +2357,35 @@
                             },
                             minlength: 3,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         corrective_preventive_action: {
                             required: true,
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                           pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         responsible_person_id: {
                             required: true,
                         },
                         target_date: {
                             required: true,
+                        },
+                        risk_analysis: {
+                            required: true,
+                        },
+                        risk_analysis_remark: {
+                            required: function(element) {
+                                return $('input[name="risk_analysis"]:checked').val() === '2';
+                            },
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
+                        },
+                        remark: {
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                     },
                     messages: {
@@ -2402,7 +2420,7 @@
                             required: "Action taken is required.",
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         details: {
                             required: "Please provide details of the treatment.",
@@ -2414,13 +2432,27 @@
                             required: "Corrective/preventive action is required.",
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         responsible_person_id: {
                             required: "Responsible person ID is required.",
                         },
                         target_date: {
                             required: "Target date is required.",
+                        },
+                        risk_analysis: {
+                            required: "Risk Analysis is required.",
+                        },
+                        risk_analysis_remark: {
+                            required: "Risk Analysis Remarks is required.",
+                            minlength: "Details must be at least 3 characters long.",
+                            maxlength: "Details cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+                        },
+                        remark: {
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                     },
 

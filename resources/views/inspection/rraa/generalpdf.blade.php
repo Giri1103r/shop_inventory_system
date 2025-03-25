@@ -292,7 +292,7 @@
         <br>
     @endforeach
 
-    @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+    {{-- @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -347,7 +347,7 @@
             @endif
         </table>
         <br>
-    @endif
+    @endif --}}
 
     @if (isset($inspection_details->capa_remarks))
         <div style="width:100%;">
@@ -487,7 +487,7 @@
     <br>
     @endif
     
-    <div>
+    {{-- <div>
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -535,7 +535,7 @@
             </div>
         </div>
         <br>
-    </div>
+    </div> --}}
     <br>
 
 </body>

@@ -133,13 +133,14 @@ class ChecklistSubTypeDataController extends Controller
     {
         if ($request->ajax()) {
             $subcategory_name = $request->subcategory_name;
-            $category_id = decryptId($request->category_id);
+            $checklist_type_id = decryptId($request->checklist_type_id);
+            $checklist_sub_type_id = decryptId($request->checklist_sub_type_id);
             $id = $request->id;
             if ($id == '') {
-                $record = $this->checklist_subtype_data->uniqueCheck($subcategory_name, $category_id);
+                $record = $this->checklist_subtype_dataName->uniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id);
             } else {
                 $id = decryptId($id);
-                $record = $this->checklist_subtype_data->ExistuniqueCheck($subcategory_name, $category_id, $id);
+                $record = $this->checklist_subtype_dataName->ExistuniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id, $id);
             }
             if ($record->count()) {
                 return Response::json(false);
@@ -147,7 +148,6 @@ class ChecklistSubTypeDataController extends Controller
             return Response::json(true);
         }
     }
-
     public function View($id)
     {
         try {

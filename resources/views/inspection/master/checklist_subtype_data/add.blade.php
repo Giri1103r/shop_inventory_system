@@ -86,7 +86,7 @@
                                                         <tbody id="checklistBody">
                                                             <tr id="RowchecklistView0">
                                                                 <td><input type="text" name="checklist[0][name]"
-                                                                        class="form-control"></td>
+                                                                        class="form-control" id="sub_type_data_name_0"></td>
                                                                 <td>
                                                                     <textarea name="checklist[0][description]" class="form-control"></textarea>
                                                                 </td>
@@ -176,7 +176,7 @@
                 // }
                 const newRow = `
             <tr id="RowchecklistView${checklistIndex}">
-                <td><input type="text" name="checklist[${checklistIndex}][name]" class="form-control"></td>
+                <td><input type="text" name="checklist[${checklistIndex}][name]" id="sub_type_data_name_${checklistIndex}" class="form-control"></td>
                 <td><textarea name="checklist[${checklistIndex}][description]" class="form-control"></textarea></td>
                 <td>
                     <button type="button" class="btn btn-sm  removeChecklistRow">
@@ -225,6 +225,21 @@
                     minlength: 3,
                     maxlength: 100,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    remote: {
+                        url: '{{ admin_url('checklist-sub-type-data/unique') }}',
+                        type: 'post',
+                        data: {
+                            checklist_type_id: function() {
+                                return $('#checklist_type_id').val();
+                            },
+                            checklist_sub_type_id: function() {
+                                return $('#checklist_sub_type_id').val();
+                            },
+                            subcategory_name: function() {
+                                return $('#sub_type_data_name_0').val();
+                            },
+                        }
+                    },
                     messages: {
                         required: "Checklist Sub-Type Data Name is Required",
                         minlength: "{{ __('common.validate_min_length') }}",
@@ -257,23 +272,21 @@
                             minlength: 3,
                             maxlength: 100,
                             pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-
-                            // remote: {
-                            //     url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
-                            //     type: 'post',
-                            //     data: {
-
-                            //         checklist_type_id: function() {
-                            //             return $('#checklist_type_id').val();
-                            //         },
-                            //         checklist_sub_type_id: function() {
-                            //             return $('#checklist_sub_type_id').val();
-                            //         },
-                            //         unit_name: function() {
-                            //             return $('#unit_name').val();
-                            //         },
-                            //     }
-                            // }
+                            remote: {
+                                url: '{{ admin_url('checklist-sub-type-data/unique') }}',
+                                type: 'post',
+                                data: {
+                                    checklist_type_id: function() {
+                                        return $('#checklist_type_id').val();
+                                    },
+                                    checklist_sub_type_id: function() {
+                                        return $('#checklist_sub_type_id').val();
+                                    },
+                                    subcategory_name: function() {
+                                        return $('#sub_type_data_name_0').val();
+                                    },
+                                }
+                            }
                         },
 
                     },

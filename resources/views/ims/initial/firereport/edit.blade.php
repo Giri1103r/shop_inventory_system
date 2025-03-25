@@ -612,8 +612,8 @@
                     },
                     shift: {
                         required: "Shift is required.",
-                        minlength: "Brief Description Required must be exactly 2 characters.",
-                        maxlength: "Brief Description Required must be exactly 2000 characters.",
+                        minlength: "Shift Required must be exactly 2 characters.",
+                        maxlength: "Shift Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     location_id: {
@@ -621,8 +621,8 @@
                     },
                     exact_location: {
                         required: "Exact Location is required.",
-                        minlength: "Brief Description Required must be exactly 2 characters.",
-                        maxlength: "Brief Description Required must be exactly 2000 characters.",
+                        minlength: "Exact Location Required must be exactly 2 characters.",
+                        maxlength: "Exact Location Required must be exactly 2000 characters.",
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     iir_type: {
@@ -651,7 +651,8 @@
                         required: "Brief Description is required.",
                         minlength: "Brief Description Required must be exactly 2 characters.",
                         maxlength: "Brief Description Required must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        pattern: "Only alphanumeric characters and (”%+-_/!\,-, _, ‘, “, ()) are allowed.",
+
                     },
                     // 'evidence[]': {
                     //     required: "Evidence is required",
