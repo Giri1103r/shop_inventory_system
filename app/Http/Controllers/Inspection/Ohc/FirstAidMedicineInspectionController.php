@@ -6,16 +6,13 @@ use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
-use App\Models\Inspection\Ohc\monthlyMedicineStore;
 use App\Models\Inspection\Ohc\OhcSignature;
-use App\Models\OhcManagement\Master\Medicine;
+use App\Models\Inspection\Ohc\FirstAidMedicineInspection;
 
-class MonthlyMedicineStoreController extends Controller
+class FirstAidMedicineInspectionController extends Controller
 {
     private $medicine_checklist;
     private $medicine;
@@ -23,7 +20,7 @@ class MonthlyMedicineStoreController extends Controller
 
     public function __construct()
     {
-        $this->medicine_checklist = new monthlyMedicineStore();
+        $this->medicine_checklist = new FirstAidMedicineInspection();
         $this->medicine = new Medicine();
         $this->signature = new OhcSignature();
     }

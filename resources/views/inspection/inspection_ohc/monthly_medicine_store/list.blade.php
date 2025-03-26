@@ -1,8 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment List')
-@section('pageurl', admin_url('safety/master/equipment/list'))
-
-
+@section('title', 'Monthly OHC Store Medicine Inspection Checklist')
+@section('pageurl', admin_url('ohc/monthly-medicine-store/inspection/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -11,13 +9,11 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
+
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import')) --}}
-                        <x-button-import href="{{ admin_url('safety/master/equipment/import') }}"></x-button-import>
-                        {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/master/equipment/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/monthly-medicine-store/inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -25,11 +21,21 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="equipment_name"
-                                                class="form-label ">{{ __('inspection.equipment_name') }}</label>
-                                            <input type="text" name="equipment_name" id="equipment_name"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control inspection_date">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due"
+                                                    class="form-control next_due">
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -61,9 +67,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.equipment_name') }}</th>
-                                        <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
+                                        <th>{{ __('Inspection Status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -71,19 +77,26 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
 
 
-@stop
+    @stop
 
     @push('script')
         <script type="text/javascript">
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                flatpickr(".inspection_date", {
+                    dateFormat: "d-m-Y",
+                });
+                flatpickr(".next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
             });
 
             $(function() {
@@ -112,16 +125,15 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/master/equipment/list') }}",
+                        url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.equipment_name = $('#equipment_name').val();
-                            d.status = $('#status').val();
-
+                            d.inspection_date = $('#inspection_date').val();
+                            d.next_due = $('#next_due').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -135,17 +147,18 @@
                             orderable: false,
                             searchable: true,
                         },
+
                         {
-                            data: 'equipment_name',
-                            name: 'equipment_name'
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'next_due',
+                            name: 'next_due',
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',
@@ -176,16 +189,17 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/master/equipment/export/pdf') }}" +
+                                            "{{ admin_url('ohc/monthly-medicine-store/inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due
                                     }
                                 },
                                 {
@@ -193,15 +207,15 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/master/equipment/export/excel') }}" +
+                                            "{{ admin_url('ohc/monthly-medicine-store/inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due
                                     }
                                 },
                             ]
@@ -233,72 +247,75 @@
                 });
 
                 /* Status Change */
-                $(document).on('click', '.statusChange', function() {
-                    var id = $(this).data('id');
-                    var types = $(this).data('type');
-                    if (types == 1) {
-                        var title = '{{ __('inspection.equipment_inactive_msg') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
+                // $(document).on('click', '.statusChange', function() {
+                //     var id = $(this).data('id');
+                //     var types = $(this).data('type');
+                //     if (types == 1) {
+                //         var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                //         var text = '{{ __('common.inactive') }}';
+                //         var btncolor = '#dc3545'
 
-                    } else {
-                        var title = '{{ __('inspection.equipment_active_msg') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
+                //     } else {
+                //         var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                //         var text = '{{ __('common.active') }}';
+                //         var btncolor = '#7ddc35'
+                //     }
 
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('safety/master/equipment/status') }}",
-                                type: 'post',
-                                data: {
-                                    id: id,
-                                    types: types
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
+                //     Swal.fire({
+                //         title: title,
+                //         icon: 'warning',
+                //         showCancelButton: true,
+                //         confirmButtonText: text,
+                //         confirmButtonColor: btncolor,
+                //         customClass: {
+                //             confirmButton: 'btn-skew',
+                //             cancelButton: 'btn-skew'
+                //         },
+                //     }).then((result) => {
 
-                });
+
+                //         if (result.value) {
+                //             $.ajax({
+                //                 url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list/status') }}",
+                //                 type: 'post',
+
+                //                 data: {
+                //                     id: id,
+                //                     types: types
+                //                 },
+                //                 success: function(response) {
+                //                     const Toast = Swal.mixin({
+                //                         toast: true,
+                //                         position: 'top-right',
+                //                         showConfirmButton: false,
+                //                         timer: 3000,
+                //                         timerProgressBar: true,
+                //                         didOpen: (toast) => {
+                //                             toast.addEventListener(
+                //                                 'mouseenter',
+                //                                 Swal.stopTimer)
+                //                             toast.addEventListener(
+                //                                 'mouseleave',
+                //                                 Swal.resumeTimer
+                //                             )
+                //                         }
+                //                     });
+                //                     Toast.fire({
+                //                         icon: 'success',
+                //                         title: response.msg
+                //                     });
+                //                     table.draw();
+                //                 },
+                //                 error: function(data) {
+                //                     $.notify(data.responseJSON.msg, "error");
+                //                 }
+                //             });
+                //         } else if (result.isDenied) {
+                //             Swal.fire('Something went wrong', '', 'info');
+                //         }
+                //     })
+
+                // });
 
 
                 /* Delete Record */
@@ -307,7 +324,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete the Equipment') }}';
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -324,10 +341,9 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/master/equipment/delete') }}",
+                                url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

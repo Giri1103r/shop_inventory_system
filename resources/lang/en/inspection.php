@@ -141,4 +141,10 @@ return [
     'fire_water_pump_house_details' => 'Fire Water Pump House Details',
     'water_pump_storage_tank' => 'Water Pump and Water Storage',
 
+    //OHC
+    'name_of_inspection' => 'Name of Inspection',
+    'available_quantity' => 'Available Quantity',
+    'expiry_date' => 'Expiry Date',
+    'inspected_by' => 'Inspected By',
+
 ];
