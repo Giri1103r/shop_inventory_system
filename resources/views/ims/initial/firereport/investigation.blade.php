@@ -391,7 +391,9 @@
                                             {{ $getEHSReview->team_member_names }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label">Remark</label>
                                         <div class="view_data">
                                             {{ $getEHSReview->remark }}
@@ -1193,12 +1195,12 @@
                             required: true,
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         action_taken: {
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         root_cause: {
                             required: true,
@@ -1218,12 +1220,12 @@
                             },
                             minlength: 3,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                         remark: {
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r]+$/,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                     },
                     messages: {
@@ -1237,12 +1239,12 @@
                             required: "Corrective/preventive action is required.",
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         action_taken: {
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         root_cause: {
                             required: "Root Cause Analysis is required.",
@@ -1260,12 +1262,12 @@
                             required: "Risk Analysis Remarks is required.",
                             minlength: "Details must be at least 3 characters long.",
                             maxlength: "Details cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         remark: {
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                     },
                     errorElement: 'span',

@@ -96,6 +96,24 @@
                                     </div>
 
                                     @php
+                                        $signature = GetSafetySignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            SAFETY_GALLERY_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 100px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @php
                                         $user_response = json_decode($inspection_details->responses, true);
                                     @endphp
                                     <table class="container p-5">
@@ -167,7 +185,11 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                       $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                        $signature = GetSafetySignature(
+                                                            $inspection_details->verified_by,
+                                                            $inspection_details->id,
+                                                            SAFETY_GALLERY_INSPECTION,
+                                                        );
                                                     @endphp
                                                 @endif
                                                 @if (isset($inspection_details->created_at))
@@ -185,8 +207,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -203,7 +224,11 @@
                                                             </div>
                                                         </div>
                                                         @php
-                                                            $signature = GetSafetySignature($inspection_details->approved_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                            $signature = GetSafetySignature(
+                                                                $inspection_details->approved_by,
+                                                                $inspection_details->id,
+                                                                SAFETY_GALLERY_INSPECTION,
+                                                            );
                                                         @endphp
                                                     @endif
                                                 @endif
@@ -212,8 +237,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -264,15 +288,18 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature($inspection_details->created_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                    $signature = GetSafetySignature(
+                                                        $inspection_details->created_by,
+                                                        $inspection_details->id,
+                                                        SAFETY_GALLERY_INSPECTION,
+                                                    );
                                                 @endphp
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -314,15 +341,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -363,15 +393,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->l1_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->l1_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -411,15 +444,18 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->l2_manager_verified_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->l2_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -436,15 +472,18 @@
                                                 </div>
                                             @endif
                                             @php
-                                                $signature = GetSafetySignature($inspection_details->approved_by,$inspection_details->id,SAFETY_GALLERY_INSPECTION);
+                                                $signature = GetSafetySignature(
+                                                    $inspection_details->approved_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                );
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>

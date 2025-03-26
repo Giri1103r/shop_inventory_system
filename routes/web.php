@@ -1343,6 +1343,13 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/add/submit', [WeeklyAmbulanceController::class, 'Store']);
                     Route::POST('/unique', [WeeklyAmbulanceController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [WeeklyAmbulanceController::class, 'View']);
+                    Route::GET('/generalpdf/{id}', [WeeklyAmbulanceController::class, 'generalpdf']);
+                    Route::get('verification/{id}/{employee_type}', [WeeklyAmbulanceController::class, 'approvals']);
+                    Route::post('ehsofficer/verify/submit', [WeeklyAmbulanceController::class, 'EHSOfficerSubmit']);
+                    Route::post('capa/submit', [WeeklyAmbulanceController::class, 'CAPASubmit']);
+                    Route::post('capa/reverify/submit', [WeeklyAmbulanceController::class, 'CAPAVerifySubmit']);
+                    Route::post('level-one/verify/submit', [WeeklyAmbulanceController::class, 'levelOneManagerSubmit']);
+                    Route::post('level-two/verify/submit', [WeeklyAmbulanceController::class, 'levelTwoManagerSubmit']);
                     Route::POST('/status', [WeeklyAmbulanceController::class, 'StatusChange']);
                     Route::GET('/export/excel', [WeeklyAmbulanceController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [WeeklyAmbulanceController::class, 'ExportPDF']);
@@ -1358,6 +1365,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/add/submit', [MedicalRequisitionSlipController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);
+                    Route::GET('/generalpdf/{id}', [MedicalRequisitionSlipController::class, 'generalpdf']);
                     Route::GET('/approval/view/{id}', [MedicalRequisitionSlipController::class, 'approval']);
                     Route::POST('/status', [MedicalRequisitionSlipController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipController::class, 'ExportExcel']);
@@ -1373,25 +1381,30 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
-
-
+                    Route::GET('/generalpdf/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'generalpdf']);
+                    Route::GET('/approval/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'approval']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
                     Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipSecurityGateController::class, 'ExportPDF']);
-                    Route::POST('/lists', [MedicalRequisitionSlipSecurityGateController::class, 'Checklists']);
+                    Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'safetyofficerapproval']);
+
                 });
 
                 Route::group(['prefix' => 'first-aid-box/daily-departmental'], function () {
                     Route::GET('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
                     Route::POST('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
                     Route::GET('/add', [DailyDepartmentFirstAidBoxController::class, 'Add']);
+                    Route::GET('/generalpdf/{id}', [DailyDepartmentFirstAidBoxController::class, 'generalpdf']);
+                    Route::GET('/approval/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'approval']);
                     Route::POST('/add/submit', [DailyDepartmentFirstAidBoxController::class, 'Store']);
                     Route::POST('/unique', [DailyDepartmentFirstAidBoxController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'View']);
                     Route::POST('/status', [DailyDepartmentFirstAidBoxController::class, 'StatusChange']);
                     Route::GET('/export/excel', [DailyDepartmentFirstAidBoxController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [DailyDepartmentFirstAidBoxController::class, 'ExportPDF']);
+
+                    Route::POST('/floormanagerapproval/submit', [DailyDepartmentFirstAidBoxController::class, 'floormanagerapproval']);
                     Route::POST('/lists', [DailyDepartmentFirstAidBoxController::class, 'Checklists']);
                 });
 

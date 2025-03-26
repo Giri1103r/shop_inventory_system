@@ -12,6 +12,7 @@ use App\Models\UploadLogType;
 use App\Models\UserPermission;
 use App\Models\Master\Employee;
 use App\Models\Master\UserRole;
+use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master\ForkLiftType;
@@ -28,15 +29,17 @@ use App\Models\Inspection\Master\Frequency;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
+use App\Models\Inspection\MSDS\MSDSCheckList;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Ohc\FloorStretcherFiles;
+use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
+use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\Inspection\MSDSCheckList;
-use App\Models\Inspection\RRAACheckList;
-use App\Models\OhcManagement\SafetyPettyLogbook\SafetyPettyChecklist;
 use App\Models\Inspection\audit\AuditAnalysis;
-
 if (!function_exists('get_encryptVal')) {
 
     function get_encryptVal($id)
@@ -1427,6 +1430,16 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getFIRCount')) {
+
+        function getFIRCount()
+        {
+            $data = FirstAidRecordChecklist::get()->count();
+            return $data;
+        }
+    }
+
+
     if (!function_exists('getCategoryname')) {
 
         function getCategoryname($id)
@@ -1547,6 +1560,22 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getEquipmentName')) {
+
+        function getEquipmentName($userid)
+        {
+
+            $equipment_name = DB::table('inspection_safety_master_equipment')->select('equipment_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($equipment_name == null) {
+                return '';
+            } else {
+                return $equipment_name->equipment_name;
+            }
+        }
+    }
+
     if (!function_exists('getBloodGroupname')) {
 
         function getBloodGroupname($userid)
@@ -1614,6 +1643,20 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $suggested_by->suggested_by;
+            }
+        }
+    }
+    if (!function_exists('getFirstAider')) {
+
+        function getFirstAider($userid)
+        {
+
+            $certifier_name = DB::table('ohc_master_certified_first_aider')->select('certifier_name')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($certifier_name == null) {
+                return '';
+            } else {
+                return $certifier_name->certifier_name;
             }
         }
     }
@@ -1806,7 +1849,18 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+    if (!function_exists('getMedicalAssistant')) {
+        function getMedicalAssistant()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_MEDICAL_ASSISTANT . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
 
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
@@ -1905,7 +1959,11 @@ if (!function_exists('getMonth')) {
 
             $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
-                return '';
+                $name = User::where('id', $userid)->first();
+                if ($name == null) {
+                    return null;
+                }
+                return $name->signature_upload;
             } else {
                 return $name->file_path;
             }
@@ -1919,25 +1977,91 @@ if (!function_exists('getMonth')) {
                 case RRAA_INSPECTION:
                     $name = DB::table('inspection_rraa_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
-                        return '';
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
                 case MSDS_INSPECTION:
-
                     $name = DB::table('inspection_msds_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('trash', 'NO')->first();
                     if ($name == null) {
-                        return '';
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
                     } else {
                         return $name->file_path;
                     }
-                    case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
-                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc', $id)->where('trash', 'NO')->first();
+                case OHC_TYPE_MEDICINE_REQUISTION_FLOOR:
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            return '';
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+                case OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST:
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case HOOTER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOOTER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case MONTHLY_FIRE_PUMP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+
+                case OHC_TYPE_FLOOR_STRETCHER:
+                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                    ->where('status', 1)->where('trash', 'NO')->first();
+
+                if ($name == null) {
+                    $name = User::where('id', $userid)->first();
+                    if ($name == null) {
+                        return null;
+                    }
+                    return $name->signature_upload;
+                } else {
+                    return $name->file_path;
+                }
+
             }
         }
     }
@@ -1979,9 +2103,17 @@ if (!function_exists('getMonth')) {
             } else if ($id == FLOOR_MANAGER_REJECTED) {
                 return 'floor Manager rejected';
             } else if ($id == SAFETY_OFFICER_APPROVAL_PENDING) {
-                return 'Safet Officer Approval Pending';
+                return 'Safety Officer Approval Pending';
             } else if ($id == SAFETY_OFFICER_APPROVED) {
-                return 'Safet Officer Approved';
+                return 'Safety Officer Approved';
+            } else if ($id == SAFETY_OFFICER_REJECTED) {
+                return 'Safety Officer rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVAL_PENDING) {
+                return 'Medical Assistant /Floor Manager  Approval Pending';
+            } else if ($id == MEDICAL_ASSISTANT_REJECTED) {
+                return 'Medical Assistant /Floor Manager rejected';
+            } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
+                return 'Medical Assistant /Floor Manager Approved';
             }
 
             return 'OHC Creation';
@@ -2003,6 +2135,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSafetyWalkImage')) {
+
+        function GetSafetyWalkImage($id)
+        {
+
+            $safetyImage = DB::table('inspection_safety_walk_observation_files')->where('safety_walk_observation_id', $id)->where('trash', 'NO')->first();
+
+            if ($safetyImage == null) {
+                return false;
+            } else {
+                return $safetyImage->file_path;
+            }
+        }
+    }
+
     // Monthly Eye Wash Sequence
     if (!function_exists('MEWSequence')) {
         function MEWSequence()
@@ -2010,6 +2157,14 @@ if (!function_exists('getMonth')) {
             return 'MEW-000001';
         }
     }
+
+    if (!function_exists('forkliftInspection')) {
+        function forkliftInspection()
+        {
+            return 'FORKLIFT-INS-000001';
+        }
+    }
+
 
     if (!function_exists('getGMInspectionStatus')) {
         function getGMInspectionStatus($id)
@@ -2032,12 +2187,79 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getObservationStatus')) {
+        function getObservationStatus($id)
+        {
+            if ($id == OBSERVATION_APPROVED) {
+                return 'Observation Approved';
+            } else if ($id == OBSERVATION_REJECTED) {
+                return 'Observation Rejected';
+            } else if ($id == OBSERVATION_PENDING) {
+                return 'Observation Pending';
+            }
+
+            return 'Unknown';
+        }
+    }
+
+    if (!function_exists('getObservationType')) {
+        function getObservationType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Unsafe Act';
+            } elseif ($type_id == 2) {
+                return 'Unsafe Condition';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkStatus')) {
+        function getGembaWalkStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'Closed';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
     // Fire Inspection Hooter Sequence
-    if(!function_exists('HooterSequence'))
-    {
+    if (!function_exists('HooterSequence')) {
         function HooterSequence()
         {
             return 'HTR-000001';
+        }
+    }
+
+    // Fire Inspection Folder Name
+    if (!function_exists('GetTypeName')) {
+        function GetTypeName($id)
+        {
+            switch ($id) {
+                case HOOTER_INSPECTION:
+                    return 'Hooter-Inspection';
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    // Get Department Name
+    if (!function_exists('GetDeptName')) {
+        function GetDeptName($id)
+        {
+            $data = Department::where('id', $id)->first();
+
+            if ($data) {
+                return $data->department_name;
+            }
         }
     }
 }

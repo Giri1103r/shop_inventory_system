@@ -30,14 +30,12 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="accidentReportAdd" enctype="multipart/form-data"
+                                    <form method="POST" id="gembaWalkReportAdd" enctype="multipart/form-data"
                                         action="{{ admin_url('inspection/gemba-walk/add/submit') }}">
                                         @csrf
 
                                         <div class="row">
-
                                             <div class="row">
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">Gemba Walk ID</label>
@@ -72,22 +70,32 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 file-upload-block" id="file-upload-0">
-                                                    <label for="gemba_walk_prepared_by" class="form-label">Singnature Upload</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
-                                                        name="gemba_walk_prepared_by" id="gemba_walk_prepared_by">
-                                                    <div class="text-danger"></div>
+                                
 
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    @if (isset(Auth::user()->signature_upload))
+                                                        <label class="form-label"
+                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                    @else
+                                                        <div class="form-input col-md-12 mb-2">
+                                                            <label class="form-label require">Signature</label>
+                                                            <input type="file" name="gemba_walk_prepared_by" id="gemba_walk_prepared_by"
+                                                                class="form-control form-control-sm" accept="image/*"
+                                                                placeholder="Enter the image">
+                                                            <small>Allowed file types: jpg, jpeg, png</small>
+                                                            <div id="gemba_walk_prepared_by" class="text-danger"></div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
-
 
                                             <div class="mt-4 row">
                                                 <div
                                                     class="card-header-inner d-flex justify-content-between align-items-center">
                                                     <h4 class="text-white">Checklist Details</h4>
-                                                    <button type="button" class="btn btn-primary addChecklistDetails">Add
+                                                    <button type="button" class="btn mb-2 btn-primary addChecklistDetails">Add
                                                         More</button>
                                                 </div>
                                                 <div id="gemba_walk_checklist">
@@ -182,8 +190,7 @@
                                                                 id="file-upload-0">
                                                                 <label for="evidence_0"
                                                                     class="form-label">Evidence</label>
-                                                                <input type="file"
-                                                                    class="form-control validate-file-accept validate-file-required"
+                                                                <input type="file" class="form-control"
                                                                     name="gemba_walk[0][evidence]" id="evidence_0">
                                                                 <div class="text-danger"></div>
 
@@ -250,12 +257,7 @@
 
                                                                 </div>
                                                             </div>
-
-
                                                         </div>
-
-
-
 
                                                         <div class="row mt-2 observationContainer">
                                                             <div class="col-md-4 form-input observationRow">
@@ -272,14 +274,7 @@
                                                             </div>
                                                         </div>
 
-
-
-
-
                                                     </div>
-
-
-
                                                 </div>
 
                                                 <div class="submit-button" style="text-align: right;">
@@ -288,14 +283,8 @@
                                                     <x-button-cancel
                                                         href="{{ admin_url('inspection/gemba-walk/list') }}"></x-button-cancel>
                                                 </div>
-
                                             </div>
-
-
-
                                         </div>
-
-
                                     </form>
                                 </div>
 
@@ -462,10 +451,10 @@
                           </div>  
 
 
-                            <div class=" row col-md-6">
+                            <div class="row mt-2">
                                 <div class="observationContainer">
                                     <div class="row observationRow">
-                                        <div class="col-md-8 form-input">
+                                        <div class="col-md-4 form-input">
                                             <label class="form-label">Observation</label>
                                             <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_observation][0]"></textarea>
                                         </div>
@@ -495,6 +484,7 @@
                 $("#gemba_walk_checklist").append(newChecklistField);
 
                 updateSerialNumbers();
+                addValidationRules(checklistIndex);
                 checklistCount++;
                 checklistIndex++;
 
@@ -504,6 +494,9 @@
                 $(".date_of_compliance, .date_of_observation").flatpickr({
                     dateFormat: "d-m-Y"
                 });
+
+
+
             });
 
             $(document).on("click", ".addChecklistObservation", function() {
@@ -511,8 +504,7 @@
                 const rowIndex = $(this).data("index");
                 const observationContainer = checklistRow.find(".observationContainer");
                 const observationIndex = checklistRow.find(".observationRow")
-                    .length; // Correct index assignment
-                // alert(rowIndex,observationIndex);
+                    .length;
 
                 if (observationIndex >= 5) {
                     Swal.fire({
@@ -525,7 +517,7 @@
 
                 const newObservationField = `
             <div class="row mt-2 observationRow">
-                <div class="col-md-8 form-input">
+                <div class="col-md-4 form-input">
                     <label class="form-label">Observation</label>
                     <textarea class="form-control" name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"></textarea>
                 </div>
@@ -537,6 +529,20 @@
             </div>`;
 
                 observationContainer.append(newObservationField);
+
+                $(`[name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"]`).rules(
+                    "add", {
+                        required: true,
+                        minlength: 2,
+                        maxlength: 200,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        messages: {
+                            required: "Observation is required.",
+                            minlength: "Observation must be at least 2 characters.",
+                            maxlength: "Observation cannot exceed 200 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                        }
+                    });
             });
 
             $(document).on("click", ".removeChecklistObservation", function() {
@@ -548,6 +554,211 @@
                 checklistIndex--;
                 updateSerialNumbers();
             });
+
+            $(document).ready(function() {
+                $.validator.addMethod("filesize", function(value, element, param) {
+                    return this.optional(element) || (element.files[0] && element.files[0].size <=
+                        param);
+                }, "File size must be less than 5MB.");
+
+                $('#gembaWalkReportAdd').validate({
+                    rules: {
+                        document_no: {
+                            minlength: 3,
+                            maxlength: 200,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk[0][checklist_description]': {
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk[0][hazard]': {
+                            minlength: 3,
+                            maxlength: 200,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk[0][checklist_capa]': {
+                            minlength: 3,
+                            maxlength: 200,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk[0][checklist_remark]': {
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk[0][checklist_observation][0]': {
+                            minlength: 3,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        },
+                        'gemba_walk_prepared_by': {
+                            extension: "jpg|jpeg|png",
+                            filesize: 5 * 1024 * 1024,
+                        },
+                        'gemba_walk[0][evidence]': {
+                            extension: "jpg|jpeg|png|pdf",
+                            filesize: 5 * 1024 * 1024,
+                        }
+                    },
+                    messages: {
+                        document_no: {
+                            minlength: "Document Number must be at least 2 characters.",
+                            maxlength: "Document Number cannot exceed 200 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk[0][checklist_description]': {
+                            minlength: "Checklist Description must be at least 3 characters.",
+                            maxlength: "Checklist Description cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk[0][hazard]': {
+                            minlength: "Hazard must be at least 3 characters.",
+                            maxlength: "Hazard cannot exceed 200 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk[0][checklist_capa]': {
+                            minlength: "CAPA must be at least 3 characters.",
+                            maxlength: "CAPA cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk[0][checklist_remark]': {
+                            minlength: "Remark must be at least 3 characters.",
+                            maxlength: "Remark cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk[0][checklist_observation][0]': {
+                            minlength: "Observation must be at least 3 characters.",
+                            maxlength: "Observation cannot exceed 2000 characters.",
+                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        },
+                        'gemba_walk_prepared_by': {
+                            extension: "Only JPG, JPEG, and PNG files are allowed for the signature.",
+                            filesize: "File size must be less than 5MB.",
+                        },
+                        'gemba_walk[0][evidence]': {
+                            extension: "Only JPG, JPEG, PNG, and PDF files are allowed for evidence.",
+                            filesize: "File size must be less than 5MB.",
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+
+                        if (element.attr("type") === "file") {
+                            error.insertAfter(element.closest('.file-upload-block').find(
+                                '.text-danger'));
+                        } else {
+                            element.closest('.form-input').append(error);
+                        }
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        if (errors) {
+                            console.log(`There are ${errors} validation errors.`);
+                            validator.errorList.forEach(function(error) {
+                                console.log(
+                                    `Field: ${error.element.name}, Error: ${error.message}`
+                                );
+                            });
+                        }
+                    },
+                });
+            });
+
+
+            function addValidationRules(index) {
+                $.validator.addMethod("filesize", function(value, element, param) {
+                    return this.optional(element) || (element.files[0] && element.files[0].size <=
+                        param);
+                }, "File size must be less than 5MB.");
+                $(`[name="gemba_walk[${index}][checklist_description]"]`).rules("add", {
+                    minlength: 3,
+                    maxlength: 2000,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                    messages: {
+                        minlength: "Checklist Description must be at least 3 characters.",
+                        maxlength: "Checklist Description cannot exceed 2000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][hazard]"]`).rules("add", {
+                    minlength: 3,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+
+                    messages: {
+                        minlength: "Hazard must be at least 3 characters.",
+                        maxlength: "Hazard cannot exceed 200 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][checklist_capa]"]`).rules("add", {
+                    minlength: 3,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+
+                    messages: {
+                        minlength: "CAPA must be at least 3 characters.",
+                        maxlength: "CAPA cannot exceed 200 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][checklist_remark]"]`).rules("add", {
+                    minlength: 3,
+                    maxlength: 2000,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                    messages: {
+                        required: "Remark is required.",
+                        minlength: "Remark must be at least 3 characters.",
+                        maxlength: "Remark cannot exceed 2000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
+                    }
+                });
+
+
+                $(`[name="gemba_walk[${index}][checklist_observation][0]"]`).rules("add", {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 2000,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                    messages: {
+                        required: "Observation is required.",
+                        minlength: "Observation must be at least 3 characters.",
+                        maxlength: "Observation cannot exceed 2000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    }
+                });
+
+
+                $(`[name="gemba_walk[${index}][evidence]"]`).rules("add", {
+                    required: true,
+                    extension: "jpg|jpeg|png|pdf",
+                    filesize: 5 * 1024 * 1024,
+                    messages: {
+                        required: "Evidence file is required.",
+                        extension: "Only JPG, JPEG, PNG, and PDF files are allowed.",
+                        filesize: "File size must be less than 5MB."
+                    }
+                });
+            }
+
         });
     </script>
 @endpush

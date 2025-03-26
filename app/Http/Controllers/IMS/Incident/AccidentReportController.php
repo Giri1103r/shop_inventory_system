@@ -169,7 +169,6 @@ class AccidentReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -206,10 +205,9 @@ class AccidentReportController extends Controller
         if (!$employee) {
             return response()->json(['error' => 'Employee not found.'], 404);
         }
-
         return response()->json([
             'employee' => [
-                'designation' => $employee->designation_name ?? '',
+                'designation' => $employee->designation ?? '',
                 'unit_id' => $employee->unit ?? '',
                 'encrypted_unit_id' => encryptId($employee->unit) ?? '',
                 'unit_name' => $employee->unit_name ?? '',

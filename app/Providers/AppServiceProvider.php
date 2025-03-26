@@ -84,6 +84,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
         defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
 
 
 
@@ -183,8 +184,16 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
         defined('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX') or define('OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX', 3);
-        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 6);
+        defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
+        defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
+        defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
+        defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
+        defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
+
+        defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('OHC_TYPE_MONTHLY_MEDICINE_STORE') or define('OHC_TYPE_MONTHLY_MEDICINE_STORE',19);
+        defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -192,7 +201,7 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_APPROVAL') or define('EHS_APPROVAL', 3);
 
         // IMS Incident
-
+        
         defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
         defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
         defined('STATUS_UAUC_PENDING') or define('STATUS_UAUC_PENDING', 3);
@@ -235,6 +244,13 @@ class AppServiceProvider extends ServiceProvider
         defined('L1_MANAGER_REJECTED') or define('L1_MANAGER_REJECTED', 8);
         defined('L2_MANAGER_REJECTED') or define('L2_MANAGER_REJECTED', 9);
 
+
+        //SAFETY WALK OBSERVATION
+        defined('OBSERVATION_PENDING') or define('OBSERVATION_PENDING', 1);
+        defined('OBSERVATION_REJECTED') or define('OBSERVATION_REJECTED', 2);
+        defined('OBSERVATION_APPROVED') or define('OBSERVATION_APPROVED', 3);
+
+
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);
         defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
@@ -243,25 +259,34 @@ class AppServiceProvider extends ServiceProvider
         defined('SAFETY_OFFICER_APPROVAL_PENDING') or define('SAFETY_OFFICER_APPROVAL_PENDING', 5);
         defined('SAFETY_OFFICER_APPROVED') or define('SAFETY_OFFICER_APPROVED', 6);
         defined('SAFETY_OFFICER_REJECTED') or define('SAFETY_OFFICER_REJECTED', 7);
+        defined('MEDICAL_ASSISTANT_APPROVAL_PENDING') or define('MEDICAL_ASSISTANT_APPROVAL_PENDING', 8);
+        defined('MEDICAL_ASSISTANT_APPROVED') or define('MEDICAL_ASSISTANT_APPROVED', 9);
+        defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
+
 
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
+        defined('OHC_INSPECTION') or define('OHC_INSPECTION',12);
 
 
         // Gemba Walk
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION', 1);
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION', 2);
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION', 3);
-        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 4);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION',1);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION',2);
+        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION',3);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED',4);
+        defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED',5);
 
-        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1', 1);
-        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2', 2);
-        defined('GEMBA_WALK_INSPECTION_PASS_1') or define('GEMBA_WALK_INSPECTION_PASS_1', 1);
-        defined('GEMBA_WALK_INSPECTION_PASS_2') or define('GEMBA_WALK_INSPECTION_PASS_2', 2);
-        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
-        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
-        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 0);
+
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1',1);
+        defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2',2);
+        defined('GEMBA_WALK_INSPECTION_PASS_L1') or define('GEMBA_WALK_INSPECTION_PASS_L1',1);
+        defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2',2);
+        defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL',3);
+        defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS',4);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START',0);
+
 
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
         defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
@@ -269,20 +294,37 @@ class AppServiceProvider extends ServiceProvider
         //Status Log
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
+        defined('FORKLIFT_INSPECTION') or define('FORKLIFT_INSPECTION', 3);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
+        defined('OHS_SUMMARY_REPORT') or define('OHS_SUMMARY_REPORT', 5);
+        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 6);
+        defined('SAFETY_WALK_OBSERVATION') or define('SAFETY_WALK_OBSERVATION', 7);
 
 
         // Monthly Eye Wash
         defined('GOOD') or define('GOOD',1);
         defined('FAIR') or define('FAIR',2);
         defined('POOR') or define('POOR',3);
-        
+
+        //Standard/Norms
+        defined('STANDARD') or define('STANDARD',1);
+        defined('NORMS') or define('NORMS',2);
+
         defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', 1);
         defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', 2);
+        defined('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST') or define('MONTHLY_FIRE_PUMPHOUSE_INSPECTION_CHECKLIST',3);
+        defined('OHC_FLOOR_STRECTHER_CHECKLIST') or define('OHC_FLOOR_STRECTHER_CHECKLIST',4);
 
-        // Fire 
+        // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
 
+        // OPTIONS
+        defined('YES') or define('YES',1);
+        defined('NO') or define('NO',2);
+
+        // Fire File Upload
+        defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
         View::composer('*', function ($view) {
 

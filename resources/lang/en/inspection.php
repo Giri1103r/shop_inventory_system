@@ -13,7 +13,7 @@ return [
     'active_msg' => 'Do you want to Activate the checklist type?',
     'doc_no' => 'Document Number',
     'issue_date' => 'Issue Date',
-    'rev_date' => 'Revision & Date',
+    'rev_date' => 'Revision & Data',
     'inspection_date' => 'Date of Inspection',
     'location' => 'Location',
     'next_due' => 'Next Due on',
@@ -89,5 +89,56 @@ return [
     'quantity' => 'Quantity',
     'observations' => 'Check If Observations Needed',
     'obs' => 'Observation',
+    'shifts' => 'Shift',
+    'upload_image' => 'Device Image',
+    'observation_required' => 'Is Observation Required ?',
+    'checked_obs' => 'Required Inspections',
+
+    //Safety Equipment List
+    'standard_norms' => 'Standard/Norms',
+    'equipment_category' => 'Equipment Category',
+    'unit_of_measurement' => 'Unit Of Measurement',
+    'minimum_order_value' => 'Minimum Order Quantity',
+    'economic_order_quantity' => 'Economic Order Quantity',
+    'observation_status' => 'Observation Status',
+    'fire_safety_equipment' => 'Fire Safety Equipment',
+
+    //Safety Walk Observation
+    'safety_walk_taken_by' => 'Safety Walk Taken By',
+    'observation' => 'Observation',
+    'recomended_action' => 'Recomended Action',
+    'employee' => 'Responsibility',
+    'date_of_compliance' => 'Date of Compliance',
+    'previous_month_observation' => 'Previous Month Obervation',
+    'current_month_observation' => 'Current Month Obervation',
+    'date_of_observation' => 'Observation Date',
+    //ohc safety petty logbook
+    'safety_petty_logbook' => 'Safety Petty Logbook',
+    'approval' => 'Approval',
+
+
+    // Floor Stretcher
+    'dept/location' => 'Department / Location',
+    'fs_first' => 'Are the Stretcher Cover and patient stretcher clean?',
+    'fs_second' => 'Is the Stretcher Hanging Hooks are Ok ?',
+    'fs_third' => 'Is the floor patient stretcher resource code correct and available?',
+    'fs_fourth' => 'Is the patient stretcher placed on the floor Condition is OK ?',
+    'fs_fifth' => "Is the patient's stretcher placed on the floor or properly hung on a hook in its designated area?",
+    'fs_sixth' => 'Is the Patient Handling Stretcher Guide Line Displayed ?',
+    'checkpoints' =>'Checkpoints (Yes / No )',
+
+    //ForkLift Inspection Report
+    'forklift_inspection_report' => 'ForkLift Inspection Report',
+    'corrective_action' => 'Corrective and Preventive Action',
+    'updated_frequency' => 'Updated Frequency',
+    'ohc_report' => 'OHC Plant Summary Report',
+    'description' => 'Description',
+    'total_quantity' => 'Total Quantity',
+    'unit2' => 'Unit - 2',
+    'unit1' => 'Unit - 1',
+    'unit3' => 'Unit - 3',
+    'unit4' => 'Unit - 4',
+    'fire_water_pump_house_details' => 'Fire Water Pump House Details',
+    'water_pump_storage_tank' => 'Water Pump and Water Storage',
 
 ];

@@ -34,7 +34,8 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="rraa_Add" action="{{ admin_url('rraa/ohc_fire_environment_compliance/add/submit') }}">
+                                    <form method="POST" id="rraa_Add" action="{{ admin_url('rraa/ohc_fire_environment_compliance/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -58,11 +59,29 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Date</label>
+                                                    <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date" value="{{ todaydate('todaydate') }}"
+                                                        placeholder="Revision Date" value="{{ getDocumentReviewDate('RRAA-0') }}"
                                                         readonly>
                                                 </div>
+                                            </div>
+
+                                            <div class="col-md-4 form-group form-input mt-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
 
@@ -70,7 +89,7 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                   
+
                                                 </div>
                                             </div>
 
@@ -217,7 +236,7 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            minDate: new Date(),
+            // minDate: new Date(),
         });
 
         $.validator.addMethod("noSpaces", function(value, element) {
@@ -249,7 +268,7 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
-        
+
         function initEmployeeSelect2() {
             $('.emp-select').select2({
                 ajax: {
@@ -288,6 +307,9 @@
                     required: true,
                 },
                 revision_date: {
+                    required: true,
+                },
+                signature_image: {
                     required: true,
                 },
                 'category[1]': {
@@ -329,6 +351,9 @@
                 },
                 revision_date: {
                     required: "Please Select Revision Date",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 },
                 'category[1]': {
                     required: "Category is Required",
@@ -612,21 +637,21 @@
             }
             $(this).closest('.form-set').remove();
             updatePageIndices();
-          
+
         });
 
         function updatePageIndices() {
             $('#form-wrapper .form-set').each(function(index) {
-                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5)); 
-                
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']'); 
+                $(this).find("input[name^='serial_number']").val('RRAA-' + ('0000' + (index + 1)).slice(-5));
+
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                $(this).find('input[name^="scope"]').attr('name', 'scope[' + (index + 1) + ']');
                 $(this).find('input[name^="ohs_compliance_index"]').attr('name', 'ohs_compliance_index[' + (index + 1) + ']');
-                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']'); 
-                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']'); 
-                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']'); 
-                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']'); 
-                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']'); 
+                $(this).find('select[name^="frequency"]').attr('name', 'frequency[' + (index + 1) + ']');
+                $(this).find('select[name^="category"]').attr('name', 'category[' + (index + 1) + ']');
+                $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + (index + 1) + ']');
+                $(this).find('input[name^="authority"]').attr('name', 'authority[' + (index + 1) + ']');
+                $(this).find('input[name^="accountability"]').attr('name', 'accountability[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }

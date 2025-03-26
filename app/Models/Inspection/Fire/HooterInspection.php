@@ -2,6 +2,8 @@
 
 namespace App\Models\Inspection\Fire;
 
+use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class HooterInspection extends Model
@@ -12,11 +14,13 @@ class HooterInspection extends Model
         'id',
         'doc_no',
         'issue_date',
-        'revision_date',
+        'revision_data',
         'date_of_inspection',
         'location',
         'shift',
         'next_due',
+        'observation',
+        'unit',
         'frequency',
         'checked_by',
         'verified_by',
@@ -120,8 +124,171 @@ class HooterInspection extends Model
         return $datas;
     }
 
+    public function store()
+    {
+        $request = request();
+
+        $data = array(
+            'doc_no' => $request->doc_no,
+            'issue_date' => $request->issue_date,
+            'revision_data' => $request->rev_date,
+            'date_of_inspection' => $request->inspection_date,
+            'location' => decryptId($request->location_id),
+            'shift' => decryptId($request->shift_id),
+            'next_due' => $request->next_due,
+            'observation' => $request->observation,
+            'unit' => decryptId($request->unit_id),
+            'frequency' => decryptId($request->frequency_id),
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+        );
+
+        return $this->create($data);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_fire_hooter.*');
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
+                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+            });
+        }
+
+        if (isset($request->document_number) && $request->document_number) {
+            $query = $query->where('inspection_fire_hooter.document_number', 'LIKE', '%' . $request->document_number . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_fire_hooter.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_fire_hooter.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        }
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
+        }
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+
+
+
+    public function EHSOfficerUpdate($id)
+    {
+
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L1_MANAGER_REJECTED,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L2_MANAGER_REJECTED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+
     public function selectOne($id)
     {
-        return $this->where('id',$id)->where('status',1)->where('trash','NO')->first();
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_fire_hooter'));
     }
 }

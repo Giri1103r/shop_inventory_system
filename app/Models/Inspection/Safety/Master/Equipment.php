@@ -172,6 +172,19 @@ class Equipment extends Model
         return $data;
     }
 
+    public function GetEquipment()
+    {
+        $data =  $this->get();
+        $decryptedArray = [];
+        foreach ($data as $data) {
+            // dd($data);
+            $decryptedArray[] = [
+                'id' => encryptId($data->id),
+                'equipment_name' => $data->equipment_name,
+            ];
+        }
+        return $decryptedArray;
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_safety_master_equipment'));

@@ -193,55 +193,55 @@
         $user_response = json_decode($forklift_details->responses, true);
     @endphp
 
-        <table style="width:100%;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Sr. No</th>
-                    <th colspan="3"
-                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Check Points</th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Reports</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($user_response as $subcategory => $questions)
-                    @php
-                        $rowCount = count($questions);
-                        $firstRow = true;
-                        $srNo = 1;
-                    @endphp
-                    @foreach ($questions as $questionId => $answer)
-                        <tr>
-                            @if ($firstRow)
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    {{ $srNo }}</td>
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                    {{ GetSubChecklistTypeName($subcategory) }}
-                                </td>
-                                @php
-                                    $srNo++;
-                                    $firstRow = false;
-                                @endphp
+    <table style="width:100%;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Sr. No</th>
+                <th colspan="3"
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Check Points</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Reports</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($user_response as $subcategory => $questions)
+                @php
+                    $rowCount = count($questions);
+                    $firstRow = true;
+                    $srNo = 1;
+                @endphp
+                @foreach ($questions as $questionId => $answer)
+                    <tr>
+                        @if ($firstRow)
+                            <td rowspan="{{ $rowCount }}"
+                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                {{ $srNo }}</td>
+                            <td rowspan="{{ $rowCount }}"
+                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                {{ GetSubChecklistTypeName($subcategory) }}
+                            </td>
+                            @php
+                                $srNo++;
+                                $firstRow = false;
+                            @endphp
+                        @endif
+                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                            {{ GetChecklistTypeDate($questionId) }}
+                        </td>
+                        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                            @if ($answer == 'YES')
+                                <span style="color: green; font-size: 20px;">✓</span>
+                            @elseif ($answer == 'NO' || $answer == 'N/A')
+                                <span style="color: red; font-size: 20px;">X</span>
                             @endif
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                {{ GetChecklistTypeDate($questionId) }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                @if ($answer == 'YES')
-                                    <span style="color: green; font-size: 20px;">✓</span>
-                                @elseif ($answer == 'NO' || $answer == 'N/A')
-                                    <span style="color: red; font-size: 20px;">X</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-            </tbody>
-            @endforeach
-        </table>
+                        </td>
+                    </tr>
+                @endforeach
+        </tbody>
+        @endforeach
+    </table>
 
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
@@ -263,6 +263,7 @@
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
             @endif
+
             @if (isset($forklift_details->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -282,6 +283,7 @@
                     </tr>
                 @endif
             @endif
+
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
@@ -296,6 +298,21 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $forklift_details->remarks }}
+                </tr>
+            @endif
+            @php
+                $getSafetySignature = GetSafetySignature(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
                 </tr>
             @endif
         </table>
@@ -332,6 +349,21 @@
                     {{ $forklift_details->capa_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetSafetySignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -367,6 +399,21 @@
                     {{ $forklift_details->capa_ehs_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetSafetySignature(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -403,6 +450,21 @@
                     {{ $forklift_details->level_one_manager_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetSafetySignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -445,6 +507,21 @@
                     {{ $forklift_details->level_two_manager_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetSafetySignature(
+                    $forklift_details->l2_manager_verified_by,
+                    $forklift_details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif

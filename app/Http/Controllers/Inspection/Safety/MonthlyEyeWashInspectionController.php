@@ -184,6 +184,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $inspection_id = $store_eyewash_inspection->id;
             $inspection_details = $this->eye_wash->selectOne($inspection_id);
             $store_inspection_details = $this->eye_wash_details->store($inspection_id);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $store_eyewash_inspection->id);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -194,7 +195,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'message' => "Fire Associate create the Monthly EyeWash Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_id,
                     'module' => 1,
@@ -205,12 +206,12 @@ class MonthlyEyeWashInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            $title = 'Fire Associate create the Monthly Eyewash Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
                 $details = array(
-                    'safety_type' => 'Monthly Forklift Inspection',
+                    'safety_type' => 'Monthly Eyewash Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -241,8 +242,15 @@ class MonthlyEyeWashInspectionController extends Controller
     public function GetLocations(Request $request)
     {
         try {
-            $locations = $this->location->getLocationName();
-            return response()->json($locations);
+            $data = $this->location->getLocationName();
+            $decryptedArray = [];
+            foreach ($data as $data) {
+                $decryptedArray[] = [
+                    'id' => encryptId($data->id),
+                    'location_name' => $data->location_name,
+                ];
+            }
+            return response()->json($decryptedArray);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['error' => 'Please try again after sometimes'], 406);
@@ -296,7 +304,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
             $inspection_updates = $this->eye_wash->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'eye_wash Inspeciton Approved Successfully';
@@ -366,7 +374,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $eye_wash_inspection = $this->eye_wash->capaSubmit($id);
             $inspection_details = $this->eye_wash->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -427,7 +435,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $eye_wash_inspection = $this->eye_wash->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -501,7 +509,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $eye_wash_inspection = $this->eye_wash->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -574,7 +582,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $eye_wash_inspection = $this->eye_wash->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'eye_wash Inspeciton Approved Successfully!';

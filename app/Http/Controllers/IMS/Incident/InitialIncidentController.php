@@ -184,6 +184,7 @@ class InitialIncidentController extends Controller
                 } catch (Exception $ex) {
                     
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+
                 }
             }
         }
@@ -199,7 +200,6 @@ class InitialIncidentController extends Controller
 
     public function Add(Request $request)
     {
-
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
@@ -214,6 +214,7 @@ class InitialIncidentController extends Controller
             report($ex);
         }
     }
+    
     public function employeename(Request $request)
     {
         $name = $request->input('search');

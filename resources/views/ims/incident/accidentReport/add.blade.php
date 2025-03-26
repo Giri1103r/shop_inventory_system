@@ -323,7 +323,7 @@
                         shift: {
                             required: "Shift is required.",
                             minlength: "Shift Required must be exactly 2 characters.",
-                            maxlength: "Brief Description Required must be exactly 2000 characters.",
+                            maxlength: "Shift Required must be exactly 2000 characters.",
                             pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                         },
                         location_id: {

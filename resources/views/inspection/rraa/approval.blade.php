@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Revision Date') }}</label>
+                                        <label class="form-label view_label">{{ __('Revision Data') }}</label>
                                         <div class="view_data">
                                             {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
                                         </div>
@@ -65,6 +65,24 @@
                                             {{ displaydateformat(isset($rraa_details->created_at) ? $rraa_details->created_at : '') }}
                                         </div>
                                     </div>
+                                    @php
+                                        $signature = GetSignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            RRAA_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}"
+                                                    alt="Signature Upload"
+                                                    style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 @foreach ($rraa_checkList as $item)
@@ -107,7 +125,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('Responsibility') }}</label>
                                             <div class="view_data">
-                                                {{ isset($item->responsibility) ? $item->responsibility : '' }}
+                                                {{ getUsername($item->responsibility) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">

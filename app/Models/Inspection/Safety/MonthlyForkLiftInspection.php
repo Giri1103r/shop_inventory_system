@@ -46,7 +46,7 @@ class MonthlyForkLiftInspection extends Model
         'created_at',
         'updated_at',
         'responses',
-        
+
     ];
 
     protected $attributes = [
@@ -71,11 +71,12 @@ class MonthlyForkLiftInspection extends Model
             });
         }
 
+
         if (isset($request->document_number) && $request->document_number) {
             $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
@@ -280,7 +281,7 @@ class MonthlyForkLiftInspection extends Model
             $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');

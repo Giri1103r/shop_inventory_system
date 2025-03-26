@@ -52,7 +52,9 @@ class MedicineRequistionSlipfloordetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -66,6 +68,12 @@ class MedicineRequistionSlipfloordetails extends Model
                     ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
             });
         }
+
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
+        }
         if (isset($request->document_number) && $request->document_number) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
@@ -75,8 +83,8 @@ class MedicineRequistionSlipfloordetails extends Model
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . decryptId($request->status) . '%');
+        if (isset($request->approve_status) && $request->approve_status) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status) );
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -171,9 +179,14 @@ class MedicineRequistionSlipfloordetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_ohc_medicine_requisition_slip_floor_details.*');
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
         // dd($query);
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
+        }
         if (isset($request->document_number) && $request->document_number) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
@@ -184,9 +197,13 @@ class MedicineRequistionSlipfloordetails extends Model
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->approve_status) && $request->approve_status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status));
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status) );
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', Auth::id());
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -200,8 +217,8 @@ class MedicineRequistionSlipfloordetails extends Model
                 case "document_number":
                     $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.doc_no', $columnorder);
                     break;
-                case "approve_status":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.approve_status', $columnorder);
+                case "status":
+                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.created_by', $columnorder);
@@ -215,13 +232,10 @@ class MedicineRequistionSlipfloordetails extends Model
             }
         }
 
-
-
-
         $query->orderBy('inspection_ohc_medicine_requisition_slip_floor_details.id', 'DESC');
 
 
-        return   $query;
+        return   $query->get();
     }
 
 }

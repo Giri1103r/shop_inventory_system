@@ -27,8 +27,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('safety/eye-wash-inspection/monthly/add/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/hooter-inspection/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -52,7 +52,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('SAF-0') }}"
+                                                        class="form-control" value="{{ getDocumentReviewDate('HTR-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -127,6 +127,31 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.upload_image') }}</label>
+                                                    <input type="file" name="device_image" class="form-control"
+                                                        accept="image/*">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -140,10 +165,10 @@
                                                         style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
                                                         style="min-width: 160px;">
                                                         Add Observation
-                                                    </button>
+                                                    </button> --}}
                                                     <button type="button"
                                                         class="btn btn-danger remove-row d-flex align-items-center"
                                                         style="min-width: 130px;">
@@ -201,7 +226,6 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.observations') }}</label>
-                                                        <!-- Checkboxes -->
                                                         <div class="mt-1">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
@@ -218,14 +242,14 @@
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[]" id="auditbility" value="YES">
+                                                                    name="auditbility[1]" id="auditbility"
+                                                                    value="YES">
                                                                 <label class="form-check-label"
                                                                     for="auditbility">Audibility</label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -235,15 +259,16 @@
                                                     </div>
                                                 </div>
 
+
                                             </div>
                                         </div>
                                         <div class="form-observation">
-                                            <div class="row mt-4 form-set">
+                                            <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">Hooter Inspection Observation</h4>
                                                 </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
                                                     <button class="btn btn-primary add-row" type="button" id="add-row"
                                                         style="width: 120px;">
                                                         Add
@@ -257,17 +282,16 @@
                                                         style="width: 120px;">
                                                         <i class="fa-solid fa-trash me-2"></i> Remove
                                                     </button>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
-
                                             </div>
                                         </div>
 
@@ -366,7 +390,18 @@
                         },
                         "remarks[1]": {
                             required: true,
-                        }
+                        },
+                        device_image: {
+                            required: true,
+                            extension: "jpg",
+                            filesize: 2097152
+                        },
+                        observation: {
+                            required: true,
+                        },
+                        signature_image:{
+                            required: true,
+                        },
 
                     },
                     messages: {
@@ -374,6 +409,9 @@
                             required: "Document Number is Required",
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image:{
+                            required: 'Please upload your signature',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -413,7 +451,16 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
-                        }
+                        },
+                        device_image: {
+                            required: "Please upload an image.",
+                            extension: "Only JPG files are allowed.",
+                            filesize: "Image must be under 2MB."
+                        },
+                        observation: {
+                            required: "Please add observation",
+                        },
+
 
                     },
                     errorElement: 'span',
@@ -442,6 +489,7 @@
             const minFormSets = 1;
             const maxFormSets = 200;
             let serial_number = 2;
+            const maxObsSets = 5;
 
             $(document).ready(function() {
                 $(document).on('click', '#add-row', function() {
@@ -526,19 +574,19 @@
                                                         <div class="mt-1">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="blinking_light[${form_set_count}]" id="blinking_light"
+                                                                    name="blinking_light[${form_set_count}]" id="blinking_light[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="blinking_light">Blinking Light</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="connection[${form_set_count}]" id="connection"
+                                                                    name="connection[${form_set_count}]" id="connection[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="connection">Connection</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[${form_set_count}]" id="auditbility"
+                                                                    name="auditbility[${form_set_count}]" id="auditbility[${form_set_count}]"
                                                                     value="YES">
                                                                 <label class="form-check-label" for="auditbility">Audibility</label>
                                                             </div>
@@ -606,6 +654,55 @@
                     updatePageIndices();
 
                 });
+
+                $(document).on('click', '#add-obs', function() {
+                    let observationFormsets = $('.form-observation .form-obs').length;
+
+                    if (currentFormSets >= maxObsSets) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Maximum Hooter Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Hooter Inspection Observation.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+                    var newObsSet = `
+                        <div class="row mt-4 form-obs">
+                                                <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Hooter Inspection Observation</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="width: 120px;">
+                                                        Add
+                                                    </button>
+                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                        style="width: 150px;">
+                                                        Add Observation
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="width: 120px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                    `;
+
+                });
             });
 
             function GetDepartment(selectElement) {
@@ -628,11 +725,11 @@
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
-                    let newSerialNumber = 'MEW-' + ('000000' + idx).slice(-6);
+                    let newSerialNumber = 'HTR-' + ('000000' + idx).slice(-6);
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="department"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
                     $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
                     $(this).find('textarea[name^="check_items"]').attr('name', 'check_items[' + idx + ']');

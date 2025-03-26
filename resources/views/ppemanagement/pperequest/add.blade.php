@@ -36,93 +36,106 @@
                                         <div class="row">
 
                                             @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Request For</label>
-                                                        <div class="gap-2">
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_myself" class="form-check-input"
-                                                                    value="1">
-                                                                <span class="form-check-label">Myself</span>
-                                                            </label>
-                                                            <label class="form-check form-check-inline">
-                                                                <input type="radio" name="request_for"
-                                                                    id="request_for_worker" class="form-check-input"
-                                                                    value="2">
-                                                                <span class="form-check-label">Worker</span>
-                                                            </label>
-                                                        </div>
-                                                        <div class="text-danger"></div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Request For</label>
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for"
+                                                                id="request_for_myself" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Myself</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for"
+                                                                id="request_for_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3" id="emp_id_container">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <select name="emp_id" id="emp_id"
-                                                            class="form-select single-select form-select-sm"
-                                                            style="width: 100%">
-                                                            <option value="">Select the worker</option>
-                                                        </select>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3" id="emp_id_container">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <select name="emp_id" id="emp_id"
+                                                        class="form-select form-select-sm single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the employee</option>
+
+                                                    </select>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm" id="emp_name" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee
+                                                        Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm" id="emp_name" readonly>
+                                                    <div class="text-danger"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm" readonly>
-                                                        <div class="text-danger"></div>
-                                                    </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm" readonly>
+                                                    <div class="text-danger"></div>
                                                 </div>
-                                            @else
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
-                                                        <input type="text" name="emp_id"
-                                                            class="form-control form-control-sm "id="emp_id"
-                                                            value="{{ $employee->employee_id }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            </div>
 
-                                                    </div>
+
+                                            <input type="hidden" name="unit" id="unit"
+                                                class="form-control form-control-sm" readonly>
+                                            <input type="hidden" name="company" id="company"
+                                                class="form-control form-control-sm" readonly>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <input type="text" name="emp_id"
+                                                        class="form-control form-control-sm "id="emp_id"
+                                                        value="{{ $employee->employee_id }}" readonly>
+                                                    <div class="text-danger"></div>
+
                                                 </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
-                                                        <input type="text" name="emp_name"
-                                                            class="form-control form-control-sm " id="emp_name"
-                                                            value="{{ $employee->name }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="emp_name" class="form-label require">Employee
+                                                        Name</label>
+                                                    <input type="text" name="emp_name"
+                                                        class="form-control form-control-sm " id="emp_name"
+                                                        value="{{ $employee->name }}" readonly>
+                                                    <div class="text-danger"></div>
 
-                                                    </div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="department"
-                                                            class="form-label require">Department</label>
-                                                        <input type="text" name="department" id="department"
-                                                            class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->department_id) }}" readonly>
-                                                        <div class="text-danger"></div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Department</label>
+                                                    <input type="text" name="department" id="department"
+                                                        class="form-control form-control-sm"
+                                                        value="{{ getDepartment($employee->department_id) }}" readonly>
+                                                    <div class="text-danger"></div>
 
-                                                    </div>
                                                 </div>
-                                            @endif
+                                            </div>
+                                            <input type="hidden" name="company" id="company"
+                                                class="form-control form-control-sm"
+                                                value="{{ getCompanyname($employee->company_id) }}" readonly>
+                                            <input type="hidden" name="unit" id="unit"
+                                                class="form-control form-control-sm"
+                                                value="{{ getUnitname($employee->unit_id) }}" readonly>
+                                        @endif
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Item Code</label>
@@ -228,15 +241,13 @@
         });
 
         $(document).ready(function() {
-
-
-
-
             $('input[name="request_for"]').on("change", function() {
                 var requestFor = $(this).val();
                 var empIdContainer = $("#emp_id_container");
                 var authEmployeeId =
-                    "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
+                "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
+                var authDepartment =
+                "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}"; // Authenticated user's department
 
                 if (requestFor === "1") {
                     // If "Myself" is selected
@@ -246,11 +257,9 @@
                 <div class="text-danger"></div>
             `);
 
-                    // Populate employee name and department using helper function
                     $("#emp_name").val("{{ auth()->user()->name }}");
-                    $("#department").val("{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}");
+                    $("#department").val(authDepartment); // Set auth user's department
                 } else if (requestFor === "2") {
-                    // If "Worker" is selected
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
                 <select name="emp_id" id="emp_id" class="form-select form-select-sm " style="width: 100%">
@@ -259,63 +268,37 @@
                 <div class="text-danger"></div>
             `);
 
-                    // Reinitialize Select2 for the new dropdown
                     $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
+                        ajax: {
+                            url: '{{ admin_url('ppe_request/employeeid') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
                                 return {
-                                    id: item.id,
-                                    text: item.text
+                                    search: params.term
                                 };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
+                        },
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
 
-                    // Clear employee name and department
                     $("#emp_name").val("");
-                    $("#department").val("");
+                    $("#department").val(""); // Clear department until employee is selected
                 }
             });
-            // $('#emp_id').select2({
-            //     ajax: {
-            //         url: '{{ admin_url('ppe_request/employeeid') }}',
-            //         dataType: 'json',
-            //         delay: 250,
-            //         data: function(params) {
-            //             return {
-            //                 search: params.term
-            //             };
-            //         },
-            //         processResults: function(data) {
-            //             return {
-            //                 results: $.map(data, function(item) {
-            //                     return {
-            //                         id: item.id,
-            //                         text: item.text
-            //                     };
-            //                 })
-            //             };
-            //         }
-            //     },
-            //     minimumInputLength: 1,
-            //     dropdownCssClass: 'form-control',
-            //     selectionCssClass: 'form-control'
-            // });
+
             // Handle Employee ID change for Worker
             $(document).on("change", "#emp_id", function() {
                 var emp_id = $(this).val();
@@ -327,8 +310,8 @@
                         success: function(data) {
                             if (data && data.employee) {
                                 $("#emp_name").val(data.employee.emp_name);
-                                $("#department").val(data.departments?.department_name ||
-                                    "No department available");
+                                $("#department").val(data.departments ? data.departments
+                                    .department_name : "No department available");
                             } else {
                                 Swal.fire({
                                     icon: "error",
@@ -348,7 +331,7 @@
                     });
                 } else {
                     $("#emp_name").val("");
-                    $("#department").val("");
+                    $("#department").val(""); // Clear department when no employee is selected
                 }
             });
         });

@@ -45,8 +45,15 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
+                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{encryptId('6')}}">CLOSED</option>
+                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
+                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
+                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -160,8 +167,8 @@
                             name: 'revision_date'
                         },
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'approve_status',
+                            name: 'approve_status'
                         },
                         {
                             data: 'created_date',

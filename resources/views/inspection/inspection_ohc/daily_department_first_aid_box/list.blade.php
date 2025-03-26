@@ -46,14 +46,14 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId(8) }}">Medical Assistant / Floor manager Approve Pending</option>
+                                                <option value="{{ encryptId(9) }}">Medical Assistant / Floor manager Approved</option>
+                                                <option value="{{ encryptId(10) }}">Medical Assistant / Floor manager Rejected</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
-
                                         </div>
                                     </div>
                                 </div>
@@ -97,7 +97,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var IssueDatepicker = flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
 
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -164,8 +168,8 @@
 
 
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'approve_status',
+                            name: 'approve_status'
                         },
                         {
                             data: 'created_date',
@@ -199,7 +203,7 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
+
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -210,6 +214,7 @@
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aid-box/daily-departmental/export/pdf') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -228,7 +233,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aid-box/daily-departmental/export/excel') }}" +
+                                            "{{ admin_url('ohc/first-aid-box/daily-departmental/export/excel') }}"+
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +

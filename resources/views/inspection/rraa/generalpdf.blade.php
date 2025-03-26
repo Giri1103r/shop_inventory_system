@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>RRAA Details| KARAM</title>
+    <title>RRAA Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,8 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    RRAA Details
-                </td>
+                    RRAA Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -150,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    RRAA Details
+                    RRAA Inspection
                 </td>
             </tr>
         </table>
@@ -160,18 +159,22 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ isset($rraa_details->document_number) ? $rraa_details->document_number : '' }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($rraa_details->document_number) ? $rraa_details->document_number : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ Displaydateformat(isset($rraa_details->issue_date) ? $rraa_details->issue_date : '') }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($rraa_details->issue_date) ? $rraa_details->issue_date : '') }}
+            </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
+            <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($rraa_details->revision_date) ? $rraa_details->revision_date : '') }}</td>
+                {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
@@ -188,336 +191,67 @@
 
     <br>
 
-    @foreach ($rraa_checkList as $item)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        RRAA Checklist
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
+    <div style="width:100%;">
+        <table style="width:100%;">
             <tr>
-                <td width="50%" style="padding:5px;"><b>Serial Number</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">{{ isset($item->serial_number) ? $item->serial_number : '' }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>category</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getCategoryname($item->category) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>OHS Compliance Index</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->ohs_compliance_index) ? $item->ohs_compliance_index : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Frequency</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getFrequencyname($item->frequency) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Scope</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->scope) ? $item->scope : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Responsibility</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->responsibility) ? $item->responsibility : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Authority</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->authority) ? $item->authority : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Accountability</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->accountability) ? $item->accountability : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Remark</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($item->remark) ? $item->remark : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Created By</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($item->created_by) ? $item->created_by : '') }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ displayDateformat($item->created_at) }}</td>
-            </tr>
-        </table>
-        <br>
-    @endforeach
-
-    @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.ehs_officer_verify') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            @if (isset($inspection_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($inspection_details->verified_by) }}</td>
-                </tr>
-            @endif
-            @if (isset($inspection_details->created_at))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">  {{ Displaydateformat($inspection_details->created_at) }}</td>
-                </tr>
-            @endif
-            @if (isset($inspection_details->approved_by))
-                @if ($inspection_details->verified_by == $inspection_details->approved_by)
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ getUsername($inspection_details->approved_by) }}
-                        </td>
-                    </tr>
-                @endif
-            @endif
-            @if (isset($inspection_details->capa_recomendation))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $inspection_details->capa_recomendation }}
-                    </td>
-                </tr>
-            @else
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $inspection_details->remarks }}
-                </tr>
-            @endif
-        </table>
-        <br>
-    @endif
-
-    @if (isset($inspection_details->capa_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.fire_associate_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">  {{ getUserName($inspection_details->created_by) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">  {{ Displaydateformat($inspection_details->created_at) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $inspection_details->capa_remarks }}
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    RRAA Inspection Checklist
                 </td>
             </tr>
         </table>
-        <br>
-    @endif
-
-    @if ($inspection_details->capa_ehs_remarks)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.ehs_officer_reverification') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">  {{ getUserName($inspection_details->verified_by) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($inspection_details->created_at) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $inspection_details->capa_ehs_remarks }}
-                </td>
-            </tr>
-        </table>
-        <br>
-    @endif
-
-    @if (isset($inspection_details->level_one_manager_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.level_one_manager_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">   {{ getUserName($inspection_details->l1_manager_verified_by) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($inspection_details->created_at) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $inspection_details->level_one_manager_remarks }}
-                </td>
-            </tr>
-        </table>
-        <br>
-    @endif
-    @if (isset($inspection_details->level_two_manager_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.level_two_manager_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($inspection_details->l2_manager_verified_by) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($inspection_details->created_at) }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername($inspection_details->approved_by) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $inspection_details->level_two_manager_remarks }}
-                </td>
-            </tr>
-        </table>
-    <br>
-    @endif
-    
-    <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Status Logs
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                @if (isset($status_log) && $status_log->isNotEmpty())
-                    <table class="table table-bordered table-hover tblborder">
-                        <thead>
-                            <tr>
-                                <th>S.NO</th>
-                                <th>From Status</th>
-                                <th>To Status</th>
-                                <th>Remarks</th>
-                                <th>Approved By</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($status_log as $log)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ getInspectionStatus($log->from_status) }}</td>
-                                    <td>{{ getInspectionStatus($log->to_status) }}</td>
-                                    <td>{{ $log->remarks ?? 'N/A' }}</td>
-                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}</td>
-                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
-                                    <td>{{ displaydateformat($log->created_at) }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <div class="card-body">
-                        <p class="text-dark">{{ __('No status logs available.') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-        <br>
     </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">CATEGORY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">OHS COMPLIANCE INDEX</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">FREQUENCY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">SCOPE</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">RESPONSIBILITY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">AUTHORITY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">ACCOUNTABILITY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">REMARK</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">CREATED BY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">CREATED DATE</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($rraa_checkList as $item)
+            <tr>
+                <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->serial_number) ? $item->serial_number : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getCategoryname($item->category) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->ohs_compliance_index) ? $item->ohs_compliance_index : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getFrequencyname($item->frequency) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->scope) ? $item->scope : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername($item->responsibility) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->authority) ? $item->authority : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->accountability) ? $item->accountability : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->remark) ? $item->remark : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($item->created_by) ? $item->created_by : '') }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($item->created_at) }}</td>
+            </tr>
+            @endforeach
+            @php
+                $signature = GetSignature(
+                    $inspection_details->created_by,
+                    $inspection_details->id,
+                    RRAA_INSPECTION,
+                );
+            @endphp
+            <tr>
+                <td colspan="12" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($signature) }}" alt="Checked By Signature" style="height: 50px;">
+                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
     <br>
 
 </body>

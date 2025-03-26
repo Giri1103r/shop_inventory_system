@@ -9,15 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 class AmbientNoiseMonitoring extends Model
 {
 
-    protected $table = 'inspection_ambient_noise_monitoring';
+    protected $table = 'inspection_environment_ambient_noise_monitoring';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'ambient_noise_id',
-        'doc_no',
-        'issue_date',
-        'rev_dt',
+        'environment_id',
+        'sr_no',
         'location_id',
         'unit_id',
         'noise_level_dba',
@@ -25,11 +23,11 @@ class AmbientNoiseMonitoring extends Model
         'next_due_date_of_monitoring',
         'noise_level_dba_day',
         'noise_level_dba_night',
-        'date_of_monitoring_day',
-        'date_of_monitoring_night',
+        'date_of_monitoring_dropdown',
+        'date_of_monitoring_date',
+        'next_due_date_of_monitoring_dropdown',
         'next_due_date_of_monitoring_date',
-        'next_due_date_of_monitoring_night',
-        'act_rule_id',
+        'act_rule',
         'remark',
         'status',
         'trash',
@@ -43,115 +41,71 @@ class AmbientNoiseMonitoring extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
-    public function list()
+   
+
+    public function store($environmentId)
     {
         $request = request();
-        $search = '';
-        $query = $this->select('inspection_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id');
-        $query = $query->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id');
-        // dd($query);
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+        $monitors = $request->input('monitoring');
+        if (!empty($monitors) && is_array($monitors)) {
+            foreach ($monitors as  $monitorData) {
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ambient_noise_monitoring.ambient_noise_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
-            });
+                $data = [
+                    'environment_id' => $environmentId,
+                    'sr_no' =>  $monitorData['sr_no'],
+                    'location_id' => decryptId($monitorData['location_id']),
+                    'unit_id' => decryptId($monitorData['unit_id']),
+                    'noise_level_dba' =>  $monitorData['noise_level_dba'],
+                    'date_of_monitoring' => DBdateformat($monitorData['date_of_monitoring']),
+                    'next_due_date_of_monitoring' => DBdateformat($monitorData['next_due_date_of_monitoring']),
+                    'noise_level_dba_day' =>  $monitorData['noise_level_dba_day'],
+                    'noise_level_dba_night' =>  $monitorData['noise_level_dba_night'],
+                    'date_of_monitoring_dropdown' => decryptId($monitorData['date_of_monitoring_dropdown']),
+                    'date_of_monitoring_date' => DBdateformat($monitorData['date_of_monitoring_date']),
+                    'next_due_date_of_monitoring_dropdown' => decryptId($monitorData['next_due_date_of_monitoring_dropdown']),
+                    'next_due_date_of_monitoring_date' => DBdateformat($monitorData['next_due_date_of_monitoring_date']),
+                    'act_rule' =>  $monitorData['act_rule'],
+                    'remark' =>  $monitorData['remark'],
+                    'created_by' => Auth::id(),
+                ];
+                   $this->create($data);
+            }
         }
-
-        if ($request->has('ambient_noise_id') && $request->ambient_noise_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
-        }
-        if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.location_id', decryptId($request->location_id));
-        }
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.unit_id', decryptId($request->unit_id));
-        }
-
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_ambient_noise_monitoring.status', decryptId($request->status));
-        }
-
-        $data_count = $query;
-        $total_records = $data_count->count();
-
-        $query->orderBy('id', 'DESC');
-
-        if ($request->length != -1) {
-            $query->offset($request->start)->limit($request->length);
-        }
-
-        $data = $query->get();
-
-        $datas = array(
-            'data' => $data,
-            'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
-        );
-        return $datas;
     }
 
-    public function store()
-    {
-        $request = request();
-        $insert_array = [
-            'checklist_type_id' => decryptId($request->checklist_type_id),
-            'checklist_sub_type_id' => decryptId($request->checklist_sub_type_id),
-            'created_by' => Auth::id(),
-        ];
-        return $this->create($insert_array);
-    }
-    public function updates($id)
-    {
-
-        $request = request();
-
-        $update_array = array(
-            'checklist_type_id' => decryptId($request->checklist_type_id),
-            'checklist_sub_type_id' => decryptId($request->checklist_sub_type_id),
-            'updated_by' => Auth::id()
-        );
-        return $this->where('id', $id)->update($update_array);
-    }
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id');
-        $query = $query->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id');
+        $query = $this->select('inspection_environment_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no');
+        $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
+        $query = $query->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id');
+        $query = $query->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id');
         // dd($query);
 
         if ($request->has('ambient_noise_id') && $request->ambient_noise_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
+            $query = $query->where('inspection_environment_ambient_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.location_id', decryptId($request->location_id));
+            $query = $query->where('inspection_environment_ambient_noise_monitoring.location_id', decryptId($request->location_id));
         }
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('inspection_ambient_noise_monitoring.unit_id', decryptId($request->unit_id));
+            $query = $query->where('inspection_environment_ambient_noise_monitoring.unit_id', decryptId($request->unit_id));
         }
 
         if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_ambient_noise_monitoring.status', decryptId($request->status));
+            $query = $query->where('inspection_environment_ambient_noise_monitoring.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 
-    public function selectOne($id)
+    public function selectOne($envId)
     {
-        $data = $this->select('inspection_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name')
-            ->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id')
-            ->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')->where('inspection_ambient_noise_monitoring.id', $id)
-            ->first();
+        $data = $this->select('inspection_environment_ambient_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
+            ->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
+            ->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_ambient_noise_monitoring.environment_id', $envId)->where('inspection_environment_ambient_noise_monitoring.status',1)
+            ->get();
         return $data;
     }
 
@@ -170,31 +124,7 @@ class AmbientNoiseMonitoring extends Model
             );
         }
 
-        return $this->where('id', $id)->update($update_data);
+        return $this->where('environment_id', $id)->update($update_data);
     }
 
-
-    public function UniqueCheck($subcategory_name, $category_id)
-    {
-
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)->get();
-    }
-
-    public function ExistuniqueCheck($subcategory_name, $category_id, $id)
-    {
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)
-            ->where('id', '!=', $id)
-            ->get();
-    }
-
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('inspection_ambient_noise_monitoring'));
-
-        static::created(function ($model) {
-
-            $uniqueId = 'SUBCAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['subcategory_id' => $uniqueId]);
-        });
-    }
 }

@@ -45,10 +45,10 @@ class CertifiedFirstAider extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_certified_first_aider.*', 'masters_department.department_name', 'masters_unit.unit_name')
-        ->join('masters_department', 'ohc_master_certified_first_aider.department_id', '=', 'masters_department.id')
-        ->join('masters_unit', 'ohc_master_certified_first_aider.unit_id', '=', 'masters_unit.id')
-        ->where('masters_department.trash', 'NO')
-        ->where('masters_unit.trash', 'NO');
+            ->join('masters_department', 'ohc_master_certified_first_aider.department_id', '=', 'masters_department.id')
+            ->join('masters_unit', 'ohc_master_certified_first_aider.unit_id', '=', 'masters_unit.id')
+            ->where('masters_department.trash', 'NO')
+            ->where('masters_unit.trash', 'NO');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -115,18 +115,18 @@ class CertifiedFirstAider extends Model
     public function uniqueCheck($emp_id, $mobile_no)
     {
         return $this->where('emp_id', $emp_id)
-                    ->orWhere('mobile_no', $mobile_no)
-                    ->exists();
+            ->orWhere('mobile_no', $mobile_no)
+            ->exists();
     }
 
     public function existUniqueCheck($emp_id, $mobile_no, $id)
     {
         return $this->where(function ($query) use ($emp_id, $mobile_no) {
-                        $query->where('emp_id', $emp_id)
-                              ->orWhere('mobile_no', $mobile_no);
-                    })
-                    ->where('id', '!=', $id)
-                    ->exists();
+            $query->where('emp_id', $emp_id)
+                ->orWhere('mobile_no', $mobile_no);
+        })
+            ->where('id', '!=', $id)
+            ->exists();
     }
 
     public function store()
@@ -134,13 +134,13 @@ class CertifiedFirstAider extends Model
         $request = request();
 
         $insert_array = array(
-            'unit_id'         =>decryptId($request-> unit_id),
-            'department_id'   =>decryptId($request->department_id) ,
-            'emp_id'     =>$request-> emp_id,
-            'certifier_name' =>$request->certifier_name,
-            'mobile_no' =>$request->mobile_no ,
-            'address'=>$request->address,
-            'created_by'=>Auth::id(),
+            'unit_id'         => decryptId($request->unit_id),
+            'department_id'   => decryptId($request->department_id),
+            'emp_id'     => $request->emp_id,
+            'certifier_name' => $request->certifier_name,
+            'mobile_no' => $request->mobile_no,
+            'address' => $request->address,
+            'created_by' => Auth::id(),
         );
         return $this->create($insert_array);
     }
@@ -151,13 +151,13 @@ class CertifiedFirstAider extends Model
         $request = request();
 
         $update_array = array(
-            'unit_id'         =>decryptId($request-> unit_id),
-            'department_id'   =>decryptId($request->department_id) ,
-            'emp_id'     =>$request-> emp_id,
-            'certifier_name' =>$request->certifier_name,
-            'mobile_no' =>$request->mobile_no ,
-            'address'=>$request->address,
-            'updated_by'=>Auth::id(),
+            'unit_id'         => decryptId($request->unit_id),
+            'department_id'   => decryptId($request->department_id),
+            'emp_id'     => $request->emp_id,
+            'certifier_name' => $request->certifier_name,
+            'mobile_no' => $request->mobile_no,
+            'address' => $request->address,
+            'updated_by' => Auth::id(),
         );
         return $this->where('id', $id)->update($update_array);
     }
@@ -196,7 +196,7 @@ class CertifiedFirstAider extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_master_certified_first_aider.*');
-        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '')  {
+        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
@@ -252,7 +252,10 @@ class CertifiedFirstAider extends Model
 
         return $data;
     }
-
+    public function getFirsaid()
+    {
+        return $this->where('status', 1)->get();
+    }
 
     protected static function booted()
     {

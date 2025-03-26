@@ -51,6 +51,7 @@
                                                 <option value="{{ encryptId(4) }}">Floor Manager Rejected</option>
                                                 <option value="{{ encryptId(5) }}">Safety officer Approval pending</option>
                                                 <option value="{{ encryptId(6) }}">Safety officer Approved</option>
+                                                <option value="{{ encryptId(7) }}">Safety officer Rejected</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -100,7 +101,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var IssueDatepicker = flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
 
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({

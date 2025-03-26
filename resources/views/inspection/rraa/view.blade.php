@@ -54,14 +54,14 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Revision Date') }}</label>
+                                    <label class="form-label view_label">{{ __('Revision & Data') }}</label>
                                     <div class="view_data">
                                         {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
                                     </div>
                                 </div>
 
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Created at') }}</label>
+                                    <label class="form-label view_label">{{ __('Created by') }}</label>
                                     <div class="view_data">
                                         {{ getUsername(isset($rraa_details->created_by) ? $rraa_details->created_by : '') }}
                                     </div>
@@ -72,6 +72,25 @@
                                         {{ displaydateformat(isset($rraa_details->created_at) ? $rraa_details->created_at : '') }}
                                     </div>
                                 </div>
+
+                                @php
+                                    $signature = GetSignature(
+                                        $inspection_details->created_by,
+                                        $inspection_details->id,
+                                        RRAA_INSPECTION,
+                                    );
+                                @endphp
+                                @if (isset($signature))
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label"
+                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                            <img src="{{ admin_url($signature) }}"
+                                                alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;" />
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
 
                         </div>
@@ -117,7 +136,7 @@
                                 <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Responsibility') }}</label>
                                     <div class="view_data">
-                                        {{ isset($item->responsibility) ? $item->responsibility : '' }}
+                                        {{ getUsername($item->responsibility) }}
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
@@ -139,7 +158,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Created at') }}</label>
+                                    <label class="form-label view_label">{{ __('Created by') }}</label>
                                     <div class="view_data">
                                         {{ getUsername(isset($item->created_by) ? $item->created_by : '') }}
                                     </div>
@@ -154,7 +173,7 @@
                         </div>
                         @endforeach
 
-                        @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                        {{-- @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -244,7 +263,7 @@
                                 @endif
                             </div>
                         </div>
-                        @endif
+                        @endif --}}
 
                         @if (isset($inspection_details->capa_remarks))
                         <div class="card-body ">
@@ -498,7 +517,7 @@
                             </div>
                         </div>
                         @endif
-                        <div class="card-body ">
+                        {{-- <div class="card-body ">
                             <div class="row mt-3">
                                 <div class="card-header-inner">
                                     <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
@@ -542,7 +561,7 @@
                                     @endif
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                     </div>
                 </div>
