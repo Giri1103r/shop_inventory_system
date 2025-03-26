@@ -260,7 +260,7 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -270,7 +270,7 @@
                                         action="{{ admin_url('fire/hooter-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
                                             name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -344,7 +344,7 @@
                                                 @php
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
-                                                        $inspection_details->id,
+                                                        $inspection->id,
                                                         HOOTER_INSPECTION,
                                                     );
                                                 @endphp
@@ -426,7 +426,7 @@
                                                 @php
                                                     $signature = GetSignature(
                                                         $inspection_details->created_by,
-                                                        $inspection_details->id,
+                                                        $inspection->id,
                                                         HOOTER_INSPECTION,
                                                     );
                                                 @endphp
@@ -478,7 +478,7 @@
                                                 @php
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
-                                                        $inspection_details->id,
+                                                        $inspection->id,
                                                         HOOTER_INSPECTION,
                                                     );
                                                 @endphp
@@ -531,7 +531,7 @@
                                             @php
                                                 $signature = GetSignature(
                                                     $inspection_details->l1_manager_verified_by,
-                                                    $inspection_details->id,
+                                                    $inspection->id,
                                                     HOOTER_INSPECTION,
                                                 );
                                             @endphp
@@ -582,7 +582,7 @@
                                             @php
                                                 $signature = GetSignature(
                                                     $inspection_details->l2_manager_verified_by,
-                                                    $inspection_details->id,
+                                                    $inspection->id,
                                                     HOOTER_INSPECTION,
                                                 );
                                             @endphp
@@ -610,10 +610,10 @@
                                 @endif
 
                                 @if (
-                                    $inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
-                                        $inspection_details->inspection_status == L2_MANAGER_REJECTED ||
-                                        $inspection_details->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED)
+                                    $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                        $inspection->inspection_status == L2_MANAGER_REJECTED ||
+                                        $inspection->inspection_status == EHS_OFFICER_REJECTED ||
+                                        $inspection->inspection_status == L1_MANAGER_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -623,7 +623,7 @@
                                         action="{{ admin_url('fire/hooter-inspection/capa/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
                                             name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -667,12 +667,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/hooter-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -718,12 +718,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/hooter-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -771,12 +771,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/hooter-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">

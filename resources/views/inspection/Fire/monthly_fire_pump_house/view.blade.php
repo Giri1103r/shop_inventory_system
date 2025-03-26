@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Monthly Fire Pump House Inspection')
-@section('pageurl', admin_url('fire/monthly-fire-pumphouse-inspection/list'))
+@section('pageurl', admin_url('fire/monthly-fire-pump-house-inspection/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/monthly-fire-pumphouse-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}"></x-button-back>
 
                                 </div>
                             </div>
