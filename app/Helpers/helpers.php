@@ -39,7 +39,7 @@ use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-
+use App\Models\Inspection\audit\AuditAnalysis;
 if (!function_exists('get_encryptVal')) {
 
     function get_encryptVal($id)
@@ -1400,6 +1400,14 @@ if (!function_exists('getMonth')) {
         function getMSDSCount()
         {
             $data = MSDSCheckList::get()->count();
+            return $data;
+        }
+    }
+    if (!function_exists('getAnalysisCount')) {
+
+        function getAnalysisCount()
+        {
+            $data = AuditAnalysis::get()->count();
             return $data;
         }
     }
