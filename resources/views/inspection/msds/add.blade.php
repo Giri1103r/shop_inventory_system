@@ -58,7 +58,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Data</label>
+                                                    <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
                                                         placeholder="Revision Date" value="{{ getDocumentReviewDate('MSDS-0') }}"
                                                         readonly>
@@ -81,13 +81,13 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                        </div> 
+                                        </div>
 
                                         <div class="row mt-4">
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                   
+
                                                 </div>
                                             </div>
 
@@ -280,14 +280,14 @@
 
         $.validator.addMethod("uniqueItemCode", function(value, element) {
             var itemCodes = [];
-            
+
             $("input[name^='item_code']").each(function() {
                 var itemCodeValue = $(this).val();
                 if (itemCodeValue) {
-                    itemCodes.push(itemCodeValue);  
+                    itemCodes.push(itemCodeValue);
                 }
             });
-           
+
             return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
         }, "Item Code must be unique");
 
@@ -392,7 +392,7 @@
 
             $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
                 required: true,
-                noSpaces: true, 
+                noSpaces: true,
                 messages: {
                     required: 'Name of Chemical is required',
                     noSpaces: 'Item Code cannot be empty or only spaces'
@@ -413,9 +413,9 @@
                     required: 'Remark is required',
                     noSpaces: 'Remark cannot be empty or only spaces'
                 }
-            }); 
+            });
             form_set_count++;
-            updatePageIndices(); 
+            updatePageIndices();
         });
 
         $(document).on('click', '.remove-row', function() {
@@ -438,10 +438,10 @@
             $('#form-wrapper .form-set').each(function(index) {
                 $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(-5));
 
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']'); 
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']');
                 $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (index + 1) + ']');
-                $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']'); 
+                $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }

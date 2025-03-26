@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class AuditAssessment extends Model
 {
 
-    protected $table = 'inspection_audit';
+    protected $table = 'inspection_audit_assessment';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -37,7 +37,7 @@ class AuditAssessment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit.*','masters_employee.emp_name')->leftjoin('masters_employee','masters_employee.id','=','inspection_audit.floor_executive');
+        $query = $this->select('inspection_audit_assessment.*','masters_employee.emp_name')->leftjoin('masters_employee','masters_employee.id','=','inspection_audit_assessment.floor_executive');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -49,10 +49,10 @@ class AuditAssessment extends Model
         }
 
         // if (isset($request->category_name) && $request->category_name) {
-        //     $query = $query->where('inspection_audit.category_name', 'LIKE', '%' . $request->category_name . '%');
+        //     $query = $query->where('inspection_audit_assessment.category_name', 'LIKE', '%' . $request->category_name . '%');
         // }
         // if (isset($request->category_id) && $request->category_id) {
-        //     $query = $query->where('inspection_audit.category_id', 'LIKE', '%' . $request->category_id . '%');
+        //     $query = $query->where('inspection_audit_assessment.category_id', 'LIKE', '%' . $request->category_id . '%');
         // }
         $query->orderBy('id', 'desc');
 
@@ -98,7 +98,7 @@ class AuditAssessment extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_audit.*');
+        $query = $this->select('inspection_audit_assessment.*');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -109,10 +109,10 @@ class AuditAssessment extends Model
         }
 
         if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_audit.category_name', 'LIKE', '%' . $request->category_name . '%');
+            $query = $query->where('inspection_audit_assessment.category_name', 'LIKE', '%' . $request->category_name . '%');
         }
         if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_audit.category_id', 'LIKE', '%' . $request->category_id . '%');
+            $query = $query->where('inspection_audit_assessment.category_id', 'LIKE', '%' . $request->category_id . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -120,22 +120,22 @@ class AuditAssessment extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "category_name":
-                    $query->orderBy('inspection_audit.category_name', $columnorder);
+                    $query->orderBy('inspection_audit_assessment.category_name', $columnorder);
                     break;
                 case "category_id":
-                    $query = $query->orderBy('inspection_audit.category_id', $columnorder);
+                    $query = $query->orderBy('inspection_audit_assessment.category_id', $columnorder);
                     break;
                 case "status":
-                    $query = $query->orderBy('inspection_audit.status', $columnorder);
+                    $query = $query->orderBy('inspection_audit_assessment.status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_audit.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_audit_assessment.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_audit.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_audit_assessment.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_audit.id', 'DESC');
+                    $query = $query->orderBy('inspection_audit_assessment.id', 'DESC');
                     break;
             }
         }
@@ -196,7 +196,7 @@ class AuditAssessment extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_audit'));
+        static::addGlobalScope(new TrashScope('inspection_audit_assessment'));
         static::created(function ($model) {
 
             $uniqueId = 'AUDIT-ASSESSMENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);

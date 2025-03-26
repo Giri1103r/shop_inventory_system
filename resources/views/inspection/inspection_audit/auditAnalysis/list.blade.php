@@ -68,6 +68,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
+                                        <th>Audit Analysis ID </th>
                                         <th>Document Number</th>
                                         <th>Issue Date</th>
                                         <th>Revision Date</th>
@@ -133,7 +134,7 @@
             },
 
             ajax: {
-                url: "{{ admin_url('msds/list') }}",
+                url: "{{ admin_url('audit/6s-analysis/list') }}",
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -160,8 +161,8 @@
                 },
 
                 {
-                    data: 'document_number',
-                    name: 'document_number'
+                    data: 'audit_analysis_id',
+                    name: 'audit_analysis_id'
                 },
                 {
                     data: 'issue_date',
