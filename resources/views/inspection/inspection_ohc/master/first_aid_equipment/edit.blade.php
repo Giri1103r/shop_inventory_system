@@ -101,6 +101,9 @@
                             data: {
                                 medicine_id: function() {
                                     return $('#medicine_id').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
                                 }
                             }
                         }

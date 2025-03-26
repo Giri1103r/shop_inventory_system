@@ -11,9 +11,9 @@ use Shuchkin\SimpleXLSX;
 use Illuminate\Support\Facades\Session;
 use App\Models\UploadLogError;
 
+// class ImportFirstAidEquipmentJob implements ShouldQueue
+class ImportFirstAidEquipmentJob
 
-
-class ImportFirstAidEquipmentJob implements ShouldQueue
 {
     use Queueable;
 
@@ -94,9 +94,8 @@ class ImportFirstAidEquipmentJob implements ShouldQueue
             }
 
             $medicine_Exists = Medicine::where('medicine', $medicine_name)->get();
-
             try {
-                if (count($medicine_Exists) <= 0) {
+                if (count($medicine_Exists) <=0  ) {
                     $cond_error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
@@ -104,7 +103,6 @@ class ImportFirstAidEquipmentJob implements ShouldQueue
                     );
                     Session::flash('error', 'Import unsuccessfull!, Please check the upload logs');
                     $cond_error_datas[] = $cond_error_data;
-                    UploadLogError::insert($cond_error_data);
                     $i++;
                     continue;
                 }
@@ -112,6 +110,25 @@ class ImportFirstAidEquipmentJob implements ShouldQueue
             } catch (\Exception $ex) {
                 report($ex);
             }
+
+            $Exist = FirstAidEquipment::where('medicine_id', $medicine_id)->get();
+            try {
+                if (count($Exist) > 0) {
+                    $cond_error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Medicine Name Already Exist',
+                    );
+                    Session::flash('error', 'Import unsuccessfull!, Please check the upload logs');
+                    $cond_error_datas[] = $cond_error_data;
+                    UploadLogError::insert($cond_error_data);
+                    $i++;
+                    continue;
+                }
+            } catch (\Exception $ex) {
+                report($ex);
+            }
+
 
             if ($freeze_quantity == '') {
                 $error_data = array(
