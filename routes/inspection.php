@@ -207,7 +207,6 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::GET('/import', [EquipmentController::class, 'Import']);
         Route::POST('/import/Submit', [EquipmentController::class, 'ImportSubmit']);
         Route::GET('/sample_download', [EquipmentController::class, 'DownloadSample']);
-        Route::POST('/lists', [EquipmentController::class, 'Checklists']);
     });
 
     Route::group(['prefix' => 'eye-wash-inspection/monthly/'], function () {
@@ -470,3 +469,22 @@ Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], fun
     Route::get('export/excel', [HealthInstrumentCalibrationController::class, 'exportExcel']);
     Route::post('status', [HealthInstrumentCalibrationController::class, 'statusChange']);
 });
+Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
+    Route::get('list', [MonthlyMedicineStoreController::class, 'index']);
+    Route::post('list', [MonthlyMedicineStoreController::class, 'index']);
+    Route::get('add', [MonthlyMedicineStoreController::class, 'add']);
+    Route::post('add/submit', [MonthlyMedicineStoreController::class, 'store']);
+    Route::get('view/{id}', [MonthlyMedicineStoreController::class, 'view']);
+    Route::get('generalpdf/{id}', [MonthlyMedicineStoreController::class, 'generalpdf']);
+    Route::get('export/pdf', [MonthlyMedicineStoreController::class, 'exportPdf']);
+    Route::get('export/excel', [MonthlyMedicineStoreController::class, 'exportExcel']);
+    Route::post('status', [MonthlyMedicineStoreController::class, 'statusChange']);
+    Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
+    Route::get('approval/{id}', [MonthlyMedicineStoreController::class, 'approval']);
+    Route::post('verify/submit', [MonthlyMedicineStoreController::class, 'approvalSubmit']);
+
+
+
+
+});
+

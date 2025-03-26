@@ -201,7 +201,7 @@ class AppServiceProvider extends ServiceProvider
         defined('EHS_APPROVAL') or define('EHS_APPROVAL', 3);
 
         // IMS Incident
-        
+
         defined('STATUS_INCIDENT_REPORT') or define('STATUS_INCIDENT_REPORT', 1);
         defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
         defined('STATUS_UAUC_PENDING') or define('STATUS_UAUC_PENDING', 3);
