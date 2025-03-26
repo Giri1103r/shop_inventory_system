@@ -40,23 +40,23 @@ class FirstAidRecordChecklist extends Model
         'trash' => 'NO'
     ];
 
-    public function store($rraa_id)
+    public function store($first_aid_detail_id)
     {
         $request = request();
       
         $insertedData = [];
 
-        foreach ($request->scope as $index => $Scope) {
+        foreach ($request->first_aid_station_number as $index => $first_aid_station_number) {
             $insert_array = array(
-                'rraa_details_id' => $rraa_id,
+                'ohc_first_aid_record_details_id' => $first_aid_detail_id,
                 'serial_number' =>$request->serial_number[$index],
-                'category' =>decryptId($request->category[$index]),
-                'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
-                'frequency' =>decryptId($request->frequency[$index]),
-                'scope' => $Scope,  
-                'responsibility' =>$request->emp_id[$index],
-                'authority' => $request->authority[$index], 
-                'accountability' => $request->accountability[$index], 
+                'month' =>$request->month[$index],
+                'department' =>decryptId($request->department_id[$index]),
+                'unit' =>decryptId($request->unit_id[$index]),
+                'first_aid_station_number' => $first_aid_station_number,  
+                'first_aid_box_number' =>$request->first_aid_box_number[$index],
+                'total_number_of_first_aid' => $request->total_number_of_first_aid[$index], 
+                'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid[$index], 
                 'remark' => $request->remark[$index],  
                 'created_by' => Auth::id(),
             );

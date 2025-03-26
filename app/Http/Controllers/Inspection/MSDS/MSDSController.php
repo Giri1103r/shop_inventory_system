@@ -682,7 +682,6 @@ class MSDSController extends Controller
         }
     }
 
-
     public function ExportExcel(Request $request)
     {
 
@@ -712,7 +711,7 @@ class MSDSController extends Controller
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_date;
-                $export[] = getInspectionStatus($data->inspection_status);
+                $export[] = $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -727,7 +726,6 @@ class MSDSController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('msds/list'));
@@ -781,7 +779,6 @@ class MSDSController extends Controller
             $filename = "MSDS.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('msds/list'));

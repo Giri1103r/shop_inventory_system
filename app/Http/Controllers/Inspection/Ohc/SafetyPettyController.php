@@ -247,7 +247,7 @@ class SafetyPettyController extends Controller
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_date;
-                $export[] = getInspectionStatus($data->inspection_status);
+                $export[] = $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -365,6 +365,7 @@ class SafetyPettyController extends Controller
             $filename = "Safety Petty Logbook Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

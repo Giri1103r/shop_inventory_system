@@ -462,7 +462,7 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="card-body ">
+                            {{-- <div class="card-body ">
                                 <div class="row mt-3">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
@@ -508,7 +508,7 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                         </div>
                     </div>

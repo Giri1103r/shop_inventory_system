@@ -152,7 +152,7 @@ class RRAAController extends Controller
         try {
             $frequency = $this->frequency->getFrequency();
             $category = $this->category->getAll();
-          
+
             $data = [
                 'frequency' => $frequency,
                 'category' => $category,
@@ -179,7 +179,6 @@ class RRAAController extends Controller
                 'authority' => 'required',
                 'accountability' => 'required',
                 'remark' => 'required',
-
             ];
             $messages = [
                 'document_number.required' => __('Document Number is required'),
@@ -194,14 +193,13 @@ class RRAAController extends Controller
                 'authority.required' => __('authority is required'),
                 'accountability.required' => __('accountability is required'),
                 'remark.required' => __('remark is required'),
-
             ];
-       
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-           
+
             try {
 
                $rraa = $this->rraa_details->store();
@@ -213,7 +211,7 @@ class RRAAController extends Controller
                $mailsubject = 'RRAA Inspection completed by fire associate';
                $ehsOfficer = GetEHSOfficer();
                $message = 'RRAA Inspection completed by fire associate';
-               
+
                if (count($ehsOfficer) > 0) {
                     foreach ($ehsOfficer as $user) {
                         $email_id = $user->email;
@@ -225,7 +223,7 @@ class RRAAController extends Controller
                                 'message' => $message,
                             );
                             Mail::to($email_id)->queue(new RRAAEmail($data));
-                            
+
                         }
                     }
                 }
@@ -285,7 +283,7 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
 
             $this->rraa_details->statuschange($id);
-           
+
             $this->rraa_checkList->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -380,11 +378,11 @@ class RRAAController extends Controller
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
                 'remarks' => $request->remarks,
-            ]; 
+            ];
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -399,7 +397,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -452,7 +450,7 @@ class RRAAController extends Controller
 
             $message = 'CAPA Action completed by Fire Associates';
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -467,7 +465,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -532,7 +530,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -547,7 +545,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -612,7 +610,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -627,7 +625,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -690,7 +688,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -705,7 +703,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -726,7 +724,7 @@ class RRAAController extends Controller
         try {
 
             $allData = $this->rraa_details->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -748,8 +746,8 @@ class RRAAController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  $data->revision_date;
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
