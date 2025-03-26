@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment List')
-@section('pageurl', admin_url('safety/master/equipment/list'))
+@section('title', ' First AidEquipment List')
+@section('pageurl', admin_url('ohc/master/first-aid-stock/list'))
 
 
 @section('content')
@@ -13,11 +13,11 @@
                     <div class="d-flex justify-content-end p-2">
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                        <x-button-import href="{{ admin_url('safety/master/equipment/import') }}"></x-button-import>
+                        <x-button-import href="{{ admin_url('ohc/master/first-aid-stock/import') }}"></x-button-import>
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/master/equipment/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/master/first-aid-stock/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -25,11 +25,25 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="equipment_name"
-                                                class="form-label ">{{ __('inspection.equipment_name') }}</label>
-                                            <input type="text" name="equipment_name" id="equipment_name"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Medicine Name</label>
+                                                <select name="medicine_id" id="medicine_id"
+                                                    class="form-control single-select" style="width: 100%">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($medicine as $medicine)
+                                                    <option value="{{ encryptId($medicine->id) }}">
+                                                        {{ $medicine->medicine }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Freeze Quantity</label>
+                                                <input type="text" name="freeze_quantity" id ="freeze_quantity" class="form-control"
+                                                    placeholder="Medicine Name">
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -61,7 +75,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.equipment_name') }}</th>
+                                        <th>Medicine Name</th>
+                                        <th>Freeze Quantity</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -112,14 +127,15 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/master/equipment/list') }}",
+                        url: "{{ admin_url('ohc/master/first-aid-stock/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.equipment_name = $('#equipment_name').val();
+                            d.medicine_id = $('#medicine_id').val();
+                            d.freeze_quantity = $('#freeze_quantity').val();
                             d.status = $('#status').val();
 
                         },
@@ -136,8 +152,12 @@
                             searchable: true,
                         },
                         {
-                            data: 'equipment_name',
-                            name: 'equipment_name'
+                            data: 'medicine',
+                            name: 'medicine'
+                        },
+                        {
+                            data: 'freeze_quantity',
+                            name: 'freeze_quantity'
                         },
                         {
                             data: 'status',
@@ -176,15 +196,17 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
+                                        medicine_id = $('#medicine_id').val();
+                                        freeze_quantity = $('#freeze_quantity').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/master/equipment/export/pdf') }}" +
+                                            "{{ admin_url('ohc/master/first-aid-stock/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
+                                            '&medicine_id=' + medicine_id +
+                                            '&freeze_quantity=' + freeze_quantity +
                                             '&status=' + status
                                     }
                                 },
@@ -193,14 +215,16 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
+                                        medicine_id = $('#medicine_id').val();
+                                        freeze_quantity = $('#freeze_quantity').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/master/equipment/export/excel') }}" +
+                                            "{{ admin_url('ohc/master/first-aid-stock/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
+                                            '&medicine_id=' + medicine_id +
+                                            '&freeze_quantity=' + freeze_quantity +
                                             '&status=' + status
                                     }
                                 },
@@ -237,12 +261,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('inspection.equipment_inactive_msg') }}';
+                        var title = '{{ __('Do You want to In-Activate First Aid Detail') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('inspection.equipment_active_msg') }}';
+                        var title = '{{ __('Do You want to Activate First Aid Detail') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -260,7 +284,7 @@
                     }).then((result) => {
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/master/equipment/status') }}",
+                                url: "{{ admin_url('ohc/master/first-aid-stock/status') }}",
                                 type: 'post',
                                 data: {
                                     id: id,
@@ -307,7 +331,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete the Equipment') }}';
+                    var title = '{{ __('Do You want to Delete the First Aid Detail') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -327,7 +351,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/master/equipment/delete') }}",
+                                url: "{{ admin_url('ohc/master/first-aid-stock/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
