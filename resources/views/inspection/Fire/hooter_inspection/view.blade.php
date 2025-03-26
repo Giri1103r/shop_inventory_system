@@ -112,6 +112,23 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @php
+                                            $signature = GetSignature(
+                                                $inspection->created_by,
+                                                $inspection->id,
+                                                HOOTER_INSPECTION,
+                                            );
+                                        @endphp
+                                        @if (isset($signature))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                        style="width: 100px; margin-top: -10px;" />
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <hr>
                                     <div class="form-observation">
@@ -263,10 +280,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
+                                                    $signature = GetSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        SAFETY_GALLERY_INSPECTION,
+                                                        HOOTER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -302,10 +319,10 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSafetySignature(
+                                                        $signature = GetSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            SAFETY_GALLERY_INSPECTION,
+                                                            HOOTER_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -365,10 +382,10 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    HOOTER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -418,10 +435,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -470,10 +487,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -521,10 +538,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -548,10 +565,10 @@
                                             </div>
                                         @endif
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                SAFETY_GALLERY_INSPECTION,
+                                                HOOTER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

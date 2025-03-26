@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Inspection\Safety;
 use Exception;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\ForkLiftInspection;
 use App\Models\Inspection\Safety\ForkliftInspectionDetails;
-use App\Models\Master\Department;
 
 class ForkLiftInspectionController extends Controller
 {
@@ -20,6 +21,7 @@ class ForkLiftInspectionController extends Controller
     private $observation_details;
     private $unit;
     private $department;
+    private $signature;
 
     public function __construct()
     {
@@ -27,6 +29,7 @@ class ForkLiftInspectionController extends Controller
         $this->observation_details = new ForkliftInspectionDetails();
         $this->unit = new Unit();
         $this->department = new Department();
+        $this->signature = new SignatureUpload();
     }
 
     public function Index(Request $request)
@@ -114,12 +117,13 @@ class ForkLiftInspectionController extends Controller
     {
         try {
 
+
             $forklift_observation =  $this->forklift->Store();
             $forklift_observation_details = $this->observation_details->store($forklift_observation->id);
-            Session::flash('success', 'Safety Walk Observation added successfully!');
+            $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $forklift_observation->id);
+            Session::flash('success', 'Forklift Inspection added successfully!');
             return redirect(admin_url('safety/forklift-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));
@@ -181,7 +185,7 @@ class ForkLiftInspectionController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                'Status',
+                'Observation Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -193,15 +197,15 @@ class ForkLiftInspectionController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
                 $export[] =  displaydateformat($data->issue_date);
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);
+                $export[] = $data->rev_data;
+                $export[] =  getObservationStatus($data->observation_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Safety Walk Observation.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Forklift Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -235,7 +239,7 @@ class ForkLiftInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Safety Walk Observation",
+                'pagetitle' => "Forklift Inspection",
             );
 
             $property = [
@@ -254,7 +258,7 @@ class ForkLiftInspectionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Safety Walk Observation.pdf";
+            $filename = "Forklift Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -270,14 +274,11 @@ class ForkLiftInspectionController extends Controller
             if (Auth::check()) {
                 $inspection_details = $this->forklift->selectOne($id);
                 $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
-                $last_month_inspection = $this->forklift->GetLastMonthObservation($id);
-                $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $current_month_inspection,
-                    'last_month_observation_details' => $last_month_observation_details,
-                    'pagetitle' => "Safety Walk Observation",
+                    'pagetitle' => "Forklift Inspection",
                 ];
             }
             $property = [
@@ -296,7 +297,7 @@ class ForkLiftInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Safety Walk Observation.pdf";
+            $filename = "Forklift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
@@ -311,37 +312,37 @@ class ForkLiftInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->remarks;
-            $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status);
+            $remarks = $request->capa_remarks;
+            $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             if ($status == 1) {
-                $message = 'APPROVED';
-                $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
                 $to_status = OBSERVATION_APPROVED;
             } else {
-                $message = 'REJECTED';
-                $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
                 $to_status = OBSERVATION_REJECTED;
             }
-            // $mailsubject = 'SAFETY INSPECTION';
-            // $notificationData = array(
-            //     'notification_type' => SAFETY_INSPECTION,
-            //     'module_type' => 1,
-            //     'notification_message' => $mailsubject,
-            //     'mobile_notification' => json_encode(array(
-            //         'title' => $mailsubject,
-            //         'message' => $message,
-            //         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-            //         'id' => $inspection_details->id,
-            //         'module' => 1,
-            //     )),
-            //     'web_link' =>  $web_link,
-            //     'assigned_user' => array_to_string($users),
-            //     'created_by' => Auth::id(),
-            // );
-
-
-            // notificationSave($notificationData);
+            $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/forklift-inspection/list'));
         } catch (Exception $ex) {

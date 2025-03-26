@@ -131,6 +131,23 @@
                                         </div>
                                     </div>
                                     @php
+                                        $signature = GetSafetySignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            MONTHLY_FORKLIFT_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 100px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
+                                    @php
                                         $user_response = json_decode($inspection_details->responses, true);
                                     @endphp
                                     <table class="container p-5">
@@ -192,7 +209,7 @@
 
 
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && $approval_type == 'ehs')
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -259,7 +276,6 @@
                                         </div>
                                     </form>
                                 @else
-
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -298,8 +314,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -371,8 +386,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -424,8 +438,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}"
-                                                                alt="Signature Upload"
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
@@ -478,8 +491,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -539,8 +551,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}"
-                                                            alt="Signature Upload"
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
@@ -550,10 +561,11 @@
                                 @endif
 
                                 @if (
-                                    $inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection_details->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection_details->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED) &&
+                                        ($approval_type = 'capa'))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -607,7 +619,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION && $approval_type == 'ehsVerify')
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -658,7 +670,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION && $approval_type == 'level-one-manager')
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -710,7 +722,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION && $approval_type == 'level-two-manager')
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('safety/forklift-inspection/monthly/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

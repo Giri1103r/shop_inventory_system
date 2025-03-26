@@ -213,6 +213,8 @@ class HooterInspectionController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
+            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'FIRE INSPECTION';
@@ -323,7 +325,7 @@ class HooterInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->hooter->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FIRE_PUMP);
+            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully';
@@ -370,7 +372,7 @@ class HooterInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => MONTHLY_FIRE_PUMP,
+                'type' => HOOTER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -381,6 +383,7 @@ class HooterInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -430,7 +433,7 @@ class HooterInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => MONTHLY_FIRE_PUMP,
+                'type' => HOOTER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -504,7 +507,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => MONTHLY_FIRE_PUMP,
+                'type' => HOOTER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -578,7 +581,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => MONTHLY_FIRE_PUMP,
+                'type' => HOOTER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -602,7 +605,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->hooter->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(MONTHLY_FIRE_PUMP);
+            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully!';
@@ -648,7 +651,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => MONTHLY_FIRE_PUMP,
+                'type' => HOOTER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,

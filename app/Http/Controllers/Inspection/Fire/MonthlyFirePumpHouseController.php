@@ -167,6 +167,10 @@ class MonthlyFirePumpHouseController extends Controller
         try {
             $monthly_fire_inspection = $this->monthlyfirepump->store();
             $id = $monthly_fire_inspection->id;
+            $inspection_type = MONTHLY_FIRE_PUMP;
+
+            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'FIRE INSPECTION';

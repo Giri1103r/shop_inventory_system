@@ -192,6 +192,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
 
         defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('OHC_TYPE_MONTHLY_MEDICINE_STORE') or define('OHC_TYPE_MONTHLY_MEDICINE_STORE',19);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
 
         // IMS  EHS_REVIEW
@@ -267,7 +268,7 @@ class AppServiceProvider extends ServiceProvider
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
         defined('FIRE_INSPECTION') or define('FIRE_INSPECTION',8);
-        defined('OHC_INSPECTION') or define('OHC_INSPECTION',8);
+        defined('OHC_INSPECTION') or define('OHC_INSPECTION',12);
 
 
         // Gemba Walk
@@ -293,8 +294,11 @@ class AppServiceProvider extends ServiceProvider
         //Status Log
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION',1);
         defined('MONTHLY_FORKLIFT_INSPECTION') or define('MONTHLY_FORKLIFT_INSPECTION', 2);
+        defined('FORKLIFT_INSPECTION') or define('FORKLIFT_INSPECTION', 3);
         defined('SAFETY_GALLERY_INSPECTION') or define('SAFETY_GALLERY_INSPECTION', 4);
-        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 4);
+        defined('OHS_SUMMARY_REPORT') or define('OHS_SUMMARY_REPORT', 5);
+        defined('SAFETY_EQUIPMENT') or define('SAFETY_EQUIPMENT', 6);
+        defined('SAFETY_WALK_OBSERVATION') or define('SAFETY_WALK_OBSERVATION', 7);
 
 
         // Monthly Eye Wash

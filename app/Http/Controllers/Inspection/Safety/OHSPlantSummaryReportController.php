@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Safety;
 
 use Exception;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -118,7 +119,7 @@ class OHSPlantSummaryReportController extends Controller
         }
 
         $data = array();
-        return view('inspection.Safety.safety_gallery_inspection.list', $data);
+        return view('inspection.Safety.ohc_plant_summary.list', $data);
     }
 
     public function add(Request $request)
@@ -128,7 +129,7 @@ class OHSPlantSummaryReportController extends Controller
             $data = array(
                 'units' => $unit,
             );
-            return view('inspection.Safety.safety_gallery_inspection.add', $data);
+            return view('inspection.Safety.ohc_plant_summary.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -139,8 +140,8 @@ class OHSPlantSummaryReportController extends Controller
     public function store(Request $request)
     {
         try {
-            $safety_gallery_inspection = $this->ohsreport->store();
-            $id = $safety_gallery_inspection->id;
+            $ohc_plant_summary = $this->ohsreport->store();
+            $id = $ohc_plant_summary->id;
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             Session::flash('success', __('common.created_msg'));
@@ -160,7 +161,7 @@ class OHSPlantSummaryReportController extends Controller
             $data = [
                 'inspection_details' => $inspection_details,
             ];
-            return view('inspection.Safety.safety_gallery_inspection.view', $data);
+            return view('inspection.Safety.ohc_plant_summary.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -276,7 +277,6 @@ class OHSPlantSummaryReportController extends Controller
                 $forklift_details = $this->ohsreport->selectOne($id);
 
                 $data = [
-                    'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Safety Gallery Inspection",
                 ];
@@ -294,7 +294,7 @@ class OHSPlantSummaryReportController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.safety.safety_gallery_inspection.viewpdf', $data);
+            $html = view('inspection.safety.ohc_plan_summary.viewpdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

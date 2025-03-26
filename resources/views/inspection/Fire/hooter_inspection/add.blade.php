@@ -27,8 +27,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('fire/hooter-inspection/add/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/hooter-inspection/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -52,7 +52,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('SAF-0') }}"
+                                                        class="form-control" value="{{ getDocumentReviewDate('HTR-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -135,25 +135,23 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 mb-2 d-flex flex-column align-items-center">
-                                                <div class="form-group form-input text-center">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.observation_required') }}</label>
-                                                    <div class="d-flex gap-3">
-                                                        <div class="form-check">
-                                                            <input type="radio" name="obs_choice"
-                                                                id="yes_option" value="{{ YES }}" class="form-check-input"
-                                                                required>
-                                                            <label for="yes_option" class="form-check-label">Yes</label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input type="radio" name="obs_choice" id="no_option"
-                                                                value="{{ NO }}" class="form-check-input" required>
-                                                            <label for="no_option" class="form-check-label">No</label>
-                                                        </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
                                                     </div>
-                                                </div>
-                                            </div> --}}
+                                                @endif
+                                            </div>
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -244,7 +242,8 @@
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[1]" id="auditbility" value="YES">
+                                                                    name="auditbility[1]" id="auditbility"
+                                                                    value="YES">
                                                                 <label class="form-check-label"
                                                                     for="auditbility">Audibility</label>
                                                             </div>
@@ -397,16 +396,22 @@
                             extension: "jpg",
                             filesize: 2097152
                         },
-                        observation:{
-                            required : true,
+                        observation: {
+                            required: true,
                         },
-                
+                        signature_image:{
+                            required: true,
+                        },
+
                     },
                     messages: {
                         doc_no: {
                             required: "Document Number is Required",
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image:{
+                            required: 'Please upload your signature',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -452,10 +457,10 @@
                             extension: "Only JPG files are allowed.",
                             filesize: "Image must be under 2MB."
                         },
-                        observation:{
+                        observation: {
                             required: "Please add observation",
                         },
-                        
+
 
                     },
                     errorElement: 'span',

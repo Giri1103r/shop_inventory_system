@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Monthly Fire Pump House Inspection')
-@section('pageurl', admin_url('fire/monthly-fire-pumphouse-inspection/list'))
+@section('pageurl', admin_url('fire/monthly-fire-pump-house-inspection/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/monthly-fire-pumphouse-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -94,6 +94,23 @@
                                             </div>
                                         </div>
                                     </div>
+                                    @php
+                                        $signature = GetSignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            MONTHLY_FIRE_PUMP,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 100px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     @php
                                         $user_response = json_decode($inspection_details->responses, true);
@@ -173,10 +190,10 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSafetySignature(
+                                                        $signature = GetSignature(
                                                             $inspection_details->verified_by,
                                                             $inspection_details->id,
-                                                            SAFETY_GALLERY_INSPECTION,
+                                                            MONTHLY_FIRE_PUMP,
                                                         );
                                                     @endphp
                                                 @endif
@@ -212,10 +229,10 @@
                                                             </div>
                                                         </div>
                                                         @php
-                                                            $signature = GetSafetySignature(
+                                                            $signature = GetSignature(
                                                                 $inspection_details->approved_by,
                                                                 $inspection_details->id,
-                                                                SAFETY_GALLERY_INSPECTION,
+                                                                MONTHLY_FIRE_PUMP,
                                                             );
                                                         @endphp
                                                     @endif
@@ -276,10 +293,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
+                                                    $signature = GetSignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
-                                                        SAFETY_GALLERY_INSPECTION,
+                                                        MONTHLY_FIRE_PUMP,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -329,10 +346,10 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -381,10 +398,10 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -432,10 +449,10 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -460,10 +477,10 @@
                                                 </div>
                                             @endif
                                             @php
-                                                $signature = GetSafetySignature(
+                                                $signature = GetSignature(
                                                     $inspection_details->approved_by,
                                                     $inspection_details->id,
-                                                    SAFETY_GALLERY_INSPECTION,
+                                                    MONTHLY_FIRE_PUMP,
                                                 );
                                             @endphp
                                             @if (isset($signature))

@@ -283,7 +283,9 @@
                                             {{ $getEHSReview->team_member_names }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label">Remark</label>
                                         <div class="view_data">
                                             {{ $getEHSReview->remark }}
@@ -330,20 +332,21 @@
                                                         {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                             {{ $injury->department_name }}
                                                         @else --}}
-                                                            {{ $injury->injury_person_department_id }}
+                                                        {{ $injury->injury_person_department_id }}
                                                         {{-- @endif --}}
                                                     </td>
                                                     <td>
                                                         @if ($injury->body_part_image)
-                                                            <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}" target="_blank">
+                                                            <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                target="_blank">
                                                                 <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
-                                                                     alt="Body Parts Image"
-                                                                     style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                    alt="Body Parts Image"
+                                                                    style="max-width: 100px; max-height: 100px; object-fit: contain;">
                                                             </a>
                                                         @endif
                                                     </td>
-                                                 
-                                                    
+
+
                                                     <td>
                                                         @php
                                                             $imgMapDataDecoded = json_decode($injury->imgMapdata, true);
@@ -484,7 +487,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Risk Analysis</label>
                                         <div class="view_data">
-                                            {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                            {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
                                         </div>
                                     </div>
                                     @if ($getInvestigation->risk_analysis == 2)
@@ -845,7 +848,7 @@
 
                                                 <div class="col-md-12 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Description of CA</label>
+                                                        <label class="form-label require">Description of CA</label>
                                                         <textarea class="form-control" name="description_ca" id="description_ca"></textarea>
 
                                                     </div>
@@ -895,6 +898,9 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
 
                     },
@@ -906,8 +912,11 @@
                         'ua_or_uc[]': {
                             required: "This field is required.",
                         },
-                        description_uauc: {
+                        description_ca: {
                             required: "Description of UA UC is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
 
                     },
@@ -949,8 +958,10 @@
                         },
                         description_ca: {
                             required: true,
+                            minlength: 10,
+                            maxlength: 2000,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
-
                     },
                     messages: {
 
@@ -959,8 +970,10 @@
                         },
                         description_ca: {
                             required: "Description of CA is required.",
+                            minlength: "Minimum 10 characters required.",
+                            maxlength: "Maximum 2000 characters allowed.",
+                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
-
                     },
 
                     errorElement: 'span',

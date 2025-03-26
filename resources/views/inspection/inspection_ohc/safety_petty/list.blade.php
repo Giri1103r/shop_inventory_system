@@ -65,7 +65,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Document Number</th>
                                         <th>Issue Date</th>
-                                        <th>Revision Date</th>
+                                        <th>Revision & Data</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -204,7 +204,6 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                revision_date = $('#revision_date').val();
                                 status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
@@ -214,7 +213,6 @@
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
                                     '&issue_date=' + issue_date +
-                                    '&revision_date=' + revision_date +
                                     '&status=' + status
                             }
                         },
@@ -225,7 +223,6 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                revision_date = $('#revision_date').val();
                                 status = $('#status').val();
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -234,7 +231,6 @@
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
                                     '&issue_date=' + issue_date +
-                                    '&revision_date=' + revision_date +
                                     '&status=' + status
                             }
                         },

@@ -53,9 +53,9 @@ class FloorStretcherController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->checklist_id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->checklist_id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -72,9 +72,9 @@ class FloorStretcherController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/floor_stretcher/checklist/view/' . encryptId($row->checklist_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/floor_stretcher/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
-                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/view/exportViewPdf/' . encryptId($row->checklist_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -242,6 +242,97 @@ class FloorStretcherController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
+        }
+    }
+
+    public function ExportPDF()
+    {
+        try {
+            $allData = $this->floor_strecther->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Date of Inspection',
+                'Unit',
+                'Frequency',
+                'Shift',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Floor Stretcher Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.ohc.floor_stretcher.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Floor-Stretcher Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
+        }
+    }
+
+    public function ExportViewPDF(Request $request)
+    {
+        try {
+
+            $id = decryptId($request->id);
+            $inspection_detail = $this->floor_strecther->selectOne($id);
+            $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
+            $inspection_file = $this->floor_files->getFiles($id, $inspection_type);
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $data = array(
+                'inspection_detail' => $inspection_detail,
+                'inspection_file' => $inspection_file,
+                'pagetitle' => "Checklist Of Floor Stretcher Inspection",
+            );
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.ohc.floor_stretcher.viewpdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Floor Stretcher Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));

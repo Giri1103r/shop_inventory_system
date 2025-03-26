@@ -212,7 +212,9 @@
                                                 {{ $getEHSReview->team_member_names }}
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-12 form-input">
                                             <label class="form-label">Remark</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->remark }}
@@ -264,7 +266,7 @@
                                                             {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                                 {{ $injury->department_name }}
                                                             @else --}}
-                                                                {{ $injury->injury_person_department_id }}
+                                                            {{ $injury->injury_person_department_id }}
                                                             {{-- @endif --}}
                                                         </td>
                                                         <td>
@@ -423,7 +425,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Risk Analysis</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes':'No' }}
+                                                {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
                                             </div>
                                         </div>
                                         @if ($getInvestigation->risk_analysis == 2)
@@ -834,7 +836,9 @@
                                                 {{ $getEHSVerify->team_member_names }}
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-12 form-input">
                                             <label class="form-label">Remark</label>
                                             <div class="view_data">
                                                 {{ $getEHSVerify->remark }}
@@ -1059,8 +1063,9 @@
                     },
                     remark: {
                         required: "Please provide a remark.",
-                        maxlength: "Remark cannot exceed 1000 characters."
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        maxlength: "Remark cannot exceed 1000 characters.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+
                     }
                 },
                 errorElement: 'span',
@@ -1114,7 +1119,7 @@
                     remark: {
                         required: "Please provide a remark.",
                         maxlength: "Remark cannot exceed 1000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1147,14 +1152,18 @@
 
                     action_submission_description: {
                         required: true,
-                        maxlength: 1000
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                     }
                 },
                 messages: {
 
                     action_submission_description: {
                         required: "Please provide Action Taken.",
-                        maxlength: "Action Taken cannot exceed 1000 characters."
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1196,7 +1205,7 @@
                     remark: {
                         required: "Please provide remark.",
                         maxlength: "Remark cannot exceed 1000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',

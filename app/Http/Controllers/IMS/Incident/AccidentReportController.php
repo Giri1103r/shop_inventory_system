@@ -205,10 +205,9 @@ class AccidentReportController extends Controller
         if (!$employee) {
             return response()->json(['error' => 'Employee not found.'], 404);
         }
-
         return response()->json([
             'employee' => [
-                'designation' => $employee->designation_name ?? '',
+                'designation' => $employee->designation ?? '',
                 'unit_id' => $employee->unit ?? '',
                 'encrypted_unit_id' => encryptId($employee->unit) ?? '',
                 'unit_name' => $employee->unit_name ?? '',

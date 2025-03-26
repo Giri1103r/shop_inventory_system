@@ -71,59 +71,59 @@ class RRAAController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('inspection_status', function ($row) {
-                            $text = '';
-                            switch ($row->inspection_status) {
-                                case WAITING_FOR_EHS_OFFICER_VERIFICATION:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
-                                    break;
-                                case WAITING_FOR_CAPA_ACTION:
-                                    $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
-                                    break;
-                                case WAITING_FOR_CAPA_VERIFICATION:
-                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
-                                    break;
-                                case WAITING_FOR_L1_VERIFICATION:
-                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
-                                    break;
-                                case WAITING_FOR_L2_VERIFICATION:
-                                    $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
-                                    break;
-                                case INSPECTION_APPROVED:
-                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
-                                    break;
-                                case L2_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                                    break;
-                                case L1_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                                    break;
-                                case EHS_OFFICER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                                    break;
-                                default:
-                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
-                            }
-                            return $text;
-                        })
+                        // ->addColumn('inspection_status', function ($row) {
+                        //     $text = '';
+                        //     switch ($row->inspection_status) {
+                        //         case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                        //             $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
+                        //             break;
+                        //         case WAITING_FOR_CAPA_ACTION:
+                        //             $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
+                        //             break;
+                        //         case WAITING_FOR_CAPA_VERIFICATION:
+                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
+                        //             break;
+                        //         case WAITING_FOR_L1_VERIFICATION:
+                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
+                        //             break;
+                        //         case WAITING_FOR_L2_VERIFICATION:
+                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
+                        //             break;
+                        //         case INSPECTION_APPROVED:
+                        //             $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
+                        //             break;
+                        //         case L2_MANAGER_REJECTED:
+                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                        //             break;
+                        //         case L1_MANAGER_REJECTED:
+                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                        //             break;
+                        //         case EHS_OFFICER_REJECTED:
+                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                        //             break;
+                        //         default:
+                        //             $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                        //     }
+                        //     return $text;
+                        // })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
+                            // if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                            //     $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
+                            // if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
+                            //     $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
+                            // if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
+                            //     $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
+                            // if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
+                            //     $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
+                            // if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
+                            //     $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
                             $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
@@ -152,7 +152,7 @@ class RRAAController extends Controller
         try {
             $frequency = $this->frequency->getFrequency();
             $category = $this->category->getAll();
-          
+
             $data = [
                 'frequency' => $frequency,
                 'category' => $category,
@@ -179,7 +179,6 @@ class RRAAController extends Controller
                 'authority' => 'required',
                 'accountability' => 'required',
                 'remark' => 'required',
-
             ];
             $messages = [
                 'document_number.required' => __('Document Number is required'),
@@ -194,26 +193,25 @@ class RRAAController extends Controller
                 'authority.required' => __('authority is required'),
                 'accountability.required' => __('accountability is required'),
                 'remark.required' => __('remark is required'),
-
             ];
-       
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-           
+
             try {
 
                $rraa = $this->rraa_details->store();
-             
                $rraa_id = $rraa->id;
-               
                $this->rraa_checkList->store($rraa_id);
+
+                $this->signature->signatureStore(RRAA_INSPECTION,$rraa->id);
 
                $mailsubject = 'RRAA Inspection completed by fire associate';
                $ehsOfficer = GetEHSOfficer();
                $message = 'RRAA Inspection completed by fire associate';
-               
+
                if (count($ehsOfficer) > 0) {
                     foreach ($ehsOfficer as $user) {
                         $email_id = $user->email;
@@ -225,7 +223,7 @@ class RRAAController extends Controller
                                 'message' => $message,
                             );
                             Mail::to($email_id)->queue(new RRAAEmail($data));
-                            
+
                         }
                     }
                 }
@@ -285,7 +283,7 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
 
             $this->rraa_details->statuschange($id);
-           
+
             $this->rraa_checkList->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -380,11 +378,11 @@ class RRAAController extends Controller
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
                 'remarks' => $request->remarks,
-            ]; 
+            ];
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -399,7 +397,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -452,7 +450,7 @@ class RRAAController extends Controller
 
             $message = 'CAPA Action completed by Fire Associates';
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -467,7 +465,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -532,7 +530,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -547,7 +545,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -612,7 +610,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -627,7 +625,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -690,7 +688,7 @@ class RRAAController extends Controller
             $this->statusLog->create($insert_array);
 
             $ehsOfficer = GetEHSOfficer();
-        
+
             if (count($ehsOfficer) > 0) {
                  foreach ($ehsOfficer as $user) {
 
@@ -705,7 +703,7 @@ class RRAAController extends Controller
                             'message' => $message,
                         );
                         Mail::to($email_id)->queue(new RRAAEmail($data));
-                         
+
                      }
                  }
              }
@@ -726,7 +724,7 @@ class RRAAController extends Controller
         try {
 
             $allData = $this->rraa_details->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -748,8 +746,8 @@ class RRAAController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  $data->revision_date;
+                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 

@@ -34,7 +34,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="msdsAdd" action="{{ admin_url('msds/add/submit') }}">
+                                    <form method="POST" id="msdsAdd" action="{{ admin_url('msds/add/submit') }}" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -58,11 +58,28 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Data</label>
+                                                    <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
                                                         placeholder="Revision Date" value="{{ getDocumentReviewDate('MSDS-0') }}"
                                                         readonly>
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mt-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
 
@@ -70,7 +87,7 @@
                                             <div class="row mt-2">
                                                 <div
                                                     class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                   
+
                                                 </div>
                                             </div>
 
@@ -174,7 +191,7 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            minDate: new Date(),
+            // minDate: new Date(),
         });
 
         $.validator.addMethod("noSpaces", function(value, element) {
@@ -191,6 +208,9 @@
                     required: true,
                 },
                 revision_date: {
+                    required: true,
+                },
+                signature_image: {
                     required: true,
                 },
                 'item_code[1]': {
@@ -219,6 +239,9 @@
                 },
                 revision_date: {
                     required: "Please Select Revision Date",
+                },
+                signature_image: {
+                    required: "Signature is Required",
                 },
                 'item_code[1]': {
                     required: "Item Code is Required",
@@ -257,14 +280,14 @@
 
         $.validator.addMethod("uniqueItemCode", function(value, element) {
             var itemCodes = [];
-            
+
             $("input[name^='item_code']").each(function() {
                 var itemCodeValue = $(this).val();
                 if (itemCodeValue) {
-                    itemCodes.push(itemCodeValue);  
+                    itemCodes.push(itemCodeValue);
                 }
             });
-           
+
             return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
         }, "Item Code must be unique");
 
@@ -369,7 +392,7 @@
 
             $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
                 required: true,
-                noSpaces: true, 
+                noSpaces: true,
                 messages: {
                     required: 'Name of Chemical is required',
                     noSpaces: 'Item Code cannot be empty or only spaces'
@@ -390,9 +413,9 @@
                     required: 'Remark is required',
                     noSpaces: 'Remark cannot be empty or only spaces'
                 }
-            }); 
+            });
             form_set_count++;
-            updatePageIndices(); 
+            updatePageIndices();
         });
 
         $(document).on('click', '.remove-row', function() {
@@ -415,10 +438,10 @@
             $('#form-wrapper .form-set').each(function(index) {
                 $(this).find("input[name^='serial_number']").val('MSDS-' + ('0000' + (index + 1)).slice(-5));
 
-                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']'); 
-                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']'); 
+                $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']');
                 $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (index + 1) + ']');
-                $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']'); 
+                $(this).find('select[name^="msds_availability_status"]').attr('name', 'msds_availability_status[' + (index + 1) + ']');
                 $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
             });
         }
