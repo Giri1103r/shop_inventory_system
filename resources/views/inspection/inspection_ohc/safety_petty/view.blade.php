@@ -94,7 +94,6 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Employee Name</label>
                                         <div class="view_data">
-                                            {{-- @dd(getUsername($sfty_petty_checklist->employee_name)) --}}
                                             {{ getUsername($sfty_petty_checklist->employee_name) }}
                                         </div>
                                     </div>
