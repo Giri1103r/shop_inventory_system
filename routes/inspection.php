@@ -438,19 +438,12 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('add', [FirstAidRecordController::class, 'add']);
     Route::post('add/submit', [FirstAidRecordController::class, 'store']);
     Route::get('view/{id}', [FirstAidRecordController::class, 'view']);
-    Route::post('delete', [FirstAidRecordController::class, 'delete']);
     Route::get('export/excel', [FirstAidRecordController::class, 'exportExcel']);
     Route::get('export/pdf', [FirstAidRecordController::class, 'exportPdf']);
     Route::post('status', [FirstAidRecordController::class, 'statusChange']);
-    Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
-    Route::get('employeeid', [FirstAidRecordController::class, 'employeeid']);
-    Route::get('verification/{id}/{employee_type}', [FirstAidRecordController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [FirstAidRecordController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [FirstAidRecordController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [FirstAidRecordController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [FirstAidRecordController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [FirstAidRecordController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
+    Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
+
 });
 Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
     Route::GET('list', [MonthlyMedicineStoreController::class, 'Index']);

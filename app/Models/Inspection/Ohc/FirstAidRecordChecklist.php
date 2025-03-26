@@ -26,7 +26,6 @@ class FirstAidRecordChecklist extends Model
         'first_aid_box_number',
         'total_number_of_first_aid',
         'remark',
-        'overall_total_number_of_first_aid',
         'status',
         'trash',
         'created_by',
@@ -46,21 +45,20 @@ class FirstAidRecordChecklist extends Model
       
         $insertedData = [];
 
-        foreach ($request->first_aid_station_number as $index => $first_aid_station_number) {
+        foreach ($request->serial_number as $index => $serial_number) {
             $insert_array = array(
                 'ohc_first_aid_record_details_id' => $first_aid_detail_id,
-                'serial_number' =>$request->serial_number[$index],
+                'serial_number' =>$serial_number,
                 'month' =>$request->month[$index],
                 'department' =>decryptId($request->department_id[$index]),
                 'unit' =>decryptId($request->unit_id[$index]),
-                'first_aid_station_number' => $first_aid_station_number,  
+                'first_aid_station_number' => $request->first_aid_station_number[$index],  
                 'first_aid_box_number' =>$request->first_aid_box_number[$index],
                 'total_number_of_first_aid' => $request->total_number_of_first_aid[$index], 
-                'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid[$index], 
                 'remark' => $request->remark[$index],  
                 'created_by' => Auth::id(),
             );
-
+// dd($insert_array);
             $insertedData []=  $this->create($insert_array);
 
         }

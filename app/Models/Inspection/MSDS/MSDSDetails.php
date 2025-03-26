@@ -68,8 +68,8 @@ class MSDSDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
@@ -103,10 +103,9 @@ class MSDSDetails extends Model
 
         $insert_array = array(
             'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
+            'issue_date' => DBdateformat($request->issue_date),
             'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
-            // 'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
 
         return $this->create($insert_array);
@@ -265,8 +264,8 @@ class MSDSDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');

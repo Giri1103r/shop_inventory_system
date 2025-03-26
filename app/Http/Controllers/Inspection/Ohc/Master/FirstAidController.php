@@ -36,7 +36,6 @@ class FirstAidController extends Controller
         $this->first_aid_equipment = new FirstAidEquipment();
         $this->medicine = new Medicine();
         $this->uploadlog = new UploadLog();
-
     }
 
     public function Index(Request $request)
@@ -78,7 +77,7 @@ class FirstAidController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
                     dd($ex);
-                    return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
@@ -145,15 +144,12 @@ class FirstAidController extends Controller
     {
         if ($request->ajax()) {
             $medicine_id = decryptId($request->medicine_id);
-            $id = $request->id;
+            $id = decryptId($request->id);
             if ($id == '') {
 
-                // dd('sdcds');
                 $record = $this->first_aid_equipment->uniqueCheck($medicine_id);
             } else {
 
-                // dd('sdcgsed');
-                $id = decryptId($id);
                 $record = $this->first_aid_equipment->ExistuniqueCheck($medicine_id, $id);
             }
             if ($record->count()) {
@@ -435,11 +431,11 @@ class FirstAidController extends Controller
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Equipment name Uploaded sucessfully'));
-            return redirect(admin_url('safety/master/equipment/list'));
+            Session::flash('success', __('Medicine name Uploaded sucessfully'));
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         } catch (Exception $ex) {
-            Session::flash('error', __('equipment to be taken upload failed'));
-            return redirect(admin_url('safety/master/equipment/list'));
+            Session::flash('error', __('Medicine to be taken upload failed'));
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 }

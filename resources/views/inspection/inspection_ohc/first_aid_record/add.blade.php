@@ -58,7 +58,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Date</label>
+                                                    <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
                                                         placeholder="Revision Date"
                                                         value="{{ getDocumentReviewDate('FIR-0') }}" readonly>
@@ -68,7 +68,8 @@
 
                                         <div class="row mt-4">
                                             <div class="row mt-2">
-                                                <div class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
+                                                <div
+                                                    class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
                                                 </div>
                                             </div>
 
@@ -99,8 +100,8 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Month</label>
-                                                                <input type="text" name="month[1]" id="month" class="form-control"
-                                                                    placeholder="Month" value="">
+                                                                <input type="text" name="month[1]" id="month"
+                                                                    class="form-control" placeholder="Month" value="">
                                                             </div>
                                                         </div>
 
@@ -122,7 +123,8 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department</label>
                                                                 <select name="department_id[1]" id="department_id"
-                                                                    class="form-control single-select" style="width: 100%">
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
                                                                     <option value="">Select Department</option>
                                                                 </select>
                                                             </div>
@@ -130,19 +132,34 @@
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">First Aid Station Number</label>
+                                                                <label class="form-label require">First Aid Station
+                                                                    Number</label>
                                                                 <input type="text" name="first_aid_station_number[1]"
-                                                                    class="form-control" placeholder="First Aid Station Number"
-                                                                    value="" readonly>
+                                                                    class="form-control"
+                                                                    placeholder="First Aid Station Number" value=""
+                                                                    readonly>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">First Aid Box Number</label>
+                                                                <label class="form-label require">First Aid Box
+                                                                    Number</label>
                                                                 <input type="text" name="first_aid_box_number[1]"
-                                                                    class="form-control" placeholder="First Aid Box Number"
-                                                                    value="" readonly>
+                                                                    class="form-control"
+                                                                    placeholder="First Aid Box Number" value=""
+                                                                    readonly>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Total Number of First
+                                                                    Aid</label>
+                                                                <input type="text" name="total_number_of_first_aid[1]"
+                                                                    class="form-control"
+                                                                    placeholder="Total Number of First Aid"
+                                                                    value="">
                                                             </div>
                                                         </div>
 
@@ -158,6 +175,16 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-4 mt-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Overall Total Number of First
+                                                    Aid</label>
+                                                <input type="text" name ="overall_total_number_of_first_aid"
+                                                    class="form-control" placeholder="Overall Total Number of First Aid"
+                                                    value="0" readonly>
+                                            </div>
+                                        </div>
+                                        
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
 
@@ -205,11 +232,22 @@
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
 
+            $(document).on('input', '[name^="total_number_of_first_aid"]', function() {
+                var overallTotal = 0;
+                $('[name^="total_number_of_first_aid"]').each(function() {
+                    var value = parseFloat($(this).val()) || 0;
+                    overallTotal += value;
+                });
+                $('input[name="overall_total_number_of_first_aid"]').val(overallTotal);
+            });
+
+            var selectedUnitsDepartments = [];
+
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/first-aid-record/ajax-list') }}/" + unitId + "/0",
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
@@ -219,7 +257,7 @@
                                 $('#department_id').append('<option value="' + value
                                     .id + '">' + value.name + '</option>');
                             });
-                            $('#department_id').trigger('change.');
+                            $('#department_id').trigger('change');
                         },
                         error: function(xhr) {
                             alert('Error fetching department. Please try again.');
@@ -227,22 +265,65 @@
                     });
                 } else {
                     $('#department_id').empty().append('<option value="">Select Department</option>');
-                    $('#department_id').trigger('change.');
+                    $('#department_id').trigger('change');
                 }
             });
-            $(document).on('change', '[id^="unit_id-"]', function() { 
+
+            $(document).on('change', '#unit_id, #department_id', function() {
+                var unitId = $('#unit_id').val();
+                var departmentId = $('#department_id').val();
+
+                if (unitId && departmentId) {
+                    var combination = unitId + '-' + departmentId;
+
+                    if (selectedUnitsDepartments.indexOf(combination) === -1) {
+                        selectedUnitsDepartments.push(combination);
+                        $.ajax({
+                            url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                            type: 'GET',
+                            data: {
+                                unit_id: unitId,
+                                department_id: departmentId
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                $('input[name="first_aid_station_number[1]"]').val(response
+                                    .station_number);
+                                $('input[name="first_aid_box_number[1]"]').val(response
+                                    .first_aid_box_no);
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching first aid details. Please try again.');
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Duplicate Selection',
+                            text: 'This unit and department combination already exists.',
+                            confirmButtonText: 'OK'
+                        });
+
+                        $('#department_id').val('');
+                    }
+                }
+            });
+
+            $(document).on('change', '[id^="unit_id-"]', function() {
                 var unitId = $(this).val();
-                var departmentSelect = $(this).closest('form').find('[id^="department_id-"]'); 
+                var departmentSelect = $(this).closest('form').find('[id^="department_id-"]');
 
                 if (unitId) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/first-aid-record/ajax-list') }}/" + unitId + "/0",
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            departmentSelect.empty().append('<option value="">Select Department</option>');
+                            departmentSelect.empty().append(
+                                '<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                                departmentSelect.append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
                             });
                             departmentSelect.trigger('change');
                         },
@@ -256,12 +337,54 @@
                 }
             });
 
+            $(document).on('change', '[id^="unit_id-"], [id^="department_id-"]', function() {
+                var formSetCount = $(this).attr('id').split('-')[1];
+                var unitId = $('#unit_id-' + formSetCount).val();
+                var departmentId = $('#department_id-' + formSetCount).val();
+
+                if (unitId && departmentId) {
+                    var combination = unitId + '-' + departmentId;
+
+                    if (selectedUnitsDepartments.indexOf(combination) === -1) {
+                        selectedUnitsDepartments.push(combination);
+                        $.ajax({
+                            url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                            type: 'GET',
+                            data: {
+                                unit_id: unitId,
+                                department_id: departmentId
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                $('input[name="first_aid_station_number[' + formSetCount +
+                                    ']"]').val(response.station_number);
+                                $('input[name="first_aid_box_number[' + formSetCount + ']"]')
+                                    .val(response.first_aid_box_no);
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching first aid details. Please try again.');
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Duplicate Selection',
+                            text: 'This unit and department combination already exists.',
+                            confirmButtonText: 'OK'
+                        });
+
+                        $('#department_id-' + formSetCount).val('');
+                    }
+                }
+            });
+
 
             $('#fir_add').validate({
                 rules: {
                     document_number: {
                         required: true,
                         noSpaces: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
                     issue_date: {
                         required: true,
@@ -279,19 +402,31 @@
                         required: true,
                     },
                     'first_aid_box_number[1]': {
-                        required: "Remark is Required",
+                        required: true,
                     },
                     'first_aid_station_number[1]': {
-                        required: "Remark is Required",
+                        required: true,
+                    },
+                    'total_number_of_first_aid[1]': {
+                        required: true,
+                        number: true,
+                        noSpaces: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                    },
+                    overall_total_number_of_first_aid: {
+                        required: true,
+                        noSpaces: true,
                     },
                     'remark[1]': {
                         required: true,
                         noSpaces: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
                 },
                 messages: {
                     document_number: {
                         required: "Document Number is Required",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     },
                     issue_date: {
                         required: "Please Select Issue Date",
@@ -309,13 +444,22 @@
                         required: "Unit is Required",
                     },
                     'first_aid_box_number[1]': {
-                        required: "Remark is Required",
+                        required: "First Aid Box Number is Required",
                     },
                     'first_aid_station_number[1]': {
-                        required: "Remark is Required",
+                        required: "First Aid Station Number is Required",
+                    },
+                    'total_number_of_first_aid[1]': {
+                        required: "Total Number of First Aid is Required",
+                        number: "Please enter a valid number.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                    },
+                    overall_total_number_of_first_aid: {
+                        required: "OverAll Total Number of First Aid is Required",
                     },
                     'remark[1]': {
                         required: "Remark is Required",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     },
                 },
                 errorElement: 'span',
@@ -429,6 +573,16 @@
                             </div>
                         </div>
 
+                        <div class="col-md-4 mt-2">
+                            <div class="form-group form-input">
+                                <label class="form-label require">Total Number of First
+                                    Aid</label>
+                                <input type="text" name="total_number_of_first_aid[${form_set_count}]"
+                                    class="form-control"
+                                    placeholder="Total Number of First Aid" value="">
+                            </div>
+                        </div>
+
                         <div class="col-md-12 mt-2">
                             <div class="form-group form-input">
                                 <label class="form-label require">Remark</label>
@@ -450,12 +604,6 @@
                     autoclose: true
                 });
 
-                $('select[name^="emp_id["]').each(function() {
-                    $(this).select2({
-                        placeholder: "Select Responsibility",
-                        width: '100%'
-                    });
-                });
                 $('select[name^="unit_id["]').each(function() {
                     $(this).select2({
                         placeholder: "Select Unit",
@@ -465,13 +613,6 @@
                 $('select[name^="department_id["]').each(function() {
                     $(this).select2({
                         placeholder: "Select Department",
-                        width: '100%'
-                    });
-                });
-
-                $('select[name^="frequency["]').each(function() {
-                    $(this).select2({
-                        placeholder: "Select Frequency",
                         width: '100%'
                     });
                 });
@@ -497,13 +638,6 @@
                     }
                 });
 
-                $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'Responsibility is required',
-                    }
-                });
-
                 $("input[name='first_aid_box_number[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
@@ -517,13 +651,28 @@
                         required: 'First Aid Station Number is required',
                     }
                 });
-               
+
+                $("input[name='total_number_of_first_aid[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    number: true,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                    messages: {
+                        required: 'Total Number of First Aid is required',
+                        noSpaces: 'Total Number of First Aid cannot be empty or only spaces',
+                        number: "Please enter a valid number.",
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                    }
+                });
+
                 $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                     required: true,
                     noSpaces: true,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     messages: {
                         required: 'Remark is required',
-                        noSpaces: 'Remark cannot be empty or only spaces'
+                        noSpaces: 'Remark cannot be empty or only spaces',
+                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
                     }
                 });
 
@@ -550,14 +699,15 @@
 
             function updatePageIndices() {
                 $('#form-wrapper .form-set').each(function(index) {
-                    $(this).find("input[name^='serial_number']").val('FIR-' + ('0000' + (index + 1)).slice(-5));
+                    $(this).find("input[name^='serial_number']").val('FIR-' + ('0000' + (index + 1)).slice(- 5));
 
                     $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
                     $(this).find('input[name^="month"]').attr('name', 'month[' + (index + 1) + ']');
                     $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + (index + 1) + ']');
                     $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + (index + 1) + ']');
                     $(this).find('input[name^="first_aid_box_number"]').attr('name', 'first_aid_box_number[' + (index + 1) + ']');
-                    $(this).find('input[name^="first_aid_station_number"]').attr('name','first_aid_station_number[' + (index + 1) + ']');
+                    $(this).find('input[name^="first_aid_station_number"]').attr('name', 'first_aid_station_number[' + (index + 1) + ']');
+                    $(this).find('input[name^="total_number_of_first_aid"]').attr('name', 'total_number_of_first_aid[' + (index + 1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
                 });
             }
