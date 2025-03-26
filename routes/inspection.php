@@ -26,6 +26,8 @@ use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
@@ -486,6 +488,34 @@ Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function ()
     Route::get('approval/{id}', [MonthlyMedicineStoreController::class, 'approval']);
     Route::post('verify/submit', [MonthlyMedicineStoreController::class, 'approvalSubmit']);
 });
+Route::group(['prefix' => 'ohc/first-aid/opd-medicine-inspection/'], function () {
+    Route::get('list', [FirstAidMedicineInspectionController::class, 'index']);
+    Route::post('list', [FirstAidMedicineInspectionController::class, 'index']);
+    Route::get('add', [FirstAidMedicineInspectionController::class, 'add']);
+    Route::post('add/submit', [FirstAidMedicineInspectionController::class, 'store']);
+    Route::get('view/{id}', [FirstAidMedicineInspectionController::class, 'view']);
+    Route::get('generalpdf/{id}', [FirstAidMedicineInspectionController::class, 'generalpdf']);
+    Route::get('export/pdf', [FirstAidMedicineInspectionController::class, 'exportPdf']);
+    Route::get('export/excel', [FirstAidMedicineInspectionController::class, 'exportExcel']);
+    Route::post('status', [FirstAidMedicineInspectionController::class, 'statusChange']);
+    Route::GET('exportViewpdf/{id}', [FirstAidMedicineInspectionController::class, 'ExportViewPDF']);
+    Route::get('approval/{id}', [FirstAidMedicineInspectionController::class, 'approval']);
+    Route::post('verify/submit', [FirstAidMedicineInspectionController::class, 'approvalSubmit']);
+});
+Route::group(['prefix' => 'ohc/emergency-floor-first-aid-bag/checklist/'], function () {
+    Route::get('list', [FirstAidBagChecklistController::class, 'index']);
+    Route::post('list', [FirstAidBagChecklistController::class, 'index']);
+    Route::get('add', [FirstAidBagChecklistController::class, 'add']);
+    Route::post('add/submit', [FirstAidBagChecklistController::class, 'store']);
+    Route::get('view/{id}', [FirstAidBagChecklistController::class, 'view']);
+    Route::get('generalpdf/{id}', [FirstAidBagChecklistController::class, 'generalpdf']);
+    Route::get('export/pdf', [FirstAidBagChecklistController::class, 'exportPdf']);
+    Route::get('export/excel', [FirstAidBagChecklistController::class, 'exportExcel']);
+    Route::post('status', [FirstAidBagChecklistController::class, 'statusChange']);
+    Route::GET('exportViewpdf/{id}', [FirstAidBagChecklistController::class, 'ExportViewPDF']);
+    Route::get('approval/{id}', [FirstAidBagChecklistController::class, 'approval']);
+    Route::post('verify/submit', [FirstAidBagChecklistController::class, 'approvalSubmit']);
+});
 
 Route::group(['prefix' => 'ohc/master/first-aid-stock/'], function () {
     Route::get('list', [FirstAidController::class, 'index']);
@@ -512,3 +542,36 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('add', [WeeklyFirstAidBoxController::class, 'add']);
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

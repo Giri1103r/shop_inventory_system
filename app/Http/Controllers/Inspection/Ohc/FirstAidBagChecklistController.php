@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Ohc;
+namespace App\Http\Controllers\Inspection\ohc;
 
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
-use App\Models\Inspection\Ohc\FirstAidMedicineInspection;
+use App\Models\Inspection\ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
+use Yajra\DataTables\Facades\DataTables;
 
-class FirstAidMedicineInspectionController extends Controller
+class FirstAidBagChecklistController extends Controller
 {
     private $medicine_checklist;
     private $medicine;
@@ -21,7 +21,7 @@ class FirstAidMedicineInspectionController extends Controller
 
     public function __construct()
     {
-        $this->medicine_checklist = new FirstAidMedicineInspection();
+        $this->medicine_checklist = new FirstAidBagChecklist();
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
     }
@@ -34,20 +34,12 @@ class FirstAidMedicineInspectionController extends Controller
                     $data =  $this->medicine_checklist->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('inspection_status', function ($row) {
-                            $text = '';
-                            switch ($row->inspection_status) {
-                                case OBSERVATION_PENDING:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>OBSERVATION PENDING</span>";
-                                    break;
-                                case OBSERVATION_APPROVED:
-                                    $text = "<span class='badge bg-success' style='font-size: 1.0em;'>OBSERVATION APPROVED</span>";
-                                    break;
-                                case OBSERVATION_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>OBSERVATION REJECTED</span>";
-                                    break;
-                                default:
-                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active</span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
@@ -66,18 +58,18 @@ class FirstAidMedicineInspectionController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
                             if ($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) {
-                                $btn .= '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/approval/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/approval/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/exportViewpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/exportViewpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'inspection_date', 'next_due'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_date', 'next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -90,7 +82,7 @@ class FirstAidMedicineInspectionController extends Controller
             }
         }
 
-        return view('inspection.inspection_ohc.first_aid_inspection.list');
+        return view('inspection.inspection_ohc.first_aid_bag_inspection.list');
     }
 
     public function Add(Request $request)
@@ -102,12 +94,11 @@ class FirstAidMedicineInspectionController extends Controller
             $data = array(
                 'medicines' => $medicines,
             );
-            return view('inspection.inspection_ohc.first_aid_inspection.add', $data);
+            return view('inspection.inspection_ohc.first_aid_bag_inspection.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -115,17 +106,17 @@ class FirstAidMedicineInspectionController extends Controller
     {
         try {
             $store = $this->medicine_checklist->store();
-            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);
             $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
             Session::flash('success', 'Your data has been added successfully');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -135,7 +126,7 @@ class FirstAidMedicineInspectionController extends Controller
 
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_file = $this->signature->getFilesByEmpId($inspection_details->created_by, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $verified_by = $this->signature->getFilesByEmpId($inspection_details->updated_by, $inspection_type);
@@ -148,11 +139,11 @@ class FirstAidMedicineInspectionController extends Controller
             );
 
 
-            return view('inspection.inspection_ohc.first_aid_inspection.view', $data);
+            return view('inspection.inspection_ohc.first_aid_bag_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -168,7 +159,7 @@ class FirstAidMedicineInspectionController extends Controller
                 __("common.sno"),
                 'Date of Inspection',
                 'Next Due',
-                'Inspection Status',
+                'Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -180,14 +171,14 @@ class FirstAidMedicineInspectionController extends Controller
                 $export[] =  $i;
                 $export[] =  Displaydateformat($data->inspection_date);
                 $export[] =  Displaydateformat($data->next_due);
-                $export[] =  getObservationStatus($data->inspection_status);
+                $export[] =  ($data->status == '1' ? 'Active' : 'Inactive');
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly OHC First-Aid Medicine Inspection Checklist.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('FIRST AID BAG INSPECTION CHECKLIST.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -195,7 +186,7 @@ class FirstAidMedicineInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -211,7 +202,7 @@ class FirstAidMedicineInspectionController extends Controller
                 __("common.sno"),
                 'Date of Inspection',
                 'Next Due',
-                'Inspection Status',
+                'Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -219,7 +210,7 @@ class FirstAidMedicineInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Monthly OHC First-Aid Medicine Inspection Checklist",
+                'pagetitle' => "FIRST AID BAG INSPECTION CHECKLIST",
             );
 
             $property = [
@@ -234,17 +225,17 @@ class FirstAidMedicineInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.inspection_ohc.first_aid_inspection.pdf', $data);
+            $view = view('inspection.inspection_ohc.first_aid_bag_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
+            $filename = "FIRST AID BAG INSPECTION CHECKLIST.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -254,7 +245,7 @@ class FirstAidMedicineInspectionController extends Controller
 
             $id = decryptId($request->id);
             $inspection_detail = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_file = $this->signature->getFiles($id, $inspection_type);
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
             $inspection_created_by = $this->signature->getFilesByEmpId($inspection_detail->created_by, $inspection_type);
@@ -272,7 +263,7 @@ class FirstAidMedicineInspectionController extends Controller
             $data = array(
                 'inspection_detail' => $inspection_detail,
                 'inspection_file' => $inspection_file,
-                'pagetitle' => "Monthly OHC First-Aid Medicine Inspection Checklist",
+                'pagetitle' => "FIRST AID BAG INSPECTION CHECKLIST",
                 'inspection_data' => $inspection_data,
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
@@ -281,16 +272,16 @@ class FirstAidMedicineInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.inspection_ohc.first_aid_inspection.viewpdf', $data);
+            $html = view('inspection.inspection_ohc.first_aid_bag_inspection.viewpdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
+            $filename = "FIRST AID BAG INSPECTION CHECKLIST.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -300,7 +291,7 @@ class FirstAidMedicineInspectionController extends Controller
 
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_file = $this->signature->getFiles($id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
 
@@ -310,11 +301,11 @@ class FirstAidMedicineInspectionController extends Controller
                 'inspection_data' => $inspection_data,
             );
 
-            return view('inspection.inspection_ohc.first_aid_inspection.approval', $data);
+            return view('inspection.inspection_ohc.first_aid_bag_inspection.approval', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 
@@ -326,7 +317,7 @@ class FirstAidMedicineInspectionController extends Controller
             $remarks = $request->capa_remarks;
             $eye_wash_inspection = $this->medicine_checklist->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->medicine_checklist->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(OHC_OPD_MEDICINE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRST_AID_BAG_INSPECTION_CHECKLIST);
             // $ehsOfficer = GetEHSOfficer();
             // $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             // if ($status == 1) {
@@ -336,7 +327,7 @@ class FirstAidMedicineInspectionController extends Controller
             //     $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
             //     $to_status = OBSERVATION_REJECTED;
             // }
-            // $web_link =   admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
+            // $web_link =   admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($inspection_details->id));
             // $mailsubject = 'SAFETY INSPECTION';
             // $notificationData = array(
             //     'notification_type' => SAFETY_INSPECTION,
@@ -355,11 +346,11 @@ class FirstAidMedicineInspectionController extends Controller
             // );
             // notificationSave($notificationData);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
     }
 }

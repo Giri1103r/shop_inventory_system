@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Medicine Store Inspection| KARAM</title>
+    <title> FIRST AID BAG INSPECTION CHECKLIST| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly Medicine Store Inspection</td>
+                     FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                     FIRST AID BAG INSPECTION CHECKLIST
                 </td>
             </tr>
         </table>
@@ -192,7 +192,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                     FIRST AID BAG INSPECTION CHECKLIST
                 </td>
             </tr>
         </table>
@@ -208,6 +208,9 @@
                 <th
                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Name Of Inspection</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                    Freeze Quantity</th>
                 <th
                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
@@ -231,6 +234,8 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ getMedicinename($medicines['medicine_id']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['freeze_quantity'] }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['available_quantity'] }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ Displaydateformat($medicines['expired_date']) }}</td>
@@ -241,21 +246,11 @@
                 </tr>
             @endforeach
             <tr>
-                <td colspan="3"
+                <td colspan="7"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($inspection_created_by->requestor_file_path) }}" alt="Checked By Signature"
                         style="height: 50px; margin-top:2px;">
                     <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
-                </td>
-                <td colspan="3"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_detail->updated_by != null)
-                        <img src="{{ admin_url($inspection_updated_by->requestor_file_path) }}"
-                            alt="Verified By Signature" style="height: 50px;">
-                        <div>Verified By: {{ getUsername($inspection_detail->updated_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
                 </td>
             </tr>
 

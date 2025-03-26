@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Models\Inspection\Ohc;
+namespace App\Models\Inspection\ohc;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class FirstAidMedicineInspection extends Model
+class FirstAidBagChecklist extends Model
 {
-    protected $table = 'inspection_ohc_first_aid_inspection';
+    protected $table = 'inspection_ohc_first_aid_bag_inspection';
 
     protected $primaryKey = 'id';
 
@@ -16,7 +16,6 @@ class FirstAidMedicineInspection extends Model
         'inspection_date',
         'next_due',
         'inspection_data',
-        'inspection_status',
         'approval_remarks',
         'status',
         'trash',
@@ -33,7 +32,7 @@ class FirstAidMedicineInspection extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_first_aid_inspection.*');
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -42,25 +41,25 @@ class FirstAidMedicineInspection extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_first_aid_inspection.inspection_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_first_aid_inspection.next_due', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.inspection_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
             });
         }
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
-            $query = $query->whereDate('inspection_ohc_first_aid_inspection.inspection_date', $formattedDate);
+            $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.inspection_date', $formattedDate);
         }
 
         if ($request->has('next_due') && $request->next_due) {
             $formattedDate = DBdateformat($request->next_due);
-            $query = $query->whereDate('inspection_ohc_first_aid_inspection.next_due', $formattedDate);
+            $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.next_due', $formattedDate);
         }
 
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('inspection_ohc_first_aid_inspection.status',  decryptId($request->status));
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.status',  decryptId($request->status));
         }
 
 
@@ -95,6 +94,7 @@ class FirstAidMedicineInspection extends Model
                 'expired_date' => dbdateformat($request->expired_date[$index]),
                 'emp_id' => $request->emp_id[$index],
                 'remarks' => $request->remarks[$index],
+                'freeze_quantity' => $request->freeze_quantity[$index],
             ];
         }
         $updated_medicine_checklist = json_encode($updated_medicine_checklist);
@@ -103,7 +103,6 @@ class FirstAidMedicineInspection extends Model
             'next_due' => DBdateformat($request->next_due),
             'inspection_data' =>  $updated_medicine_checklist,
             'created_by' =>  Auth::id(),
-            'inspection_status' => OBSERVATION_PENDING,
         ];
         return  $this->create($data);
     }
@@ -117,29 +116,29 @@ class FirstAidMedicineInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_first_aid_inspection.*');
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_first_aid_inspection.inspection_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_first_aid_inspection.next_due', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.inspection_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
             });
         }
 
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
-            $query = $query->whereDate('inspection_ohc_first_aid_inspection.inspection_date', $formattedDate);
+            $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.inspection_date', $formattedDate);
         }
 
         if ($request->has('next_due') && $request->next_due) {
             $formattedDate = DBdateformat($request->next_due);
-            $query = $query->whereDate('inspection_ohc_first_aid_inspection.next_due', $formattedDate);
+            $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.next_due', $formattedDate);
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.inspection_status', decryptId($request->inspection_status));
         }
         $query->orderBy('id', 'DESC');
 

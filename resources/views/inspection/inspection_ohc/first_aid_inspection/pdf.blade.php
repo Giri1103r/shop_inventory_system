@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Medicine Store Inspection Checklist Pdf')
+@section('title', 'Monthly OHC First-Aid Medicine Inspection Checklist Pdf')
 @section('content')
 
     <div style="width:100%;">

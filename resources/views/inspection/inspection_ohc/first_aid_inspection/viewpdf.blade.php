@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Medicine Store Inspection| KARAM</title>
+    <title>Monthly OHC First-Aid Medicine Inspection Checklist| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly Medicine Store Inspection</td>
+                    Monthly OHC First-Aid Medicine Inspection Checklist</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                    Monthly OHC First-Aid Medicine Inspection Checklist
                 </td>
             </tr>
         </table>
@@ -192,7 +192,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                    Monthly OHC First-Aid Medicine Inspection Checklist
                 </td>
             </tr>
         </table>
