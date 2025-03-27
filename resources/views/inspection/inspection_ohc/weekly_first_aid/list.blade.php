@@ -72,7 +72,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Doc.NO</th>
                                         <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>Location</th>
+                                        <th>Unit</th>
                                         <th>Status</th>
                                         <th>Created By</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -185,8 +186,12 @@
                         name: 'issue_date'
                     },
                     {
-                        data: 'revision_date',
-                        name: 'revision_date'
+                        data: 'location_name',
+                        name: 'location_name'
+                    },
+                    {
+                        data: 'unit_name',
+                        name: 'unit_name'
                     },
                     {
                         data: 'status',

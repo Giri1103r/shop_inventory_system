@@ -123,39 +123,39 @@ class AccidentReportController extends Controller
                             }
 
 
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->accident_status == 1 || $row->accident_status == 5 || $row->accident_status == 8 || $row->accident_status == 7)) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->accident_status == 1)) {
                                 $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
-                            if (!empty($row->investigation_assigned) && $row->accident_status == 2) {
-                                $assignedUsers = explode(',', $row->investigation_assigned);
-                                $loggedInUserId = Auth::id();
-                                $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
-                                if (in_array($loggedInUserId, $assignedLoginIds) || (CheckUserRole(ROLE_SUPERADMIN))) {
-                                    $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
-                                                <i class="fa fa-search" style="color: #000000;"></i>
-                                             </a>';
-                                }
-                            }
+                            // if (!empty($row->investigation_assigned) && $row->accident_status == 2) {
+                            //     $assignedUsers = explode(',', $row->investigation_assigned);
+                            //     $loggedInUserId = Auth::id();
+                            //     $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
+                            //     if (in_array($loggedInUserId, $assignedLoginIds) || (CheckUserRole(ROLE_SUPERADMIN))) {
+                            //         $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
+                            //                     <i class="fa fa-search" style="color: #000000;"></i>
+                            //                  </a>';
+                            //     }
+                            // }
 
-                            if ($row->accident_status == 3) {
-                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
-                            }
+                            // if ($row->accident_status == 3) {
+                            //     $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
+                            // }
 
 
-                            if ($row->accident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
-                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
-                            }
+                            // if ($row->accident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
+                            //     $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
+                            // }
 
-                            if ($row->accident_status == 6) {
-                                $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) .  '" 
-                                            class="edit-icon" 
-                                            title="' . __('Corrective Action') . '">';
-                                $btn .= '<img src="' . public_image('common/ca.png') . '" 
-                                            alt="' . __('common.edit') . '" 
-                                            style="width: 20px;">';
-                                $btn .= '</a>';
-                            }
+                            // if ($row->accident_status == 6) {
+                            //     $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) .  '" 
+                            //                 class="edit-icon" 
+                            //                 title="' . __('Corrective Action') . '">';
+                            //     $btn .= '<img src="' . public_image('common/ca.png') . '" 
+                            //                 alt="' . __('common.edit') . '" 
+                            //                 style="width: 20px;">';
+                            //     $btn .= '</a>';
+                            // }
                             $btn .= '<a href="' . admin_url('accidentReport/accidentpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                              </a>';
@@ -184,6 +184,176 @@ class AccidentReportController extends Controller
         );
 
         return view('ims.incident.accidentReport.list', $data);
+    }
+
+    public function investigationList(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+
+                try {
+
+                    $data =  $this->accident_report->list();
+                    $datatables = Datatables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('date_and_time', function ($row) {
+                            return Displaydatetimeformat($row->date_and_time);
+                        })
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                        
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->accident_status == 5 || $row->accident_status == 8)) {
+                                $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+
+                            if (!empty($row->investigation_assigned) && $row->accident_status == 2) {
+                                $assignedUsers = explode(',', $row->investigation_assigned);
+                                $loggedInUserId = Auth::id();
+                                $assignedLoginIds = Employee::whereIn('id', $assignedUsers)->pluck('login_id')->toArray();
+                                if (in_array($loggedInUserId, $assignedLoginIds) || (CheckUserRole(ROLE_SUPERADMIN))) {
+                                    $btn .= '<a href="' . admin_url('accidentReport/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
+                                                <i class="fa fa-search" style="color: #000000;"></i>
+                                             </a>';
+                                }
+                            }
+
+                            if ($row->accident_status == 3) {
+                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="uauc"><i class="fas fa-user-shield" style="color: #7e9611;"></i>';
+                            }
+
+
+                            if ($row->accident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
+                                $btn .= '<a href="' . admin_url('accidentReport/uauc_riskanalysis/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
+                            }
+                            $btn .= '<a href="' . admin_url('accidentReport/accidentpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'status_batch', 'date_and_time', 'created_date', 'created_by', 'status'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+        $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
+
+        $data = array(
+            'departmentList' => $departmentList,
+            'accidentStatusList' => $accidentStatusList,
+            'employeeList' => $employeeList,
+        );
+
+        return view('ims.incident.accidentReport.investigationlist', $data);
+    }
+
+    public function calist(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+
+                try {
+
+                    $data =  $this->accident_report->list();
+                    $datatables = Datatables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('date_and_time', function ($row) {
+                            return Displaydatetimeformat($row->date_and_time);
+                        })
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('accidentReport/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                        
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->accident_status == 5 ||$row->accident_status == 7)) {
+                                $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+                            if ($row->accident_status == 6) {
+                                $btn .= '<a href="' . admin_url('accidentReport/review/' . encryptId($row->id)) .  '" 
+                                            class="edit-icon" 
+                                            title="' . __('Corrective Action') . '">';
+                                $btn .= '<img src="' . public_image('common/ca.png') . '" 
+                                            alt="' . __('common.edit') . '" 
+                                            style="width: 20px;">';
+                                $btn .= '</a>';
+                            }
+                            $btn .= '<a href="' . admin_url('accidentReport/accidentpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'status_batch', 'date_and_time', 'created_date', 'created_by', 'status'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+        $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+        $accidentStatusList  = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
+        $employeeList  = $this->employee->select('id', 'emp_id')->whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', user_role)')->where('status', '1')->get();
+
+        $data = array(
+            'departmentList' => $departmentList,
+            'accidentStatusList' => $accidentStatusList,
+            'employeeList' => $employeeList,
+        );
+
+        return view('ims.incident.accidentReport.calist', $data);
     }
     public function getEmployeeDetails($emp_id)
     {
@@ -797,12 +967,12 @@ class AccidentReportController extends Controller
 
             Session::flash('success', 'Your data has been created successfully!');
 
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         }
     }
     public function uaucRiskanalysis(Request $request, $accident_id)
@@ -965,11 +1135,11 @@ class AccidentReportController extends Controller
                 $this->Statuslog->create($insert_array);
             }
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         }
     }
 
@@ -1034,11 +1204,11 @@ class AccidentReportController extends Controller
             );
             $this->Statuslog->create($insert_array);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         }
     }
     public function ehsHeadVerifySubmit(Request $request)
@@ -1108,11 +1278,11 @@ class AccidentReportController extends Controller
             }
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/investigationList'));
         }
     }
     public function actiontakenSubmit(Request $request)
@@ -1175,11 +1345,11 @@ class AccidentReportController extends Controller
             );
             $this->Statuslog->create($insert_array);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/calist'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/calist'));
         }
     }
 
@@ -1303,11 +1473,11 @@ class AccidentReportController extends Controller
             }
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/calist'));
         } catch (Exception $ex) {
 
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('accidentReport/list'));
+            return redirect(admin_url('accidentReport/calist'));
         }
     }
     public function Uniquecheck(Request $request)
