@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', 'Occupational Health Center Inspection Checklist')
+@section('pageurl', admin_url('ohc/inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -132,7 +132,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
+                        url: "{{ admin_url('ohc/inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -214,7 +214,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
+                                            "{{ admin_url('ohc/inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -234,7 +234,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
+                                            "{{ admin_url('ohc/inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -302,7 +302,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/status') }}",
+                                url: "{{ admin_url('ohc/inspection/status') }}",
                                 type: 'post',
 
                                 data: {

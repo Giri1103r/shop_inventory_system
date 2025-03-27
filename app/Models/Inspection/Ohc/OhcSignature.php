@@ -106,6 +106,7 @@ class OhcSignature extends Model
                     'ohc_id' => $id,
                     'type' => $type,
                     'requestor_file_path' => $url,
+                    'file_path' => $url,
                     'file_name' => $file_name,
                     'file_orgname' => $OriginalfileName,
                     'file_extension' => $fileExt,
@@ -193,9 +194,13 @@ class OhcSignature extends Model
         return $this->where('ohc_id', $id)->where('emp_id', $safetyofficer->approved_by)->where('type', $type)->first();
     }
 
-    public function floormanagersignature($id, $floormanger, $type)
-    {
-        return $this->where('ohc_id', $id)->where('emp_id', $floormanger->approved_by)->where('type', $type)->first();
+    public function approversignature($id, $approver, $type){
+
+        return $this->where('ohc_id',$id)->where('emp_id',$approver)->where('type',$type)->first();
+    }
+
+    public function floormanagersignature($id, $floormanger, $type){
+        return $this->where('ohc_id',$id)->where('emp_id',$floormanger->approved_by)->where('type',$type)->first();
     }
 
     public function requestorSignature($id, $requestorsignature, $type)
