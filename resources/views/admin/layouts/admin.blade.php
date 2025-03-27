@@ -344,43 +344,53 @@
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('keydown', function(e) {
-                
-                if (e.keyCode === 123 || 
+
+                if (e.keyCode === 123 ||
                     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                    (e.ctrlKey && e.keyCode === 85) || 
+                    (e.ctrlKey && e.keyCode === 85) ||
                     (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
                 ) {
-                    e.preventDefault(); 
+                    e.preventDefault();
                 }
             });
 
             (function() {
                 var devtoolsOpen = false;
-                var threshold = 160; 
-                var interval = setInterval(function() {
-                    var widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                    var heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                var threshold = 160;
 
+                var checkDevTools = function() {
+                    var widthDiff = window.outerWidth - window.innerWidth;
+                    var heightDiff = window.outerHeight - window.innerHeight;
+
+                    var widthThreshold = widthDiff > threshold;
+                    var heightThreshold = heightDiff > threshold;
+
+                    // Check if width or height difference is beyond the threshold
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                        devtoolsOpen = true; 
-                        logBlockedUser();
+                        // Additional validation: Ignore small fluctuations due to zooming
+                        if (window.outerWidth > 800) { // Ensure it's a real dev tool case, not just zooming
+                            devtoolsOpen = true;
+                            logBlockedUser();
+                        }
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
-                        devtoolsOpen = false; 
+                        devtoolsOpen = false;
                     }
-                }, 5000); 
+                };
 
+                setInterval(checkDevTools, 3000); // Check every 3 seconds
             })();
 
+
             document.addEventListener('dragstart', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('selectstart', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('mousedown', function(e) {
@@ -391,7 +401,7 @@
 
             function logBlockedUser() {
                 $.ajax({
-                    url: "{{ url('blocked-save') }}", 
+                    url: "{{ url('blocked-save') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -402,7 +412,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = "{{ url('blocked') }}"; 
+                            window.location.href = "{{ url('blocked') }}";
                         }
                     },
                     error: function(xhr) {
