@@ -404,7 +404,7 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        console.log('test');
+
                         form.submit();
 
                     },

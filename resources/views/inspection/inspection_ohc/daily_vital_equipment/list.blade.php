@@ -1,8 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC Plant Summary')
-@section('pageurl', admin_url('safety/ohc-plant-summary/list'))
-
-
+@section('title', 'OHC Daily Vital Equipment')
+@section('pageurl', admin_url('ohc/daily-vital-equipment/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -15,7 +13,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/ohc-plant-summary/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/daily-vital-equipment/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -24,9 +22,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
+                                            <label for="doc_no"
                                                 class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                            <input type="text" name="doc_no" id="doc_no"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
@@ -35,19 +33,12 @@
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
-                                            <input type="text" name="inspection_date" id="inspection_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status"
-                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
-
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -72,7 +63,6 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -99,12 +89,8 @@
             flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
             });
-            flatpickr("#inspection_date", {
-                dateFormat: "d-m-Y",
-            });
 
             $(function() {
-                /* Datatable */
                 var table = $('.datatable-list').DataTable({
                     autoWidth: false,
                     responsive: true,
@@ -129,16 +115,16 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/ohc-plant-summary/list') }}",
+                        url: "{{ admin_url('ohc/daily-vital-equipment/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
+                            d.doc_no = $('#doc_no').val();
                             d.issue_date = $('#issue_date').val();
-                            d.inspection_date = $('#inspection_date').val();
+                            d.revision_date = $('#revision_date').val();
                             d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
@@ -161,10 +147,6 @@
                         {
                             data: 'issue_date',
                             name: 'issue_date',
-                        },
-                        {
-                            data: 'inspection_date',
-                            name: 'inspection_date',
                         },
                         {
                             data: 'revision_data',
@@ -203,19 +185,17 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
-                                        inspection_date = $('#inspection_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/ohc-plant-summary/export/pdf') }}" +
+                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&doc_no=' + doc_no +
                                             '&issue_date=' + issue_date +
-                                            '&inspection_date=' + inspection_date +
                                             '&status=' + status
                                     }
                                 },
@@ -224,18 +204,16 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
-                                        inspection_date = $('#inspection_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/ohc-plant-summary/export/excel') }}" +
+                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&doc_no=' + doc_no +
                                             '&issue_date=' + issue_date +
-                                            '&inspection_date=' + inspection_date +
                                             '&status=' + status
                                     }
                                 },
@@ -272,12 +250,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Daily Vital Equipment checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate Daily Vital Equipment checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -297,7 +275,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/ohc-plant-summary/status') }}",
+                                url: "{{ admin_url('ohc/daily-vital-equipment/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -345,7 +323,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var title = '{{ __('Do You want to Delete Daily Vital Equipment checklist') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -362,10 +340,9 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/ohc-plant-summary/delete') }}",
+                                url: "{{ admin_url('ohc/daily-vital-equipment/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

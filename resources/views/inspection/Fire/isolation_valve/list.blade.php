@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC Plant Summary')
-@section('pageurl', admin_url('safety/ohc-plant-summary/list'))
+@section('title', 'Fire Extinguisher Inspection')
+@section('pageurl', admin_url('fire/fire_extinguisher-inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/ohc-plant-summary/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/fire_extinguisher-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -35,19 +35,25 @@
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
-                                            <input type="text" name="inspection_date" id="inspection_date" class="form-control">
+                                            <label for="rev_date"
+                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status"
-                                                class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
-
+                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
+                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{encryptId('6')}}">CLOSED</option>
+                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
+                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
+                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -72,7 +78,6 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -94,13 +99,6 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
-            });
-
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-            });
-            flatpickr("#inspection_date", {
-                dateFormat: "d-m-Y",
             });
 
             $(function() {
@@ -129,7 +127,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/ohc-plant-summary/list') }}",
+                        url: "{{ admin_url('fire/fire_extinguisher-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -138,8 +136,8 @@
                         data: function(d) {
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
-                            d.inspection_date = $('#inspection_date').val();
-                            d.status = $('#status').val();
+                            d.rev_date = $('#rev_date').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -163,16 +161,12 @@
                             name: 'issue_date',
                         },
                         {
-                            data: 'inspection_date',
-                            name: 'inspection_date',
-                        },
-                        {
                             data: 'revision_data',
                             name: 'revision_data',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',
@@ -205,18 +199,18 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        inspection_date = $('#inspection_date').val();
-                                        status = $('#status').val();
+                                        rev_date = $('#rev_date').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/ohc-plant-summary/export/pdf') }}" +
+                                            "{{ admin_url('fire/fire_extinguisher-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&inspection_date=' + inspection_date +
-                                            '&status=' + status
+                                            '&rev_date=' + rev_date +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                                 {
@@ -226,17 +220,17 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        inspection_date = $('#inspection_date').val();
-                                        status = $('#status').val();
+                                        rev_date = $('#rev_date').val();
+                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/ohc-plant-summary/export/excel') }}" +
+                                            "{{ admin_url('fire/fire_extinguisher-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&inspection_date=' + inspection_date +
-                                            '&status=' + status
+                                            '&rev_date=' + rev_date +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]
@@ -297,7 +291,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/ohc-plant-summary/status') }}",
+                                url: "{{ admin_url('fire/fire_extinguisher-inspection/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -365,7 +359,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/ohc-plant-summary/delete') }}",
+                                url: "{{ admin_url('fire/fire_extinguisher-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
