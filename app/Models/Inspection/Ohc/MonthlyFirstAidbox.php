@@ -131,13 +131,13 @@ class MonthlyFirstAidbox extends Model
         return $datas;
     }
 
-    public function store($responses)
+    public function store()
     {
 
         $request = request();
 
         $insert_array = [
-            'checklist' => json_encode($responses),
+       
             'doc_no' => $request->document_no,
             'issue_date' => DBdateformat($request->issue_date),
             'shift' => decryptId($request->shift),
