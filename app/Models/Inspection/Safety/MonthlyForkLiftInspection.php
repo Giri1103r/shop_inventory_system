@@ -72,8 +72,8 @@ class MonthlyForkLiftInspection extends Model
         }
 
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->doc_no) && $request->doc_no) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->doc_no . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
@@ -91,13 +91,13 @@ class MonthlyForkLiftInspection extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "rev_date":
-                    $query->orderBy('inspection_forklift_inpsection_monthly.rev_date', $columnorder);
+                    $query->orderBy('inspection_forklift_inpsection_monthly.revision_data', $columnorder);
                     break;
                 case "issue_date":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.issue_date', $columnorder);
                     break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.document_number', $columnorder);
+                case "doc_no":
+                    $query = $query->orderBy('inspection_forklift_inpsection_monthly.doc_no', $columnorder);
                     break;
                 case "inspection_status":
                     $query = $query->orderBy('inspection_forklift_inpsection_monthly.inspection_status', $columnorder);
@@ -277,8 +277,8 @@ class MonthlyForkLiftInspection extends Model
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->doc_no) && $request->doc_no) {
+            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->doc_no . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));

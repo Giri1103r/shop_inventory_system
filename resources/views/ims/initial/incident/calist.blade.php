@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid')
-@section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
+@section('title', 'Incident Corrective Action')
+@section('pageurl', admin_url('incident/initial-incident/list'))
 
 
 @section('content')
@@ -13,36 +13,68 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/first-aid-box/weekly-inspection/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
                     </div>
+
                     <div id="search" class="collapse">
-                        {{-- <form action="" id="formsearch">
+                        <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Sr.No</label>
+                                                <input type="text" name="sr_no" id="sr_no" class=" form-control ">
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                            <label for="inspectiontype" class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Unit</option>
+                                                @foreach ($unitList as $unit)
+                                                    <option value="{{ encryptId($unit->id) }}">
+                                                        {{ $unit->unit_name }}</option>
+                                                @endforeach
+
+                                            </select>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">Approve Status</label>
+                                            <select name="incident_status" id="incident_status" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Status</option>
+                                                @foreach ($status as $status)
+                                                    <option value="{{ encryptId($status->id) }}">
+                                                        {{ $status->status_name }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
@@ -50,15 +82,16 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
 
+                                        <div class="col-md-3 mb-3 d-flex align-items-end gap-2">
+                                            <x-button-search class="me-2"></x-button-search>
+                                            <x-button-reset class="ms-1"></x-button-reset>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
-                        </form> --}}
+                        </form>
                         <hr>
                     </div>
 
@@ -70,14 +103,14 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Location</th>
+                                        <th>Sr. No</th>
                                         <th>Unit</th>
-                                        <th>Status</th>
-                                        <th>Created By</th>
+                                        <th>Shift</th>
+                                        <th>Approve Status</th>
+                                        <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th data-priority = '1'>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -90,23 +123,14 @@
         </div>
     </div>
 
+
 @stop
-
-
 
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
-
-            var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-        });
-
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-        });
         });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
@@ -152,23 +176,25 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('ohc/first-aid-box/weekly-inspection/list') }}",
+                    url: "{{ admin_url('incident/initial-incident/calist') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
                     data: function(d) {
-                        d.doc_no = $('#document_number').val();
-                        d.issue_date = $('#issue_date').val();
-                        d.revision_date = $('#rev_date').val();
+                        d.sr_no = $('#sr_no').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.incident_status = $('#incident_status').val();
                         d.status = $('#status').val();
 
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; 
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
                         }
                     }
                 },
@@ -178,26 +204,25 @@
                         searchable: true,
                     },
                     {
-                        data: 'doc_no',
-                        name: 'doc_no'
-                    },
-                    {
-                        data: 'issue_date',
-                        name: 'issue_date'
-                    },
-                    {
-                        data: 'location_name',
-                        name: 'location_name'
+                        data: 'sr_no',
+                        name: 'sr_no'
                     },
                     {
                         data: 'unit_name',
                         name: 'unit_name'
                     },
                     {
+                        data: 'shift',
+                        name: 'shift'
+                    },
+                    {
+                        data: 'status_batch',
+                        name: 'status_batch'
+                    },
+                    {
                         data: 'status',
                         name: 'status'
                     },
-                   
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -235,45 +260,49 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#rev_date').val();
+                                    var sr_no = $('#sr_no').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var incident_status = $('#incident_status').val();
                                     var status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/health-instrument/calibration-track-sheet/export/pdf') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
-                                        '&issue_date=' + issue_date +
-                                        '&rev_date=' + revision_date +
-                                        '&status=' + status 
-
+                                        '&sr_no=' + sr_no +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&incident_status=' + incident_status +
+                                        '&status=' + status
                                 }
                             },
                             {
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-                                    
-                                    var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#rev_date').val();
-                                    var status = $('#status').val();
 
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    var sr_no = $('#sr_no').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    var incident_status = $('#incident_status').val();
+                                    var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/health-instrument/calibration-track-sheet/export/excel') }}" +
+                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
-                                        '&issue_date=' + issue_date +
-                                        '&rev_date=' + revision_date +
-                                        '&status=' + status 
- 
-
+                                        '&sr_no=' + sr_no +
+                                        '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&incident_status=' + incident_status +
+                                        '&status=' + status
                                 }
                             },
                         ]
@@ -309,12 +338,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Health Instrument Calibration') }}';
+                    var title = '{{ __('Do You want to In-Activate Initial Incident') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Health Instrument Calibration') }}';
+                    var title = '{{ __('Do You want to Activate Initial Incident') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -334,7 +363,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/health-instrument/calibration-track-sheet/status') }}",
+                            url: "{{ admin_url('incident/initial-incident/status') }}",
                             type: 'post',
 
                             data: {

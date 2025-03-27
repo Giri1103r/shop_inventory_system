@@ -136,9 +136,9 @@ class FirstAidMedicineInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
-            $inspection_file = $this->signature->getFilesByEmpId($inspection_details->created_by, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $verified_by = $this->signature->getFilesByEmpId($inspection_details->updated_by, $inspection_type);
+            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
 
             $data = array(
                 'inspection_details' => $inspection_details,
@@ -257,8 +257,8 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_file = $this->signature->getFiles($id, $inspection_type);
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            $inspection_created_by = $this->signature->getFilesByEmpId($inspection_detail->created_by, $inspection_type);
-            $inspection_updated_by = $this->signature->getFilesByEmpId($inspection_detail->updated_by, $inspection_type);
+            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -301,7 +301,7 @@ class FirstAidMedicineInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
-            $inspection_file = $this->signature->getFiles($id, $inspection_type);
+            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
 
             $data = array(

@@ -1,9 +1,8 @@
-=
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>OHC PLANT SUMMARY | KARAM</title>
+    <title> FIRST AID BAG INSPECTION CHECKLIST| KARAM</title>
 
     <style>
         .badge {
@@ -124,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    OHC PLANT SUMMARY </td>
+                     FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -150,20 +149,20 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    OHC PLANT SUMMARY
+                     FIRST AID  CHECKLIST
                 </td>
             </tr>
         </table>
     </div>
 
-
     <table width="100%" style="width:100%;">
         <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
+            <td width="50%" style="padding:5px;"><b>Documnet No</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}</td>
+            <td width="48%" style="padding:5px;">{{ $inspection_details->doc_no }}
+            </td>
         </tr>
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -175,23 +174,56 @@
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->revision_data) ? $inspection_details->revision_data : '' }}
+                {{ $inspection_details->revision_date }}
+            </td>
+        </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b> Date of Inspection</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Date</b></td>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->inspection_date) ? $inspection_details->inspection_date : '') }}
+                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Updated Frequency</b></td>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getShiftname(isset($inspection_details->updated_frequency) ? $inspection_details->updated_frequency : '') }}
+                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
             </td>
         </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>First Aid Box No</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($inspection_details->first_aid_box_no) ? $inspection_details->first_aid_box_no : '' }}
+            </td>
+        </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>First Aider Name</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFirstAider(isset($inspection_details->first_aider) ? $inspection_details->first_aider : '') }}
+            </td>
+        </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+            </td>
+        </tr>
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -212,120 +244,66 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    OHC PLANT SUMMARY
+                    WEEKLY FIRST AID CHECKLIST
                 </td>
             </tr>
         </table>
     </div>
 
-    @php
-        $rowcount = count($units);
-    @endphp
 
-    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+    <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 80px;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Description</th>
-                <th colspan="{{ $rowcount }}" style="border: 2px solid black; padding: 8px; background-color: #ddd; text-align:center;">
-                    Quantity (in Nos/m²)
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Total Quantity (in Nos/m²)</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    {{ __('inspection.sr_no') }}</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                   Medicine Name</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                    Freeze Quantity</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Available Quantity</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Expiry Date</th>
+                
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    {{ __('inspection.remarks') }}</th>
             </tr>
-            <tr>
-                @foreach ($units as $unit)
-                    <th style="border: 1px solid #000; vertical-align:middle; text-align:center; width: 100px;">
-                        {{ $unit->unit_name }}
-                    </th>
-                @endforeach
-            </tr>
+
         </thead>
         <tbody>
-            @foreach ($quantity_details as $index => $quantity_detail)
+            @foreach ($inspection_data as $medicines)
                 <tr>
-                    <td style="border: 1px solid #000;">{{ $index }}</td>
-                    <td style="border: 1px solid #000;">
-                        {{ $quantity_detail['description'] }}</td>
-                    @foreach ($units as $index => $unit)
-                        <td style="border: 1px solid #000;">
-                            {{ isset($quantity_detail['unit - ' . $index + 1]) ? $quantity_detail['unit - ' . $index + 1] : '' }}
-                        </td>
-                    @endforeach
-
-                    <td style="border: 1px solid #000;">
-                        {{ $quantity_detail['total_quantity'] }}
-                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getMedicinename($medicines['medicine_id']) }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['freeze_quantity'] }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['available_quantity'] }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ Displaydateformat($medicines['expired_date']) }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['remarks'] }}</td>
                 </tr>
             @endforeach
-        </tbody>
-    </table>
-    <div style="width:100%;">
-        <table style="width:100%;">
             <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire Water Pump House Details
+                <td colspan="7"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($inspection_created_by->requestor_file_path) }}" alt="Checked By Signature"
+                        style="height: 50px; margin-top:2px;">
+                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
             </tr>
-        </table>
-    </div>
 
-    <div class="table-responsive">
-        <table id="firewaterpump" class="table table-bordered text-center" style="border-collapse: collapse;">
-            <thead>
-                <tr>
-                    <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Sr.
-                        No.
-                    </th>
-                    <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Name
-                        of
-                        Water
-                        Pump & Water Storage Tank
-                    </th>
-                    <th colspan="{{ $rowcount }}"
-                        style="border: 1px solid #000; text-align: center; vertical-align:middle; text-align:center">
-                        Capacity
-                    </th>
-                </tr>
-                <tr>
-                    @foreach ($units as $unit)
-                        <th style="border: 1px solid #000; vertical-align:middle; text-align:center">
-                            {{ $unit->unit_name }}
-                        </th>
-                    @endforeach
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($fire_water_pump_details as $index => $quantity_detail)
-                    <tr>
-                        <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
-                            {{ $index + 1 }}</td>
-                        <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
-                            {{ $quantity_detail['fire_pump_details'] }}
-                        </td>
-                        @foreach ($units as $unit_index => $unit)
-                            <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
-                                {{ isset($quantity_detail['fire_pump_details_unit_' . ($unit_index + 1)]) ? $quantity_detail['fire_pump_details_unit_' . ($unit_index + 1)] : '' }}
-                            </td>
-                        @endforeach
-                    </tr>
-                @endforeach
-
-                @php
-                    $total_columns = 2 + count($units); // 2 static columns + dynamic columns from $units
-                @endphp
-
-                <tr>
-                    <td colspan="{{ $total_columns }}"
-                        style="border: 1px solid #000; vertical-align:middle; text-align:left">
-                        Prepared By: {{ getUsername($inspection_details->created_by) }}
-                    </td>
-                </tr>
-            </tbody>
-
-        </table>
-    </div>
-
+        </tbody>
+    </table>
     <br>
 
 </body>

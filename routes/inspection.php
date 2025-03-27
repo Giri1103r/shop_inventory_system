@@ -549,6 +549,11 @@ Route::group(['prefix' => 'ohc/master/first-aid-stock/'], function () {
 
 Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('list', [WeeklyFirstAidBoxController::class, 'index']);
+    Route::post('list', [WeeklyFirstAidBoxController::class, 'index']);
     Route::get('add', [WeeklyFirstAidBoxController::class, 'add']);
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
+    Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
+    Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+
+
 });

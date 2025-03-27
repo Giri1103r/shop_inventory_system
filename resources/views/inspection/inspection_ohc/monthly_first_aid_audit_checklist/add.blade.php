@@ -30,7 +30,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="weeklyambulance"
+                                    <form method="POST" id="monthlyfirstaidchecklist"
                                         action="{{ admin_url('ohc/first-aid-box/monthly-audit/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -431,7 +431,7 @@
                             departmentDropdown.append('<option value="' + value.id + '">' +
                                 value.name + '</option>');
                         });
-                        departmentDropdown.trigger('change');
+                        departmentDropdown.trigger('change'); // Ensure Select2 updates properly
                     },
                     error: function(xhr) {
                         Swal.fire({
@@ -448,86 +448,146 @@
                 departmentDropdown.trigger('change');
             }
         });
-        // first Aid box number
 
-//         $(document).on('change', '.unit_id','.department_id' function() {
-//             var unitId = $(this).val();
-//             var departmentId = $(this).val();
-//             var row = $(this).closest('tr');
-//             var firstaidBox = row.find('.first_aid_box');
+        // First Aid Box Number Fetching
+        $(document).on('change', '.unit_id, .department_id', function() {
+            var row = $(this).closest('tr');
+            var unitId = row.find('.unit_id').val();
+            var departmentId = row.find('.department_id').val();
+            var firstAidBox = row.find('input[name^="first_aid_box"]');
 
-//             if (unitId) {
-//                 $.ajax({
-//                     url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-//                     type: 'GET',
-//                     dataType: 'json',
-//                     success: function(data) {
-// $('.first_aid_box').append()
-//                     },
-//                     error: function(xhr) {
-//                         Swal.fire({
-//                             icon: "warning",
-//                             title: "Warning!",
-//                             text: "Error in fetching the First Aid Box Number.",
-//                             confirmButtonColor: "#d33",
-//                             confirmButtonText: "OK"
-//                         });
-//                     }
-//                 });
-//             } else {
-//                 departmentDropdown.empty().append('<option value="">Select Department</option>');
-//                 departmentDropdown.trigger('change');
-//             }
-//         });
-
-
-        // add more details
-
-        $(document).on("click", ".add-row", function() {
-            var rowCount = $("#medicine-tbody tr").length;
-            var newRow = $(".medicine-row:first").clone();
-
-            // Reset all inputs and selects in the cloned row
-            newRow.find("select, input").each(function() {
-                var name = $(this).attr("name");
-                if (name) {
-                    name = name.replace(/\[\d+\]/, "[" + rowCount + "]");
-                    $(this).attr("name", name);
-                }
-
-                var id = $(this).attr("id");
-                if (id) {
-                    var newId = id.replace(/\[\d+\]/, "[" + rowCount + "]");
-                    $(this).attr("id", newId);
-                }
-
-                var label = newRow.find("label[for='" + id + "']");
-                if (label.length) {
-                    label.attr("for", id.replace(/\[\d+\]/, "[" + rowCount + "]"));
-                }
-
-                if ($(this).is("input[type='radio'], input[type='checkbox']")) {
-                    $(this).prop("checked", false);
-                }
-
-                if ($(this).is("select")) {
-                    $(this).val(null).trigger("change");
-                }
-            });
-
-
-            newRow.find(".single-select").each(function() {
-
-                $(this).removeClass("select2-hidden-accessible").removeAttr("data-select2-id").show();
-                $(this).next(".select2-container").remove();
-            });
-
-
-            $("#medicine-tbody").append(newRow);
-
-
-            newRow.find(".single-select").select2();
+            if (unitId && departmentId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                    type: 'GET',
+                    data: {
+                        unit_id: unitId,
+                        department_id: departmentId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        firstAidBox.val(response.first_aid_box_no);
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching first aid details. Please try again.');
+                    }
+                });
+            }
         });
+
+        // Add More Details - Cloning Rows
+        $(document).ready(function() {
+            // Initialize Select2
+            $(".single-select").select2();
+
+
+            $("#monthlyfirstaidchecklist").validate({
+                rules: {
+                    "unit_id[0]": {
+                        required: true
+                    },
+                    "department_id[0]": {
+                        required: true
+                    },
+                    "first_aid_register_maintained[0]": {
+                        required: true
+                    },
+                    "first_aid_box_inspect_periodicity[0]": {
+                        required: true
+                    },
+                    "first_aid_box_checklist_periodicity[0]": {
+                        required: true
+                    },
+                    "first_aid_box_freeze_quantity[0]": {
+                        required: true
+                    },
+                    "medicine_requisition_slip_record[0]": {
+                        required: true
+                    },
+                    "first_aid_box_clean[0]": {
+                        required: true
+                    },
+                    "first_aid_box_sticker[0]": {
+                        required: true
+                    },
+                    "first_aid_material_index[0]": {
+                        required: true
+                    }
+                },
+                messages: {
+                    "unit_id[0]": "Please select a unit",
+                    "department_id[0]": "Please select a department",
+                    "first_aid_register_maintained[0]": "This field is required",
+                    "first_aid_box_inspect_periodicity[0]": "This field is required",
+                    "first_aid_box_checklist_periodicity[0]": "This field is required",
+                    "first_aid_box_freeze_quantity[0]": "This field is required",
+                    "medicine_requisition_slip_record[0]": "This field is required",
+                    "first_aid_box_clean[0]": "This field is required",
+                    "first_aid_box_sticker[0]": "This field is required",
+                    "first_aid_material_index[0]": "This field is required"
+                }
+            });
+
+
+            $(document).on("click", ".add-row", function() {
+                var rowCount = $("#medicine-tbody tr").length;
+                var newRow = $(".medicine-row:first").clone();
+
+                newRow.find("select, input").each(function() {
+                    var name = $(this).attr("name");
+                    if (name) {
+                        name = name.replace(/\[\d+\]/, "[" + rowCount + "]");
+                        $(this).attr("name", name);
+                    }
+
+                    var id = $(this).attr("id");
+                    if (id) {
+                        var newId = id.replace(/\[\d+\]/, "[" + rowCount + "]");
+                        $(this).attr("id", newId);
+                    }
+
+                    var label = newRow.find("label[for='" + id + "']");
+                    if (label.length) {
+                        label.attr("for", newId);
+                    }
+
+                    if ($(this).is("input[type='radio'], input[type='checkbox']")) {
+                        $(this).prop("checked", false);
+                    }
+
+                    if ($(this).is("select")) {
+                        $(this).val(null).trigger("change"); // Reset value
+                    }
+
+                    $(this).removeClass("error");
+                    $(this).next("label.error").remove();
+                });
+
+
+                $("#medicine-tbody").append(newRow);
+
+
+                newRow.find(".single-select").each(function() {
+                    $(this).removeClass("select2-hidden-accessible");
+                    $(this).next(".select2-container").remove();
+                    $(this).select2();
+                });
+
+                // Validate dynamically added fields
+                newRow.find("input, select").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "This field is required"
+                        }
+                    });
+                });
+            });
+
+
+
+        });
+
 
 
 
@@ -545,5 +605,98 @@
                 });
             }
         });
+
+        $(function () {
+    $.validator.addMethod(
+        "regex",
+        function (value, element, regex) {
+            return this.optional(element) || new RegExp(regex).test(value);
+        },
+        "Invalid format."
+    );
+
+    $('#monthlyfirstaidchecklist').validate({
+        rules: {
+            shift: {
+                required: true,
+            },
+            frequency: {
+                required: true,
+            },
+            issue_date: {
+                required: true,
+            },
+            document_no: {
+                required: true,
+                minlength: 3,
+                maxlength: 30,
+            },
+            review_date: {
+                required: true,
+            },
+            date: {
+                required: true,
+            },
+            signature_image: {
+                required: true,
+                extension: "png|jpeg|jpg",
+            }
+        },
+        messages: {
+            shift: {
+                required: "Please select the Shift name.",
+            },
+            frequency: {
+                required: "Please select the Frequency Name.",
+            },
+            issue_date: {
+                required: "Please select the issue date.",
+            },
+            date: {
+                required: "Please select the date.",
+            },
+            document_no: {
+                required: "Document Number is Required",
+                minlength: "Minimum Characters should be 3",
+                maxlength: "Maximum Characters should not exceed 30",
+            },
+            review_date: {
+                required: "Please select the review date.",
+            },
+            signature_image: {
+                required: "Please upload a signature.",
+                extension: "Only PNG, JPEG, and JPG formats are allowed.",
+            },
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            error.addClass('invalid-feedback');
+
+            if (element.hasClass("single-select") || element.hasClass("form-control")) {
+                // Append error message for select elements and form-controls properly
+                element.closest('.form-input').append(error);
+            } else if (element.is(":file")) {
+                // Append error message for file input
+                element.closest('.form-group').append(error);
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function (form) {
+            form.submit();
+        },
+        invalidHandler: function (event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log("Form has " + errors + " invalid fields.");
+        },
+    });
+});
+
     </script>
 @endpush

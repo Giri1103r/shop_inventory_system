@@ -919,15 +919,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 30,
-                        remote: {
-                            url: "{{ admin_url('ohc/prescribe-to-patient/unique') }}",
-                            type: "post",
-                            data: {
-                                emp_name: function() {
-                                    return $('#emp_name').val();
-                                }
-                            }
-                        }
+
                     },
                     unit_id: {
                         required: true,
@@ -1087,7 +1079,7 @@
                         required: "Please enter employee name.",
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
-                        remote: "Employee Name Should be Unique"
+                       
                     },
                     // company_name: {
                     //     required: "Please enter Company name.",

@@ -74,7 +74,7 @@ class Worktemp extends Model
 
                 $status = isset($item['Status']) ? ($item['Status'] === 'Y' ? 1 : 0) : null;
 
-                // dd($item['Status'], $status);
+              
                 $valuesToInsertOrUpdate = [
                     'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
                     'gender' => isset($item['Gender']) ? $item['Gender'] : null,
