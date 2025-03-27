@@ -1,49 +1,28 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('ohc/weekly-ambulance/inspection/checklist'))
+@section('title', 'Occupational Health Center Inspection Checklist')
+@section('pageurl', admin_url('ohc/inspection/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">Company Add</h4> --}}
+
 
         </div>
-        {{-- <ol class="breadcrumb">
-            <li class="breadcrumb-item active ms-auto">
-                <a class="d-flex align-self-center" href="{{ admin_url('dashboard') }}">
-                    <svg class="me-2 svg-main-icon" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24"
-                        version="1.1">
-                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <rect x="0" y="0" width="24" height="24"></rect>
-                            <path
-                                d="M3.95709826,8.41510662 L11.47855,3.81866389 C11.7986624,3.62303967 12.2013376,3.62303967 12.52145,3.81866389 L20.0429,8.41510557 C20.6374094,8.77841684 21,9.42493654 21,10.1216692 L21,19.0000642 C21,20.1046337 20.1045695,21.0000642 19,21.0000642 L4.99998155,21.0000673 C3.89541205,21.0000673 2.99998155,20.1046368 2.99998155,19.0000673 L2.99999828,10.1216672 C2.99999935,9.42493561 3.36258984,8.77841732 3.95709826,8.41510662 Z M10,13 C9.44771525,13 9,13.4477153 9,14 L9,17 C9,17.5522847 9.44771525,18 10,18 L14,18 C14.5522847,18 15,17.5522847 15,17 L15,14 C15,13.4477153 14.5522847,13 14,13 L10,13 Z"
-                                fill="#009999"></path>
-                        </g>
-                    </svg>
-                    {{ __('common.dashboard') }}
-                </a>
-            </li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_4') }}</a></li>
-            <li class="breadcrumb-item"><a href="javascript:void(0)">{{ __('leftmenu.menu_8') }}</a></li>
-        </ol> --}}
+
     </div>
 
     <div class="content-body  default-height">
         <div class="container-fluid main-content">
-            <!-- row -->
             <div class="row">
 
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -51,8 +30,8 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="weeklyambulance"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('ohc/inspection/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId(1) }}" name="ohc_type">
                                         <div class="row">
@@ -158,6 +137,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             @if ($signature_upload->signature_upload != '')
                                             <label class="form-label view_label">Requestor Signature</label>
 
@@ -190,7 +170,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Weekly Ambulance Inspection Checklist</h4>
+                                                <h4 class="text-white">Occupational Heath Inspection Checklist</h4>
                                             </div>
                                         </div>
 
@@ -210,6 +190,9 @@
                                                                     {{ $option }}
                                                                 </th>
                                                             @endforeach
+                                                            <th>
+                                                                Quantity
+                                                            </th>
                                                             <th colspan="3" \>
                                                                 Remarks
                                                             </th>
@@ -254,6 +237,12 @@
                                                                             </label>
                                                                         </td>
                                                                     @endforeach
+                                                                    <td
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                        <input type="number"
+                                                                            name="quantity[{{ $checklist->checklist_id ?? '' }}]" min="1"
+                                                                            class="form-control">
+                                                                    </td>
 
                                                                     <td
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
@@ -381,7 +370,11 @@
                         element.closest('td').append(error);
                     } else if (element.is('textarea')) {
                         element.closest('td').append(error);
-                    } else {
+                    }
+                    else if (element.is('input[type="number"]')) {
+                        element.closest('td').append(error);
+                    }
+                   else {
                         element.closest('.form-input').append(error);
                     }
                 },
@@ -406,16 +399,25 @@
             });
 
 
-            $.validator.addMethod("radioRequired", function(value, element, param) {
-                return $('input[name="' + param + '"]:checked').length > 0;
-            }, "Please select an option");
+            // $.validator.addMethod("radioRequired", function(value, element, param) {
+            //     return $('input[name="' + param + '"]:checked').length > 0;
+            // }, "Please select an option");
 
-            $.validator.addMethod("remarksRequired", function(value, element) {
+            // $.validator.addMethod("remarksRequired", function(value, element) {
+            //     var checklistId = $(element).attr('name').match(/\d+/)[
+            //         0];
+            //     return $('input[name="checklist_type_status[' + checklistId + ']"]:checked').length > 0 ? $
+            //         .trim(value).length > 0 : true;
+            // }, "Please provide remarks ");
+
+            $.validator.addMethod("quantityRequired", function(value, element) {
                 var checklistId = $(element).attr('name').match(/\d+/)[
                     0];
                 return $('input[name="checklist_type_status[' + checklistId + ']"]:checked').length > 0 ? $
                     .trim(value).length > 0 : true;
             }, "Please provide remarks ");
+
+
 
 
             $('input[type="radio"]').each(function() {
@@ -425,6 +427,7 @@
                 };
             });
 
+            // Apply validation dynamically to remarks fields
             $('textarea[name^="remarks"]').each(function() {
                 var name = $(this).attr("name");
                 $('#weeklyambulance').validate().settings.rules[name] = {
@@ -436,6 +439,19 @@
                     remarksRequired: "Remarks are required if an option is selected",
                     minlength: "Remarks must be at least 3 characters",
                     maxlength: "Remarks must not exceed 600 characters"
+                };
+            });
+
+            // Apply validation dynamically to quantity fields
+            $('input[name^="quantity"]').each(function() {
+                var name = $(this).attr("name");
+                $('#weeklyambulance').validate().settings.rules[name] = {
+                    quantityRequired: true,
+                    digits: true,
+                };
+                $('#weeklyambulance').validate().settings.messages[name] = {
+                    quantityRequired: "Quantity is required if an option is selected",
+                    digits: "Quantity should be numeric",
                 };
             });
         });

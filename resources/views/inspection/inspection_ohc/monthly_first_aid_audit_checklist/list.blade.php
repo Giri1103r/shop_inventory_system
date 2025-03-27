@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', '  Occupation Health Inspection ' )
-@section('pageurl', admin_url('ohc/inspection/list'))
+@section('title', 'Monthly First Aid Box Audit Checklist')
+@section('pageurl', admin_url('ohc/first-aid-box/monthly-audit/list'))
 
 
 @section('content')
@@ -11,12 +11,11 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/inspection/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/first-aid-box/monthly-audit/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -46,8 +45,10 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId('1') }}">Active
+                                                </option>
+                                                <option value="{{ encryptId('0') }}">In-Active</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -83,7 +84,6 @@
                         </div>
                     </div>
 
-
                 </div>
             </div>
         </div>
@@ -97,7 +97,9 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -124,7 +126,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/inspection/list') }}",
+                        url: "{{ admin_url('ohc/first-aid-box/monthly-audit/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -151,7 +153,7 @@
 
                         {
                             data: 'doc_no',
-                            name: 'doc_no'
+                            name: 'document_no'
                         },
                         {
                             data: 'issue_date',
@@ -161,8 +163,6 @@
                             data: 'revision_date',
                             name: 'revision_date'
                         },
-
-
                         {
                             data: 'status',
                             name: 'status'
@@ -199,7 +199,6 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -209,7 +208,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/inspection/export/pdf') }}" +
+                                            "{{ admin_url('ohc/first-aid-box/monthly-audit/export/pdf') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -228,7 +228,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/inspection/export/excel') }}" +
+                                            "{{ admin_url('ohc/first-aid-box/monthly-audit/export/excel') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -268,12 +269,14 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Monthly First Aid Box Audit Checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Monthly First Aid Box Audit Checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -293,7 +296,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/inspection/status') }}",
+                                url: "{{ admin_url('ohc/first-aid-box/monthly-audit/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -333,6 +336,10 @@
                     })
 
                 });
+
+
+                /* Delete Record */
+               
 
             });
         </script>
