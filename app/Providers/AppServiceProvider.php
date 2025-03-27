@@ -197,6 +197,8 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_OPD_MEDICINE_INSPECTION') or define('OHC_OPD_MEDICINE_INSPECTION',20);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
         defined('FIRST_AID_BAG_INSPECTION_CHECKLIST') or define('FIRST_AID_BAG_INSPECTION_CHECKLIST',17);
+        defined('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE') or define('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE',11);
+
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);

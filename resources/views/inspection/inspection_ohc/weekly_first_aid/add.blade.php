@@ -152,7 +152,7 @@
                                                     <thead class="table-secondary">
                                                         <tr>
                                                             <th style="text-align: center">Sr. No.</th>
-                                                            <th style="text-align: center">Name Of Inspection</th>
+                                                            <th style="text-align: center">Medicine Name</th>
                                                             <th style="text-align: center">Freeze Quantity</th>
                                                             <th style="text-align: center">Available Quantity</th>
                                                             <th style="text-align: center">Expiry Date</th>
@@ -165,7 +165,7 @@
                                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                                 <td class="text-center">
                                                                     {{ getMedicinename($medicines->medicine_id) }} <input
-                                                                        type="hidden" name="id[{{ $medicines->id }}]"
+                                                                        type="hidden" name="medicine_id[{{ $medicines->id }}]"
                                                                         value="{{ encryptId($medicines->id) }}"></td>
 
                                                                 <td class="text-center">{{ $medicines->freeze_quantity }}
@@ -217,6 +217,14 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Remark By</label>
+                                                        <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
+
+                                                    </div>
                                                 </div>
                                             </div>
 

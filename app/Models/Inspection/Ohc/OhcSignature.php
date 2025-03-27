@@ -101,7 +101,6 @@ class OhcSignature extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-
                     'emp_id' => Auth::id(),
                     'ohc_id' => $id,
                     'type' => $type,
