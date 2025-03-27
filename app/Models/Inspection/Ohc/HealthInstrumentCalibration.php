@@ -122,13 +122,13 @@ class HealthInstrumentCalibration extends Model
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
-
+            
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.revision_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.status', 'LIKE', '%' . $search . '%');
+                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $search . '%')
+                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.issue_date', 'LIKE', '%' . $search . '%')
+                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.revision_date', 'LIKE', '%' . $search . '%')
+                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.status', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('document_number') && $request->document_number) {

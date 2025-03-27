@@ -8,20 +8,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Master\Unit;
+use App\Models\Master\Department;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\audit\AuditAnalysisChecklist;
 use App\Models\Inspection\MSDSCheckList;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class AuditAnalysisController extends Controller
 {
-
+    private $unit;
+    private $department;
     private $auditAnalysis;
-    private $msdsCheckList;
+    private $auditAnalysisCheckList;
 
     public function __construct()
     {
         $this->auditAnalysis = new AuditAnalysis();
+        $this->auditAnalysisCheckList = new AuditAnalysisChecklist();
+        $this->department = new Department();
+        $this->unit = new Unit();
     }
 
     public function Index(Request $request)
@@ -65,6 +72,8 @@ class AuditAnalysisController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -79,7 +88,27 @@ class AuditAnalysisController extends Controller
     public function add(Request $request)
     {
         try {
-            $data = array();
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $months = [
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December',
+                'January',
+                'February',
+                'March',
+            ];
+            $data = array(
+                'departmentList' => $departmentList,
+                'unitList' => $unitList,
+                'months' => $months,
+            );
             return view('inspection.inspection_audit.auditAnalysis.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -90,49 +119,25 @@ class AuditAnalysisController extends Controller
     {
        
         try {
-            $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
-                'serial_number' => 'required',
-                'item_code' => 'required',
-                'name_of_chemical' => 'required',
-                'msds_availability_status' => 'required',
-                'remark' => 'required',
-
-            ];
-            $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
-                'serial_number.required' => __('Serial Number is required'),
-                'item_code.required' => __('Item Code is required'),
-                'name_of_chemical.required' => __('Name of Chemical is required'),
-                'msds_availability_status.required' => __('MSDS Availability Status is required'),
-                'remark.required' => __('Remark is required'),
-
-            ];
-         
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
             
             try {
 
-               $msds = $this->msdsDetails->store();
-               $msdsId = $msds->id;
-               $this->msdsCheckList->store($msdsId);
+               $auditAnalysis = $this->auditAnalysis->store();
+               $auditanalysis_id = $auditAnalysis->id;
+               $this->auditAnalysisCheckList->store($auditanalysis_id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
+
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
 
@@ -219,7 +224,7 @@ class AuditAnalysisController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
 
@@ -273,7 +278,7 @@ class AuditAnalysisController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
 
@@ -339,11 +344,11 @@ class AuditAnalysisController extends Controller
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('msds/list'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
 

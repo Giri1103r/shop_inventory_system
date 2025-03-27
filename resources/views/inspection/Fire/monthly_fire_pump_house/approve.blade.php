@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Monthly Fire Pump House Inspection')
-@section('pageurl', admin_url('fire/monthly-fire-pumphouse-inspection/list'))
+@section('pageurl', admin_url('fire/monthly-fire-pump-house-inspection/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/monthly-fire-pumphouse-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -218,7 +218,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/monthly-fire-pumphouse-inspection/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('fire/monthly-fire-pump-house-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -272,7 +272,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/monthly-fire-pumphouse-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -571,7 +571,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/monthly-fire-pumphouse-inspection/capa/submit') }}"
+                                        action="{{ admin_url('fire/monthly-fire-pump-house-inspection/capa/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -612,7 +612,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/monthly-fire-pumphouse-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/monthly-fire-pump-house-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -620,7 +620,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/monthly-fire-pumphouse-inspection/capa/reverify/submit') }}"
+                                        action="{{ admin_url('fire/monthly-fire-pump-house-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -671,7 +671,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('fire/monthly-fire-pumphouse-inspection/level-one/verify/submit') }}"
+                                        action="{{ admin_url('fire/monthly-fire-pump-house-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
@@ -724,7 +724,7 @@
 
                                 @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('fire/monthly-fire-pumphouse-inspection/level-two/verify/submit') }}"
+                                        action="{{ admin_url('fire/monthly-fire-pump-house-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection_details->id) }}"

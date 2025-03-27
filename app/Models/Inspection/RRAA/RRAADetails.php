@@ -65,17 +65,16 @@ class RRAADetails extends Model
         }
 
         if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('inspection_status') && $request->inspection_status) {
-
-            $query = $query->where('inspection_status', decryptId($request->inspection_status));
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('inspection_rraa_details.status', decryptId($request->status));
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -102,10 +101,9 @@ class RRAADetails extends Model
        
         $insert_array = array(
             'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
+            'issue_date' => DBdateformat($request->issue_date),
             'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
-            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
       
         return $this->create($insert_array);
@@ -247,16 +245,16 @@ class RRAADetails extends Model
             });
         }
         if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('inspection_status') && $request->inspection_status) {
-            $query = $query->where('inspection_status', decryptId($request->inspection_status));
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('inspection_rraa_details.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

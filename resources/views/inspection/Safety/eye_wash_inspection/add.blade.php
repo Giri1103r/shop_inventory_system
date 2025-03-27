@@ -53,7 +53,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('SAF-0') }}"
+                                                        class="form-control" value="{{ getDocumentReviewDate('MEW-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>

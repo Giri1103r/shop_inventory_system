@@ -36,10 +36,10 @@
                             {{ $value->revision_date }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{-- @php
+                            @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp --}}
-                            {{ getInspectionStatus($value->inspection_status); }}
+                            @endphp
+                            {{ $status }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

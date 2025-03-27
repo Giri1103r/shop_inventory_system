@@ -66,6 +66,9 @@ class SafetyPettyController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('issue_date', function ($row) {
+                            return Displaydateformat($row->issue_date);
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
@@ -74,7 +77,7 @@ class SafetyPettyController extends Controller
                             </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'inspection_status', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -247,7 +250,7 @@ class SafetyPettyController extends Controller
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_date;
-                $export[] = getInspectionStatus($data->inspection_status);
+                $export[] = $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -365,6 +368,7 @@ class SafetyPettyController extends Controller
             $filename = "Safety Petty Logbook Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
