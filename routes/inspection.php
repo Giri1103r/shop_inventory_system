@@ -26,6 +26,7 @@ use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
@@ -536,6 +537,17 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
 });
 
+
+Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
+    Route::GET('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::POST('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::GET('add', [DailyVitalEquipmentController::class, 'Add']);
+    Route::POST('add/submit', [DailyVitalEquipmentController::class, 'Store']);
+    Route::GET('view/{id}', [DailyVitalEquipmentController::class, 'View']);
+    Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
+    Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+});
 
 
 
