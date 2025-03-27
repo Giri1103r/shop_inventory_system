@@ -152,7 +152,7 @@
                 padding: 8px 16px;
             }
         }
-        
+
         .warning-message {
             font-size: 18px;
             font-weight: bold;
@@ -173,8 +173,8 @@
                 @yield('code')
             </div>
             <div class="warning-message">
-                We have disabled the Developer Tool in the production environment.<br>
-                Please close the Developer Tool and use the application.
+                Developer tools have been disabled in the production environment. <br>
+                Please close them to continue using the application.
             </div>
             <h4>@yield('message')</h4>
             <a href="{{ admin_url('home') }}"><button>Back to Home</button></a>
