@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Medicine Store Inspection Checklist Pdf')
+@section('title', 'Monthly First Aid Box Audit Checklist')
 @section('content')
 
     <div style="width:100%;">
@@ -19,28 +19,46 @@
                 @php
                     $i = 1;
                 @endphp
-                @foreach ($content as $key => $data)
+                @foreach ($content as $key => $value)
                     <tr>
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($data->inspection_date)}}
+                            {{ ($value->doc_no) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->revision_date) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($data->next_due)}}
+                            {{ displaydateformat($value->issue_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getObservationStatus($data->inspection_status) }}
+                            {{ displaydateformat($value->next_due) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ displaydateformat($value->date_of_inspection) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getShift($value->shift) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getLocationname($value->location) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getInspectionStatus($value->approve_status) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($data->created_by) }}
+                            {{ getusername($value->created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($data->created_at) }}
+                            {{ Displaydateformat($value->created_at) }}
                         </td>
                     </tr>
                     @php

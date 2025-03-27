@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Weekly Ambulance Inspection Checklist | KARAM</title>
+    <title>Occupational Health Center Inspection Checklist | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Weekly Ambulance Inspection Checklist</td>
+                    Occupational Health Center Inspection Checklist</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Weekly Ambulance Inspection Checklist
+                    Occupational Health Center Inspection Checklist
                 </td>
             </tr>
         </table>
@@ -208,6 +208,9 @@
                             Status
                         </th>
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                            Quantity
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                             Remarks
                         </th>
                     </tr>
@@ -218,6 +221,7 @@
                         $checkItems = $decodedData['check_item'] ?? [];
                         $statuses = $decodedData['status'] ?? [];
                         $remarks = $decodedData['remarks'] ?? [];
+                        $quantity = $decodedData['quantity'] ?? [];
                         $srNo = 1;
                     @endphp
 
@@ -241,13 +245,16 @@
                                 </td>
                                 <td
                                     style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
+                                    @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
                                         <span style="color: green; font-size: 20px;">✓</span>
-                                    @elseif (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
+                                    @elseif ((!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO') || (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A'))
                                         <span style="color: red; font-size: 20px;">X</span>
                                     @else
                                         <i class="fa-solid fa-minus" style="color: #808080; width: 15px;"></i>
                                     @endif
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    {{ $quantity[$checkPoint] ?? 'No Quantity is Available' }}
                                 </td>
                                 <td style="border: 1px solid black; padding: 8px;">
                                     {{ $remarks[$checkPoint] ?? 'No Remarks' }}

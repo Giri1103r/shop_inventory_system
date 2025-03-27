@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Medicine Store Inspection Checklist Pdf')
+@section('title', 'FIRST AID BAG INSPECTION CHECKLIST')
 @section('content')
 
     <div style="width:100%;">
@@ -33,7 +33,7 @@
                             {{ Displaydateformat($data->next_due)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getObservationStatus($data->inspection_status) }}
+                            {{ $data->status == "1" ? "Active" : "Inactive" }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

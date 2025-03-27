@@ -1,8 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('checklistmaster/list'))
-
-
+@section('title', ' FIRST AID BAG INSPECTION CHECKLIST')
+@section('pageurl', admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -11,11 +9,11 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -23,21 +21,21 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control inspection_date">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due"
+                                                    class="form-control next_due">
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -45,16 +43,8 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
-                                                </option>
-                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{ encryptId('6') }}">CLOSED</option>
-                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
-                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
-                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -77,11 +67,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
-                                        <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
+                                        <th>{{ __('Status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -89,7 +77,6 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -102,10 +89,16 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                flatpickr(".inspection_date", {
+                    dateFormat: "d-m-Y",
+                });
+                flatpickr(".next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
             });
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -132,17 +125,15 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
+                        url: "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.next_due = $('#next_due').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -158,24 +149,16 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'document_no'
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'next_due',
+                            name: 'next_due',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
-                        },
-                        {
-                            data: 'approve_status',
-                            name: 'approve_status'
-                        },
-                        {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'status',
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -206,20 +189,17 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
+                                            "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due
                                     }
                                 },
                                 {
@@ -227,19 +207,15 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
+                                            "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due
                                     }
                                 },
                             ]
@@ -270,78 +246,7 @@
                     }, 150);
                 });
 
-                /* Status Change */
-                $(document).on('click', '.statusChange', function() {
-                    var id = $(this).data('id');
-                    var types = $(this).data('type');
-                    if (types == 1) {
-                        var title =
-                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
 
-                    } else {
-                        var title =
-                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/status') }}",
-                                type: 'post',
-
-                                data: {
-                                    id: id,
-                                    types: types
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-                });
 
 
                 /* Delete Record */
@@ -367,10 +272,9 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
+                                url: "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

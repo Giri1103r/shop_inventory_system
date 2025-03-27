@@ -169,7 +169,7 @@ class MonthlyMedicineStoreController extends Controller
                 __("common.sno"),
                 'Date of Inspection',
                 'Next Due',
-                'Status',
+                'Inspection Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -181,7 +181,7 @@ class MonthlyMedicineStoreController extends Controller
                 $export[] =  $i;
                 $export[] =  Displaydateformat($data->inspection_date);
                 $export[] =  Displaydateformat($data->next_due);
-                $export[] =  ($data->status == 1 ? 'Active' : 'Inactive');
+                $export[] =  getObservationStatus($data->inspection_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -212,7 +212,7 @@ class MonthlyMedicineStoreController extends Controller
                 __("common.sno"),
                 'Date of Inspection',
                 'Next Due',
-                'Status',
+                'Inspection Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -240,7 +240,7 @@ class MonthlyMedicineStoreController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Floor-Stretcher Inspection.pdf";
+            $filename = "Monthly Medicine Store Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

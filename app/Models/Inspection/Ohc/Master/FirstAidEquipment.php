@@ -34,7 +34,7 @@ class FirstAidEquipment extends Model
         $search = '';
         $query = $this->select('inspection_ohc_master_first_aid_equipment.*', 'ohc_master_medicine.medicine')
             ->leftJoin('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'inspection_ohc_master_first_aid_equipment.medicine_id')
-            ->where('inspection_ohc_master_first_aid_equipment.trash','NO');
+            ->where('inspection_ohc_master_first_aid_equipment.trash', 'NO');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -44,8 +44,8 @@ class FirstAidEquipment extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -161,14 +161,13 @@ class FirstAidEquipment extends Model
         $query =   $this->select('inspection_ohc_master_first_aid_equipment.*', 'ohc_master_medicine.medicine')
             ->leftJoin('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'inspection_ohc_master_first_aid_equipment.medicine_id');
 
-            if ($request->search != null || $request->search != '') {
-                $search = $request->search;
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
-
+                    ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -185,5 +184,10 @@ class FirstAidEquipment extends Model
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();
+    }
+
+    public function getFirstAidData()
+    {
+        return $this->get();
     }
 }

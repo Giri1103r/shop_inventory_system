@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
-use App\Models\OhcManagement\Master\Medicine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -30,7 +30,7 @@ class WeeklyFirstAidBoxController extends Controller
         $this->shift = new Shift();
         $this->location = new Location();
         $this->certified_First_aid = new CertifiedFirstAider();
-        $this->medicine = new Medicine();
+        $this->medicine = new FirstAidEquipment();
 
 
 
@@ -97,20 +97,14 @@ class WeeklyFirstAidBoxController extends Controller
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
             $First_aid = $this->certified_First_aid->getFirsaid();
-            $medicine = $this->medicine->getMedicineData();
-
-
+            $medicines = $this->medicine->getFirstAidData();
             $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'First_aid' => $First_aid,
                 'location' => $location,
-                'medicine' => $medicine,
-
-
-
-
+                'medicines' => $medicines,
             );
             
             return view('inspection.inspection_ohc.weekly_first_aid.add',$data);

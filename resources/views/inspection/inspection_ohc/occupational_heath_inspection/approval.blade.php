@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist Approval')
-@section('pageurl', admin_url('ohc/weekly-ambulance/inspection/checklist/list'))
+@section('title', 'Occupational Health Center Inspection Checklist Approval')
+@section('pageurl', admin_url('ohc/inspection/list'))
 
 @push('style')
     <style>
@@ -40,7 +40,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -49,56 +49,56 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Details</h4>
+                                        <h4 class="text-white">Occupational Heath Inspection Checklist Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($weekAmbualance->doc_no) ? $weekAmbualance->doc_no : '' }}
+                                            {{ isset($occupational_health_center->doc_no) ? $occupational_health_center->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Review date</label>
                                         <div class="view_data">
-                                            {{ isset($weekAmbualance->revision_date) ? $weekAmbualance->revision_date : '' }}
+                                            {{ isset($occupational_health_center->revision_date) ? $occupational_health_center->revision_date : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issued Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->issue_date) ? $weekAmbualance->issue_date : '') }}
+                                            {{ DisplaydateFormat(isset($occupational_health_center->issue_date) ? $occupational_health_center->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Next Due On</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->next_due) ? $weekAmbualance->next_due : '') }}
+                                            {{ DisplaydateFormat(isset($occupational_health_center->next_due) ? $occupational_health_center->next_due : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date Of Inspection</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->date_of_inspection) ? $weekAmbualance->date_of_inspection : '') }}
+                                            {{ DisplaydateFormat(isset($occupational_health_center->date_of_inspection) ? $occupational_health_center->date_of_inspection : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Shift</label>
                                         <div class="view_data">
-                                            {{ getShift(isset($weekAmbualance->shift) ? $weekAmbualance->shift : '') }}
+                                            {{ getShift(isset($occupational_health_center->shift) ? $occupational_health_center->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Location</label>
                                         <div class="view_data">
-                                            {{ getLocationname(isset($weekAmbualance->location) ? $weekAmbualance->location : '') }}
+                                            {{ getLocationname(isset($occupational_health_center->location) ? $occupational_health_center->location : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
+                                            {{ getUnitname(isset($occupational_health_center->unit) ? $occupational_health_center->unit : '') }}
                                         </div>
                                     </div>
                                     @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
@@ -125,20 +125,20 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($weekAmbualance->created_by) }}
+                                            {{ getusername($occupational_health_center->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($weekAmbualance->created_at) }}
+                                            {{ displayDateformat($occupational_health_center->created_at) }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($weekAmbualance->status == 1)
+                                            @if ($occupational_health_center->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}
@@ -150,7 +150,7 @@
 
                                 <div class="row mt-2">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Inspection Checklist</h4>
+                                        <h4 class="text-white">Occupational Heath Inspection Checklist</h4>
                                     </div>
                                 </div>
 
@@ -163,6 +163,7 @@
                                                     @foreach ($getoption as $option)
                                                         <th>{{ $option }}</th>
                                                     @endforeach
+                                                    <th>Quantity</th>
                                                     <th colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
@@ -172,6 +173,7 @@
                                                     $checkItems = $decodedData['check_item'] ?? [];
                                                     $statuses = $decodedData['status'] ?? [];
                                                     $remarks = $decodedData['remarks'] ?? [];
+                                                    $quantity = $decodedData['quantity'] ?? [];
                                                 @endphp
 
                                                 @foreach ($checkItems as $groupId => $checkPoints)
@@ -189,31 +191,32 @@
                                                             </td>
 
                                                             @foreach ($getoption as $option)
-                                                                <td style="text-align: center;">
-                                                                    @if ($option == 'Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Green check for Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @elseif ($option == 'Not-Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Red check for Not-Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
+                                                            <td style="text-align: center;">
+                                                                @if ($option == 'Yes')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
+                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    @else
+                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
                                                                     @endif
-                                                                </td>
-                                                            @endforeach
+                                                                @elseif ($option == 'No')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
+                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    @else
+                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    @endif
+                                                                @elseif ($option == 'N/A')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
+                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    @else
+                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    @endif
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
 
+                                                        <td >
+                                                            {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
+                                                        </td>
 
 
                                                             <td colspan="3">
@@ -229,17 +232,17 @@
                                         </table>
                                     </div>
                                 </div>
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}" name="id">
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -290,7 +293,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -300,31 +303,30 @@
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
                                         <div class="row mb-2">
-                                            @if (isset($weekAmbualance->verified_by))
+                                            @if (isset($occupational_health_center->verified_by))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($weekAmbualance->verified_by) }}
+                                                            {{ getUserName($occupational_health_center->verified_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetSignature(
-                                                        $weekAmbualance->verified_by,
-                                                        $weekAmbualance->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        $occupational_health_center->verified_by,
+                                                        $occupational_health_center->id,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                             @endif
-
-                                            @if (isset($weekAmbualance->created_at))
+                                            @if (isset($occupational_health_center->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                            {{ Displaydateformat($occupational_health_center->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -339,24 +341,24 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if ($weekAmbualance->approved_by)
+                                            @if ($occupational_health_center->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.approved_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUsername($weekAmbualance->approved_by) }}
+                                                            {{ getUsername($occupational_health_center->approved_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($weekAmbualance->capa_recomendation))
+                                            @if (isset($occupational_health_center->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.capa_recomendation') }}</label>
                                                         <div class="view_data">
-                                                            {{ $weekAmbualance->capa_recomendation }}
+                                                            {{ $occupational_health_center->capa_recomendation }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -365,13 +367,13 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
-                                                            {{ $weekAmbualance->remarks }}
+                                                            {{ $occupational_health_center->remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endif
                                         </div>
-                                        @if (isset($weekAmbualance->capa_remarks))
+                                        @if (isset($occupational_health_center->capa_remarks))
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
                                             </div>
@@ -381,7 +383,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.name') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($weekAmbualance->created_by) }}
+                                                            {{ getUserName($occupational_health_center->created_by) }}
                                                         </div>
                                                     </div>
 
@@ -390,15 +392,15 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                            {{ Displaydateformat($occupational_health_center->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetSignature(
-                                                        $weekAmbualance->created_by,
-                                                        $weekAmbualance->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        $occupational_health_center->created_by,
+                                                        $occupational_health_center->id,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -416,13 +418,13 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
                                                         <div class="view_data">
-                                                            {{ $weekAmbualance->capa_remarks }}
+                                                            {{ $occupational_health_center->capa_remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        @if ($weekAmbualance->capa_ehs_remarks)
+                                        @if ($occupational_health_center->capa_ehs_remarks)
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
                                                 </h4>
@@ -434,7 +436,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($weekAmbualance->verified_by) }}
+                                                            {{ getUserName($occupational_health_center->verified_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -442,15 +444,15 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                            {{ Displaydateformat($occupational_health_center->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetSignature(
-                                                        $weekAmbualance->verified_by,
-                                                        $weekAmbualance->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        $occupational_health_center->verified_by,
+                                                        $occupational_health_center->id,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -468,7 +470,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
                                                         <div class="view_data">
-                                                            {{ $weekAmbualance->capa_ehs_remarks }}
+                                                            {{ $occupational_health_center->capa_ehs_remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -476,7 +478,7 @@
                                         @endif
                                     </div>
 
-                                    @if (isset($weekAmbualance->level_one_manager_remarks))
+                                    @if (isset($occupational_health_center->level_one_manager_remarks))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Level One Manager Action</h4>
@@ -489,7 +491,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($weekAmbualance->l1_manager_verified_by) }}
+                                                        {{ getUserName($occupational_health_center->l1_manager_verified_by) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -497,15 +499,15 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                        {{ Displaydateformat($occupational_health_center->created_at) }}
                                                     </div>
                                                 </div>
                                             </div>
                                             @php
                                                 $signature = GetSignature(
-                                                    $weekAmbualance->l1_manager_verified_by,
-                                                    $weekAmbualance->id,
-                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                    $occupational_health_center->l1_manager_verified_by,
+                                                    $occupational_health_center->id,
+                                                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -523,13 +525,13 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
                                                     <div class="view_data">
-                                                        {{ $weekAmbualance->level_one_manager_remarks }}
+                                                        {{ $occupational_health_center->level_one_manager_remarks }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endif
-                                    @if (isset($weekAmbualance->level_two_manager_remarks))
+                                    @if (isset($occupational_health_center->level_two_manager_remarks))
                                         <div class="row">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
@@ -540,7 +542,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($weekAmbualance->l2_manager_verified_by) }}
+                                                        {{ getUserName($occupational_health_center->l2_manager_verified_by) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -548,15 +550,15 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                        {{ Displaydateformat($occupational_health_center->created_at) }}
                                                     </div>
                                                 </div>
                                             </div>
                                             @php
                                             $signature = GetSignature(
-                                                $weekAmbualance->l2_manager_verified_by,
-                                                $weekAmbualance->id,
-                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                $occupational_health_center->l2_manager_verified_by,
+                                                $occupational_health_center->id,
+                                                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                             );
                                         @endphp
                                         @if (isset(Auth::user()->signature_upload))
@@ -579,7 +581,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
                                                     <div class="view_data">
-                                                        {{ $weekAmbualance->level_two_manager_remarks }}
+                                                        {{ $occupational_health_center->level_two_manager_remarks }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -589,20 +591,20 @@
                                 @endif
 
                                 @if (
-                                    $weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
-                                        $weekAmbualance->approve_status == L2_MANAGER_REJECTED ||
-                                        $weekAmbualance->approve_status == EHS_OFFICER_REJECTED ||
-                                        $weekAmbualance->approve_status == L1_MANAGER_REJECTED)
+                                    $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                        $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
+                                        $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
+                                        $occupational_health_center->approve_status == L1_MANAGER_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/capa/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/capa/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}"
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
                                             name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -640,18 +642,18 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/capa/reverify/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}"
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -697,12 +699,12 @@
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-one/verify/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}"
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -749,12 +751,12 @@
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-two/verify/submit') }}"
+                                        action="{{ admin_url('ohc/inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}"
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
                                             name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
