@@ -220,8 +220,7 @@
 
                                                 <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
                                                     <label for="evidence_0" class="form-label require">Evidence</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
+                                                    <input type="file" class="form-control validate-file-required"
                                                         name="evidence[0][]" id="evidence_0" multiple>
                                                     <div class="text-danger"></div>
                                                     <small>Allowed file types: png, jpeg , jpg, pdf, doc, docx, mp4</small>
@@ -267,16 +266,41 @@
             enableTime: true,
             dateFormat: "d-m-Y H:i",
             time_24hr: true,
-            maxDate: new Date()
+            maxDate: new Date(),
+            onChange: function(selectedDates, dateStr, instance) {
+                validateReportingTime();
+            }
         });
 
         flatpickr("#time_of_reporting", {
             enableTime: true,
-            noCalendar: true, // Disables the date selection
-            dateFormat: "H:i", // Format to show only hours and minutes
-            time_24hr: true // Uses 24-hour format
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                validateReportingTime();
+            }
         });
 
+        function validateReportingTime() {
+            var incidentDateTime = $("#incident_date_time").val();
+            var reportingTime = $("#time_of_reporting").val();
+            var incidentDateTimeObj = moment(incidentDateTime, "D-M-YYYY HH:mm").toDate();
+            var reportingTimeObj = moment(reportingTime, "HH:mm").toDate();
+
+            if (incidentDateTime && reportingTime) {
+
+                if (reportingTimeObj >= incidentDateTimeObj) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Time',
+                        text: 'Time of reporting must be smaller than Date and Time.',
+                        confirmButtonText: 'OK'
+                    });
+                    $("#time_of_reporting").val('');
+                }
+            }
+        }
 
         const maxUploads = 5;
 
@@ -296,7 +320,7 @@
             let newFileUploadBlock = `
                 <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
                     <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
-                    <input type="file" class="form-control validate-file-accept validate-file-required"
+                    <input type="file" class="form-control  validate-file-required"
                         name="evidence[${currentFileUploads}][]" id="evidence_${currentFileUploads}" multiple>
                     <div class="text-danger"></div>
                     <small>Allowed file types: png, jpeg , jpg, pdf, doc,docx, mp4</small>
@@ -310,15 +334,16 @@
             // Append new block
             $('#file-upload-container').append(newFileUploadBlock);
 
-            // Revalidate the new file input after it's added
             $('#evidence_' + currentFileUploads).rules("add", {
                 required: true,
                 extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
                 messages: {
                     required: "This field is required.",
-                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc,docx, mp4",
+                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc, docx, mp4",
                 }
             });
+
+
         });
 
         // Handling file input validation for dynamic removal of blocks (if applicable)
@@ -503,10 +528,9 @@
                         pattern: /^[a-zA-Z0-9\s\-_'",”%+\/!\\()]+$/
 
                     },
-                    'evidence[]': {
+                    'evidence[0][]': {
                         required: true,
-                        // extension: "png|jpeg|jpg|pdf|doc|mp4"
-                        imageFormat: true
+                        extension: "png|jpeg|jpg|pdf|doc|docx|mp4"
                     },
                 },
                 messages: {
@@ -560,9 +584,9 @@
                         pattern: "Only alphanumeric characters and (”%+-_/!\,-, _, ‘, “, ()) are allowed.",
 
                     },
-                    'evidence[]': {
-                        required: "Evidence is required",
-                        imageFormat: "Invalid file type"
+                    'evidence[0][]': {
+                        required: "Evidence is required.",
+                        extension: "Invalid file type (Allowed: png, jpeg, jpg, pdf, doc, docx, mp4)"
                     }
                 },
                 errorElement: 'span',

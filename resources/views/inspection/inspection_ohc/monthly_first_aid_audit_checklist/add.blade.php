@@ -411,13 +411,13 @@
 
         });
 
-        // add more details
+
         // getDepartment
 
-        $(document).on('change', '.unit_id', function() { // Changed #unit_id to .unit_id
+        $(document).on('change', '.unit_id', function() {
             var unitId = $(this).val();
-            var row = $(this).closest('tr'); // Get the current row
-            var departmentDropdown = row.find('.department_id'); // Target department dropdown in the same row
+            var row = $(this).closest('tr');
+            var departmentDropdown = row.find('.department_id');
 
             if (unitId) {
                 $.ajax({
@@ -426,7 +426,7 @@
                     dataType: 'json',
                     success: function(data) {
                         departmentDropdown.empty().append(
-                        '<option value="">Select Department</option>');
+                            '<option value="">Select Department</option>');
                         $.each(data, function(key, value) {
                             departmentDropdown.append('<option value="' + value.id + '">' +
                                 value.name + '</option>');
@@ -434,7 +434,13 @@
                         departmentDropdown.trigger('change');
                     },
                     error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Warning!",
+                            text: "Error in fetching the Department.",
+                            confirmButtonColor: "#d33",
+                            confirmButtonText: "OK"
+                        });
                     }
                 });
             } else {
@@ -442,10 +448,40 @@
                 departmentDropdown.trigger('change');
             }
         });
+        // first Aid box number
+
+//         $(document).on('change', '.unit_id','.department_id' function() {
+//             var unitId = $(this).val();
+//             var departmentId = $(this).val();
+//             var row = $(this).closest('tr');
+//             var firstaidBox = row.find('.first_aid_box');
+
+//             if (unitId) {
+//                 $.ajax({
+//                     url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+//                     type: 'GET',
+//                     dataType: 'json',
+//                     success: function(data) {
+// $('.first_aid_box').append()
+//                     },
+//                     error: function(xhr) {
+//                         Swal.fire({
+//                             icon: "warning",
+//                             title: "Warning!",
+//                             text: "Error in fetching the First Aid Box Number.",
+//                             confirmButtonColor: "#d33",
+//                             confirmButtonText: "OK"
+//                         });
+//                     }
+//                 });
+//             } else {
+//                 departmentDropdown.empty().append('<option value="">Select Department</option>');
+//                 departmentDropdown.trigger('change');
+//             }
+//         });
 
 
-
-
+        // add more details
 
         $(document).on("click", ".add-row", function() {
             var rowCount = $("#medicine-tbody tr").length;
@@ -479,17 +515,17 @@
                 }
             });
 
-          
+
             newRow.find(".single-select").each(function() {
 
                 $(this).removeClass("select2-hidden-accessible").removeAttr("data-select2-id").show();
                 $(this).next(".select2-container").remove();
             });
 
-            // Append the cloned row to the table
+
             $("#medicine-tbody").append(newRow);
 
-            // Reinitialize Select2 for the new row
+
             newRow.find(".single-select").select2();
         });
 
