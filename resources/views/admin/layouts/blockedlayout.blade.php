@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title')</title>
+    <title>@yield('title', 'Developer Tools Disabled')</title>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -12,7 +12,7 @@
             padding: 0;
             display: flex;
             min-height: 100vh;
-            background: url('{{ public_image('neologin.jpg') }}') no-repeat left center fixed;
+            background: url('{{ asset('images/neologin.jpg') }}') no-repeat left center fixed;
             background-size: cover;
             text-align: center;
             color: #fff;
@@ -25,7 +25,7 @@
             border-radius: 20px;
             width: 50%;
             max-width: 600px;
-            height: 450px;
+            height: auto;
             text-align: center;
             margin: auto;
             margin-left: 950px;
@@ -57,6 +57,16 @@
             animation: pulse 3s infinite;
         }
 
+        .warning-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #D32F2F;
+            margin-bottom: 20px;
+            background: rgba(255, 235, 59, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
         h4 {
             font-size: 20px;
             font-weight: 600;
@@ -73,7 +83,6 @@
         button {
             padding: 12px 25px;
             background: linear-gradient(45deg, #f5645a, #ca2e13);
-
             color: white;
             border: none;
             border-radius: 10px;
@@ -91,19 +100,15 @@
             from {
                 opacity: 0;
             }
-
             to {
                 opacity: 1;
             }
         }
 
         @keyframes bounce {
-
-            0%,
-            100% {
+            0%, 100% {
                 transform: translateY(0);
             }
-
             50% {
                 transform: translateY(-10px);
             }
@@ -113,11 +118,9 @@
             0% {
                 opacity: 0.8;
             }
-
             50% {
                 opacity: 1;
             }
-
             100% {
                 opacity: 0.8;
             }
@@ -127,16 +130,13 @@
             body {
                 background-position: center;
             }
-
             .container {
                 width: 90%;
                 margin-right: 5%;
             }
-
             .code {
                 font-size: 60px;
             }
-
             button {
                 font-size: 14px;
             }
@@ -146,7 +146,6 @@
             .code {
                 font-size: 40px;
             }
-
             button {
                 font-size: 12px;
                 padding: 8px 16px;
@@ -158,12 +157,16 @@
 <body>
     <div class="container">
         <div class="message">
-            <img id="dark-logo" src="{{ public_image('logo-dark.png') }}" alt="Logo">
+            <img id="dark-logo" src="{{ asset('images/logo-dark.png') }}" alt="Logo">
             <div class="code" style="margin-top:-12px;">
-                @yield('code')
+                @yield('code', '403')
             </div>
-            <h4>@yield('message')</h4>
-            <a href="{{ admin_url('home') }}"><button>Back to Home</button></a>
+            <div class="warning-message">
+                We have disabled the Developer Tool in the production environment.<br>
+                Please close the Developer Tool and use the application.
+            </div>
+            <h4>@yield('message', 'Access Denied')</h4>
+            <a href="{{ url('admin/home') }}"><button>Back to Home</button></a>
         </div>
     </div>
 </body>
