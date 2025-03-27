@@ -142,7 +142,8 @@
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="action" value="approve"
                                                     class="btn btn-success w-100">Approve</button>
-
+                                                    <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
                                             </div>
                                         </form>
                                     </div>

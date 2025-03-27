@@ -60,65 +60,18 @@ class MSDSController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        // ->addColumn('inspection_status', function ($row) {
-                        //     $text = '';
-                        //     switch ($row->inspection_status) {
-                        //         case WAITING_FOR_EHS_OFFICER_VERIFICATION:
-                        //             $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For EHS Officer Verification</span>";
-                        //             break;
-                        //         case WAITING_FOR_CAPA_ACTION:
-                        //             $text = "<span class='badge bg-info rounded' style='font-size: 1.0em;'>Waiting For CAPA Action</span>";
-                        //             break;
-                        //         case WAITING_FOR_CAPA_VERIFICATION:
-                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For CAPA Verification</span>";
-                        //             break;
-                        //         case WAITING_FOR_L1_VERIFICATION:
-                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-1 Manager Verification</span>";
-                        //             break;
-                        //         case WAITING_FOR_L2_VERIFICATION:
-                        //             $text = "<span class='badge bg-warning rounded' style='font-size: 1.0em;'>Waiting For Level-2 Manager Verification</span>";
-                        //             break;
-                        //         case INSPECTION_APPROVED:
-                        //             $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
-                        //             break;
-                        //         case L2_MANAGER_REJECTED:
-                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                        //             break;
-                        //         case L1_MANAGER_REJECTED:
-                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                        //             break;
-                        //         case EHS_OFFICER_REJECTED:
-                        //             $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
-                        //             break;
-                        //         default:
-                        //             $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
-                        //     }
-                        //     return $text;
-                        // })
+                        ->addColumn('issue_date', function ($row) {
+                            return Displaydateformat($row->issue_date);
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            // if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                            //     $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
-                            // if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                            //     $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
-                            // if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                            //     $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
-                            // if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                            //     $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
-                            // if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                            //     $btn .= '<a href="' . admin_url('msds/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
                             $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'inspection_status', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -230,6 +183,7 @@ class MSDSController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('msds/list'));

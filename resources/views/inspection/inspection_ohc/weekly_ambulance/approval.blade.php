@@ -101,7 +101,27 @@
                                             {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
                                         </div>
                                     </div>
-
+                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label" style="display: block;">
+                                                {{ __('inspection.signature') }}
+                                            </label>
+                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        </div>
+                                    </div>
+                                @else
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label" style="display: block;">
+                                            {{ __('inspection.signature') }}
+                                        </label>
+                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                    </div>
+                                </div>
+                                @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -298,6 +318,7 @@
                                                     );
                                                 @endphp
                                             @endif
+
                                             @if (isset($weekAmbualance->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -789,3 +810,182 @@
         </div>
 
     @stop
+    @push('script')
+    <script>
+        $('#forklistassessmentAdd').validate({
+            rules: {
+                remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $.validator.addMethod("noSpaces", function(value) {
+            return value.trim().length > 0;
+        }, "Spaces are not allowed");
+
+        $('#capaAction').validate({
+            rules: {
+                capa_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                capa_remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelOneManager').validate({
+            rules: {
+                level_one_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_one_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelTwoManager').validate({
+            rules: {
+                level_two_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_two_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+    </script>
+@endpush

@@ -396,7 +396,7 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->hooter->capaSubmit($id);
             $inspection_details = $this->hooter->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -457,7 +457,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->hooter->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -531,7 +531,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->hooter->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';

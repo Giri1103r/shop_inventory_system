@@ -141,4 +141,27 @@ return [
     'fire_water_pump_house_details' => 'Fire Water Pump House Details',
     'water_pump_storage_tank' => 'Water Pump and Water Storage',
 
+    //OHC
+    'name_of_inspection' => 'Name of Inspection',
+    'available_quantity' => 'Available Quantity',
+    'expiry_date' => 'Expiry Date',
+    'inspected_by' => 'Inspected By',
+
+    // Fire Extinguisher
+    'fire_point_no' => 'Fire Point No.',
+    'type' => 'Type',
+    'capacity' => 'Capacity',
+    'cylinder_pressure' => 'Cylinder Pressure',
+    'discharge_tube' => 'Discharge Tube',
+    'safety_pin' => 'Safety Pin',
+    'approach' => 'Approach',
+    'ABC' => 'ABC Type Fire Extinguishers',
+    'CO2' => 'CO2 Type Fire Extinguishers',
+    'FOAM' => 'Foam Type Fire Extinguihsers',
+    'WATER' => 'Water Tyoe Fire Extinguishers',
+    'functional' => 'Functional',
+    'non_functional' => 'Non Functional',
+    'present' => 'Present',
+    'missing' => 'Missing',
+ 
 ];

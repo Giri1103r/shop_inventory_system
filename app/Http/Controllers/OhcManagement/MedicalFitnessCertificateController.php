@@ -79,6 +79,9 @@ class MedicalFitnessCertificateController extends Controller
                             } else if ($row->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED) {
                                 $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
                             }
+                            else if ($row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
+                                $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>Doctor Rejected</span>";
+                            }
                             return $text;
                         })
                         ->editColumn('date', function ($row) {
@@ -240,13 +243,16 @@ class MedicalFitnessCertificateController extends Controller
             if (Auth::check()) {
                 $medicalfitness = $this->medical_fitness_certificate->selectOne($id);
                 $medicalfitnesslog = $this->ohc_status->medicalfitnesslog($id);
-
+                $doctorapprovallog = $this->ohc_status->doctorapprovalview($id);
+                $ehsheadlog = $this->ohc_status->fitnessehsheadlog($id);
                 $data = array(
                     'medicalfitness' => $medicalfitness,
                     'medicalfitnesslog' => $medicalfitnesslog,
-
+                    'doctorapprovallog' => $doctorapprovallog,
+                    'ehsheadlog' => $ehsheadlog,
 
                 );
+               
             }
             return view('ohcmanagement.medical_fitness_certificate.view', $data);
         } catch (Exception $ex) {
@@ -278,34 +284,28 @@ class MedicalFitnessCertificateController extends Controller
         try {
             $id = decryptId($request->id);
 
-            // $rules = [
-            //     'approver_name' => 'required',
-            //     'remarks' => 'required',
-            // ];
-            // $messages = [
-            //     'approver_name.required' => 'Approver name is required.',
-            //     'remarks.required' => 'Remarks are required.',
-            // ];
 
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
 
             try {
                 $action = $request->input('action');
                 $remarks = $request->input('remarks');
-                $approveStatus = $action == 'approve' ? STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING : STATUS_OHC_EHS_REJECTED;
-                $doctorverifydata = [
+
+                if($action == 'approve'){
+                    $doctorverifydata = [
+                        'remarks' => $remarks,
+                        'approve_status' =>  STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING
+                    ];
+                }else if ($action == 'reject'){    $doctorverifydata = [
                     'remarks' => $remarks,
-                    'approve_status' => $approveStatus
+                    'approve_status' =>  STATUS_OHC_MEDICAL_DOCTOR_REJECTED
                 ];
+
+                }
+
                 $this->medical_fitness_certificate->doctorapproval($id, $doctorverifydata);
 
                 $this->ohc_status->doctorverificationstatuslog($id, $doctorverifydata);
-                // if ($action == 'approve') {
-                //     $this->ohc_status->doctorverificationapprovedstatuslog($id, $doctorverifydata);
-                // }
+
 
                 $data = $this->medical_fitness_certificate->selectOne($id);
                 if ($action == 'approve') {
@@ -333,12 +333,50 @@ class MedicalFitnessCertificateController extends Controller
                                 Mail::to($details['email_id'])->queue(new FitnessEmail($details));
                             }
                         }
-                    }
-
 
                     /**
                      * Send Web notification
                      */
+                        $notificationData = array(
+                            'notification_type' => 4,
+                            'module_type' => 1,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode(array(
+                                'title' => $mailsubject,
+                                'message' => ($data->emp_name) . 'fitness check is approved by the ' . getUsername($data->approved_by),
+                                'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                                'id' => $data->id,
+                                'module' => 1,
+                            )),
+                            'web_link' =>  admin_url('ohc/medical-fitness/approval/view/' . encryptId($data->id)),
+                            'assigned_user' => array_to_string($userids),
+                            'created_by' => Auth::id(),
+                        );
+                        notificationSave($notificationData);
+                    }
+
+
+
+
+                }
+
+                if($action == 'reject'){
+                    $mailsubject = 'Medical Fitness Check';
+                    $data = $this->medical_fitness_certificate->selectOne($id);
+                    $createdBy =   $data->created_by;
+                    $user = User::where('id',$createdBy)->where('status',1)->first();
+                    $email_id = $user->email;
+
+                    if ($email_id != '' || $email_id != null) {
+                        $data = $this->medical_fitness_certificate->selectOne($id);
+                        $details  = $data->toArray();
+
+                        $details['name'] = $user->name;
+                        $details['email_id'] =  $email_id;
+                        $details['mail_subject'] = $mailsubject;
+
+                        Mail::to($details['email_id'])->queue(new FitnessEmail($details));
+                    }
 
                     $notificationData = array(
                         'notification_type' => 4,
@@ -346,13 +384,13 @@ class MedicalFitnessCertificateController extends Controller
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
-                            'message' => ($data->emp_name) . 'fitness check is approved by the ' . getUsername($data->approved_by),
+                            'message' => ($data->emp_name) . 'fitness check is rejected by the ' . getUsername($data->approved_by),
                             'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                             'id' => $data->id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('ohc/medical-fitness/approval/view/' . encryptId($data->id)),
-                        'assigned_user' => array_to_string($userids),
+                        'web_link' =>  admin_url('ohc/medical-fitness/list'),
+                        'assigned_user' =>  $createdBy,
                         'created_by' => Auth::id(),
                     );
                     notificationSave($notificationData);
@@ -377,19 +415,7 @@ class MedicalFitnessCertificateController extends Controller
         try {
             $id = decryptId($request->id);
 
-            // $rules = [
-            //     'approver_name' => 'required',
-            //     'remarks' => 'required',
-            // ];
-            // $messages = [
-            //     'approver_name.required' => 'Approver name is required.',
-            //     'remarks.required' => 'Remarks are required.',
-            // ];
 
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
 
             try {
                 $action = $request->input('action');
@@ -637,6 +663,10 @@ class MedicalFitnessCertificateController extends Controller
                     $export[] = 'EHS Head Approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED) {
                     $export[] = 'EHS Head Approved';
+
+                }
+                elseif ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
+                    $export[] = 'Doctor Rejected';
                 }  else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
@@ -668,10 +698,14 @@ class MedicalFitnessCertificateController extends Controller
                 $medicinefitness = $this->medical_fitness_certificate->selectOne($id);
             }
             $medicalfitnesslog = $this->ohc_status->medicalfitnesslog($id);
+            $doctorapprovallog = $this->ohc_status->doctorapprovalview($id);
+            $ehsheadlog = $this->ohc_status->fitnessehsheadlog($id);
 
             $data = [
                 'medicinefitness' => $medicinefitness,
                 'medicalfitnesslog' => $medicalfitnesslog,
+                'doctorapprovallog' => $doctorapprovallog,
+                'ehsheadlog' => $ehsheadlog,
                 'pagetitle' => "Medical Fitness Certificate",
             ];
 

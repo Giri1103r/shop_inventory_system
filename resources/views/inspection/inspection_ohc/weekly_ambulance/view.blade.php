@@ -101,7 +101,27 @@
                                             {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
                                         </div>
                                     </div>
-
+                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label" style="display: block;">
+                                                {{ __('inspection.signature') }}
+                                            </label>
+                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        </div>
+                                    </div>
+                                @else
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label" style="display: block;">
+                                            {{ __('inspection.signature') }}
+                                        </label>
+                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                    </div>
+                                </div>
+                                @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -501,6 +521,53 @@
 
                                     </div>
                                 @endif
+
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
+
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <div class="col-md-12">
+                                            <table class="table table-bordered">
+                                                <thead class="bg-secondary" style="color: #ffff">
+                                                    <tr>
+                                                        <th>S.NO</th>
+                                                        <th>From Status</th>
+                                                        <th>To Status</th>
+                                                        <th>Remarks</th>
+                                                        <th>Approved By</th>
+                                                        <th>Created By</th>
+                                                        <th>Created At</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if(empty($statuslog) || $statuslog->isEmpty())
+                                                        <tr>
+                                                            <td colspan="7" class="text-center">No data is available</td>
+                                                        </tr>
+                                                    @else
+                                                        @foreach ($statuslog as $log)
+                                                            <tr>
+                                                                <td>{{ $loop->iteration }}</td>
+                                                                <td>{{ getInspectionStatus($log->from_status) }}</td>
+                                                                <td>{{ getInspectionStatus($log->to_status) }}</td>
+                                                                <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                                                <td>{{ getUserName($log->approved_by) ?? '-' }}</td>
+                                                                <td>{{ getUserName($log->created_by) ?? '-' }}</td>
+                                                                <td>{{ displaydateformat($log->created_at) }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -72,15 +72,14 @@ class OhcSignature extends Model
                     'created_by' => Auth::id(),
                 ];
 
-             $data =    $this->create($insert_array);
-
+                $data =    $this->create($insert_array);
             }
         } catch (Exception $ex) {
             dd($ex);
         }
     }
 
-    public function requestorsignatureUpload($type,$id)
+    public function requestorsignatureUpload($type, $id)
     {
         try {
 
@@ -102,19 +101,18 @@ class OhcSignature extends Model
                 $fileExt = $image->getClientOriginalExtension();
 
                 $insert_array = [
-
                     'emp_id' => Auth::id(),
                     'ohc_id' => $id,
                     'type' => $type,
                     'requestor_file_path' => $url,
+                    'file_path' => $url,
                     'file_name' => $file_name,
                     'file_orgname' => $OriginalfileName,
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
 
-             $data =    $this->create($insert_array);
-
+                $data =    $this->create($insert_array);
             }
         } catch (Exception $ex) {
             dd($ex);
@@ -153,7 +151,6 @@ class OhcSignature extends Model
                             'file_extension' => $file_extension,
                             'created_by' => Auth::id(),
                         ]);
-
                     }
                 }
             } else {
@@ -190,35 +187,50 @@ class OhcSignature extends Model
         }
     }
 
-    public function safetyofficersignature($id, $safetyofficer, $type){
+    public function safetyofficersignature($id, $safetyofficer, $type)
+    {
 
-        return $this->where('ohc_id',$id)->where('emp_id',$safetyofficer->approved_by)->where('type',$type)->first();
+        return $this->where('ohc_id', $id)->where('emp_id', $safetyofficer->approved_by)->where('type', $type)->first();
+    }
+
+    public function approversignature($id, $approver, $type){
+
+        return $this->where('ohc_id',$id)->where('emp_id',$approver)->where('type',$type)->first();
     }
 
     public function floormanagersignature($id, $floormanger, $type){
         return $this->where('ohc_id',$id)->where('emp_id',$floormanger->approved_by)->where('type',$type)->first();
     }
 
-    public function requestorSignature($id, $requestorsignature, $type){
+    public function requestorSignature($id, $requestorsignature, $type)
+    {
 
-        return $this->where('ohc_id',$id)->where('emp_id',$requestorsignature)->where('type',$type)->first();
+        return $this->where('ohc_id', $id)->where('emp_id', $requestorsignature)->where('type', $type)->first();
     }
 
-    public function getGivenBy($type, $sub_type,$id)
+    public function getGivenBy($type, $sub_type, $id)
     {
         $data =  $this->where('ohc_id', $id)
-                    ->where('type', $type)
-                    ->where('sub_type', $sub_type)
-                    ->first();
+            ->where('type', $type)
+            ->where('sub_type', $sub_type)
+            ->first();
 
         return $data;
     }
-    public function getReceivedBy($type, $sub_type,$id)
+    public function getReceivedBy($type, $sub_type, $id)
     {
         return $this->where('ohc_id', $id)
-                    ->where('type', $type)
-                    ->where('sub_type', $sub_type)
-                    ->first();
+            ->where('type', $type)
+            ->where('sub_type', $sub_type)
+            ->first();
     }
 
+    public function getFiles($id, $type)
+    {
+        return $this->where('ohc_id', $id)->where('type', $type)->where('status', 1)->where('trash', 'NO')->first();
+    }
+    public function getFilesByEmpId($id, $type)
+    {
+        return $this->where('emp_id', $id)->where('type', $type)->where('status', 1)->where('trash', 'NO')->first();
+    }
 }

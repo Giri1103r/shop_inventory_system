@@ -77,7 +77,7 @@
         </div>
 
 
-    @stop
+@stop
 
     @push('script')
         <script type="text/javascript">

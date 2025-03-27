@@ -58,6 +58,8 @@ use App\Http\Controllers\Inspection\Ohc\DailyDepartmentFirstAidBoxController;
 use App\Http\Controllers\Inspection\Ohc\FirstAiderlistController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipController;
 use App\Http\Controllers\Inspection\Ohc\MedicalRequisitionSlipSecurityGateController;
+use App\Http\Controllers\Inspection\Ohc\MonthlyFirstAidboxController;
+use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
@@ -1373,6 +1375,46 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [WeeklyAmbulanceController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [WeeklyAmbulanceController::class, 'ExportPDF']);
                     Route::POST('/lists', [WeeklyAmbulanceController::class, 'Checklists']);
+                });
+
+                Route::group(['prefix' => 'inspection'], function () {
+                    Route::GET('/list', [OccupationHealthInspectionController::class, 'Index']);
+                    Route::POST('/list', [OccupationHealthInspectionController::class, 'Index']);
+                    Route::GET('/add', [OccupationHealthInspectionController::class, 'Add']);
+                    Route::POST('/add/submit', [OccupationHealthInspectionController::class, 'Store']);
+                    Route::POST('/unique', [OccupationHealthInspectionController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [OccupationHealthInspectionController::class, 'View']);
+                    Route::GET('/generalpdf/{id}', [OccupationHealthInspectionController::class, 'generalpdf']);
+                    Route::get('verification/{id}/{employee_type}', [OccupationHealthInspectionController::class, 'approvals']);
+                    Route::post('ehsofficer/verify/submit', [OccupationHealthInspectionController::class, 'EHSOfficerSubmit']);
+                    Route::post('capa/submit', [OccupationHealthInspectionController::class, 'CAPASubmit']);
+                    Route::post('capa/reverify/submit', [OccupationHealthInspectionController::class, 'CAPAVerifySubmit']);
+                    Route::post('level-one/verify/submit', [OccupationHealthInspectionController::class, 'levelOneManagerSubmit']);
+                    Route::post('level-two/verify/submit', [OccupationHealthInspectionController::class, 'levelTwoManagerSubmit']);
+                    Route::POST('/status', [OccupationHealthInspectionController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [OccupationHealthInspectionController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [OccupationHealthInspectionController::class, 'ExportPDF']);
+                    Route::POST('/lists', [OccupationHealthInspectionController::class, 'Checklists']);
+                });
+
+                Route::group(['prefix' => 'first-aid-box/monthly-audit'], function () {
+                    Route::GET('/list', [MonthlyFirstAidboxController::class, 'Index']);
+                    Route::POST('/list', [MonthlyFirstAidboxController::class, 'Index']);
+                    Route::GET('/add', [MonthlyFirstAidboxController::class, 'Add']);
+                    Route::POST('/add/submit', [MonthlyFirstAidboxController::class, 'Store']);
+                    Route::POST('/unique', [MonthlyFirstAidboxController::class, 'UniqueCheck']);
+                    Route::GET('/view/{id}', [MonthlyFirstAidboxController::class, 'View']);
+                    Route::GET('/generalpdf/{id}', [MonthlyFirstAidboxController::class, 'generalpdf']);
+                    Route::get('verification/{id}/{employee_type}', [MonthlyFirstAidboxController::class, 'approvals']);
+                    Route::post('ehsofficer/verify/submit', [MonthlyFirstAidboxController::class, 'EHSOfficerSubmit']);
+                    Route::post('capa/submit', [MonthlyFirstAidboxController::class, 'CAPASubmit']);
+                    Route::post('capa/reverify/submit', [MonthlyFirstAidboxController::class, 'CAPAVerifySubmit']);
+                    Route::post('level-one/verify/submit', [MonthlyFirstAidboxController::class, 'levelOneManagerSubmit']);
+                    Route::post('level-two/verify/submit', [MonthlyFirstAidboxController::class, 'levelTwoManagerSubmit']);
+                    Route::POST('/status', [MonthlyFirstAidboxController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [MonthlyFirstAidboxController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [MonthlyFirstAidboxController::class, 'ExportPDF']);
+                    Route::POST('/lists', [MonthlyFirstAidboxController::class, 'Checklists']);
                 });
 
 

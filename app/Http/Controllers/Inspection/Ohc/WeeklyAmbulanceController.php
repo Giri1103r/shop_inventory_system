@@ -17,6 +17,7 @@ use App\Models\Master\Department;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\UploadLog;
+use App\Models\User;
 use Exception;
 use Illuminate\Container\Attributes\Database;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class WeeklyAmbulanceController extends Controller
     private $unit;
     private $shift;
     private $department;
+    private $user;
     private $checklist_type;
     private $sub_type_data;
     private $sub_type_data_name;
@@ -60,6 +62,7 @@ class WeeklyAmbulanceController extends Controller
         $this->signature = new OhcSignature();
         $this->location = new Location();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
+        $this->user = new User();
     }
 
     public function Index(Request $request)
@@ -175,12 +178,14 @@ class WeeklyAmbulanceController extends Controller
             $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
             $location = $this->location->getLocationname();
+            $signature_upload = $this->user->getSignature();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'checklist_details' =>  $checklist_details,
                 'location' => $location,
                 'getoption' => $getoption,
+                'signature_upload' => $signature_upload,
 
 
             );
@@ -217,13 +222,15 @@ class WeeklyAmbulanceController extends Controller
                     'from_status' => OHC_CREATION,
                     'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                     'reference_id' => $weekly_ambulance_details->id,
-                    'remarks' => "",
+                    'remarks' =>  "",
                     'approved_by' => null,
                     'created_by' => Auth::id(),
 
                 ];
                 $id = $weekly_ambulance_details->id;
                 $this->inspection_ohc_status_log->store($data);
+
+                $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST, $id);
 
                 $ehsOfficer = GetEHSOfficer();
                 $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -287,11 +294,22 @@ class WeeklyAmbulanceController extends Controller
                 $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
+
+                $type = OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST;
+                $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $requestorsignature =  $weekAmbualance->created_by;
+
+
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+
                 $data = array(
                     'weekAmbualance' => $weekAmbualance,
                     'inspectionCkeclist' => $inspectionCkeclist,
                     'checklist_details' =>  $checklist_details,
                     'getoption' => $getoption,
+                    'requestorsignature' => $requestor_signature,
+                    'statuslog' => $statuslog,
                 );
             }
             return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
@@ -311,11 +329,23 @@ class WeeklyAmbulanceController extends Controller
                 $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
+                $type = OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST;
+                $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $requestorsignature =  $weekAmbualance->created_by;
+
+
+                $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+
+
+
                 $data = array(
                     'weekAmbualance' => $weekAmbualance,
                     'inspectionCkeclist' => $inspectionCkeclist,
                     'checklist_details' =>  $checklist_details,
                     'getoption' => $getoption,
+                    'requestorsignature' => $requestor_signature,
+
                 );
             }
             return view('inspection.inspection_ohc.weekly_ambulance.approval', $data);
@@ -330,7 +360,7 @@ class WeeklyAmbulanceController extends Controller
             $request = Request();
             $id = decryptId($request->id);
 
-            $signature_update = $this->signature->signatureUpload(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
+            $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
             $weekAmbualance = $this->weekly_ambulance_details->WeekambulanceSelectone($id);
             if ($request->is_passed == 1) {
                 $message = 'Weekly Ambulance Inspection Checklist Approved Successfully';
@@ -383,7 +413,7 @@ class WeeklyAmbulanceController extends Controller
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
                 'reference_id' => $id,
-                'remarks' => "",
+                'remarks' =>  $request->remarks,
                 'approved_by' => Auth::id(),
                 'created_by' => Auth::id(),
 
@@ -446,7 +476,7 @@ class WeeklyAmbulanceController extends Controller
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'reference_id' => $id,
-                'remarks' => "",
+                'remarks' =>  $request->capa_remarks,
                 'approved_by' => Auth::id(),
                 'created_by' => Auth::id(),
 
@@ -524,7 +554,7 @@ class WeeklyAmbulanceController extends Controller
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' =>  $to_status,
                 'reference_id' => $id,
-                'remarks' => "",
+                'remarks' =>   $remarks,
                 'approved_by' => Auth::id(),
                 'created_by' => Auth::id(),
 
@@ -601,7 +631,7 @@ class WeeklyAmbulanceController extends Controller
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' =>  $to_status,
                 'reference_id' => $id,
-                'remarks' => "",
+                'remarks' =>  $remarks,
                 'approved_by' => Auth::id(),
                 'created_by' => Auth::id(),
 
@@ -624,6 +654,7 @@ class WeeklyAmbulanceController extends Controller
             $remarks = $request->level_two_manager;
             $weekly_ambulance_details_inspection = $this->weekly_ambulance_details->levelTwoManagerSubmit($id, $status, $remarks);
             $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
+
             $weeklyAmbulance = $this->weekly_ambulance_details->WeekambulanceSelectone($id);
             if ($status == 1) {
                 $message = 'Weekly Ambulance Inspection Checklist  Approved Successfully!';
@@ -675,7 +706,7 @@ class WeeklyAmbulanceController extends Controller
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' =>  $to_status,
                 'reference_id' => $id,
-                'remarks' => "",
+                'remarks' =>  $remarks,
                 'approved_by' => Auth::id(),
                 'created_by' => Auth::id(),
 
@@ -727,7 +758,7 @@ class WeeklyAmbulanceController extends Controller
                 'Shift',
                 'Location',
                 'Unit',
-                __("common.status"),
+                'Approve Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -788,7 +819,7 @@ class WeeklyAmbulanceController extends Controller
                 'Shift',
                 'Location',
                 'Unit',
-                __("common.status"),
+                'Approve Status',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -847,6 +878,9 @@ class WeeklyAmbulanceController extends Controller
             $data = [
                 'weeklyAmbulance' => $weeklyAmbulance,
                 'statuslog' => $statuslog,
+                'inspectionCkeclist' => $inspectionCkeclist,
+                'checklist_details' =>  $checklist_details,
+                'getoption' => $getoption,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             ];
 

@@ -160,91 +160,109 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset( $weeklyAmbulance->doc_no) ?  $weeklyAmbulance->doc_no : '' }}</td>
+                {{ isset($weeklyAmbulance->doc_no) ? $weeklyAmbulance->doc_no : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset( $weeklyAmbulance->issue_date) ?  $weeklyAmbulance->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($weeklyAmbulance->issue_date) ? $weeklyAmbulance->issue_date : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset( $weeklyAmbulance->revision_date) ?  $weeklyAmbulance->revision_date : '' }}
+                {{ isset($weeklyAmbulance->revision_date) ? $weeklyAmbulance->revision_date : '' }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset( $weeklyAmbulance->created_by) ?  $weeklyAmbulance->created_by : '') }}</td>
+                {{ getUsername(isset($weeklyAmbulance->created_by) ? $weeklyAmbulance->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat( $weeklyAmbulance->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($weeklyAmbulance->created_at) }}</td>
         </tr>
     </table>
 
     <br>
     @php
-        $user_response = json_decode( $weeklyAmbulance->checklist, true);
+        $user_response = json_decode($weeklyAmbulance->checklist, true);
     @endphp
-
-        <table style="width:100%;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Sr. No</th>
-                    <th colspan="3"
-                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Check Points</th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Reports</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($user_response as $subcategory => $questions)
+    <div class="table-responsive">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover tblborder">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                            Sr. No
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                            colspan="4">
+                            Check Points
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                            Status
+                        </th>
+                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                            Remarks
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
                     @php
-                        $rowCount = count($questions);
-                        $firstRow = true;
+                        $decodedData = json_decode($inspectionCkeclist->checklist, true);
+                        $checkItems = $decodedData['check_item'] ?? [];
+                        $statuses = $decodedData['status'] ?? [];
+                        $remarks = $decodedData['remarks'] ?? [];
                         $srNo = 1;
                     @endphp
-                    @foreach ($questions as $questionId => $answer)
-                        <tr>
-                            @if ($firstRow)
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    {{ $srNo }}</td>
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                    {{ GetSubChecklistTypeName($subcategory) }}
-                                </td>
-                                @php
-                                    $srNo++;
-                                    $firstRow = false;
-                                @endphp
-                            @endif
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                {{ GetChecklistTypeDate($questionId) }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                @if ($answer == 'YES')
-                                    <span style="color: green; font-size: 20px;">✓</span>
-                                @elseif ($answer == 'NO' || $answer == 'N/A')
-                                    <span style="color: red; font-size: 20px;">X</span>
+
+                    @foreach ($checkItems as $groupId => $checkPoints)
+                        @php $rowCount = count($checkPoints); @endphp
+
+                        @foreach ($checkPoints as $index => $checkPoint)
+                            <tr>
+                                @if ($index == 0)
+                                    <td rowspan="{{ $rowCount }}"
+                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                        {{ $srNo++ }}
+                                    </td>
+                                    <td rowspan="{{ $rowCount }}"
+                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                        {{ getSubcategoryname($groupId) }}
+                                    </td>
                                 @endif
-                            </td>
-                        </tr>
+                                <td colspan="3" style="border: 1px solid black; padding: 8px;">
+                                    {{ getSubcategoryDataname($checkPoint) }}
+                                </td>
+                                <td
+                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                                    @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
+                                        <span style="color: green; font-size: 20px;">✓</span>
+                                    @elseif (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
+                                        <span style="color: red; font-size: 20px;">X</span>
+                                    @else
+                                        <i class="fa-solid fa-minus" style="color: #808080; width: 15px;"></i>
+                                    @endif
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                                </td>
+                            </tr>
+                        @endforeach
                     @endforeach
-            </tbody>
-            @endforeach
-        </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 
-    @if ( $weeklyAmbulance->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+
+    @if ($weeklyAmbulance->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -256,38 +274,38 @@
             </table>
         </div>
         <table width="100%" style="width:100%;">
-            @if (isset( $weeklyAmbulance->verified_by))
+            @if (isset($weeklyAmbulance->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName( $weeklyAmbulance->verified_by) }}</td>
+                    <td width="48%" style="padding:5px;"> {{ getUserName($weeklyAmbulance->verified_by) }}</td>
                 </tr>
             @endif
-            @if (isset( $weeklyAmbulance->created_at))
+            @if (isset($weeklyAmbulance->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat( $weeklyAmbulance->created_at) }}
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                     </td>
                 </tr>
             @endif
-            @if (isset( $weeklyAmbulance->approved_by))
-                @if ( $weeklyAmbulance->verified_by ==  $weeklyAmbulance->approved_by)
+            @if (isset($weeklyAmbulance->approved_by))
+                @if ($weeklyAmbulance->verified_by == $weeklyAmbulance->approved_by)
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ getUsername( $weeklyAmbulance->approved_by) }}
+                            {{ getUsername($weeklyAmbulance->approved_by) }}
                         </td>
                     </tr>
                 @endif
             @endif
-            @if (isset( $weeklyAmbulance->capa_recomendation))
+            @if (isset($weeklyAmbulance->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{  $weeklyAmbulance->capa_recomendation }}
+                        {{ $weeklyAmbulance->capa_recomendation }}
                     </td>
                 </tr>
             @else
@@ -295,14 +313,14 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{  $weeklyAmbulance->remarks }}
+                        {{ $weeklyAmbulance->remarks }}
                 </tr>
             @endif
         </table>
         <br>
     @endif
 
-    @if (isset( $weeklyAmbulance->capa_remarks))
+    @if (isset($weeklyAmbulance->capa_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -317,19 +335,19 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName( $weeklyAmbulance->created_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($weeklyAmbulance->created_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat( $weeklyAmbulance->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{  $weeklyAmbulance->capa_remarks }}
+                    {{ $weeklyAmbulance->capa_remarks }}
                 </td>
             </tr>
         </table>
@@ -337,7 +355,7 @@
     @endif
 
 
-    @if ( $weeklyAmbulance->capa_ehs_remarks)
+    @if ($weeklyAmbulance->capa_ehs_remarks)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -352,19 +370,19 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName( $weeklyAmbulance->verified_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($weeklyAmbulance->verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat( $weeklyAmbulance->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{  $weeklyAmbulance->capa_ehs_remarks }}
+                    {{ $weeklyAmbulance->capa_ehs_remarks }}
                 </td>
             </tr>
         </table>
@@ -372,7 +390,7 @@
     @endif
 
 
-    @if (isset( $weeklyAmbulance->level_one_manager_remarks))
+    @if (isset($weeklyAmbulance->level_one_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -388,26 +406,26 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName( $weeklyAmbulance->l1_manager_verified_by) }}</td>
+                    {{ getUserName($weeklyAmbulance->l1_manager_verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat( $weeklyAmbulance->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{  $weeklyAmbulance->level_one_manager_remarks }}
+                    {{ $weeklyAmbulance->level_one_manager_remarks }}
                 </td>
             </tr>
         </table>
         <br>
     @endif
 
-    @if (isset( $weeklyAmbulance->level_two_manager_remarks))
+    @if (isset($weeklyAmbulance->level_two_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -423,26 +441,26 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName( $weeklyAmbulance->l2_manager_verified_by) }}</td>
+                    {{ getUserName($weeklyAmbulance->l2_manager_verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat( $weeklyAmbulance->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUsername( $weeklyAmbulance->approved_by) }}
+                    {{ getUsername($weeklyAmbulance->approved_by) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{  $weeklyAmbulance->level_two_manager_remarks }}
+                    {{ $weeklyAmbulance->level_two_manager_remarks }}
                 </td>
             </tr>
         </table>

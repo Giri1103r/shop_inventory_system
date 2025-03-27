@@ -45,15 +45,16 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{encryptId('6')}}">CLOSED</option>
-                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -102,7 +103,9 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -212,7 +215,7 @@
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
-                                          '?search=' + searchValue +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -232,7 +235,7 @@
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
-                                          '?search=' + searchValue +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -272,12 +275,14 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
