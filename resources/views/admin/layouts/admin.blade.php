@@ -341,7 +341,7 @@
 
 
     @stack('scripts')
-    @if (app()->environment('local') && getConstant('template_constant') == PRODUCTION)
+    @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
