@@ -33,6 +33,7 @@ use App\Mail\Ohc\MedicineStockEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
 use App\Mail\PermitExpiryEmail;
 use App\Mail\SafetyPermitEmail;
+use App\Models\Master\Company;
 use App\Models\Master\PpeTypeMaster;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\MedicineReceiving;
@@ -50,6 +51,7 @@ class CronController extends Controller
     private $emp_temp;
     private $work;
     private $employee;
+    private $company;
     private $user;
     private $ppestock;
     private $ppeexemption;
@@ -78,6 +80,7 @@ class CronController extends Controller
         $this->medicine_stock = new MedicineStock();
         $this->medicine_receiving = new MedicineReceiving();
         $this->worker_details = new WorkerCompanyDetails();
+        $this->company = new Company();
     }
     public function queueHigh()
     {
@@ -210,7 +213,7 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
-            $office_id = $this->worker_details->getofficeid();
+            $office_id = $this->company->getcompany();
 
             $responses = [];
             $errors = [];
@@ -259,7 +262,7 @@ class CronController extends Controller
             $fromDate = todayDbdate();
             $toDate = todayDbdate();
 
-            $office_id = $this->worker_details->getofficeid();
+            $office_id = $this->company->getcompany();
             foreach ($office_id as $company) {
                 $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
 
@@ -538,7 +541,7 @@ class CronController extends Controller
                     $email_id = $user->email;
 
                     if (!empty($email_id)) {
-                        foreach ($filteredIds as $medicineId) { 
+                        foreach ($filteredIds as $medicineId) {
                             $medicinedetails = $this->medicine->selectone($medicineId);
                             $dataArray = Inventory::where('unit_id', 1)->where('medicine_id', $medicineId)->first();
 
