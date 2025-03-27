@@ -336,7 +336,6 @@ class AppServiceProvider extends ServiceProvider
 
         //  template constant
         defined('PRODUCTION') or define('PRODUCTION',1);
-        defined('LOCAL') or define('LOCAL',2);
 
         // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
