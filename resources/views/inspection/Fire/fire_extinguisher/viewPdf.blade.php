@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Safety Gallery Inspection </td>
+                    Fire Extinguisher Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Gallery Inspection
+                    Fire Extinguisher Inspection
                 </td>
             </tr>
         </table>
@@ -195,61 +195,85 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly EyeWash Inspection Details
+                    Fire Extinguisher Inspection Details
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
-        <!-- Column Headers -->
-        <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">QUANTITY</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ddd;">CHECK ITEMS</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
-        </tr>
-        <tr>
-            <th colspan="4" style="border: 1px solid black;"></th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">BLINKING LIGHT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONNECTION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">AUDIBILITY</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONDITION OF HOOTER</th>
-            <th style="border: 1px solid black;"></th>
-        </tr>
-
-        @foreach ($inspection as $details)
+    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
+        <thead>
             <tr>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->blinking_light == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->connection == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->audiobility == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->condition_of_hooter }}</td>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+                <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARKS</th>
             </tr>
-        @endforeach
+            <tr>
+                <th style="border: 1px solid black; padding: 8px;">CYLINDER PRESSURE</th>
+                <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
+                <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
+                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
+                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
+                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
+                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach ($inspection as $details)
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+                    <!-- SL -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
+                    <!-- FIRE POINT NO. -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ GetDeptName($details->department) }}</td> <!-- DEPARTMENT -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getLocationname($details->location) }}</td> <!-- LOCATION -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $details->cylinder_pressure }}</td> <!-- CYLINDER PRESSURE -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->safety_pin == PRESENT)
+                            {{ __('inspection.present') }}
+                        @elseif($details->safety_pin == MISSING)
+                            {{ __('inspection.missing') }}
+                        @endif
+                    </td> <!-- SAFETY PIN -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->approach }}
+                    </td> <!-- APPROACH -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->discharge_tube == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @elseif($details->discharge_tube == NON_FUNCTIONAL)
+                            {{ __('inspection.non_functional') }}
+                        @endif
+                    </td> <!-- DISCHARGE TUBE -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->type == ABC)
+                            {{ __('inspection.ABC') }}
+                        @elseif($details->type == CO2)
+                            {{ __('inspection.CO2') }}
+                        @elseif($details->type == WATER)
+                            {{ __('inspection.WATER') }}
+                        @elseif($details->type == FOAM)
+                            {{ __('inspection.FOAM') }}
+                        @endif
+                    </td> <!-- TYPE -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->capacity }}
+                    </td> <!-- CAPACITY -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->quantity }}
+                    </td> <!-- QUANTITY -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->description }}
+                    </td> <!-- DESCRIPTION -->
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->remarks }}</td>
+                    <!-- REMARKS -->
+                </tr>
+            @endforeach
+        </tbody>
+
     </table>
 
 
