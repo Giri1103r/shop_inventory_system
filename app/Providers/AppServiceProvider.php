@@ -323,6 +323,7 @@ class AppServiceProvider extends ServiceProvider
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
 
         // OPTIONS
         defined('YES') or define('YES',1);
