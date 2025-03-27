@@ -341,6 +341,87 @@
 
 
     @stack('scripts')
+    @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
+        <script>
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode === 123 || 
+                    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+                    
+                    (e.ctrlKey && e.keyCode === 85) ||
+                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80)) 
+                ) {
+                    e.preventDefault();
+                }
+            });
+
+            (function() {
+                var devtoolsOpen = false;
+                var threshold = 160;
+
+                var checkDevTools = function() {
+                    var widthDiff = window.outerWidth - window.innerWidth;
+                    var heightDiff = window.outerHeight - window.innerHeight;
+
+                    var widthThreshold = widthDiff > threshold;
+                    var heightThreshold = heightDiff > threshold;
+
+                    if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
+                       
+                        if (window.outerWidth > 800) { 
+                            devtoolsOpen = true;
+                            logBlockedUser();
+                        }
+                    } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
+                        devtoolsOpen = false;
+                    }
+                };
+
+                setInterval(checkDevTools, 3000); 
+            })();
+
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousedown', function(e) {
+                if (e.button === 1) { 
+                    e.preventDefault();
+                }
+            });
+
+            function logBlockedUser() {
+                $.ajax({
+                    url: "{{ url('blocked-save') }}",
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = "{{ url('blocked') }}"; // Redirect to blocked page
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        alert("AJAX Error: " + xhr.responseText);
+                    }
+                });
+            }
+        </script>
+    @endif
+
 
     <script type="text/javascript" nonce="projectcab">
         $.ajaxSetup({
@@ -537,14 +618,14 @@
         });
 
         $(document).on('click', '.popupwindow', function(e) {
-             e.preventDefault();
-             $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
-             setTimeout(function() {
-                 callpopupsingleselect();
-                 callpopupmultipleselect();
-             }, 500);
+            e.preventDefault();
+            $('#popupwindowmodal').modal('show').find('.modal-content').load($(this).attr('href'));
+            setTimeout(function() {
+                callpopupsingleselect();
+                callpopupmultipleselect();
+            }, 500);
 
-         });
+        });
 
         /*
          * Menu Active dynamically

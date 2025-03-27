@@ -180,6 +180,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVED') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVED', 3);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
+        defined('STATUS_OHC_MEDICAL_DOCTOR_REJECTED') or define('STATUS_OHC_MEDICAL_DOCTOR_REJECTED', 6);
+
         // inspection ohc
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
@@ -188,7 +190,8 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 9);
-        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8);
+        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8); 
+        defined('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST') or define('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST', 7);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
@@ -198,6 +201,8 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_OPD_MEDICINE_INSPECTION') or define('OHC_OPD_MEDICINE_INSPECTION',20);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
         defined('FIRST_AID_BAG_INSPECTION_CHECKLIST') or define('FIRST_AID_BAG_INSPECTION_CHECKLIST',17);
+        defined('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE') or define('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE',11);
+
 
         // IMS  EHS_REVIEW
         defined('EHS_REVIEW') or define('EHS_REVIEW', 1);
@@ -324,13 +329,31 @@ class AppServiceProvider extends ServiceProvider
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
+        defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
 
         // OPTIONS
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
+        //  template constant
+        defined('PRODUCTION') or define('PRODUCTION',1);
+
         // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
+
+        // Fire Extinguisher Type
+        defined('ABC') or define('ABC',1);
+        defined('CO2') or define('CO2',2);
+        defined('WATER') or define('WATER',3);
+        defined('FOAM') or define('FOAM',4);
+
+        // Functional Types
+        defined('FUNCTIONAL') or define('FUNCTIONAL',1);
+        defined('NON_FUNCTIONAL') or define('NON_FUNCTIONAL',2);
+
+        defined('PRESENT') or define('PRESENT',1);
+        defined('MISSING') or define('MISSING',2);
 
         View::composer('*', function ($view) {
 

@@ -75,6 +75,7 @@
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId(2) }}">Doctor Approval Pending</option>
                                                 <option value="{{ encryptId(3) }}">Doctor Approved</option>
+                                                <option value="{{ encryptId(6) }}">Doctor Rejected</option>
                                                 <option value="{{ encryptId(4) }}">EHS Head Approval Pending</option>
                                                 <option value="{{ encryptId(5) }}">EHS Approved</option>
                                             </select>

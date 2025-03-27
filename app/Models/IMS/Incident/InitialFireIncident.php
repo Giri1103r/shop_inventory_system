@@ -7,6 +7,7 @@ namespace App\Models\IMS\Incident;
 use Carbon\Carbon;
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\DB;
+use App\Models\Master\Employee;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -62,9 +63,34 @@ class InitialFireIncident extends Model
         $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
-        // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_fireincident.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_fireincident.created_by', Auth::user()->id)->where('ims_initial_fireincident.status', '1');
+        }else {
+            $userId = Auth::id();
+            $userLoginId = Auth::user()->employee_id;
+        
+            $employeeId = Employee::where('emp_id', $userLoginId)->value('id'); 
+        
+            $query->where(function ($q) use ($userId, $employeeId) {
+                $q->where('ims_initial_fireincident.created_by', $userId)
+                  ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
+                  ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
+            })->where('ims_initial_fireincident.status', '1');
+        }
+        
+       
+        /**
+         * Role Based list view condition end
+         */
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -308,6 +334,33 @@ class InitialFireIncident extends Model
         $query = $this->select('ims_initial_fireincident.*', 'ims_incident_status.status_name', 'ims_incident_status.to_status', 'ims_incident_status.bg_color', 'ims_initial_fireincident_investigation.risk_analysis');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_fireincident.incident_status');
         $query = $query->leftJoin('ims_initial_fireincident_investigation', 'ims_initial_fireincident_investigation.incident_id', '=', 'ims_initial_fireincident.id');
+
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_fireincident.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_fireincident.created_by', Auth::user()->id)->where('ims_initial_fireincident.status', '1');
+        }else {
+            $userId = Auth::id();
+            $userLoginId = Auth::user()->employee_id;
+        
+            $employeeId = Employee::where('emp_id', $userLoginId)->value('id'); 
+        
+            $query->where(function ($q) use ($userId, $employeeId) {
+                $q->where('ims_initial_fireincident.created_by', $userId)
+                  ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
+                  ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
+            })->where('ims_initial_fireincident.status', '1');
+        }
+        
+       
+        /**
+         * Role Based list view condition end
+         */
+
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 

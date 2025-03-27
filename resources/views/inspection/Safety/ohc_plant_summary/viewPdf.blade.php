@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Safety Walk Observation | KARAM</title>
+    <title>OHC PLANT SUMMARY | KARAM</title>
 
     <style>
         .badge {
@@ -124,7 +124,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Safety Walk Observation </td>
+                    OHC PLANT SUMMARY </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -150,11 +150,12 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Walk Observation
+                    OHC PLANT SUMMARY
                 </td>
             </tr>
         </table>
     </div>
+
 
     <table width="100%" style="width:100%;">
         <tr>
@@ -181,35 +182,14 @@
             <td width="50%" style="padding:5px;"><b>Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->date) ? $inspection_details->date : '') }}
+                {{ Displaydateformat(isset($inspection_details->inspection_date) ? $inspection_details->inspection_date : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Shift Id</b></td>
+            <td width="50%" style="padding:5px;"><b>Updated Frequency</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getShiftname(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Month</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->month) ? $inspection_details->month : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Safety Walk Taken By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->safety_walk_taken_by) ? $inspection_details->safety_walk_taken_by : '' }}
+                {{ getShiftname(isset($inspection_details->updated_frequency) ? $inspection_details->updated_frequency : '') }}
             </td>
         </tr>
         <tr>
@@ -232,154 +212,119 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Walk Observation
+                    OHC PLANT SUMMARY
                 </td>
             </tr>
         </table>
     </div>
 
+    @php
+        $rowcount = count($units);
+    @endphp
 
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DATE OF
-                    OBSERVATION
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 80px;">SR. NO.</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Description</th>
+                <th colspan="{{ $rowcount }}" style="border: 2px solid black; padding: 8px; background-color: #ddd; text-align:center;">
+                    Quantity (in Nos/m²)
                 </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">OBSERVATION
-                </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Total Quantity (in Nos/m²)</th>
             </tr>
             <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">PICTURE
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    RECOMENDED ACTION</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    RESPONSIBILITY</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DATE OF
-                    COMPLIANCE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    STATUS</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">REMARKS
-                </th>
+                @foreach ($units as $unit)
+                    <th style="border: 1px solid #000; vertical-align:middle; text-align:center; width: 100px;">
+                        {{ $unit->unit_name }}
+                    </th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-
-            @if ($last_month_observation_details !== false)
+            @foreach ($quantity_details as $index => $quantity_detail)
                 <tr>
-                    <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">
-                        Previous
-                        Month Observation</td>
-                </tr>
-                @php
-                    $i = 1;
-                @endphp
-                @foreach ($last_month_observation_details as $details)
-                    @foreach ($details as $details)
-                        <tr>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $i }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                {{ getLocationName($details->location) }}
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                {{ Displaydateformat($details->observation_date) }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
-
-                            <td style="border: 2px solid black; padding: 8px;"><img
-                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt="" />
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->responsibility }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                @if ($details->observation_status == 1)
-                                    Active
-                                @elseif($details->observation_status == 0)
-                                    Inactive
-                                @else
-                                    Unknown
-                                @endif
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                        </tr>
-                        @php
-
-                            $i++;
-                        @endphp
+                    <td style="border: 1px solid #000;">{{ $index }}</td>
+                    <td style="border: 1px solid #000;">
+                        {{ $quantity_detail['description'] }}</td>
+                    @foreach ($units as $index => $unit)
+                        <td style="border: 1px solid #000;">
+                            {{ isset($quantity_detail['unit - ' . $index + 1]) ? $quantity_detail['unit - ' . $index + 1] : '' }}
+                        </td>
                     @endforeach
-                @endforeach
-            @endif
 
-            <tr>
-                <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">Current
-                    Month Observation</td>
-            </tr>
-            @foreach ($inspection as $detail)
-                <tr>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($detail->location) }}
+                    <td style="border: 1px solid #000;">
+                        {{ $quantity_detail['total_quantity'] }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ Displaydateformat($detail->observation_date) }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
-                    <td style="border: 2px solid black; padding: 8px;"><img
-                            src="{{ GetSafetyWalkImage($detail->id) }}" alt="" style="width:80px; height:80px">
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->recomended_action }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ Displaydateformat($detail->date_of_compliance) }}</td>
-
-                    <td style="border: 2px solid black; padding: 8px;">
-                        @if ($detail->observation_status == 1)
-                            Active
-                        @elseif($detail->observation_status == 0)
-                            Inactive
-                        @else
-                            Unknown
-                        @endif
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
-            @php
-                $prepared_by_signature = GetSafetySignature(
-                    $inspection_details->created_by,
-                    $inspection_details->id,
-                    SAFETY_WALK_OBSERVATION,
-                );
-                $verified_by_signature = GetSafetySignature(
-                    $inspection_details->updated_by,
-                    $inspection_details->id,
-                    SAFETY_WALK_OBSERVATION,
-                );
-            @endphp
-            <tr>
-                <td colspan="5"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
-                </td>
-                <td colspan="5"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
-                        <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-            </tr>
-
         </tbody>
     </table>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Fire Water Pump House Details
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <div class="table-responsive">
+        <table id="firewaterpump" class="table table-bordered text-center" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Sr.
+                        No.
+                    </th>
+                    <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Name
+                        of
+                        Water
+                        Pump & Water Storage Tank
+                    </th>
+                    <th colspan="{{ $rowcount }}"
+                        style="border: 1px solid #000; text-align: center; vertical-align:middle; text-align:center">
+                        Capacity
+                    </th>
+                </tr>
+                <tr>
+                    @foreach ($units as $unit)
+                        <th style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                            {{ $unit->unit_name }}
+                        </th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($fire_water_pump_details as $index => $quantity_detail)
+                    <tr>
+                        <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                            {{ $index + 1 }}</td>
+                        <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                            {{ $quantity_detail['fire_pump_details'] }}
+                        </td>
+                        @foreach ($units as $unit_index => $unit)
+                            <td style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                {{ isset($quantity_detail['fire_pump_details_unit_' . ($unit_index + 1)]) ? $quantity_detail['fire_pump_details_unit_' . ($unit_index + 1)] : '' }}
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+
+                @php
+                    $total_columns = 2 + count($units); // 2 static columns + dynamic columns from $units
+                @endphp
+
+                <tr>
+                    <td colspan="{{ $total_columns }}"
+                        style="border: 1px solid #000; vertical-align:middle; text-align:left">
+                        Prepared By: {{ getUsername($inspection_details->created_by) }}
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
 
     <br>
 

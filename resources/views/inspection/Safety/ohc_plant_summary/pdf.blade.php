@@ -36,7 +36,7 @@
                             {{ $value->revision_data }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
-                            {{ getObservationStatus($value->observation_status) }}
+                            {{ ($value->status == "1" ? "Active" : "Inactive") }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

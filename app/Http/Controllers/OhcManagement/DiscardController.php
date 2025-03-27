@@ -80,7 +80,7 @@ class DiscardController extends Controller
                                 $text = "<span style='color:red'>In-Active</span>";
                             }
 
-                    
+
                             if ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD) {
                                 if ($row->status == 1) {
                                     $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->med_id) . "' data-type='1'>Active</span>";
@@ -109,11 +109,9 @@ class DiscardController extends Controller
                         })
                         ->editColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
-                            $btn .= '<a href="' . admin_url('ohc/discard/edit/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>';
-
-                            // }
+                            }
 
                             return $btn;
                         })

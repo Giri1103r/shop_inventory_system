@@ -261,14 +261,14 @@ class OhcStatuslog extends Model
         return $this->create($insert_data);
     }
 
-    public function doctorverificationstatuslog($id, $ehsverifydata)
+    public function doctorverificationstatuslog($id, $doctorverifydata )
     {
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICAL_FITNESS,
             'reference_id' => $id,
             'from_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
-            'to_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVED,
+            'to_status' => $doctorverifydata['approve_status'],
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
         ];
@@ -296,9 +296,14 @@ class OhcStatuslog extends Model
     {
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->get();
     }
+
     public function doctorapprovalview($id)
     {
         return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->where('from_status', STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)->first();
+    }
+    public function fitnessehsheadlog($id)
+    {
+        return $this->where('reference_id', $id)->where('type', TYPE_OHC_MEDICAL_FITNESS)->where('from_status', STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)->first();
     }
     // EHS Verification
     public function ehsverifydata($id)

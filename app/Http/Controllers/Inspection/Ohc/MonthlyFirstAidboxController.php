@@ -140,4 +140,196 @@ class MonthlyFirstAidboxController extends Controller
             dd($ex);
         }
     }
+    // store
+    public function Store(Request $request)
+    {
+        try {
+            $store = $this->monthly_first_aid->store();
+            $inspection_type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
+            $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->store($store->id);
+            $id = $store->id;
+            $files = $this->signature->requestorsignatureUpload($inspection_type, $id);
+
+            Session::flash('success', 'Your data has been added successfully');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        }
+    }
+    // view
+
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $monthly_first_aid = $this->monthly_first_aid->selectOne($id);
+                $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
+            }
+
+            $data = [
+                'monthly_first_aid' => $monthly_first_aid,
+                'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
+
+                'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
+            ];
+            return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+        }
+    }
+    // general pdf
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $monthly_first_aid = $this->monthly_first_aid->selectOne($id);
+                $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
+            }
+
+            $data = [
+                'monthly_first_aid' => $monthly_first_aid,
+                'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
+
+                'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
+            ];
+
+            $property = [
+                'tempDir' => storage_path('app/public/pdf/temp/'), // Corrected path
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            // Load HTML from the Blade view
+            $html = view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
+
+            return $mpdf->Output($filename, 'D');
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        }
+    }
+
+    // Excel
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+
+            $allData = $this->monthly_first_aid->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Unit',
+                'Department',
+                'Approve Status',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->revision_date;
+                $export[] =  Displaydateformat($data->issue_date);
+                $export[] =  getUnitname($data->unit);
+                $export[] =  getUnitname($data->department);
+                $export[] = getohcrequisitionfloorstatus($data->approve_status);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Monthly First Aid Audit Checklist Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        }
+    }
+    // pdf
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->monthly_first_aid->exportdata();
+            $header = [
+                __("common.sno"),
+                'Document Number',
+                'Review date',
+                'Issued Date',
+                'Unit',
+                'Department',
+                'Status',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        }
+    }
 }

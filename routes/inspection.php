@@ -4,13 +4,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
+use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
+use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
+use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Ohc\MonthlyMedicineStoreController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
@@ -18,7 +24,10 @@ use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
+use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
@@ -417,6 +426,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
     });
+
+    Route::group(['prefix' => 'fire_extinguisher-inspection'], function () {
+        Route::GET('list', [FireExtinguisherController::class, 'Index']);
+        Route::POST('list', [FireExtinguisherController::class, 'Index']);
+        Route::GET('add', [FireExtinguisherController::class, 'Add']);
+        Route::POST('add/submit', [FireExtinguisherController::class, 'Store']);
+        Route::GET('view/{id}', [FireExtinguisherController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [FireExtinguisherController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [FireExtinguisherController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [FireExtinguisherController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [FireExtinguisherController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [FireExtinguisherController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [FireExtinguisherController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [FireExtinguisherController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [FireExtinguisherController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [FireExtinguisherController::class, 'ExportPDF']);
+    });
 });
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
@@ -444,7 +470,6 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::post('status', [FirstAidRecordController::class, 'statusChange']);
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
-
 });
 Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
     Route::GET('list', [MonthlyMedicineStoreController::class, 'Index']);
@@ -533,8 +558,13 @@ Route::group(['prefix' => 'ohc/master/first-aid-stock/'], function () {
 
 Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('list', [WeeklyFirstAidBoxController::class, 'index']);
+    Route::post('list', [WeeklyFirstAidBoxController::class, 'index']);
     Route::get('add', [WeeklyFirstAidBoxController::class, 'add']);
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
+    Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
+    Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+
+
 });
 
 

@@ -89,6 +89,7 @@ class MonthlyMedicineStore extends Model
         $id = $request->id;
         foreach ($id as $index => $value) {
             $id = decryptId($value);
+
             $updated_medicine_checklist[$id] = [
                 'medicine_id' => $id,
                 'available_quantity' => $request->available_quantity[$index],

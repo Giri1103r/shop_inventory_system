@@ -457,7 +457,13 @@
                                                 Cause
                                                 Analysis (PRCA)</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->root_cause_analysis }}
+                                                @if ($getInvestigation->root_cause_analysis == 1)
+                                                    Why Why Analysis
+                                                @elseif($getInvestigation->root_cause_analysis == 2)
+                                                    Fish Bone Analysis
+                                                @else
+                                                    NA
+                                                @endif
                                             </div>
                                         </div>
 
@@ -810,7 +816,7 @@
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Verify</h4>
+                                            <h4 class="text-white">Verification of the EHS Head</h4>
                                         </div>
                                     </div>
                                     <div class="basic-form">

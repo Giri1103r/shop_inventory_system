@@ -154,31 +154,7 @@
             });
         });
 
-        // $('#emp_name').select2({
-        //     ajax: {
-        //         url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
-        //         dataType: 'json',
-        //         delay: 250,
-        //         data: function(params) {
-        //             return {
-        //                 search: params.term
-        //             };
-        //         },
-        //         processResults: function(data) {
-        //             return {
-        //                 results: $.map(data, function(item) {
-        //                     return {
-        //                         id: item.id,
-        //                         text: item.text
-        //                     };
-        //                 })
-        //             };
-        //         }
-        //     },
-        //     minimumInputLength: 1,
-        //     dropdownCssClass: 'form-control',
-        //     selectionCssClass: 'form-control'
-        // });
+        
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({

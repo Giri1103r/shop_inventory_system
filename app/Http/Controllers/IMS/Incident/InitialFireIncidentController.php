@@ -129,7 +129,82 @@ class InitialFireIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // }
-                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 1 || $row->incident_status == 5 || $row->incident_status == 8 || $row->incident_status == 7)) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 1)) {
+                                $btn .= '<a href="' . admin_url('incident/fire-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+
+                            $btn .= '<a href="' . admin_url('incident/fire-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+        $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $status = $this->status->get();
+        $data = array(
+            'unitList' => $unitList,
+            'status' => $status,
+        );
+
+        return view('ims.initial.firereport.list', $data);
+    }
+
+    
+    public function investigationList(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+
+                try {
+
+                    $data =  $this->initialfireincident->list();
+
+
+                    $datatables = Datatables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+
+
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('unit_name', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('incident/fire-incident/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+      
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 5 || $row->incident_status == 8)) {
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
@@ -152,6 +227,81 @@ class InitialFireIncidentController extends Controller
 
                             if ($row->incident_status == 4  && $row->risk_analysis != 2 && (CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
                                 $btn .= '<a href="' . admin_url('incident/fire-incident/approvereject/' . encryptId($row->id)) . '" class=" " title="Risk Analysis"><i class="fa fa-exclamation-triangle" style="color: #e83333;"></i>';
+                            }
+
+
+                            $btn .= '<a href="' . admin_url('incident/fire-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+        $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $status = $this->status->get();
+        $data = array(
+            'unitList' => $unitList,
+            'status' => $status,
+        );
+
+        return view('ims.initial.firereport.investigationlist', $data);
+    }
+
+    public function calist(Request $request)
+    {
+        if (Auth::check()) {
+            if ($request->ajax()) {
+
+                try {
+
+                    $data =  $this->initialfireincident->list();
+
+
+                    $datatables = Datatables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+
+
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('unit_name', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('incident/fire-incident/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ( $row->incident_status == 7)) {
+                                $btn .= '<a href="' . admin_url('incident/fire-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
 
                             if ($row->incident_status == 6) {
@@ -190,8 +340,9 @@ class InitialFireIncidentController extends Controller
             'status' => $status,
         );
 
-        return view('ims.initial.firereport.list', $data);
+        return view('ims.initial.firereport.calist', $data);
     }
+
 
     public function Add(Request $request)
     {
@@ -869,11 +1020,11 @@ class InitialFireIncidentController extends Controller
 
             $this->Statuslog->create($insert_array);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         }
     }
 
@@ -1053,11 +1204,11 @@ class InitialFireIncidentController extends Controller
                 $this->Statuslog->create($insert_array);
             }
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         }
     }
 
@@ -1123,11 +1274,11 @@ class InitialFireIncidentController extends Controller
             $this->Statuslog->create($insert_array);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         }
     }
 
@@ -1193,11 +1344,11 @@ class InitialFireIncidentController extends Controller
                 $this->Statuslog->create($insert_array);
             }
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/investigationList'));
         }
     }
     public function actiontakenSubmit(Request $request)
@@ -1260,11 +1411,11 @@ class InitialFireIncidentController extends Controller
 
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/calist'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/calist'));
         }
     }
 
@@ -1389,11 +1540,11 @@ class InitialFireIncidentController extends Controller
                 $this->Statuslog->create($insert_array);
             }
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/calist'));
         } catch (Exception $ex) {
             
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/fire-incident/list'));
+            return redirect(admin_url('incident/fire-incident/calist'));
         }
     }
 

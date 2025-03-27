@@ -839,7 +839,7 @@
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Verify</h4>
+                                            <h4 class="text-white">Verification of the EHS Head</h4>
                                         </div>
                                     </div>
                                     <div class="basic-form">

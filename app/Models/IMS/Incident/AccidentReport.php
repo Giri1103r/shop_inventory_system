@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Master\Employee;
 
 class AccidentReport extends Model
 {
@@ -66,6 +67,32 @@ class AccidentReport extends Model
         $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_accident_report.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_accident_report.created_by', Auth::user()->id)->where('ims_initial_accident_report.status', '1');
+        } else {
+            $userId = Auth::id();
+            $userLoginId = Auth::user()->employee_id;
+
+            $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
+
+            $query->where(function ($q) use ($userId, $employeeId) {
+                $q->where('ims_initial_accident_report.created_by', $userId)
+                    ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
+                    ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
+            })->where('ims_initial_accident_report.status', '1');
+        }
+
+
+        /**
+         * Role Based list view condition end
+         */
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -123,6 +150,7 @@ class AccidentReport extends Model
 
         $data = $query->get();
 
+
         $datas = array(
             'data' => $data,
             'total_records' => $org_total_counts,
@@ -130,6 +158,7 @@ class AccidentReport extends Model
         );
         return $datas;
     }
+
 
 
     public function store()
@@ -417,7 +446,31 @@ class AccidentReport extends Model
         $query = $query->leftJoin('masters_department', 'ims_initial_accident_report.department_id', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_location', 'ims_initial_accident_report.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('ims_accident_investigation', 'ims_initial_accident_report.id', '=', 'ims_accident_investigation.accident_id');
-     
+        /**
+         * Role Based list view condition start
+         */
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            $query->where('ims_initial_accident_report.status', '1');
+        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('ims_initial_accident_report.created_by', Auth::user()->id)->where('ims_initial_accident_report.status', '1');
+        } else {
+            $userId = Auth::id();
+            $userLoginId = Auth::user()->employee_id;
+
+            $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
+
+            $query->where(function ($q) use ($userId, $employeeId) {
+                $q->where('ims_initial_accident_report.created_by', $userId)
+                    ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
+                    ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
+            })->where('ims_initial_accident_report.status', '1');
+        }
+
+
+        /**
+         * Role Based list view condition end
+         */
+
         if ($request->has('accident_report_no') && $request->accident_report_no) {
             $query = $query->where('accident_report_no',  $request->accident_report_no);
         }

@@ -5,12 +5,17 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use App\Http\Controllers\Controller;
 use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
+use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\Inspection\Ohc\WeeklyFirstAidBox;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 class WeeklyFirstAidBoxController extends Controller
 {
@@ -20,8 +25,9 @@ class WeeklyFirstAidBoxController extends Controller
     private $location;
     private $shift;
     private $medicine;
-
-
+    private $weekly_first_aid;
+    private $signature;
+    private $user;
 
 
     public function __construct()
@@ -31,6 +37,9 @@ class WeeklyFirstAidBoxController extends Controller
         $this->location = new Location();
         $this->certified_First_aid = new CertifiedFirstAider();
         $this->medicine = new FirstAidEquipment();
+        $this->weekly_first_aid = new WeeklyFirstAidBox();
+        $this->signature = new OhcSignature();
+        $this->user = new User();
 
 
 
@@ -40,7 +49,7 @@ class WeeklyFirstAidBoxController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->health_instrument_calibration->list();
+                    $data = $this->weekly_first_aid->list();
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -63,11 +72,11 @@ class WeeklyFirstAidBoxController extends Controller
                         })
 
                         ->addColumn('action', function ($row) {
-                            $btn = '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
+                            $btn = '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>';
                         
-                            $btn .= '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
                         
@@ -117,61 +126,19 @@ class WeeklyFirstAidBoxController extends Controller
 
     public function Store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         try {
-            // $rules = [
-            //     'document_no' => 'required',
-            //     'issue_date' => 'required',
-            //     'review_date' => 'required',
-            //     'health_instrument.*.sr_no' => 'required',
-            //     'health_instrument.*.instrument_name' => 'required',
-            //     'health_instrument.*.resource_code' => 'required',
-            //     'health_instrument.*.exact_location' => 'required',
-            //     'health_instrument.*.unit_id' => 'required',
-            //     'health_instrument.*.instrument_serial_no' => 'required',
-            //     'health_instrument.*.make' => 'required',
-            //     'health_instrument.*.model' => 'required',
-            //     'health_instrument.*.instrument_range' => 'required',
-            //     'health_instrument.*.calibration_frequency' => 'required',
-            //     'health_instrument.*.date_of_calibration' => 'required',
-            //     'health_instrument.*.due_date_of_calibration' => 'required',
-            //     'health_instrument.*.instrument_remarks' => 'required',
-            // ];
             
-            // $messages = [
-            //     'document_no.required' => 'Document number is required.',
-            //     'issue_date.required' => 'Issue date is required.',
-            //     'review_date.required' => 'Review date is required.',
-            //     'health_instrument.*.sr_no.required' => 'Serial number is required.',
-            //     'health_instrument.*.instrument_name.required' => 'Please enter the instrument name.',
-            //     'health_instrument.*.resource_code.required' => 'Please enter the resource code.',
-            //     'health_instrument.*.exact_location.required' => 'Please specify the exact location.',
-            //     'health_instrument.*.unit_id.required' => 'Please select a unit.',
-            //     'health_instrument.*.instrument_serial_no.required' => 'Instrument serial number is required.',
-            //     'health_instrument.*.make.required' => 'Please enter the make of the instrument.',
-            //     'health_instrument.*.model.required' => 'Please enter the model of the instrument.',
-            //     'health_instrument.*.instrument_range.required' => 'Instrument range is required.',
-            //     'health_instrument.*.calibration_frequency.required' => 'Calibration frequency is required.',
-            //     'health_instrument.*.date_of_calibration.required' => 'Please select the date of calibration.',
-            //     'health_instrument.*.due_date_of_calibration.required' => 'Please select the due date of calibration.',
-            //     'health_instrument.*.instrument_remarks.required' => 'Remarks are required.',
-            // ];
-            
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            
-            
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }  
             try {
 
-                $health_instrument = $this->health_instrument_calibration->store();
-                $id = $health_instrument->id;
-
-                $health_instrument_details = $this->health_instrument_calibration_details->store($id);
+                $weekly_first_aid = $this->weekly_first_aid->store();
+                $weekly_first_aid_id = $weekly_first_aid->id;
+                $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
+                $inspection_details = $this->weekly_first_aid->selectOne($weekly_first_aid_id);
+                $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
                 Session::flash('success', 'Your data has been created successfully!');
-                return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
+                return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
 
             } catch (Exception $ex) {
                 dd($ex);
@@ -180,6 +147,76 @@ class WeeklyFirstAidBoxController extends Controller
 
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+
+    public function View(Request $request)
+    {
+        try {
+            
+            $id = decryptId($request->id);
+            $inspection_details = $this->weekly_first_aid->selectOne($id);
+            $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
+            $inspection_file = $this->signature->getFiles($inspection_details->created_by, $inspection_type);
+            $inspection_data = json_decode($inspection_details->inspection_data, true);
+            $creater_signature = $this->user->where('id',$inspection_details->created_by)->first();
+
+            $data = array(
+                'inspection_details' => $inspection_details,
+                'inspection_file' => $inspection_file,
+                'inspection_data' => $inspection_data,
+                'creater_signature' => $creater_signature,
+            );
+
+
+            return view('inspection.inspection_ohc.weekly_first_aid.view',$data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            
+            if (Auth::check()) {
+                $id = decryptId($request->id);
+                $inspection_details = $this->weekly_first_aid->selectOne($id);
+                $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
+                $inspection_created_by = $this->signature->getFilesByEmpId($inspection_details->created_by, $inspection_type);
+                $inspection_data = json_decode($inspection_details->inspection_data, true);
+
+                $data = array(
+                    'inspection_details' => $inspection_details,
+                    'inspection_created_by' => $inspection_created_by,
+                    'inspection_data' => $inspection_data,
+                );
+                
+            }
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.inspection_ohc.weekly_first_aid.generalpdf',$data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Weekly First Aid Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 }

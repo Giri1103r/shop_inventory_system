@@ -46,6 +46,8 @@
                               Doctor Approved
                           @elseif ($value->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                               EHS Head Approval Pending
+                              @elseif ($value->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
+                              Doctor Approval Pending
                           @else
                               {{ removeUnderScore(getStatus($value->approve_status)) }}
                           @endif
@@ -60,6 +62,8 @@
                               EHS Head Approval Pending
                           @elseif ($value->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                               EHS Head Approved
+                              @elseif ($value->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
+                             Doctor Rejected
                           @else
                               {{ removeUnderScore(getStatus($value->approve_status)) }}
                           @endif
