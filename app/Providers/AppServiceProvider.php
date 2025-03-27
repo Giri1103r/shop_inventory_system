@@ -258,6 +258,11 @@ class AppServiceProvider extends ServiceProvider
         defined('OBSERVATION_REJECTED') or define('OBSERVATION_REJECTED', 2);
         defined('OBSERVATION_APPROVED') or define('OBSERVATION_APPROVED', 3);
 
+        //OHC Hygiene Checklist
+        defined('CLEANER_SUBMITTED_THE_CHECKLIST') or define('CLEANER_SUBMITTED_THE_CHECKLIST', 1);
+        defined('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST') or define('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST', 2);
+
+
 
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);

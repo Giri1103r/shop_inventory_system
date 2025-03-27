@@ -163,5 +163,6 @@ return [
     'non_functional' => 'Non Functional',
     'present' => 'Present',
     'missing' => 'Missing',
- 
+    'ohc_hygiene_cleaning_checklist' => 'Is Floor Tiles, wall, Dust Bin, Washbasin, Bed, Bedsheet, Computer Table, window, window cover, Fire Extinguishers, Fan, AC, Body Weigh Measurement, Almirah, Wall Boards, Stickers & others all useful equipment has been cleaned properly?',
+
 ];
