@@ -35,15 +35,14 @@
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                            <label for="issue_date"
+                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                            <input type="text" name="inspection_date" id="inspection_date" class="form-control">
                                         </div>
-
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId('1') }}">Active</option>
@@ -73,6 +72,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -97,6 +97,9 @@
             });
 
             flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
             });
 
@@ -135,8 +138,8 @@
                         data: function(d) {
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -160,12 +163,16 @@
                             name: 'issue_date',
                         },
                         {
+                            data: 'inspection_date',
+                            name: 'inspection_date',
+                        },
+                        {
                             data: 'revision_data',
                             name: 'revision_data',
                         },
                         {
-                            data: 'observation_status',
-                            name: 'observation_status',
+                            data: 'status',
+                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -198,7 +205,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        inspection_date = $('#inspection_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -208,7 +215,7 @@
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&inspection_date=' + inspection_date +
                                             '&status=' + status
                                     }
                                 },
@@ -219,7 +226,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        inspection_date = $('#inspection_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -228,7 +235,7 @@
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&inspection_date=' + inspection_date +
                                             '&status=' + status
                                     }
                                 },

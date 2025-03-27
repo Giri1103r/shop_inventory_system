@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\Safety\OHSPlantSummaryReport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,6 +19,7 @@ class OHSPlantSummaryReportController extends Controller
     public function __construct()
     {
         $this->unit = new Unit();
+        $this->ohsreport = new OHSPlantSummaryReport();
     }
     public function Index(Request $request)
     {
@@ -31,9 +33,9 @@ class OHSPlantSummaryReportController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -43,6 +45,9 @@ class OHSPlantSummaryReportController extends Controller
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
+                        })
+                        ->addColumn('inspection_date', function ($row) {
+                            return Displaydateformat($row->inspection_date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -105,7 +110,7 @@ class OHSPlantSummaryReportController extends Controller
                         </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'issue_date', 'inspection_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -141,7 +146,6 @@ class OHSPlantSummaryReportController extends Controller
     {
         try {
             $ohc_plant_summary = $this->ohsreport->store();
-            $id = $ohc_plant_summary->id;
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             Session::flash('success', __('common.created_msg'));
@@ -158,8 +162,14 @@ class OHSPlantSummaryReportController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->ohsreport->selectOne($id);
+            $quantity_details = json_decode($inspection_details->quantity_details, true);
+            $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
+            $unit = $this->unit->getUnit();
             $data = [
                 'inspection_details' => $inspection_details,
+                'quantity_details' => $quantity_details,
+                'fire_water_pump_details' => $fire_water_pump_details,
+                'units' => $unit,
             ];
             return view('inspection.Safety.ohc_plant_summary.view', $data);
         } catch (Exception $ex) {
@@ -185,7 +195,7 @@ class OHSPlantSummaryReportController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("inspection.inspection_status"),
+                __("Status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -198,14 +208,14 @@ class OHSPlantSummaryReportController extends Controller
                 $export[] =  $data->doc_no;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
+                $export[] =  ($data->status == "1" ? 'Active' : 'InActive');
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Safety Gallery Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('OHS Plant Summary Report.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -231,7 +241,7 @@ class OHSPlantSummaryReportController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("inspection.inspection_status"),
+                __('Status'),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -239,7 +249,7 @@ class OHSPlantSummaryReportController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Safety Gallery Inspection",
+                'pagetitle' => "OHS Plant Summary Report",
             );
 
             $property = [
@@ -253,12 +263,12 @@ class OHSPlantSummaryReportController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.pdf.pdf', $data);
+            $view = view('inspection.Safety.ohc_plant_summary.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Safety Gallery Inspection.pdf";
+            $filename = "OHS Plant Summary Report.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -274,11 +284,17 @@ class OHSPlantSummaryReportController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $forklift_details = $this->ohsreport->selectOne($id);
+                $inspection_details = $this->ohsreport->selectOne($id);
+                $quantity_details = json_decode($inspection_details->quantity_details, true);
+                $units = $this->unit->getUnit();
+                $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
 
                 $data = [
-                    'forklift_details' => $forklift_details,
-                    'pagetitle' => "Safety Gallery Inspection",
+                    'inspection_details' => $inspection_details,
+                    'quantity_details' => $quantity_details,
+                    'fire_water_pump_details' => $fire_water_pump_details,
+                    'pagetitle' => "OHS Plant Summary Report",
+                    'units' => $units,
                 ];
             }
 
@@ -294,16 +310,16 @@ class OHSPlantSummaryReportController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.safety.ohc_plan_summary.viewpdf', $data);
+            $html = view('inspection.Safety.ohc_plant_summary.viewpdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Safety Gallery Inspection.pdf";
+            $filename = "OHS Plant Summary Report.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/ohc-plant-summary/list'));
         }
     }
 }
