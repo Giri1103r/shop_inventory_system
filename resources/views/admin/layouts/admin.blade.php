@@ -344,15 +344,16 @@
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
+                e.preventDefault(); // Prevent right-click
             });
 
             document.addEventListener('keydown', function(e) {
-
-                if (e.keyCode === 123 ||
+                // Prevent opening developer tools or using specific key combinations
+                if (e.keyCode === 123 || // F12
                     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                    (e.ctrlKey && e.keyCode === 85) ||
-                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
+                    // Ctrl + Shift + I or Ctrl + Shift + J
+                    (e.ctrlKey && e.keyCode === 85) || // Ctrl + U
+                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80)) // Ctrl + S or Ctrl + P
                 ) {
                     e.preventDefault();
                 }
@@ -363,18 +364,20 @@
                 var threshold = 160;
 
                 var checkDevTools = function() {
+                    // Only detect changes due to the developer tools and not zooming
                     var widthDiff = window.outerWidth - window.innerWidth;
                     var heightDiff = window.outerHeight - window.innerHeight;
 
+                    // Check if there's a significant change in width or height (signaling devtools)
                     var widthThreshold = widthDiff > threshold;
                     var heightThreshold = heightDiff > threshold;
 
-                    // Check if width or height difference is beyond the threshold
+                    // Check if the devtools are likely open (based on window size changes)
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                        // Additional validation: Ignore small fluctuations due to zooming
+                        // Ignore small fluctuations due to zooming
                         if (window.outerWidth > 800) { // Ensure it's a real dev tool case, not just zooming
                             devtoolsOpen = true;
-                            logBlockedUser();
+                            logBlockedUser(); // Block the user if dev tools are detected
                         }
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
                         devtoolsOpen = false;
@@ -384,7 +387,7 @@
                 setInterval(checkDevTools, 3000); // Check every 3 seconds
             })();
 
-
+            // Prevent drag and select actions
             document.addEventListener('dragstart', function(e) {
                 e.preventDefault();
             });
@@ -393,8 +396,9 @@
                 e.preventDefault();
             });
 
+            // Prevent middle mouse button (usually for opening new tabs)
             document.addEventListener('mousedown', function(e) {
-                if (e.button == 1) {
+                if (e.button === 1) { // Middle button (usually wheel)
                     e.preventDefault();
                 }
             });
@@ -412,7 +416,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = "{{ url('blocked') }}";
+                            window.location.href = "{{ url('blocked') }}"; // Redirect to blocked page
                         }
                     },
                     error: function(xhr) {
@@ -423,6 +427,7 @@
             }
         </script>
     @endif
+
 
     <script type="text/javascript" nonce="projectcab">
         $.ajaxSetup({
