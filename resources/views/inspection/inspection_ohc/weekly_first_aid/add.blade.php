@@ -29,7 +29,7 @@
 
                             <div class="card-body">
 
-                                <form method="POST" id="HealthInstrumentAdd" enctype="multipart/form-data"
+                                <form method="POST" id="WeeklyFirstAidAdd" enctype="multipart/form-data"
                                     action="{{ admin_url('ohc/first-aid-box/weekly-inspection/add/submit') }}">
                                     @csrf
 
@@ -147,93 +147,90 @@
                                                 </div>
                                             </div>
 
+                                            <div class=" mt-3">
+                                                <table class="table table-bordered table-striped">
+                                                    <thead class="table-secondary">
+                                                        <tr>
+                                                            <th style="text-align: center">Sr. No.</th>
+                                                            <th style="text-align: center">Name Of Inspection</th>
+                                                            <th style="text-align: center">Freeze Quantity</th>
+                                                            <th style="text-align: center">Available Quantity</th>
+                                                            <th style="text-align: center">Expiry Date</th>
+                                                            <th style="text-align: center">Remark</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($medicines as $medicines)
+                                                            <tr>
+                                                                <td class="text-center">{{ $loop->iteration }}</td>
+                                                                <td class="text-center">
+                                                                    {{ getMedicinename($medicines->medicine_id) }} <input
+                                                                        type="hidden" name="id[{{ $medicines->id }}]"
+                                                                        value="{{ encryptId($medicines->id) }}"></td>
 
-                                        </div>
-                                    </div>
+                                                                <td class="text-center">{{ $medicines->freeze_quantity }}
+                                                                    <input type="hidden"
+                                                                        name="freeze_quantity[{{ $medicines->id }}]"
+                                                                        value="{{ ($medicines->freeze_quantity) }}">
+                                                                </td>
+                                                                <td>
+                                                                    <div class="form-input">
+                                                                        <input class="form-control" type="text"
+                                                                            name="available_quantity[{{ $medicines->id }}]" />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="form-input">
+                                                                        <input class="form-control expired_date"
+                                                                            type="date"
+                                                                            name="expired_date[{{ $medicines->id }}]" />
+                                                                    </div>
+                                                                </td>
+                                                             
+                                                                <td>
+                                                                    <div class="form-input">
+                                                                        <textarea class="form-control" type="text" style="resize: none" name="remarks[{{ $medicines->id }}]"></textarea>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
 
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">Weekly First Aid</h4>
+
                                             </div>
-                                        </div>
-        
-                                        <div class="d-flex justify-content-end align-items-center mb-3 button-container">
-        
-                                            <button class="btn btn-primary addmorebutton" data-block='lesson_learned_block'
-                                                data-row='lesson_learned_row' type="button" id="dynamic-add-more"
-                                                style="margin-left: 10px; width: 84px;">
-                                                Add
-                                            </button>
-        
-                                            
-                                        </div>
 
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered" id="medicine-table">
-                                                <thead class="bg-secondary text-white">
-                                                    <tr>
-                                                        <th width="25%">Medicine</th>
-                                                        <th width="15%">Available Quantity</th>
-                                                        <th width="15%">Freeze Quantity</th>
-                                                        <th width="15%">Material Expiry</th>
-                                                        <th width="20%">Remarks</th>
-                                                        <th width="10%">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="lesson_learned_block">
-                                                    <tr class="lesson_learned_row">
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <select name="weekly_first_aid[1][medicine_id]"
-                                                                    class="form-control  single-select">
-                                                                    <option value="">Select Medicine</option>
-                                                                    @foreach ($medicine as $medi)
-                                                                    <option value="{{ encryptId($medi->id) }}">
-                                                                        {{ $medi->medicine }}</option>
-                                                                @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <input type="number" name="weekly_first_aid[1][available_quantity]"
-                                                                    class="form-control" min="0">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <input type="number" name="weekly_first_aid[1][freeze_quantity]"
-                                                                    class="form-control" min="0">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <input type="text" name="weekly_first_aid[1][material_expiry]"
-                                                                    class="form-control datepicker">
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="form-group">
-                                                                <textarea name="weekly_first_aid[1][remarks]" class="form-control" rows="1"></textarea>
-                                                            </div>
-                                                        </td>
-                                                        <td><button class="btn btn-danger removerowdata"
-                                                            type="button" style="margin:10px;"><i
-                                                                class="fa fa-trash"></i></button>
-                                                    </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                            <div class="row m-2">
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    @if (isset(Auth::user()->signature_upload))
+                                                        <label class="form-label"
+                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                    @else
+                                                        <div class="form-input col-md-12 mb-2">
+                                                            <label class="form-label require">Signature</label>
+                                                            <input type="file" name="signature_image"
+                                                                id="signature_upload" class="form-control form-control-sm"
+                                                                accept="image/*" placeholder="Enter the image">
+                                                            <small>Allowed file types: jpg, jpeg, png</small>
+                                                            <div id="signature_upload" class="text-danger"></div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
 
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ohc/first-aid-box/weekly-inspection/list') }}"></x-button-cancel>
+                                            <div class="submit-button m-2" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class="submit"></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                            </div>
+
                                         </div>
                                     </div>
+
+                                   
 
                                 </form>
 
@@ -252,147 +249,118 @@
 
 
 @push('script')
-    <script type="text/javascript" nonce="projectcab">
+<script type="text/javascript" nonce="projectcab">
+    $(document).ready(function() {
+
+        $('#resetform').on('click', function(e) {
+            e.preventDefault();
+            location.reload();
+        });
+        flatpickr("#issue_date", {
+            dateFormat: "d-m-Y",
+        });
+        flatpickr("#date_of_inspection", {
+            dateFormat: "d-m-Y",
+        });
+        flatpickr(".expired_date", {
+            dateFormat: "d-m-Y",
+        });
+
+
+        $('#WeeklyFirstAidAdd').validate({
+            rules: {
+                document_no: {
+                    required: true,
+                },
+                next_due: {
+                    required: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                document_no: {
+                    required: "Inspection Date is required",
+                },
+                next_due: {
+                    required: "Next Due Date is required",
+                },
+                signature_image: {
+                    required: "Signature is required",
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function(form) {
+                form.submit();
+
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+            }
+        });
+
+        $('#WeeklyFirstAidAdd').on('change input',
+            'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
+            function() {
+                $(this).valid();
+            });
+
         $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
+            $('input[name^="available_quantity"]').each(function() {
+                $(this).rules('add', {
+                    required: true,
+                    number: true,
+                    min: 1,
+                    messages: {
+                        required: "Available Quantity is required",
+                        number: "Please enter a valid number",
+                        min: "Quantity must be at least 1"
+                    }
+                });
+            });
+
+            $('input[name^="expired_date"]').each(function() {
+                $(this).rules('add', {
+                    required: true,
+
+                    messages: {
+                        required: "Expiry Date is required",
+
+                    }
+                });
+            });
+
+            $('select[name^="emp_id"]').each(function() {
+                $(this).rules('add', {
+                    required: true,
+                    messages: {
+                        required: "Employee is required",
+                    }
+                });
+            });
+
+            $('textarea[name^="remarks"]').each(function() {
+                $(this).rules('add', {
+                    required: 500,
+                    messages: {
+                        required: "Remarks is required"
+                    }
+                });
             });
         });
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            function initializeFlatpickr() {
-                flatpickr("input[id^='issue_date']", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date()
-                });
-                flatpickr("input[id^='date_of_inspection']", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date()
-                });
-                flatpickr("input[id^='date_of_calibration_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='due_date_of_calibration_']", {
-                    dateFormat: "d-m-Y"
-                });
-
-            }
-
-            function updateRowIndexes() {
-
-                $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                    let newIndex = index + 1;
-                    $(this).find("input, select, textarea").each(function() {
-                        let oldName = $(this).attr("name");
-                        let oldId = $(this).attr("id");
-
-                        if (oldName) {
-                            let newName = oldName.replace(/\[\d+\]/, "[" + newIndex + "]");
-                            $(this).attr("name", newName);
-                        }
-
-                        if (oldId) {
-                            let newId = oldId.replace(/\d+$/, newIndex);
-                            $(this).attr("id", newId);
-                        }
-                    });
-                });
-                initializeFlatpickr();
-            }
-
-
-            $("#dynamic-add-more").on("click", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount >= 200) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "Maximum 200 records only."
-                    });
-                    return;
-                }
-
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
-                    let oldName = $(this).attr("name");
-                    let oldId = $(this).attr("id");
-
-                    if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
-                        $(this).attr("name", newName);
-                    }
-                    if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
-                        $(this).attr("id", newId);
-                    }
-                    if ($(this).is("input[type='text'], textarea")) {
-                        $(this).val("");
-                    }
-                    if ($(this).is("select")) {
-                        $(this).val("").trigger("change");
-                    }
-                });
-                newRow.find("input[name*='[sr_no]']").val("HEALTH-" + String(rowCount + 1).padStart(4,
-                    '0'));
-
-                newRow.find(".invalid-feedback").remove();
-                newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
-                newRow.find(".single-select").select2();
-
-                $("#lesson_learned_block").append(newRow);
-
-                newRow.find("input[name*='[instrument_name]']").rules("add", {
-                    minlength: 3,
-                    maxlength: 2000,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
-                    messages: {
-                        minlength: "Instrument name must be at least 3 characters.",
-                        maxlength: "Instrument name must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
-                    }
-                });
-
-                newRow.find("input[name*='[resource_code]']").rules("add", {
-                    minlength: 3,
-                    maxlength: 2000,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
-                    messages: {
-                        minlength: "Instrument name must be at least 3 characters.",
-                        maxlength: "Instrument name must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
-                    }
-                });
-
-
-                initializeFlatpickr();
-                $('.single-select').select2();
-            });
-
-            $(document).on("click", ".removerowdata", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount > 1) {
-                    $(this).closest(".lesson_learned_row").remove();
-                    updateRowIndexes();
-
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "At least one record is required."
-                    });
-                }
-            });
-
-            initializeFlatpickr();
-        });
-
-       
-
-        
-    </script>
+    });
+</script>
 @endpush
 
 
