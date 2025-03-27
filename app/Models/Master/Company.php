@@ -197,7 +197,7 @@ class Company extends Model
         return $data;
     }
 public function getcompany(){
-    return Company::where('trash','NO')->where('status','!=',0)->get();
+    return Company::where('trash','NO')->where('status',1)->get();
 }
 
     protected static function booted()

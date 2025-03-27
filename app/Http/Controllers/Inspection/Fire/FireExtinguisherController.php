@@ -18,15 +18,15 @@ use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
-use App\Models\Inspection\Fire\HooterInspection;
+use App\Models\Inspection\Fire\FireExtinguisher;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Fire\HooterInspectionDetails;
+use App\Models\Inspection\Fire\FireExtinguisherDetails;
 
-class HooterInspectionController extends Controller
+class FireExtinguisherController extends Controller
 {
-    private $hooter;
-    private $hooter_details;
+    private $fire_extinguisher;
+    private $fire_extinguisher_details;
     private $shift;
     private $location;
     private $unit;
@@ -39,8 +39,8 @@ class HooterInspectionController extends Controller
 
     public function __construct()
     {
-        $this->hooter = new HooterInspection();
-        $this->hooter_details = new HooterInspectionDetails();
+        $this->fire_extinguisher = new FireExtinguisher();
+        $this->fire_extinguisher_details = new FireExtinguisherDetails();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -57,7 +57,7 @@ class HooterInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->hooter->list();
+                    $data =  $this->fire_extinguisher->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -117,23 +117,23 @@ class HooterInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/hooter-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/fire_extinguisher-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/hooter-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -152,7 +152,7 @@ class HooterInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.hooter_inspection.list', $data);
+        return view('inspection.Fire.fire_extinguisher.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,11 +172,11 @@ class HooterInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.hooter_inspection.add', $data);
+            return view('inspection.Fire.fire_extinguisher.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -202,13 +202,14 @@ class HooterInspectionController extends Controller
 
     public function Store(Request $request)
     {
+        dd($request->all());
         try {
 
-            $inspection = $this->hooter->store();
-            $inspection_type = HOOTER_INSPECTION;
+            $inspection = $this->fire_extinguisher->store();
+            $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
             $id = $inspection->id;
 
-            $inspection_details = $this->hooter_details->store($id);
+            $inspection_details = $this->fire_extinguisher_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
@@ -224,23 +225,23 @@ class HooterInspectionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Hooter Inspection",
+                    'message' => "Fire Associate create the Fire Extinguisher Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/hooter-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Hooter Inspection';
+            $title = 'Fire Associate create the Fire Extinguisher Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Hooter Inspection',
+                    'fire_type' => 'Fire Extinguisher Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -251,7 +252,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -259,11 +260,11 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('flash', 'Your data added successfully');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -272,12 +273,12 @@ class HooterInspectionController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = HOOTER_INSPECTION;
+            $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
 
-            $inspection = $this->hooter->selectOne($id);
-            $inspection_details = $this->hooter_details->GetDetails($inspection->id);
+            $inspection = $this->fire_extinguisher->selectOne($id);
+            $inspection_details = $this->fire_extinguisher_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
 
             $data = array(
                 'inspection' => $inspection,
@@ -285,11 +286,11 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.view', $data);
+            return view('inspection.Fire.fire_extinguisher.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -298,12 +299,12 @@ class HooterInspectionController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = HOOTER_INSPECTION;
+            $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
 
-            $inspection = $this->hooter->selectOne($id);
-            $inspection_details = $this->hooter_details->GetDetails($inspection->id);
+            $inspection = $this->fire_extinguisher->selectOne($id);
+            $inspection_details = $this->fire_extinguisher_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
 
             $data = array(
                 'inspection' => $inspection,
@@ -311,11 +312,11 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.approve', $data);
+            return view('inspection.Fire.fire_extinguisher.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -324,16 +325,16 @@ class HooterInspectionController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->hooter->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
-            $inspection_details = $this->hooter->selectOne($id);
+            $inspection_updates = $this->fire_extinguisher->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(FIRE_EXTINGUISHER_INSPECTION);
+            $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Hooter Inspeciton Approved Successfully';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id));
+                $message = 'Fire Extinguisher Inspection Approved Successfully';
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
@@ -360,9 +361,9 @@ class HooterInspectionController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/capa');
+            $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Hooter Inspection',
+                'fire_type' => 'Fire Extinguisher Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -372,7 +373,7 @@ class HooterInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -381,12 +382,12 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -394,9 +395,9 @@ class HooterInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $safety_gallery_inspection = $this->hooter->capaSubmit($id);
-            $inspection_details = $this->hooter->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            $fire_extinguisher_inspection = $this->fire_extinguisher->capaSubmit($id);
+            $inspection_details = $this->fire_extinguisher->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(FIRE_EXTINGUISHER_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -413,7 +414,7 @@ class HooterInspectionController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -421,7 +422,7 @@ class HooterInspectionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
                 'fire_type' => 'Safety Gallery Inspection',
                 'email' => $email_id,
@@ -433,7 +434,7 @@ class HooterInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -442,11 +443,11 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -456,19 +457,19 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $safety_gallery_inspection = $this->hooter->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
-            $inspection_details = $this->hooter->selectOne($id);
+            $fire_extinguisher_inspection = $this->fire_extinguisher->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(FIRE_EXTINGUISHER_INSPECTION);
+            $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
@@ -496,7 +497,7 @@ class HooterInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hooter Inspection',
+                    'fire_type' => 'Fire Extinguisher Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -507,7 +508,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -516,11 +517,11 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -530,19 +531,19 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $safety_gallery_inspection = $this->hooter->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
-            $inspection_details = $this->hooter->selectOne($id);
+            $fire_extinguisher_inspection = $this->fire_extinguisher->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(FIRE_EXTINGUISHER_INSPECTION);
+            $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
@@ -570,7 +571,7 @@ class HooterInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hooter Inspection',
+                    'fire_type' => 'Fire Extinguisher Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -581,7 +582,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -590,11 +591,11 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -604,17 +605,17 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $safety_gallery_inspection = $this->hooter->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
-            $inspection_details = $this->hooter->selectOne($id);
+            $fire_extinguisher_inspection = $this->fire_extinguisher->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(FIRE_EXTINGUISHER_INSPECTION);
+            $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($status == 1) {
-                $message = 'Hooter Inspeciton Approved Successfully!';
-                $web_link =   admin_url('fire/hooter-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'Fire Extinguisher Inspection Approved Successfully!';
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
@@ -640,7 +641,7 @@ class HooterInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hooter Inspection',
+                    'fire_type' => 'Fire Extinguisher Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -651,7 +652,7 @@ class HooterInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => HOOTER_INSPECTION,
+                'type' => FIRE_EXTINGUISHER_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -660,18 +661,18 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->hooter->exportdata();
+            $allData = $this->fire_extinguisher->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -701,7 +702,7 @@ class HooterInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire Extinguisher Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -709,7 +710,7 @@ class HooterInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -717,7 +718,7 @@ class HooterInspectionController extends Controller
     {
         try {
 
-            $allData = $this->hooter->exportdata();
+            $allData = $this->fire_extinguisher->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -734,7 +735,7 @@ class HooterInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Hooter Inspection",
+                'pagetitle' => "Fire Extinguisher Inspection",
             );
 
             $property = [
@@ -759,7 +760,7 @@ class HooterInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 
@@ -769,9 +770,9 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,HOOTER_INSPECTION);
-                $forklift_details = $this->hooter->selectOne($id);
-                $inspection = $this->hooter_details->GetDetails($forklift_details->id);
+                $status_log = $this->statusLog->selectOne($id,FIRE_EXTINGUISHER_INSPECTION);
+                $forklift_details = $this->fire_extinguisher->selectOne($id);
+                $inspection = $this->fire_extinguisher_details->GetDetails($forklift_details->id);
 
                 $data = [
                     'status_log' => $status_log,
@@ -793,17 +794,16 @@ class HooterInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.hooter_inspection.viewPdf',$data);
+            $html = view('inspection.Fire.fire_extinguisher.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
             $filename = "Hooter Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
     }
 }

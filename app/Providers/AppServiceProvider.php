@@ -180,6 +180,8 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_DOCTOR_APPROVED') or define('STATUS_OHC_MEDICAL_DOCTOR_APPROVED', 3);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING', 4);
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
+        defined('STATUS_OHC_MEDICAL_DOCTOR_REJECTED') or define('STATUS_OHC_MEDICAL_DOCTOR_REJECTED', 6);
+
         // inspection ohc
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
@@ -187,6 +189,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION') or define('OHC_TYPE_OCCUPATION_HEALTH_INSPECTION', 4);
         defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
+        defined('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST') or define('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST', 7);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 10);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
@@ -325,6 +328,7 @@ class AppServiceProvider extends ServiceProvider
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
 
         // OPTIONS
         defined('YES') or define('YES',1);
@@ -332,6 +336,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
+
+        // Fire Extinguisher Type
+        defined('ABC') or define('ABC',1);
+        defined('CO2') or define('CO2',2);
+        defined('WATER') or define('WATER',3);
+        defined('FOAM') or define('FOAM',4);
+
+        // Functional Types
+        defined('FUNCTIONAL') or define('FUNCTIONAL',1);
+        defined('NON_FUNCTIONAL') or define('NON_FUNCTIONAL',2);
+
+        defined('PRESENT') or define('PRESENT',1);
+        defined('MISSING') or define('MISSING',2);
 
         View::composer('*', function ($view) {
 

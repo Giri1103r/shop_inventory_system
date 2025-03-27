@@ -223,7 +223,7 @@ class Work extends Model
         foreach (array_chunk($worktemp, $batchSize) as $chunk) {
             foreach ($chunk as $item) {
                 // Check existence of related entities
-                $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
+                $companyExists = DB::table('company_management')->where('short_name', $item['company'])->first();
                 $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
                 $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
                // dd($companyExists,$unitExists,$departmentExists,$item);

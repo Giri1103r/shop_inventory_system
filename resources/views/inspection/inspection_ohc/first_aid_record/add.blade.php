@@ -123,8 +123,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department</label>
                                                                 <select name="department_id[1]" id="department_id"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
+                                                                    class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Department</option>
                                                                 </select>
                                                             </div>
@@ -184,7 +183,7 @@
                                                     value="0" readonly>
                                             </div>
                                         </div>
-                                        
+
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
 
@@ -241,7 +240,148 @@
                 $('input[name="overall_total_number_of_first_aid"]').val(overallTotal);
             });
 
-            var selectedUnitsDepartments = [];
+            // var selectedUnitsDepartments = [];
+            // $(document).on('change', '#unit_id', function() {
+            //     var unitId = $(this).val();
+            //     if (unitId) {
+            //         $.ajax({
+            //             url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+            //             type: 'GET',
+            //             dataType: 'json',
+            //             success: function(data) {
+            //                 $('#department_id').empty().append(
+            //                     '<option value="">Select Department</option>');
+            //                 $.each(data, function(key, value) {
+            //                     $('#department_id').append('<option value="' + value
+            //                         .id + '">' + value.name + '</option>');
+            //                 });
+            //                 $('#department_id').trigger('change');
+            //             },
+            //             error: function(xhr) {
+            //                 alert('Error fetching department. Please try again.');
+            //             }
+            //         });
+            //     } else {
+            //         $('#department_id').empty().append('<option value="">Select Department</option>');
+            //         $('#department_id').trigger('change');
+            //     }
+            // });
+            // $(document).on('change', '#unit_id, #department_id', function() {
+            //     var unitId = $('#unit_id').val();
+            //     var departmentId = $('#department_id').val();
+
+            //     if (unitId && departmentId) {
+            //         var combination = unitId + '-' + departmentId;
+
+            //         var isDuplicate = false;
+
+            //         for (var i = 0; i < selectedUnitsDepartments.length; i++) {
+            //             if (selectedUnitsDepartments[i] === combination) {
+            //                 isDuplicate = true;
+            //                 break;
+            //             }
+            //         }
+
+            //         if (isDuplicate) {
+            //             Swal.fire({
+            //                 icon: 'error',
+            //                 title: 'Duplicate Selection',
+            //                 text: 'This unit and department combination already exists.',
+            //                 confirmButtonText: 'OK'
+            //             });
+
+            //             $('#department_id').val('');
+            //         } else {
+            //             selectedUnitsDepartments.push(combination);
+
+            //             $.ajax({
+            //                 url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+            //                 type: 'GET',
+            //                 data: {
+            //                     unit_id: unitId,
+            //                     department_id: departmentId
+            //                 },
+            //                 dataType: 'json',
+            //                 success: function(response) {
+            //                     $('input[name="first_aid_station_number[1]"]').val(response
+            //                         .station_number);
+            //                     $('input[name="first_aid_box_number[1]"]').val(response
+            //                         .first_aid_box_no);
+            //                 },
+            //                 error: function(xhr) {
+            //                     alert('Error fetching first aid details. Please try again.');
+            //                 }
+            //             });
+            //         }
+            //     }
+            // });
+            // $(document).on('change', '[id^="unit_id-"]', function() {
+            //     var unitId = $(this).val();
+            //     var departmentSelect = $(this).closest('form').find('[id^="department_id-"]');
+
+            //     if (unitId) {
+            //         $.ajax({
+            //             url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+            //             type: 'GET',
+            //             dataType: 'json',
+            //             success: function(data) {
+            //                 departmentSelect.empty().append(
+            //                     '<option value="">Select Department</option>');
+            //                 $.each(data, function(key, value) {
+            //                     departmentSelect.append('<option value="' + value.id +
+            //                         '">' + value.name + '</option>');
+            //                 });
+            //                 departmentSelect.trigger('change');
+            //             },
+            //             error: function(xhr) {
+            //                 alert('Error fetching department. Please try again.');
+            //             }
+            //         });
+            //     } else {
+            //         departmentSelect.empty().append('<option value="">Select Department</option>');
+            //         departmentSelect.trigger('change');
+            //     }
+            // });
+            // $(document).on('change', '[id^="unit_id-"], [id^="department_id-"]', function() {
+            //     var formSetCount = $(this).attr('id').split('-')[1];
+            //     var unitId = $('#unit_id-' + formSetCount).val();
+            //     var departmentId = $('#department_id-' + formSetCount).val();
+
+            //     if (unitId && departmentId) {
+            //         var combination = unitId + '-' + departmentId;
+
+            //         if (selectedUnitsDepartments.indexOf(combination) === -1) {
+            //             selectedUnitsDepartments.push(combination);
+            //             $.ajax({
+            //                 url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+            //                 type: 'GET',
+            //                 data: {
+            //                     unit_id: unitId,
+            //                     department_id: departmentId
+            //                 },
+            //                 dataType: 'json',
+            //                 success: function(response) {
+            //                     $('input[name="first_aid_station_number[' + formSetCount +
+            //                         ']"]').val(response.station_number);
+            //                     $('input[name="first_aid_box_number[' + formSetCount + ']"]')
+            //                         .val(response.first_aid_box_no);
+            //                 },
+            //                 error: function(xhr) {
+            //                     alert('Error fetching first aid details. Please try again.');
+            //                 }
+            //             });
+            //         } else {
+            //             Swal.fire({
+            //                 icon: 'error',
+            //                 title: 'Duplicate Selection',
+            //                 text: 'This unit and department combination already exists.',
+            //                 confirmButtonText: 'OK'
+            //             });
+
+            //             $('#department_id-' + formSetCount).val('');
+            //         }
+            //     }
+            // });
 
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
@@ -274,38 +414,24 @@
                 var departmentId = $('#department_id').val();
 
                 if (unitId && departmentId) {
-                    var combination = unitId + '-' + departmentId;
-
-                    if (selectedUnitsDepartments.indexOf(combination) === -1) {
-                        selectedUnitsDepartments.push(combination);
-                        $.ajax({
-                            url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
-                            type: 'GET',
-                            data: {
-                                unit_id: unitId,
-                                department_id: departmentId
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                $('input[name="first_aid_station_number[1]"]').val(response
-                                    .station_number);
-                                $('input[name="first_aid_box_number[1]"]').val(response
-                                    .first_aid_box_no);
-                            },
-                            error: function(xhr) {
-                                alert('Error fetching first aid details. Please try again.');
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Duplicate Selection',
-                            text: 'This unit and department combination already exists.',
-                            confirmButtonText: 'OK'
-                        });
-
-                        $('#department_id').val('');
-                    }
+                    $.ajax({
+                        url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                        type: 'GET',
+                        data: {
+                            unit_id: unitId,
+                            department_id: departmentId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            $('input[name="first_aid_station_number[1]"]').val(response
+                                .station_number);
+                            $('input[name="first_aid_box_number[1]"]').val(response
+                                .first_aid_box_no);
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching first aid details. Please try again.');
+                        }
+                    });
                 }
             });
 
@@ -343,41 +469,26 @@
                 var departmentId = $('#department_id-' + formSetCount).val();
 
                 if (unitId && departmentId) {
-                    var combination = unitId + '-' + departmentId;
-
-                    if (selectedUnitsDepartments.indexOf(combination) === -1) {
-                        selectedUnitsDepartments.push(combination);
-                        $.ajax({
-                            url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
-                            type: 'GET',
-                            data: {
-                                unit_id: unitId,
-                                department_id: departmentId
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                $('input[name="first_aid_station_number[' + formSetCount +
-                                    ']"]').val(response.station_number);
-                                $('input[name="first_aid_box_number[' + formSetCount + ']"]')
-                                    .val(response.first_aid_box_no);
-                            },
-                            error: function(xhr) {
-                                alert('Error fetching first aid details. Please try again.');
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Duplicate Selection',
-                            text: 'This unit and department combination already exists.',
-                            confirmButtonText: 'OK'
-                        });
-
-                        $('#department_id-' + formSetCount).val('');
-                    }
+                    $.ajax({
+                        url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                        type: 'GET',
+                        data: {
+                            unit_id: unitId,
+                            department_id: departmentId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            $('input[name="first_aid_station_number[' + formSetCount + ']"]')
+                                .val(response.station_number);
+                            $('input[name="first_aid_box_number[' + formSetCount + ']"]').val(
+                                response.first_aid_box_no);
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching first aid details. Please try again.');
+                        }
+                    });
                 }
             });
-
 
             $('#fir_add').validate({
                 rules: {
@@ -699,15 +810,21 @@
 
             function updatePageIndices() {
                 $('#form-wrapper .form-set').each(function(index) {
-                    $(this).find("input[name^='serial_number']").val('FIR-' + ('0000' + (index + 1)).slice(- 5));
+                    $(this).find("input[name^='serial_number']").val('FIR-' + ('0000' + (index + 1)).slice(-
+                        5));
 
-                    $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index + 1) + ']');
+                    $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index +
+                        1) + ']');
                     $(this).find('input[name^="month"]').attr('name', 'month[' + (index + 1) + ']');
                     $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + (index + 1) + ']');
-                    $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + (index + 1) + ']');
-                    $(this).find('input[name^="first_aid_box_number"]').attr('name', 'first_aid_box_number[' + (index + 1) + ']');
-                    $(this).find('input[name^="first_aid_station_number"]').attr('name', 'first_aid_station_number[' + (index + 1) + ']');
-                    $(this).find('input[name^="total_number_of_first_aid"]').attr('name', 'total_number_of_first_aid[' + (index + 1) + ']');
+                    $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + (index +
+                        1) + ']');
+                    $(this).find('input[name^="first_aid_box_number"]').attr('name',
+                        'first_aid_box_number[' + (index + 1) + ']');
+                    $(this).find('input[name^="first_aid_station_number"]').attr('name',
+                        'first_aid_station_number[' + (index + 1) + ']');
+                    $(this).find('input[name^="total_number_of_first_aid"]').attr('name',
+                        'total_number_of_first_aid[' + (index + 1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
                 });
             }
