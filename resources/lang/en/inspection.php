@@ -126,9 +126,25 @@ return [
     'fs_fifth' => "Is the patient's stretcher placed on the floor or properly hung on a hook in its designated area?",
     'fs_sixth' => 'Is the Patient Handling Stretcher Guide Line Displayed ?',
     'checkpoints' =>'Checkpoints (Yes / No )',
- 
+
     //ForkLift Inspection Report
     'forklift_inspection_report' => 'ForkLift Inspection Report',
     'corrective_action' => 'Corrective and Preventive Action',
+    'updated_frequency' => 'Updated Frequency',
+    'ohc_report' => 'OHC Plant Summary Report',
+    'description' => 'Description',
+    'total_quantity' => 'Total Quantity',
+    'unit2' => 'Unit - 2',
+    'unit1' => 'Unit - 1',
+    'unit3' => 'Unit - 3',
+    'unit4' => 'Unit - 4',
+    'fire_water_pump_house_details' => 'Fire Water Pump House Details',
+    'water_pump_storage_tank' => 'Water Pump and Water Storage',
+
+    //OHC
+    'name_of_inspection' => 'Name of Inspection',
+    'available_quantity' => 'Available Quantity',
+    'expiry_date' => 'Expiry Date',
+    'inspected_by' => 'Inspected By',
 
 ];

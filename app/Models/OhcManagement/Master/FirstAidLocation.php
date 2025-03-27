@@ -293,6 +293,12 @@ class FirstAidLocation extends Model
 
         return $data;
     }
+
+    public function getDetail($unitId,$departmentId)
+    {
+        return $this->where('unit_id', $unitId)->where('department_id', $departmentId)->first();
+    }
+    
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_master_first_aid_location'));

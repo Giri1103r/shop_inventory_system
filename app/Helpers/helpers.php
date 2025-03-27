@@ -39,7 +39,7 @@ use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-
+use App\Models\Inspection\audit\AuditAnalysis;
 if (!function_exists('get_encryptVal')) {
 
     function get_encryptVal($id)
@@ -1403,6 +1403,14 @@ if (!function_exists('getMonth')) {
             return $data;
         }
     }
+    if (!function_exists('getAnalysisCount')) {
+
+        function getAnalysisCount()
+        {
+            $data = AuditAnalysis::get()->count();
+            return $data;
+        }
+    }
 
     if (!function_exists('getSPLBCount')) {
 
@@ -1951,7 +1959,7 @@ if (!function_exists('getMonth')) {
 
             $name = DB::table('inspection_safety_signatureupload')->select('*')->where('emp_id', $userid)->where('inspection_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
-                $name = User::where('id', $id)->first();
+                $name = User::where('id', $userid)->first();
                 if ($name == null) {
                     return null;
                 }
@@ -2000,7 +2008,7 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
                 case OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST:
-                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                    $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('ohc_id', $id)->where('type', OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)->where('trash', 'NO')->first();
                     if ($name == null) {
                         $name = User::where('id', $userid)->first();
                         if ($name == null) {
@@ -2010,6 +2018,18 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+                    case OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST:
+                        $name = DB::table('inspection_ohc_signatureupload')->select('*')->where('emp_id', $userid)->where('type', OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST)->where('ohc_id', $id)->where('trash', 'NO')->first();
+                        if ($name == null) {
+                            $name = User::where('id', $userid)->first();
+                            if ($name == null) {
+                                return null;
+                            }
+                            return $name->signature_upload;
+                        } else {
+                            return $name->file_path;
+                        }
+
 
                 case HOOTER_INSPECTION:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOOTER_INSPECTION)

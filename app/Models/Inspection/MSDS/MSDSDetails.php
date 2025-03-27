@@ -50,7 +50,7 @@ class MSDSDetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_msds_details.*');
-      
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -68,15 +68,15 @@ class MSDSDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('inspection_status') && $request->inspection_status) {
+        if ($request->has('status') && $request->status) {
 
-            $query = $query->where('inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('status', decryptId($request->status));
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -100,28 +100,27 @@ class MSDSDetails extends Model
     public function store()
     {
         $request = request();
-       
+
         $insert_array = array(
             'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
+            'issue_date' => DBdateformat($request->issue_date),
             'revision_date' => $request->revision_date,
             'created_by' => Auth::id(),
-            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
-      
+
         return $this->create($insert_array);
     }
 
     public function updates($id)
-    { 
+    {
         $request = request();
-       
+
         $update_data = array(
             'document_number' => $request->document_number,
             'issue_date' => $request->issue_date,
             'updated_by' => Auth::id()
         );
-       
+
         $result = $this->where('id', $id)->update($update_data);
         return $result;
     }
@@ -256,7 +255,7 @@ class MSDSDetails extends Model
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) { 
+            $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
                     ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
                     ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
@@ -265,15 +264,16 @@ class MSDSDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('inspection_status') && $request->inspection_status) {
-            $query = $query->where('inspection_status', decryptId($request->inspection_status));
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', decryptId($request->status));
         }
+        
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

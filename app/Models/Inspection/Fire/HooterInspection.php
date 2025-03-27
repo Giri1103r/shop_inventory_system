@@ -145,7 +145,6 @@ class HooterInspection extends Model
         );
 
         return $this->create($data);
-
     }
 
     public function exportdata()
@@ -180,9 +179,112 @@ class HooterInspection extends Model
         return  $query->get();
     }
 
+
+
+    public function EHSOfficerUpdate($id)
+    {
+
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L1_MANAGER_REJECTED,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L2_MANAGER_REJECTED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+
     public function selectOne($id)
     {
-        return $this->where('id',$id)->where('status',1)->where('trash','NO')->first();
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
     protected static function booted()

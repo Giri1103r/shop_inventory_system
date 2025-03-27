@@ -158,6 +158,34 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @if ($signature_upload->signature_upload != '')
+                                            <label class="form-label view_label">Requestor Signature</label>
+
+                                            <p>
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset( $signature_upload->signature_upload) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <label for="signature_image"
+                                                    class="form-label fw-bold require">Requestor Signature</label>
+                                                <input type="file"
+                                                    class="form-control validate-file-accept validate-file-required"
+                                                    accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                    id="signature_image">
+                                                <div class="text-danger"></div>
+                                                <small>Allowed file types: png, jpeg, jpg</small>
+
+                                                <!-- Preview Container -->
+                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                                                    <img id="imagePreview" src="#" alt="Signature Preview"
+                                                        class="img-thumbnail" width="200">
+                                                </div>
+                                            </div>
+                                        @endif
                                         </div>
 
                                         <div class="row mt-2">

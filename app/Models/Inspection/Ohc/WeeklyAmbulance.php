@@ -75,7 +75,7 @@ class WeeklyAmbulance extends Model
             $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.revision_date', 'LIKE', '%' . $request->rev_date . '%');
@@ -261,13 +261,13 @@ class WeeklyAmbulance extends Model
         $search = '';
         $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*');
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.doc_no',  $request->document_number);
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.revision_date', $request->rev_date );
         }
 
         if (!empty($request->status)) {

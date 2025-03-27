@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Safety Petty Logbook Details| KARAM</title>
+    <title>OHC Safety Petty Logbook | KARAM</title>
 
     <style>
         .badge {
@@ -123,8 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Safety Petty Logbook Details
-                </td>
+                    OHC Safety Petty Logbook </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -150,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Safety Petty Logbook Details
+                    OHC Safety Petty Logbook
                 </td>
             </tr>
         </table>
@@ -160,18 +159,22 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ isset($sfty_petty_details->document_number) ? $sfty_petty_details->document_number : '' }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($sfty_petty_details->document_number) ? $sfty_petty_details->document_number : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ Displaydateformat(isset($sfty_petty_details->issue_date) ? $sfty_petty_details->issue_date : '') }}</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($sfty_petty_details->issue_date) ? $sfty_petty_details->issue_date : '') }}
+            </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
+            <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '' }}</td>
+                {{ isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
@@ -193,107 +196,67 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    MSDS Checklist
+                    OHC Safety Petty Logbook Checklist
                 </td>
             </tr>
         </table>
     </div>
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Serial Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ isset($sfty_petty_checklist->serial_number) ? $sfty_petty_checklist->serial_number : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Employee Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ getUsername($sfty_petty_checklist->employee_name) }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Employee Code</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->employee_code) ? $sfty_petty_checklist->employee_code : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Department</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getDepartment($sfty_petty_checklist->department) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname($sfty_petty_checklist->unit) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->date) ? $sfty_petty_checklist->date : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Amount</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->amount) ? $sfty_petty_checklist->amount : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Description</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->description) ? $sfty_petty_checklist->description : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Amount Given By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername($sfty_petty_checklist->amount_given_by) }}</td>
-        </tr>
-        @if (isset($signature_amount_givenby) && $signature_amount_givenby)
+
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Signature (Amount Given By)</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url( $signature_amount_givenby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                </td>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">EMPLOYEE NAME</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">EMPLOYEE CODE</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DEPARTMEN</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">UNIT</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DATE</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">AMOUNT</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DESCRIPTION</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">AMOUNT GIVEN BY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">AMOUNT RECEIVED BY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">REMARK</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">CREATED BY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">CREATED DATE</th>
             </tr>
-        @endif
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Amount Received by</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername($sfty_petty_checklist->amount_received_by) }}</td>
-        </tr>
-        @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
+        </thead>
+        @php
+            $i = 1;
+        @endphp
+        <tbody>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Signature (Amount Received By)</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url( $signature_amount_receivedby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->serial_number) ? $sfty_petty_checklist->serial_number : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername($sfty_petty_checklist->employee_name) }}</td>
+                <td style="border: 2px solid black; padding: 8px;"> {{ isset($sfty_petty_checklist->employee_code) ? $sfty_petty_checklist->employee_code : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($sfty_petty_checklist->department) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($sfty_petty_checklist->unit) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->date) ? $sfty_petty_checklist->date : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->amount) ? $sfty_petty_checklist->amount : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->description) ? $sfty_petty_checklist->description : '' }}</td>
+                <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if($signature_amount_givenby && $signature_amount_givenby->file_path)
+                        <img src="{{ admin_url($signature_amount_givenby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                        {{ getUsername($sfty_petty_checklist->amount_given_by) }}
+                    @else
+                        <div>N/A</div>
+                    @endif
                 </td>
+                <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if($signature_amount_receivedby && $signature_amount_receivedby->file_path)
+                        <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                        {{ getUsername($sfty_petty_checklist->amount_received_by) }}
+                    @else
+                        <div>N/A</div>
+                    @endif
+                </td>                
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->remark) ? $sfty_petty_checklist->remark : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($sfty_petty_checklist->created_by) ? $sfty_petty_checklist->created_by : '') }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($sfty_petty_checklist->created_at) }}</td>
             </tr>
-        @endif
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Remark</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_checklist->remark) ? $sfty_petty_checklist->remark : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($sfty_petty_checklist->created_by) ? $sfty_petty_checklist->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($sfty_petty_checklist->created_at) }}</td>
-        </tr>
+        </tbody>
     </table>
 
     <br>

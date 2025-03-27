@@ -33,26 +33,13 @@
                                         <input type="text" name="issue_date" id="issue_date"
                                             class="form-control">
                                     </div>
-                                    {{-- <div class="col-md-3 mb-3 form-input">
-                                        <label for="revision_date" class="form-label ">Revision Date</label>
-                                        <input type="text" name="revision_date" id="revision_date"
-                                            class="form-control">
-                                    </div> --}}
-
                                     <div class="col-md-3 mb-3 form-input">
-                                        <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
-                                        <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                        <label for="status" class="form-label">{{ __('common.status') }}</label>
+                                        <select name="status" id="status" style="width: 100%"
                                             class="form-control single-select">
                                             <option value="">Select Status</option>
-                                            <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                            <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                            <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                            <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                            <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                            <option value="{{encryptId('6')}}">CLOSED</option>
-                                            <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                            <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                            <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                            <option value="{{ encryptId(1) }}">Active</option>
+                                            <option value="{{ encryptId(0) }}">In-Active</option>
                                         </select>
                                     </div>
                                     <div class="col-md-3 mt-3">
@@ -77,7 +64,7 @@
                                     <th>{{ __('common.sno') }}</th>
                                     <th>Document Number</th>
                                     <th>Issue Date</th>
-                                    <th>Revision Data</th>
+                                    <th>Revision & Data</th>
                                     <th>{{ __('common.status') }}</th>
                                     <th>{{ __('common.created_date') }}</th>
                                     <th>{{ __('common.action') }}</th>
@@ -150,7 +137,7 @@
                     d.document_number = $('#document_number').val();
                     d.issue_date = $('#issue_date').val();
                     d.revision_date = $('#revision_date').val();
-                    d.inspection_status = $('#inspection_status').val();
+                    d.status = $('#status').val();
 
                 },
                 error: function(xhr, error, code) {
@@ -179,8 +166,8 @@
                     name: 'revision_date'
                 },
                 {
-                    data: 'inspection_status',
-                    name: 'inspection_status'
+                    data: 'status',
+                    name: 'status'
                 },
                 {
                     data: 'created_date',
@@ -217,8 +204,7 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                revision_date = $('#revision_date').val();
-                                inspection_status = $('#inspection_status').val();
+                                status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -227,8 +213,7 @@
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
                                     '&issue_date=' + issue_date +
-                                    '&revision_date=' + revision_date +
-                                    '&inspection_status=' + inspection_status
+                                    '&status=' + status
                             }
                         },
                         {
@@ -238,8 +223,7 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                revision_date = $('#revision_date').val();
-                                inspection_status = $('#inspection_status').val();
+                                status = $('#status').val();
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
@@ -247,8 +231,7 @@
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
                                     '&issue_date=' + issue_date +
-                                    '&revision_date=' + revision_date +
-                                    '&inspection_status=' + inspection_status
+                                    '&status=' + status
                             }
                         },
                     ]

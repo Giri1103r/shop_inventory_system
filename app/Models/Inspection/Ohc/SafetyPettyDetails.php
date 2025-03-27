@@ -56,8 +56,8 @@ class SafetyPettyDetails extends Model
         if ($request->has('document_number') && $request->document_number) {
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
@@ -133,8 +133,8 @@ class SafetyPettyDetails extends Model
             $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
         }
 
-        if ($request->has('issue_date') && $request->issue_date) {
-            $query = $query->where('issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');

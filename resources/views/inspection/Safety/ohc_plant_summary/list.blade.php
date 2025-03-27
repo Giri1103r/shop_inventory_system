@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', '  Occupation Health Inspection ' )
-@section('pageurl', admin_url('ohc/inspection/list'))
+@section('title', 'OHC Plant Summary')
+@section('pageurl', admin_url('safety/ohc-plant-summary/list'))
 
 
 @section('content')
@@ -13,10 +13,9 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/inspection/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('safety/ohc-plant-summary/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -42,12 +41,14 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId('1') }}">Active</option>
+                                                <option value="{{ encryptId('2') }}">InActive</option>
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -70,11 +71,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>{{ __('inspection.doc_no') }}</th>
+                                        <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -82,8 +82,6 @@
                             </table>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -96,6 +94,10 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
             });
 
             $(function() {
@@ -124,7 +126,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/inspection/list') }}",
+                        url: "{{ admin_url('safety/ohc-plant-summary/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -134,7 +136,7 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -151,25 +153,19 @@
 
                         {
                             data: 'doc_no',
-                            name: 'doc_no'
+                            name: 'doc_no',
                         },
                         {
                             data: 'issue_date',
-                            name: 'issue_date'
+                            name: 'issue_date',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
-                        },
-
-
-                        {
-                            data: 'status',
-                            name: 'status'
+                            data: 'revision_data',
+                            name: 'revision_data',
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'observation_status',
+                            name: 'observation_status',
                         },
                         {
                             data: 'action',
@@ -199,7 +195,6 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-                                        va
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
@@ -209,7 +204,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/inspection/export/pdf') }}" +
+                                            "{{ admin_url('safety/ohc-plant-summary/export/pdf') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -228,7 +224,8 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/inspection/export/excel') }}" +
+                                            "{{ admin_url('safety/ohc-plant-summary/export/excel') }}" +
+                                            '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
@@ -293,7 +290,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/inspection/status') }}",
+                                url: "{{ admin_url('safety/ohc-plant-summary/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -331,6 +328,87 @@
                             Swal.fire('Something went wrong', '', 'info');
                         }
                     })
+
+                });
+
+
+                /* Delete Record */
+                $(document).on('click', '.recordDelete', function() {
+
+                    var id = $(this).data('id');
+                    var login_id = $(this).data('login_id');
+
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var text = '{{ __('common.delete') }}';
+                    var btncolor = '#dc3545'
+
+                    Swal.fire({
+                        title: title,
+                        icon: 'warning',
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: text,
+                        confirmButtonColor: btncolor,
+                        denyButtonColor: '#28a745',
+                        customClass: {
+                            confirmButton: 'btn-skew',
+                            cancelButton: 'btn-skew'
+                        },
+                    }).then((result) => {
+
+                        if (result.value) {
+                            $.ajax({
+                                url: "{{ admin_url('safety/ohc-plant-summary/delete') }}",
+                                type: 'post',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                        .attr('content')
+                                },
+                                data: {
+                                    id: id,
+                                    login_id: login_id
+                                },
+                                success: function(response) {
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-right',
+                                        showConfirmButton: false,
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        didOpen: (toast) => {
+                                            toast.addEventListener(
+                                                'mouseenter',
+                                                Swal.stopTimer)
+                                            toast.addEventListener(
+                                                'mouseleave',
+                                                Swal.resumeTimer
+                                            )
+                                        }
+                                    });
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: response.msg
+                                    });
+                                    table.draw();
+                                },
+                                error: function(data) {
+                                    if (data.status === 406 && data.responseJSON.msg ===
+                                        'module_exits') {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        });
+                                    } else {
+                                        $.notify(data.responseJSON.msg, "error");
+                                    }
+                                }
+                            });
+                        } else if (result.isDenied) {
+                            Swal.fire('Something went wrong', '', 'info');
+                        }
+                    })
+
 
                 });
 
