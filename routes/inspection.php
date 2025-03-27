@@ -31,6 +31,7 @@ use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -554,6 +555,17 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
     Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
     Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+    Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
+    Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
+    Route::post('status', [WeeklyFirstAidBoxController::class, 'statusChange']);
+
+});
+
+Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], function () {
+    Route::get('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'index']);
+    Route::get('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'add']);
+    Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
+
 
 
 });

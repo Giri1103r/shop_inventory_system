@@ -296,11 +296,20 @@
             <tr>
                 <td colspan="7"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by->requestor_file_path) }}" alt="Checked By Signature"
+                    <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
                         style="height: 50px; margin-top:2px;">
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
             </tr>
+
+            <tr>
+                <td colspan="7"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <b>Remark By</b> :
+                    {{ isset($inspection_details->remark_by) ? $inspection_details->remark_by : '' }}
+                </td>
+            </tr>
+            
 
         </tbody>
     </table>
