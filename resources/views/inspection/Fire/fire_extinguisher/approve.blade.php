@@ -116,7 +116,7 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -345,7 +345,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection->id,
-                                                        HOOTER_INSPECTION,
+                                                        FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -427,7 +427,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->created_by,
                                                         $inspection->id,
-                                                        HOOTER_INSPECTION,
+                                                        FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -479,7 +479,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection->id,
-                                                        HOOTER_INSPECTION,
+                                                        FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -532,7 +532,7 @@
                                                 $signature = GetSignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection->id,
-                                                    HOOTER_INSPECTION,
+                                                    FIRE_EXTINGUISHER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -583,7 +583,7 @@
                                                 $signature = GetSignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection->id,
-                                                    HOOTER_INSPECTION,
+                                                    FIRE_EXTINGUISHER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))

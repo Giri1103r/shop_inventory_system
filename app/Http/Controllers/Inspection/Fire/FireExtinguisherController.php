@@ -202,7 +202,6 @@ class FireExtinguisherController extends Controller
 
     public function Store(Request $request)
     {
-        dd($request->all());
         try {
 
             $inspection = $this->fire_extinguisher->store();
@@ -259,9 +258,10 @@ class FireExtinguisherController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -755,7 +755,7 @@ class FireExtinguisherController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Hooter Inspection.pdf";
+            $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -777,7 +777,7 @@ class FireExtinguisherController extends Controller
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Hooter Inspection",
+                    'pagetitle' => "Fire Extinguisher Inspection",
                     'inspection' => $inspection,
                 ];
             }
@@ -798,7 +798,7 @@ class FireExtinguisherController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Hooter Inspection.pdf";
+            $filename = "Fire Exitnguisher Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
