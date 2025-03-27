@@ -202,6 +202,7 @@ class FireExtinguisherController extends Controller
 
     public function Store(Request $request)
     {
+        dd($request->all());
         try {
 
             $inspection = $this->fire_extinguisher->store();

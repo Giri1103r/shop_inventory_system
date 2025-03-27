@@ -332,6 +332,19 @@ class AppServiceProvider extends ServiceProvider
         // Fire File Upload
         defined('HOOTER_FILE') or define('HOOTER_FILE',1);
 
+        // Fire Extinguisher Type
+        defined('ABC') or define('ABC',1);
+        defined('CO2') or define('CO2',2);
+        defined('WATER') or define('WATER',3);
+        defined('FOAM') or define('FOAM',4);
+
+        // Functional Types
+        defined('FUNCTIONAL') or define('FUNCTIONAL',1);
+        defined('NON_FUNCTIONAL') or define('NON_FUNCTIONAL',2);
+
+        defined('PRESENT') or define('PRESENT',1);
+        defined('MISSING') or define('MISSING',2);
+
         View::composer('*', function ($view) {
 
             /**

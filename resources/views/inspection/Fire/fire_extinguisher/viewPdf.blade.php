@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Fire Pump House Inspection | KARAM</title>
+    <title>Fire Extinguisher Inspection | KARAM</title>
 
     <style>
         .badge {

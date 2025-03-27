@@ -2242,9 +2242,22 @@ if (!function_exists('getMonth')) {
 
     // Fire Inspection Hooter Sequence
     if (!function_exists('HooterSequence')) {
-        function HooterSequence()
+        function FireSequence($type)
         {
-            return 'HTR-000001';
+            switch($type)
+            {
+                case HOOTER_INSPECTION:
+                    return 'HTR-000001';
+                    break;
+
+                case MONTHLY_FIRE_PUMP:
+                    return 'MFPI-000001';
+                    break;
+
+                case FIRE_EXTINGUISHER_INSPECTION:
+                    return 'FEX-000001';
+                    break;
+            }
         }
     }
 
