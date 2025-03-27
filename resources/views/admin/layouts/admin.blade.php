@@ -341,18 +341,18 @@
 
 
     @stack('scripts')
-    @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
+    @if (app()->environment('local') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
             });
 
             document.addEventListener('keydown', function(e) {
-                if (e.keyCode === 123 || 
+
+                if (e.keyCode === 123 ||
                     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                    
                     (e.ctrlKey && e.keyCode === 85) ||
-                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80)) 
+                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
                 ) {
                     e.preventDefault();
                 }
@@ -361,26 +361,25 @@
             (function() {
                 var devtoolsOpen = false;
                 var threshold = 160;
-
-                var checkDevTools = function() {
-                    var widthDiff = window.outerWidth - window.innerWidth;
-                    var heightDiff = window.outerHeight - window.innerHeight;
-
-                    var widthThreshold = widthDiff > threshold;
-                    var heightThreshold = heightDiff > threshold;
+                var interval = setInterval(function() {
+                    var widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    var heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
                        
-                        if (window.outerWidth > 800) { 
+                        var startTime = new Date();
+                        debugger;
+                        var endTime = new Date();
+                        if (endTime - startTime > 100) {
                             devtoolsOpen = true;
                             logBlockedUser();
                         }
+                       
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
                         devtoolsOpen = false;
                     }
-                };
+                }, 1000);
 
-                setInterval(checkDevTools, 3000); 
             })();
 
             document.addEventListener('dragstart', function(e) {
@@ -392,7 +391,7 @@
             });
 
             document.addEventListener('mousedown', function(e) {
-                if (e.button === 1) { 
+                if (e.button == 1) {
                     e.preventDefault();
                 }
             });
@@ -410,7 +409,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = "{{ url('blocked') }}"; // Redirect to blocked page
+                            window.location.href = "{{ url('blocked') }}";
                         }
                     },
                     error: function(xhr) {
