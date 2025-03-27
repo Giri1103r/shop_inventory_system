@@ -267,15 +267,41 @@
             enableTime: true,
             dateFormat: "d-m-Y H:i",
             time_24hr: true,
-            maxDate: new Date()
+            maxDate: new Date(),
+            onChange: function(selectedDates, dateStr, instance) {
+                validateReportingTime();
+            }
         });
 
         flatpickr("#time_of_reporting", {
             enableTime: true,
-            noCalendar: true, // Disables the date selection
-            dateFormat: "H:i", // Format to show only hours and minutes
-            time_24hr: true // Uses 24-hour format
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                validateReportingTime();
+            }
         });
+
+        function validateReportingTime() {
+            var incidentDateTime = $("#incident_date_time").val();
+            var reportingTime = $("#time_of_reporting").val();
+            var incidentDateTimeObj = moment(incidentDateTime, "D-M-YYYY HH:mm").toDate();
+            var reportingTimeObj = moment(reportingTime, "HH:mm").toDate();
+
+            if (incidentDateTime && reportingTime) {
+
+                if (reportingTimeObj >= incidentDateTimeObj) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Time',
+                        text: 'Time of reporting must be smaller than Date and Time.',
+                        confirmButtonText: 'OK'
+                    });
+                    $("#time_of_reporting").val('');
+                }
+            }
+        }
 
 
         const maxUploads = 5;
