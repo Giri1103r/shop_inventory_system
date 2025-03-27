@@ -32,6 +32,7 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
+use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -575,3 +576,47 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
     Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
 });
+
+
+Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
+    Route::GET('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::POST('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::GET('add', [DailyVitalEquipmentController::class, 'Add']);
+    Route::POST('add/submit', [DailyVitalEquipmentController::class, 'Store']);
+    Route::GET('view/{id}', [DailyVitalEquipmentController::class, 'View']);
+    Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
+    Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
