@@ -41,6 +41,7 @@ use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
+use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Safety\SignatureUpload;
