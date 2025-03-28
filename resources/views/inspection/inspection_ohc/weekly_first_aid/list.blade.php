@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid')
+@section('title', 'Weekly First Aid Checklist')
 @section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
 
 
@@ -20,7 +20,7 @@
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
-                        {{-- <form action="" id="formsearch">
+                        <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
@@ -35,21 +35,36 @@
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+
+                                        <div class="col-md-3">
+                                            <div class="form-group form-input">
+                                                <label for="location_id" class="form-label">
+                                                    Location</label>
+                                                <select name="location_id" id="location_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Location</option>
+                                                    @foreach ($location as $loc)
+                                                        <option value="{{ encryptId($loc->id) }}">
+                                                            {{ $loc->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
+                                       
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -58,7 +73,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </form> --}}
+                        </form>
                         <hr>
                     </div>
 
@@ -72,8 +87,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Doc.NO</th>
                                         <th>Issue Date</th>
-                                        <th>Rev.Date</th>
-                                        <th>Status</th>
+                                        <th>Location</th>
+                                        <th>Unit</th>
                                         <th>Created By</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -155,14 +170,14 @@
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                            .attr('content')
+                        .attr('content')
                     },
                     data: function(d) {
                         d.doc_no = $('#document_number').val();
                         d.issue_date = $('#issue_date').val();
-                        d.revision_date = $('#rev_date').val();
+                        d.location = $('#location_id').val();
+                        d.unit = $('#unit_id').val();
                         d.status = $('#status').val();
-
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -185,14 +200,13 @@
                         name: 'issue_date'
                     },
                     {
-                        data: 'revision_date',
-                        name: 'revision_date'
+                        data: 'location_name',
+                        name: 'location_name'
                     },
                     {
-                        data: 'status',
-                        name: 'status'
+                        data: 'unit_name',
+                        name: 'unit_name'
                     },
-                   
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -223,27 +237,27 @@
                     [10, 25, 50, 100]
                 ],
                 buttons: [{
-                        extend: 'collection',
-                        text: '{{ __('common.export') }}',
-                        buttons: [{
-                                extend: 'pdf',
-                                text: '{{ __('common.pdf') }}',
-                                action: function(e, dt, button, config) {
+                    extend: 'collection',
+                    text: '{{ __('common.export') }}',
+                    buttons: [{
+                        extend: 'pdf',
+                        text: '{{ __('common.pdf') }}',
+                        action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#rev_date').val();
-                                    var status = $('#status').val();
+                                    doc_no = $('#document_number').val();
+                                    issue_date = $('#issue_date').val();
+                                    loc = $('#location_id').val();
+                                    unit = $('#unit_id').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/health-instrument/calibration-track-sheet/export/pdf') }}" +
+                                        "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/pdf') }}" +
                                         '?search=' + searchValue +
                                        '&document_number=' + doc_no +
                                         '&issue_date=' + issue_date +
-                                        '&rev_date=' + revision_date +
-                                        '&status=' + status 
+                                        '&location_id=' + loc +
+                                        '&unit_id=' + unit 
 
                                 }
                             },
@@ -253,20 +267,20 @@
                                 action: function(e, dt, button, config) {
                                     
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#rev_date').val();
-                                    var status = $('#status').val();
+                                    doc_no = $('#document_number').val();
+                                    issue_date = $('#issue_date').val();
+                                    loc = $('#location_id').val();
+                                    unit = $('#unit_id').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/health-instrument/calibration-track-sheet/export/excel') }}" +
+                                        "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/excel') }}" +
                                         '?search=' + searchValue +
                                        '&document_number=' + doc_no +
                                         '&issue_date=' + issue_date +
-                                        '&rev_date=' + revision_date +
-                                        '&status=' + status 
+                                        '&location_id=' + loc +
+                                        '&unit_id=' + unit 
  
 
                                 }
@@ -299,157 +313,7 @@
                 }, 150);
             });
 
-            /* Status Change */
-            $(document).on('click', '.statusChange', function() {
-                var id = $(this).data('id');
-                var types = $(this).data('type');
-                if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Health Instrument Calibration') }}';
-                    var text = '{{ __('common.inactive') }}';
-                    var btncolor = '#dc3545'
-
-                } else {
-                    var title = '{{ __('Do You want to Activate Health Instrument Calibration') }}';
-                    var text = '{{ __('common.active') }}';
-                    var btncolor = '#7ddc35'
-                }
-
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
-
-
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('ohc/health-instrument/calibration-track-sheet/status') }}",
-                            type: 'post',
-
-                            data: {
-                                id: id,
-                                types: types
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
-
-            });
-
-
-            /* Delete Record */
-            $(document).on('click', '.recordDelete', function() {
-
-                var id = $(this).data('id');
-                var login_id = $(this).data('login_id');
-
-                var title = '{{ __('Do You want to Delete Company Details') }}';
-                var text = '{{ __('common.delete') }}';
-                var btncolor = '#dc3545'
-
-                Swal.fire({
-                    title: title,
-                    icon: 'warning',
-                    showDenyButton: false,
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
-
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('incident/initial-incident/delete') }}",
-                            type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
-                            },
-                            data: {
-                                id: id,
-                                login_id: login_id
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                if (data.status === 406 && data.responseJSON.msg ===
-                                    'module_exits') {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                    });
-                                } else {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
-
-
-            });
+           
 
         });
     </script>

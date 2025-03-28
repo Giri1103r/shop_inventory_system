@@ -115,7 +115,9 @@ class GembaWalk extends Model
             'inspection_gemba_walk.*',
             'inspection_gemba_walk_checklist.id as checklist_id',
             'inspection_gemba_walk_checklist.*',
-            'inspection_gemba_walk_checklist_files.file_path'
+            'inspection_gemba_walk_checklist_files.file_path',
+            'inspection_gemba_walk.created_by as user_id',
+
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', 'inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
@@ -123,6 +125,13 @@ class GembaWalk extends Model
             ->get();
 
         return $data;
+    }
+
+    public function getUserId($id)
+    {
+        return $this->where('id', $id)->first();
+            
+
     }
 
     public function selectSingnature($id)

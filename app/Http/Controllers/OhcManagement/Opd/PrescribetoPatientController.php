@@ -143,13 +143,13 @@ class PrescribetoPatientController extends Controller
                             if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if (CheckUserPermission('edit')) {
+                            if (CheckUserPermission('edit') && $row->patient_status != 3 && $row->patient_status != 2) {
                             $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             if ($row->patient_status !== 3) {
                                 $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
-                            if ($row->patient_status !== 3) {
+                            if ($row->patient_status != 3 && $row->patient_status != 2) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="cancel" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
 
@@ -829,7 +829,7 @@ class PrescribetoPatientController extends Controller
         $mpdf->WriteHTML($html);
 
         $filename = "Medicine Slip .pdf";
-        return $mpdf->Output($filename, 'I');
+        return $mpdf->Output($filename, 'D');
     }
 
     public function employeename(Request $request)

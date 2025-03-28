@@ -4,9 +4,13 @@ namespace App\Models\Inspection\Ohc;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 
 class HealthInstrumentCalibrationDetails extends Model
 {
+    use  HasFactory;
+
     protected $table = 'inspection_ohc_health_instrument_calibration_track_sheet_details';
     
     protected $primaryKey = 'id';

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid')
+@section('title', 'Weekly First Aid Checklist')
 @section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
 
 
@@ -152,7 +152,7 @@
                                                     <thead class="table-secondary">
                                                         <tr>
                                                             <th style="text-align: center">Sr. No.</th>
-                                                            <th style="text-align: center">Name Of Inspection</th>
+                                                            <th style="text-align: center">Medicine Name</th>
                                                             <th style="text-align: center">Freeze Quantity</th>
                                                             <th style="text-align: center">Available Quantity</th>
                                                             <th style="text-align: center">Expiry Date</th>
@@ -165,13 +165,14 @@
                                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                                 <td class="text-center">
                                                                     {{ getMedicinename($medicines->medicine_id) }} <input
-                                                                        type="hidden" name="id[{{ $medicines->id }}]"
+                                                                        type="hidden"
+                                                                        name="medicine_id[{{ $medicines->id }}]"
                                                                         value="{{ encryptId($medicines->id) }}"></td>
 
                                                                 <td class="text-center">{{ $medicines->freeze_quantity }}
                                                                     <input type="hidden"
                                                                         name="freeze_quantity[{{ $medicines->id }}]"
-                                                                        value="{{ ($medicines->freeze_quantity) }}">
+                                                                        value="{{ $medicines->freeze_quantity }}">
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
@@ -186,7 +187,7 @@
                                                                             name="expired_date[{{ $medicines->id }}]" />
                                                                     </div>
                                                                 </td>
-                                                             
+
                                                                 <td>
                                                                     <div class="form-input">
                                                                         <textarea class="form-control" type="text" style="resize: none" name="remarks[{{ $medicines->id }}]"></textarea>
@@ -218,6 +219,14 @@
                                                         </div>
                                                     @endif
                                                 </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Remark By</label>
+                                                        <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
+
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div class="submit-button m-2" style="text-align: right;">
@@ -230,7 +239,7 @@
                                         </div>
                                     </div>
 
-                                   
+
 
                                 </form>
 
@@ -249,119 +258,166 @@
 
 
 @push('script')
-<script type="text/javascript" nonce="projectcab">
-    $(document).ready(function() {
-
-        $('#resetform').on('click', function(e) {
-            e.preventDefault();
-            location.reload();
-        });
-        flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-        });
-        flatpickr("#date_of_inspection", {
-            dateFormat: "d-m-Y",
-        });
-        flatpickr(".expired_date", {
-            dateFormat: "d-m-Y",
-        });
-
-
-        $('#WeeklyFirstAidAdd').validate({
-            rules: {
-                document_no: {
-                    required: true,
-                },
-                next_due: {
-                    required: true,
-                },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                document_no: {
-                    required: "Inspection Date is required",
-                },
-                next_due: {
-                    required: "Next Due Date is required",
-                },
-                signature_image: {
-                    required: "Signature is required",
-                }
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            },
-            submitHandler: function(form) {
-                form.submit();
-
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-            }
-        });
-
-        $('#WeeklyFirstAidAdd').on('change input',
-            'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
-            function() {
-                $(this).valid();
-            });
-
+    <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            $('input[name^="available_quantity"]').each(function() {
-                $(this).rules('add', {
-                    required: true,
-                    number: true,
-                    min: 1,
-                    messages: {
-                        required: "Available Quantity is required",
-                        number: "Please enter a valid number",
-                        min: "Quantity must be at least 1"
-                    }
-                });
+
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#date_of_inspection", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr(".expired_date", {
+                dateFormat: "d-m-Y",
             });
 
-            $('input[name^="expired_date"]').each(function() {
-                $(this).rules('add', {
-                    required: true,
 
-                    messages: {
-                        required: "Expiry Date is required",
-
+            $('#WeeklyFirstAidAdd').validate({
+                rules: {
+                    document_no: {
+                        required: true,
+                    },
+                    issue_date: {
+                        required: true,
+                    },
+                    review_date: {
+                        required: true,
+                    },
+                    date_of_inspection: {
+                        required: true,
+                    },
+                    first_aid_box_no: {
+                        required: true,
+                    },
+                    shift: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    first_aider: {
+                        required: true,
+                    },
+                    next_due: {
+                        required: true,
+                        date: true
+                    },
+                    signature_image: {
+                        required: true,
                     }
-                });
+                },
+                messages: {
+                    document_no: {
+                        required: "Document Number is required",
+                    },
+                    issue_date: {
+                        required: "Issued Date is required",
+                    },
+                    review_date: {
+                        required: "Review Date is required",
+                    },
+                    date_of_inspection: {
+                        required: "Date of Inspection is required",
+                    },
+                    first_aid_box_no: {
+                        required: "First Aid Box Number is required",
+                    },
+                    shift: {
+                        required: "Shift is required",
+                    },
+                    location_id: {
+                        required: "Location is required",
+                    },
+                    unit_id: {
+                        required: "Unit is required",
+                    },
+                    first_aider: {
+                        required: "First Aider Name is required",
+                    },
+                    next_due: {
+                        required: "Next Due Date is required",
+                        date: "Please enter a valid date"
+                    },
+                    signature_image: {
+                        required: "Signature is required",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                }
             });
 
-            $('select[name^="emp_id"]').each(function() {
-                $(this).rules('add', {
-                    required: true,
-                    messages: {
-                        required: "Employee is required",
-                    }
-                });
-            });
 
-            $('textarea[name^="remarks"]').each(function() {
-                $(this).rules('add', {
-                    required: 500,
-                    messages: {
-                        required: "Remarks is required"
-                    }
+            $('#WeeklyFirstAidAdd').on('change input',
+                'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
+                function() {
+                    $(this).valid();
+                });
+
+            $(document).ready(function() {
+                $('input[name^="available_quantity"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        number: true,
+                        min: 1,
+                        messages: {
+                            required: "Available Quantity is required",
+                            number: "Please enter a valid number",
+                            min: "Quantity must be at least 1"
+                        }
+                    });
+                });
+
+                $('input[name^="expired_date"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+
+                        messages: {
+                            required: "Expiry Date is required",
+
+                        }
+                    });
+                });
+
+                $('select[name^="emp_id"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        messages: {
+                            required: "Employee is required",
+                        }
+                    });
+                });
+
+                $('textarea[name^="remarks"]').each(function() {
+                    $(this).rules('add', {
+                        required: 500,
+                        messages: {
+                            required: "Remarks is required"
+                        }
+                    });
                 });
             });
         });
-    });
-</script>
+    </script>
 @endpush
-
-
-

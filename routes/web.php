@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Artisan;
 
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 
-use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController,BlockedController};
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
@@ -63,6 +63,7 @@ use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
+use App\Http\Controllers\Ohcmanagement\Master\HospitalDetailsController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
@@ -170,6 +171,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
         Route::middleware(['islogin', 'language'])->group(function () {
+
             Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
             Route::get('home', [AdminController::class, 'index'])->name('home');
             Route::get('profile', [AdminController::class, 'profileView']);
@@ -225,9 +227,15 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('administration/permission/get', [UserPermissionController::class, 'getUserPermission']);
             Route::post('administration/permission/update', [UserPermissionController::class, 'updateUserPermission']);
 
+
+            Route::get('blocked', [BlockedController::class, 'blocked']);
+            Route::post('blocked-save', [BlockedController::class, 'blockedSave']);
+
             /**
              * File Upload Error Log
              */
+
+
 
             Route::get('uploadlog/list', [UploadLogController::class, 'index']);
             Route::post('uploadlog/list', [UploadLogController::class, 'index']);
@@ -825,6 +833,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/approval/submit', [MedicineController::class, 'approvalsubmit']);
             });
 
+            Route::group(['prefix' => 'ohc/hospital-details'], function () {
+                Route::get('/list', [HospitalDetailsController::class, 'index']);
+                Route::post('/list', [HospitalDetailsController::class, 'index']);
+                Route::get('/add', [HospitalDetailsController::class, 'add']);
+                Route::post('/add/submit', [HospitalDetailsController::class, 'store']);
+                Route::get('/edit/{id}', [HospitalDetailsController::class, 'edit']);
+                Route::post('/edit/submit', [HospitalDetailsController::class, 'update']);
+                Route::get('/view/{id}', [HospitalDetailsController::class, 'view']);
+                Route::post('/delete', [HospitalDetailsController::class, 'delete']);
+                Route::get('/export/excel', [HospitalDetailsController::class, 'exportExcel']);
+                Route::get('/export/pdf', [HospitalDetailsController::class, 'exportPdf']);
+                Route::get('/sampledownload', [HospitalDetailsController::class, 'DownloadSample']);
+                Route::get('/import', [HospitalDetailsController::class, 'import']);
+                Route::post('/import/submit', [HospitalDetailsController::class, 'importSubmit']);
+                Route::post('/status', [HospitalDetailsController::class, 'statusChange']);
+                Route::post('/unique', [HospitalDetailsController::class, 'Uniquecheck']);
+                Route::post('/hsn-unique', [HospitalDetailsController::class, 'hsnNumber']);
+                Route::get('/approval/view/{id}', [HospitalDetailsController::class, 'approval']);
+                Route::post('/approval/submit', [HospitalDetailsController::class, 'approvalsubmit']);
+            });
+
             Route::group(['prefix' => 'ohc/vendor'], function () {
                 Route::get('/list', [VendorController::class, 'index']);
                 Route::post('/list', [VendorController::class, 'index']);
@@ -1125,7 +1154,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::post('/delete/{row_id}', [MedicineFirstAidController::class, 'delete']);
                 Route::get('/editquantity/{quantity_id}', [MedicineFirstAidController::class, 'editquantity']);
-
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });
 
@@ -1219,6 +1247,10 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'incident/initial-incident'], function () {
                 Route::get('/list', [InitialIncidentController::class, 'index']);
                 Route::post('/list', [InitialIncidentController::class, 'index']);
+                Route::get('/investigationList', [InitialIncidentController::class, 'investigationList']);
+                Route::post('/investigationList', [InitialIncidentController::class, 'investigationList']);
+                Route::get('/calist', [InitialIncidentController::class, 'calist']);
+                Route::post('/calist', [InitialIncidentController::class, 'calist']);
                 Route::get('/add', [InitialIncidentController::class, 'add']);
                 Route::post('/add/submit', [InitialIncidentController::class, 'store']);
                 Route::get('/edit/{id}', [InitialIncidentController::class, 'edit']);
@@ -1257,6 +1289,10 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'accidentReport'], function () {
                 Route::get('/list', [AccidentReportController::class, 'index']);
                 Route::post('/list', [AccidentReportController::class, 'index']);
+                Route::get('/investigationList', [AccidentReportController::class, 'investigationList']);
+                Route::post('/investigationList', [AccidentReportController::class, 'investigationList']);
+                Route::get('/calist', [AccidentReportController::class, 'calist']);
+                Route::post('/calist', [AccidentReportController::class, 'calist']);
                 Route::get('/add', [AccidentReportController::class, 'add']);
                 Route::post('/add/submit', [AccidentReportController::class, 'store']);
                 Route::get('/edit/{id}', [AccidentReportController::class, 'edit']);
@@ -1301,6 +1337,10 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'incident/fire-incident'], function () {
                 Route::get('/list', [InitialFireIncidentController::class, 'index']);
                 Route::post('/list', [InitialFireIncidentController::class, 'index']);
+                Route::get('/investigationList', [InitialFireIncidentController::class, 'investigationList']);
+                Route::post('/investigationList', [InitialFireIncidentController::class, 'investigationList']);
+                Route::get('/calist', [InitialFireIncidentController::class, 'calist']);
+                Route::post('/calist', [InitialFireIncidentController::class, 'calist']);
                 Route::get('/add', [InitialFireIncidentController::class, 'add']);
                 Route::post('/add/submit', [InitialFireIncidentController::class, 'store']);
                 Route::get('/edit/{id}', [InitialFireIncidentController::class, 'edit']);
@@ -1467,6 +1507,9 @@ Route::middleware(['securityheader'])->group(function () {
 
                 });
             });
+
+
+
         });
     });
 });

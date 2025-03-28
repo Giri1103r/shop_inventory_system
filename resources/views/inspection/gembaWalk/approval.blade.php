@@ -69,25 +69,15 @@
                                             </div>
                                         </div>
 
-                                        @php
-                                            $approvedSign = $gembaWalk_approved_singnature->first();
-                                        @endphp
-                                        @if ($approvedSign && !empty($approvedSign->signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Signature</label>
-                                                    <div class="view_data">
-                                                        <a href="{{ asset($approvedSign->signature) }}" target="_blank">
-                                                            <img src="{{ asset($approvedSign->signature) }}"
-                                                                alt="Signature Image"
-                                                                style="max-width: 100px; max-height: 100px;">
-                                                        </a>
-                                                    </div>
-                                                </div>
+                                        <div class="m-2">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
+                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px">
+                                               
                                             </div>
-                                        @else
-                                            <small class="text-muted">No signature uploaded yet.</small>
-                                        @endif
+                                        </div>
 
 
 
@@ -644,7 +634,9 @@
                                                                 @if (isset(Auth::user()->signature_upload))
                                                                     <label class="form-label"
                                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                                    {{-- <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
+                                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px"> --}}
+                                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                                 @else
                                                                     <div class="form-input col-md-12 mb-2">
@@ -657,6 +649,8 @@
                                                                     </div>
                                                                 @endif
                                                             </div>
+
+                                                            
 
 
                                                             <div class="col-12 text-end mt-3">

@@ -47,6 +47,11 @@ class UserMedicineIssuance extends Model
                 $query->orWhere('unit_id', 'LIKE', '%' . $search . '%');
             });
         }
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+        } else {
+            $query->where('ohc_management_user_medicine_issuance.created_by', Auth::id());
+        }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('ohc_management_user_medicine_issuance.status', decryptId($request->status));
@@ -202,7 +207,7 @@ class UserMedicineIssuance extends Model
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
-       
+
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_user_medicine_issuance.unit_id', decryptId($request->unit_id));

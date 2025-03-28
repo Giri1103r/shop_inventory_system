@@ -30,7 +30,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="weeklyambulance"
+                                    <form method="POST" id="monthlyfirstaidchecklist"
                                         action="{{ admin_url('ohc/first-aid-box/monthly-audit/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -149,7 +149,14 @@
                                                 <h4 class="text-white">Monthly First Aid Box Audit Checklist</h4>
                                             </div>
                                         </div>
+                                        <div
+                                            class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
+                                            <button class="btn btn-primary add-row me-3" type="button" id="add-row"
+                                                style="width: 84px;">
+                                                Add
+                                            </button>
 
+                                        </div>
                                         <div class="table-responsive">
                                             <div class="col-md-12">
                                                 <table class="table table-bordered ">
@@ -161,10 +168,11 @@
                                                             <th>First Aid Box Number</th>
                                                             <th>Does the first-aid register is being properly maintened as &
                                                                 when require.</th>
-                                                            <th>Does the first-aid register is being properly maintened as &
-                                                                when require.</th>
-                                                            <th>Does the first-aid register is being properly maintened as &
-                                                                when require.</th>
+                                                            <th>Does the first-aid box is bieng inspect as per periodicity.
+                                                            </th>
+                                                            <th>Does the First- aid box inspection Checklist is being filled
+                                                                as per periodicity.
+                                                            </th>
                                                             <th>Does the First-aid box is being maintained as per the freeze
                                                                 quantity.</th>
                                                             <th>Does the medical requisition slip record is being
@@ -180,7 +188,7 @@
                                                         <tr class="medicine-row">
                                                             <td>
                                                                 <div class="form-group">
-                                                                    <select name="unit_id[0]"
+                                                                    <select name="unit_id[]"
                                                                         class="form-control single-select unit_id"
                                                                         style="width: 100%">
                                                                         <option value="">Select the Unit Name
@@ -194,7 +202,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group">
-                                                                    <select name="department_id[0]"
+                                                                    <select name="department_id[]"
                                                                         class="form-control single-select department_id"
                                                                         style="width: 100%">
                                                                         <option value="">Select the Department Name
@@ -203,23 +211,23 @@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="first_aid_box[0]"
+                                                                <input type="text" name="first_aid_box[]"
                                                                     class="form-control first_aid_box" readonly>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group">
                                                                     <input type="radio"
-                                                                        name="first_aid_register_maintained[0]"
-                                                                        id="first_aid_register_maintained_yes[0]"
+                                                                        name="first_aid_register_maintained[]"
+                                                                        id="first_aid_register_maintained_yes[]"
                                                                         value="{{ encryptId(1) }}">
-                                                                    <label for="first_aid_register_maintained_yes[0]"
+                                                                    <label for="first_aid_register_maintained_yes[]"
                                                                         class="fw-bold">Yes</label>
                                                                     <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_register_maintained[0]"
-                                                                        id="first_aid_register_maintained_no[0]"
+                                                                        name="first_aid_register_maintained[]"
+                                                                        id="first_aid_register_maintained_no[]"
                                                                         value="{{ encryptId(0) }}">
-                                                                    <label for="first_aid_register_maintained_no[0]"
+                                                                    <label for="first_aid_register_maintained_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -227,17 +235,17 @@
                                                             <td>
                                                                 <div class="form-group">
                                                                     <input type="radio"
-                                                                        name="first_aid_box_inspect_periodicity[0]"
-                                                                        id="first_aid_box_inspect_periodicity_yes[0]"
+                                                                        name="first_aid_inspect_periodicity[]"
+                                                                        id="first_aid_inspect_periodicity_yes[]"
                                                                         value="{{ encryptId(1) }}">
-                                                                    <label for="first_aid_box_inspect_periodicity_yes[0]"
+                                                                    <label for="first_aid_inspect_periodicity_yes[]"
                                                                         class="fw-bold">Yes</label>
                                                                     <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_box_inspect_periodicity[0]"
-                                                                        id="first_aid_box_inspect_periodicity_no[0]"
+                                                                        name="first_aid_inspect_periodicity[]"
+                                                                        id="first_aid_inspect_periodicity_no[]"
                                                                         value="{{ encryptId(0) }}">
-                                                                    <label for="first_aid_box_inspect_periodicity_no[0]"
+                                                                    <label for="first_aid_inspect_periodicity_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -246,16 +254,16 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="first_aid_box_checklist_periodicity[0]"class="fw-bold"
-                                                                        id="first_aid_box_checklist_periodicity_yes[0]"
+                                                                        name="first_aid_checklist_periodicity[]"class="fw-bold"
+                                                                        id="first_aid_checklist_periodicity_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="first_aid_box_checklist_periodicity_yes[0]"
+                                                                        for="first_aid_checklist_periodicity_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_box_checklist_periodicity[0]"class="fw-bold"
-                                                                        id="first_aid_box_checklist_periodicity_no[0]"
+                                                                        name="first_aid_checklist_periodicity[]"class="fw-bold"
+                                                                        id="first_aid_checklist_periodicity_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="first_aid_box_checklist_periodicity_no[0]"
+                                                                        for="first_aid_checklist_periodicity_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -263,16 +271,16 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="first_aid_box_freeze_quantity[0]"class="fw-bold"
-                                                                        id="first_aid_box_freeze_quantity_yes[0]"
+                                                                        name="first_aid_freeze_quantity[]"class="fw-bold"
+                                                                        id="first_aid_freeze_quantity_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="first_aid_box_freeze_quantity_yes[0]"
+                                                                        for="first_aid_freeze_quantity_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_box_freeze_quantity[0]"class="fw-bold"
-                                                                        id="first_aid_box_freeze_quantity_no[0]"
+                                                                        name="first_aid_freeze_quantity[]"class="fw-bold"
+                                                                        id="first_aid_freeze_quantity_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="first_aid_box_freeze_quantity_no[0]"
+                                                                        for="first_aid_freeze_quantity_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -280,16 +288,16 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="medicine_requisition_slip_record[0]"class="fw-bold"
-                                                                        id="medicine_requisition_slip_record_yes[0]"
+                                                                        name="medicine_requisition_slip_record[]"class="fw-bold"
+                                                                        id="medicine_requisition_slip_record_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="medicine_requisition_slip_record_yes[0]"
+                                                                        for="medicine_requisition_slip_record_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="medicine_requisition_slip_record[0]"class="fw-bold"
-                                                                        id="medicine_requisition_slip_record_no[0]"
+                                                                        name="medicine_requisition_slip_record[]"class="fw-bold"
+                                                                        id="medicine_requisition_slip_record_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="medicine_requisition_slip_record_no[0]"
+                                                                        for="medicine_requisition_slip_record_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -297,16 +305,16 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="first_aid_box_clean[0]"class="fw-bold"
-                                                                        id="first_aid_box_clean_yes[0]"
+                                                                        name="first_aid_clean[]"class="fw-bold"
+                                                                        id="first_aid_clean_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="first_aid_box_clean_yes[0]"
+                                                                        for="first_aid_clean_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_box_clean[0]"class="fw-bold"
-                                                                        id="first_aid_box_clean_no[0]"
+                                                                        name="first_aid_clean[]"class="fw-bold"
+                                                                        id="first_aid_clean_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="first_aid_box_clean_no[0]"
+                                                                        for="first_aid_clean_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -314,16 +322,16 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="first_aid_box_sticker[0]"class="fw-bold"
-                                                                        id="first_aid_box_sticker_yes[0]"
+                                                                        name="first_aid_sticker[]"class="fw-bold"
+                                                                        id="first_aid_sticker_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="first_aid_box_sticker_yes[0]"
+                                                                        for="first_aid_sticker_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_box_sticker[0]"class="fw-bold"
-                                                                        id="first_aid_box_sticker_no[0]"
+                                                                        name="first_aid_sticker[]"class="fw-bold"
+                                                                        id="first_aid_sticker_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="first_aid_box_sticker_no[0]"
+                                                                        for="first_aid_sticker_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
@@ -331,25 +339,22 @@
                                                                 <div class="form-group">
 
                                                                     <input type="radio"
-                                                                        name="first_aid_material_index[0]" class="fw-bold"
-                                                                        id="first_aid_material_index_yes[0]"
+                                                                        name="first_aid_material_index[]" class="fw-bold"
+                                                                        id="first_aid_material_index_yes[]"
                                                                         value="{{ encryptId(1) }}"> <label
-                                                                        for="first_aid_material_index_yes[0]"
+                                                                        for="first_aid_material_index_yes[]"
                                                                         class="fw-bold">Yes</label> <br>
                                                                     <input type="radio"
-                                                                        name="first_aid_material_index[0]"class="fw-bold"
-                                                                        id="first_aid_material_index_no[0]"
+                                                                        name="first_aid_material_index[]"class="fw-bold"
+                                                                        id="first_aid_material_index_no[]"
                                                                         value="{{ encryptId(0) }}"> <label
-                                                                        for="first_aid_material_index_no[0]"
+                                                                        for="first_aid_material_index_no[]"
                                                                         class="fw-bold">No</label>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="row gap-2">
-                                                                    <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row"
-                                                                        style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-plus"></i>
-                                                                    </div>
+
                                                                     <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>
@@ -431,7 +436,7 @@
                             departmentDropdown.append('<option value="' + value.id + '">' +
                                 value.name + '</option>');
                         });
-                        departmentDropdown.trigger('change');
+                        departmentDropdown.trigger('change'); // Ensure Select2 updates properly
                     },
                     error: function(xhr) {
                         Swal.fire({
@@ -448,85 +453,483 @@
                 departmentDropdown.trigger('change');
             }
         });
-        // first Aid box number
 
-//         $(document).on('change', '.unit_id','.department_id' function() {
-//             var unitId = $(this).val();
-//             var departmentId = $(this).val();
-//             var row = $(this).closest('tr');
-//             var firstaidBox = row.find('.first_aid_box');
+        // First Aid Box Number Fetching
+        $(document).on('change', '.unit_id, .department_id', function() {
+            var row = $(this).closest('tr');
+            var unitId = row.find('.unit_id').val();
+            var departmentId = row.find('.department_id').val();
+            var firstAidBox = row.find('input[name^="first_aid_box"]');
 
-//             if (unitId) {
-//                 $.ajax({
-//                     url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-//                     type: 'GET',
-//                     dataType: 'json',
-//                     success: function(data) {
-// $('.first_aid_box').append()
-//                     },
-//                     error: function(xhr) {
-//                         Swal.fire({
-//                             icon: "warning",
-//                             title: "Warning!",
-//                             text: "Error in fetching the First Aid Box Number.",
-//                             confirmButtonColor: "#d33",
-//                             confirmButtonText: "OK"
-//                         });
-//                     }
-//                 });
-//             } else {
-//                 departmentDropdown.empty().append('<option value="">Select Department</option>');
-//                 departmentDropdown.trigger('change');
-//             }
-//         });
+            if (unitId && departmentId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/first-aid-record/first-aid-location/details') }}",
+                    type: 'GET',
+                    data: {
+                        unit_id: unitId,
+                        department_id: departmentId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        firstAidBox.val(response.first_aid_box_no);
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching first aid details. Please try again.');
+                    }
+                });
+            }
+        });
+
+        $(document).ready(function() {
+            let rowCount = 1; // Initialize row count
+
+            $(".add-row").click(function() {
+                var newRow = `
+        <tr class="medicine-row">
+            <td>
+                <div class="form-group">
+                    <select name="unit_id[${rowCount}]" class="form-control single-select unit_id" style="width: 100%">
+                        <option value="">Select the Unit Name</option>
+                        @foreach ($unit as $list)
+                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="form-group">
+                    <select name="department_id[${rowCount}]" class="form-control single-select department_id" style="width: 100%">
+                        <option value="">Select the Department Name</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <input type="text" name="first_aid_box[${rowCount}]" class="form-control first_aid_box" readonly>
+            </td>
+            </td>
+                                                            <td>
+                                                                <div class="form-group">
+                                                                    <input type="radio"
+                                                                        name="first_aid_register_maintained[${rowCount}]"
+                                                                        id="first_aid_register_maintained_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}">
+                                                                    <label for="first_aid_register_maintained_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label>
+                                                                    <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_register_maintained[${rowCount}]"
+                                                                        id="first_aid_register_maintained_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}">
+                                                                    <label for="first_aid_register_maintained_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                     <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group">
+                                                                    <input type="radio"
+                                                                        name="first_aid_inspect_periodicity[${rowCount}]"
+                                                                        id="first_aid_inspect_periodicity_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}">
+                                                                    <label for="first_aid_inspect_periodicity_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label>
+                                                                    <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_inspect_periodicity[${rowCount}]"
+                                                                        id="first_aid_inspect_periodicity_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}">
+                                                                    <label for="first_aid_inspect_periodicity_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                         <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="first_aid_checklist_periodicity[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_checklist_periodicity_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="first_aid_checklist_periodicity_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_checklist_periodicity[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_checklist_periodicity_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="first_aid_checklist_periodicity_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                         <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="first_aid_freeze_quantity[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_freeze_quantity_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="first_aid_freeze_quantity_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_freeze_quantity[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_freeze_quantity_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="first_aid_freeze_quantity_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                        <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="medicine_requisition_slip_record[${rowCount}]"class="fw-bold"
+                                                                        id="medicine_requisition_slip_record_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="medicine_requisition_slip_record_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="medicine_requisition_slip_record[${rowCount}]"class="fw-bold"
+                                                                        id="medicine_requisition_slip_record_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="medicine_requisition_slip_record_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                        <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="first_aid_clean[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_clean_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="first_aid_clean_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_clean[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_clean_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="first_aid_clean_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                        <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="first_aid_sticker[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_sticker_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="first_aid_sticker_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_sticker[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_sticker_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="first_aid_sticker_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                       <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group">
+
+                                                                    <input type="radio"
+                                                                        name="first_aid_material_index[${rowCount}]" class="fw-bold"
+                                                                        id="first_aid_material_index_yes[${rowCount}]"
+                                                                        value="{{ encryptId(1) }}"> <label
+                                                                        for="first_aid_material_index_yes[${rowCount}]"
+                                                                        class="fw-bold">Yes</label> <br>
+                                                                    <input type="radio"
+                                                                        name="first_aid_material_index[${rowCount}]"class="fw-bold"
+                                                                        id="first_aid_material_index_no[${rowCount}]"
+                                                                        value="{{ encryptId(0) }}"> <label
+                                                                        for="first_aid_material_index_no[${rowCount}]"
+                                                                        class="fw-bold">No</label>
+                                                                         <br>
+                                                                      <span class="error-message text-danger"></span>
+                                                                </div>
+                                                            </td>
+                                                              <td>
+                                                                        <div class="row gap-2">
+
+                                                                            <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                                style="width: 30px; height: 30px;">
+                                                                                <i class="fa-solid fa-trash"></i>
+                                                                            </div>
+                                                                        </div>
+                                                            </td>
+                                                    </tr>`;
 
 
-        // add more details
+                $("#medicine-tbody").append(newRow);
 
-        $(document).on("click", ".add-row", function() {
-            var rowCount = $("#medicine-tbody tr").length;
-            var newRow = $(".medicine-row:first").clone();
+                rowCount++;
+                $('.single-select').select2({
+                    placeholder: "Select an option",
+                    width: '100%'
+                });
 
-            // Reset all inputs and selects in the cloned row
-            newRow.find("select, input").each(function() {
-                var name = $(this).attr("name");
-                if (name) {
-                    name = name.replace(/\[\d+\]/, "[" + rowCount + "]");
-                    $(this).attr("name", name);
-                }
 
-                var id = $(this).attr("id");
-                if (id) {
-                    var newId = id.replace(/\[\d+\]/, "[" + rowCount + "]");
-                    $(this).attr("id", newId);
-                }
 
-                var label = newRow.find("label[for='" + id + "']");
-                if (label.length) {
-                    label.attr("for", id.replace(/\[\d+\]/, "[" + rowCount + "]"));
-                }
+                $(`select[name="unit_id[\${rowCount}]"]`).rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Unit Name is required'
+                    }
+                });
 
-                if ($(this).is("input[type='radio'], input[type='checkbox']")) {
-                    $(this).prop("checked", false);
-                }
+                $(`select[name="department_id[\${rowCount}]"]`).rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Department Name is required'
+                    }
+                });
 
-                if ($(this).is("select")) {
-                    $(this).val(null).trigger("change");
-                }
+                $(`input[name="first_aid_box[\${rowCount}]"]`).rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'First Aid Box Number is required'
+                    }
+                });
+
+                $("#monthlyfirstaidchecklist").validate({
+                    rules: {
+                        [`first_aid_register_maintained[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_inspect_periodicity[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_checklist_periodicity[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_freeze_quantity[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`medicine_requisition_slip_record[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_clean[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_sticker[\${rowCount}]`]: {
+                            required: true
+                        },
+                        [`first_aid_material_index[\${rowCount}]`]: {
+                            required: true
+                        },
+                    },
+                    messages: {
+                        [`first_aid_register_maintained[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_inspect_periodicity[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_checklist_periodicity[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_freeze_quantity[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`medicine_requisition_slip_record[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_clean[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_sticker[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                        [`first_aid_material_index[\${rowCount}]`]: {
+                            required: "Please select an option"
+                        },
+                    }
+                });
+
             });
 
+        });
 
-            newRow.find(".single-select").each(function() {
 
-                $(this).removeClass("select2-hidden-accessible").removeAttr("data-select2-id").show();
-                $(this).next(".select2-container").remove();
+
+
+
+        $(function() {
+            $.validator.addMethod(
+                "regex",
+                function(value, element, regex) {
+                    return this.optional(element) || new RegExp(regex).test(value);
+                },
+                "Invalid format."
+            );
+
+            $('#monthlyfirstaidchecklist').validate({
+                rules: {
+                    shift: {
+                        required: true
+                    },
+                    frequency: {
+                        required: true
+                    },
+                    issue_date: {
+                        required: true
+                    },
+                    document_no: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30
+                    },
+                    review_date: {
+                        required: true
+                    },
+                    date: {
+                        required: true
+                    },
+                    signature_image: {
+                        required: true,
+                        extension: "png|jpeg|jpg"
+                    },
+
+                    "unit_id[]": {
+                        required: true
+                    },
+                    "department_id[]": {
+                        required: true
+                    },
+                    "first_aid_box[]": {
+                        required: true
+                    },
+                    "first_aid_register_maintained[]": {
+                        required: true
+                    },
+                    "first_aid_inspect_periodicity[]": {
+                        required: true
+                    },
+                    "first_aid_freeze_quantity[]": {
+                        required: true
+                    },
+                    "first_aid_checklist_periodicity[]": {
+                        required: true
+                    },
+                    "first_aid_material_index[]": {
+                        required: true
+                    },
+                    "first_aid_sticker[]": {
+                        required: true
+                    },
+                    "first_aid_clean[]": {
+                        required: true
+                    },
+                    "medicine_requisition_slip_record[]": {
+                        required: true
+                    },
+                },
+
+                messages: {
+                    shift: {
+                        required: "Please select the Shift name."
+                    },
+                    frequency: {
+                        required: "Please select the Frequency Name."
+                    },
+                    issue_date: {
+                        required: "Please select the issue date."
+                    },
+                    date: {
+                        required: "Please select the date."
+                    },
+                    document_no: {
+                        required: "Document Number is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 30",
+                    },
+                    review_date: {
+                        required: "Please select the review date."
+                    },
+                    signature_image: {
+                        required: "Please upload a signature.",
+                        extension: "Only PNG, JPEG, and JPG formats are allowed.",
+                    },
+                    "unit_id[]": {
+                        required: "Please select the Unit Name."
+                    },
+                    "department_id[]": {
+                        required: "Please select the Department Name."
+                    },
+                    "first_aid_box[]": {
+                        required: "Please enter First Aid Box details."
+                    },
+                    "first_aid_register_maintained[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_inspect_periodicity[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_freeze_quantity[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_checklist_periodicity[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_material_index[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_sticker[]": {
+                        required: "Please select an option."
+                    },
+                    "first_aid_clean[]": {
+                        required: "Please select an option."
+                    },
+                    "medicine_requisition_slip_record[]": {
+                        required: "Please select an option."
+                    },
+                },
+
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+
+                    if (element.hasClass("single-select") || element.hasClass("form-control")) {
+                        element.closest('.form-group').append(error);
+                    } else if (element.is(":file")) {
+                        element.closest('.form-group').append(error);
+                    } else if (element.is(":radio")) {
+                        element.closest('.form-group').append(error);
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
+                },
+
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log("Form has " + errors + " invalid fields.");
+                },
             });
-
-
-            $("#medicine-tbody").append(newRow);
-
-
-            newRow.find(".single-select").select2();
         });
 
 

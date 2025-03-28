@@ -40,16 +40,32 @@
                                             <input type="text" name="rev_date" id="rev_date" class="form-control">
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active
-                                                </option>
-                                                <option value="{{ encryptId('0') }}">In-Active</option>
-
-                                            </select>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($shift as $list)
+                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Frequency</label>
+                                                <select name="frequency" id="frequency" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($frequency as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->frequency_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -74,7 +90,8 @@
                                         <th>Doc.NO</th>
                                         <th>Issue Date</th>
                                         <th>Rev.Date</th>
-                                        <th>{{ __('common.status') }}</th>
+                                        <th>Shift</th>
+                                        <th>Frequency</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -136,7 +153,8 @@
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.shift = $('#shift').val();
+                            d.frequency = $('#frequency').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -164,8 +182,12 @@
                             name: 'revision_date'
                         },
                         {
-                            data: 'status',
-                            name: 'status'
+                            data: 'shift',
+                            name: 'shift'
+                        },
+                        {
+                            data: 'frequency',
+                            name: 'frequency'
                         },
                         {
                             data: 'created_date',
@@ -203,7 +225,8 @@
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        shift = $('#shift').val();
+                                        frequency = $('#frequency').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -213,7 +236,8 @@
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&shift=' + shift +
+                                            '&frequency=' + frequency
                                     }
                                 },
                                 {
@@ -233,7 +257,8 @@
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&shift=' + shift +
+                                            '&frequency=' + frequency
                                     }
                                 },
                             ]
@@ -339,7 +364,7 @@
 
 
                 /* Delete Record */
-               
+
 
             });
         </script>

@@ -147,4 +147,52 @@ return [
     'expiry_date' => 'Expiry Date',
     'inspected_by' => 'Inspected By',
 
+    // Fire Extinguisher
+    'fire_point_no' => 'Fire Point No.',
+    'type' => 'Type',
+    'capacity' => 'Capacity',
+    'cylinder_pressure' => 'Cylinder Pressure',
+    'discharge_tube' => 'Discharge Tube',
+    'safety_pin' => 'Safety Pin',
+    'approach' => 'Approach',
+    'ABC' => 'ABC Type Fire Extinguishers',
+    'CO2' => 'CO2 Type Fire Extinguishers',
+    'FOAM' => 'Foam Type Fire Extinguihsers',
+    'WATER' => 'Water Tyoe Fire Extinguishers',
+    'functional' => 'Functional',
+    'non_functional' => 'Non Functional',
+    'present' => 'Present',
+    'missing' => 'Missing',
+    'ohc_hygiene_cleaning_checklist' => 'Is Floor Tiles, wall, Dust Bin, Washbasin, Bed, Bedsheet, Computer Table, window, window cover, Fire Extinguishers, Fan, AC, Body Weigh Measurement, Almirah, Wall Boards, Stickers & others all useful equipment has been cleaned properly?',
+
+    // Isolation Valve Inspection
+    'location_isv' => 'Location Of ISV',
+    'size_isv' => 'Size Of ISV',
+    'wheel_operation' => 'Wheel Operation',
+    'leakage' => 'Leakage',
+    'valve_type' => 'Valve Type',
+    'open' => 'Open State Status',
+    'close' => 'Close State Status',
+    'isv_status'=> 'Current Status Of ISV',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'GATE' => 'Gate Valve',
+    'BALL' => 'Ball Valve',
+    'BUTTERFLY' => 'Butterfly Valve',
+
+    // Fire Alarm
+    'glass' => 'Condition Of Glass Component',
+    'hammer' => 'Status Of Hammer',
+    'mannual_call_point' => 'Mannual Call Point',
+
+    // Sprinklar System Inspection
+    'water_leakage' => 'Water Leakages In Pipes',
+    'painting' => 'Painting',
+    'QBD' => 'QBD Condition',
+    'condition_of_flow_meter' => 'Condition Of Flow Meter',
+    'main_isolation' => 'Main Isolation Valve Condition',
+    'drain_condition' => 'Drain Valve Condition',
+    'ok' => 'Ok',
+    'not_ok' => 'Not Ok',
+ 
 ];

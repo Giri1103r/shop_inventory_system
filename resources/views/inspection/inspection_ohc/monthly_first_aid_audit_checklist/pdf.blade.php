@@ -35,24 +35,18 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->issue_date) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->next_due) }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->date_of_inspection) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getShift($value->shift) }}
                         </td>
+                      
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($value->location) }}
+                            {{ getFrequency($value->frequency) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getInspectionStatus($value->approve_status) }}
-                        </td>
+
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

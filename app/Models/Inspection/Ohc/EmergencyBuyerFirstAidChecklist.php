@@ -1,0 +1,175 @@
+<?php
+
+namespace App\Models\Inspection\Ohc;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
+
+class EmergencyBuyerFirstAidChecklist extends Model
+{
+    use  HasFactory;
+
+    protected $table = 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'date_of_inspection',
+        'location_first_aid_bag',
+        'shift_id',
+        'due_date',
+        'unit_id',
+        'frequency_id',
+        'inspection_data',
+        'remark_by',
+        'created_by',
+        'updated_by',
+        'status',
+        'trash',
+    ];
+    
+
+    protected $attributes = [
+        'status' => 1,
+        'trash' => 'NO'
+    ];
+
+    public function list()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.*', 'inspection_shift_option.shift', 'masters_unit.unit_name')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.shift_id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.unit_id');
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', 'LIKE', '%' . DBdateformat($search) . '%')
+                    ->orWhere('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.location_first_aid_bag', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+        if ($request->has('date_of_inspection') && $request->date_of_inspection) { 
+            $formattedDate = DBdateformat($request->date_of_inspection);
+            $query = $query->whereDate('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('location_first_aid_bag') && $request->location_first_aid_bag) {
+            $query = $query->where('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.location_first_aid_bag', 'LIKE', '%' . $request->location_first_aid_bag . '%');
+        }
+
+        if ($request->has('shift_id') && $request->shift_id) {
+            $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
+        }
+
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+        }
+
+
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+
+        $data = $query->get();
+
+        $datas = array(
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        );
+        return $datas;
+    }
+
+    public function store()
+    {
+        $request = request();
+        // dd($request);   
+        $id = $request->medicine_id;
+        foreach ($id as $index => $value) {
+            $id = decryptId($value);
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'freeze_quantity' => $request->freeze_quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'remarks' => $request->remarks[$index],
+
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+        $data = [
+            'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
+            'location_first_aid_bag' => $request->location_first_aid_bag,
+            'shift_id' => decryptId($request->shift),
+            'due_date' => DBdateformat($request->next_due_date),
+            'unit_id' => decryptId($request->unit_id),
+            'frequency_id' => decryptId($request->frequency_id),
+            'remark_by' => $request->remark_by,
+            'inspection_data' => $updated_medicine_checklist,
+            'created_by' => Auth::id(),
+        ];
+          return  $this->create($data);
+    }
+
+    
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.*', 'inspection_shift_option.shift', 'masters_unit.unit_name')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.shift_id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.unit_id');
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', 'LIKE', '%' . DBdateformat($search) . '%')
+                    ->orWhere('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.location_first_aid_bag', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+        
+        if ($request->has('date_of_inspection') && $request->date_of_inspection) { 
+            $formattedDate = DBdateformat($request->date_of_inspection);
+            $query = $query->whereDate('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('location_first_aid_bag') && $request->location_first_aid_bag) {
+            $query = $query->where('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.location_first_aid_bag', 'LIKE', '%' . $request->location_first_aid_bag . '%');
+        }
+
+        if ($request->has('shift_id') && $request->shift_id) {
+            $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
+        }
+
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+        }
+
+        $query->orderBy('id', 'DESC');
+
+        return  $query->get();
+    }
+}
