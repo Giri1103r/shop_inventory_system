@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Extinguisher Inspection Add')
-@section('pageurl', admin_url('fire/fire_extinguisher-inspection/list'))
+@section('title', 'Isolation Valve Inspection Add')
+@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/fire_extinguisher-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -28,7 +28,7 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/add/submit') }}"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
@@ -158,7 +158,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Isolation Valve Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -183,7 +183,7 @@
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
                                                             class="form-control"
-                                                            value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}"
+                                                            value="{{ FireSequence(ISOLATION_VALVE_INSPECTION) }}"
                                                             readonly>
                                                     </div>
                                                 </div>
@@ -191,87 +191,34 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location"
+                                                            class="form-label require">{{ __('inspection.location_isv') }}</label>
+                                                        <input type="text" name="location_isv[1]" id = "location_isv"
+                                                            class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                        <input type="text" name="resource_code[1]"
+                                                            id = "resource_code" class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.size_isv') }}</label>
+                                                        <input type="number" name="size_isv[1]" id = "size_isv"
+                                                            class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.isv_status') }}</label>
+                                                        <select name="isv_status[1]" id="isv_status"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}">
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[1]" id="department"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
-                                                            @foreach ($department as $department)
-                                                                <option value="{{ encryptId($department->id) }}">
-                                                                    {{ $department->department_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.description') }}</label>
-                                                        <textarea name="description[1]" id="description" class="form-control" style="resize: none;" rows="4"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.type') }}</label>
-                                                        <select name="type[1]" id="type"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">
-                                                                {{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">
-                                                                {{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">
-                                                                {{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">
-                                                                {{ __('inspection.FOAM') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[1]" id = "capacity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[1]" id = "quantity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
-                                                        <input type="number" name="cylinder_pressure[1]"
-                                                            id = "cylinder_pressure" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
-                                                        <select name="discharge_tube[1]" id="discharge_tube"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Discharge Tube</option>
+                                                            <option value="">Select Status Of Valve</option>
                                                             <option value="{{ encryptId(FUNCTIONAL) }}">
                                                                 {{ __('inspection.functional') }}</option>
                                                             <option value="{{ encryptId(NON_FUNCTIONAL) }}">
@@ -279,27 +226,78 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
-                                                        <select name="safety_pin[1]" id="safety_pin"
+                                                            class="form-label require">{{ __('inspection.wheel_operation') }}</label>
+                                                        <select name="wheel_operation[1]" id="wheel_operation"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Safety Pin</option>
-                                                            <option value="{{ encryptId(PRESENT) }}">
-                                                                {{ __('inspection.present') }}</option>
-                                                            <option value="{{ encryptId(MISSING) }}">
-                                                                {{ __('inspection.missing') }}</option>
+                                                            <option value="">Select Status Of ISV Operation Wheel
+                                                            </option>
+                                                            <option value="{{ encryptId(FUNCTIONAL) }}">
+                                                                {{ __('inspection.functional') }}</option>
+                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">
+                                                                {{ __('inspection.non_functional') }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[1]" id="approach" class="form-control" style="resize: none;"></textarea>
-
+                                                            class="form-label require">{{ __('inspection.leakage') }}</label>
+                                                        <select name="leakage[1]" id="leakage"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status Of ISV Operation Wheel
+                                                            </option>
+                                                            <option value="{{ encryptId(YES) }}">
+                                                                {{ __('inspection.no') }}</option>
+                                                            <option value="{{ encryptId(NO) }}">
+                                                                {{ __('inspection.yes') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.valve_type') }}</label>
+                                                        <select name="type[1]" id="type"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Valve Type</option>
+                                                            <option value="{{ encryptId(GATE) }}">
+                                                                {{ __('inspection.GATE') }}</option>
+                                                            <option value="{{ encryptId(BALL) }}">
+                                                                {{ __('inspection.BALL') }}</option>
+                                                            <option value="{{ encryptId(BUTTERFLY) }}">
+                                                                {{ __('inspection.BUTTERFLY') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.open') }}</label>
+                                                        <select name="open[1]" id="open"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status</option>
+                                                            <option value="{{ encryptId(OPEN) }}">
+                                                                Opened</option>
+                                                            <option value="{{ encryptId(CLOSE) }}">
+                                                                Closed</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.close') }}</label>
+                                                        <select name="close[1]" id="close"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status</option>
+                                                            <option value="{{ encryptId(OPEN) }}">
+                                                                Opened</option>
+                                                            <option value="{{ encryptId(CLOSE) }}">
+                                                                Closed</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-2">
@@ -310,14 +308,12 @@
 
                                                     </div>
                                                 </div>
-
-
                                             </div>
                                         </div>
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Extinguisher Inspection Observation</h4>
+                                                    <h4 class="text-white">Isolation Valve Inspection Observation</h4>
                                                 </div>
 
                                                 {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -390,6 +386,19 @@
                     return this.optional(element) || value.trim().length > 0;
                 }, "This field cannot contain only spaces");
 
+                $.validator.addMethod("uniqueItemCode", function(value, element) {
+                    var itemCodes = [];
+
+                    $("input[name^='resource_code']").each(function() {
+                        var itemCodeValue = $(this).val();
+                        if (itemCodeValue) {
+                            itemCodes.push(itemCodeValue);
+                        }
+                    });
+
+                    return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
+                }, "Resource code must be unique");
+
                 $('#eyewashAdd').validate({
                     rules: {
                         doc_no: {
@@ -428,45 +437,39 @@
                         forklift_type: {
                             required: true,
                         },
-                        "check_items[1]": {
-                            required: true,
-                        },
-                        "quantity[1]": {
-                            required: true,
-                        },
-                        "department[1]": {
-                            required: true,
-                        },
                         "resource_code[1]": {
                             required: true,
-                        },
-                        "remarks[1]": {
-                            required: true,
+                            uniqueItemCode: true,
                         },
                         "type[1]": {
                             required: true,
                         },
-                        "capacity[1]": {
+                        "location_isv[1]": {
                             required: true,
                         },
-                        "description[1]": {
+                        "size_isv[1]": {
+                            required: true,
+                            number: true,
+                        },
+                        "isv_status[1]": {
                             required: true,
                         },
-                        "cylinder_pressure[1]": {
+                        "wheel_operation[1]": {
                             required: true,
                         },
-                        "discharge_tube[1]": {
+                        "leakage[1]": {
                             required: true,
                         },
-                        "approach[1]": {
+                        "open[1]": {
                             required: true,
                         },
-                        "safety_pin[1]": {
+                        "close[1]": {
                             required: true,
                         },
-                        "location[1]": {
+                        "remarks[1]":{
                             required: true,
                         },
+
                         device_image: {
                             required: true,
                             // extension: "jpg",
@@ -513,45 +516,37 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
-                        "quantity[1]": {
-                            required: "Please add the quantity",
-                        },
-                        "department[1]": {
-                            required: "Please Select The Department",
-                        },
-                        "check_items[1]": {
-                            required: "Please add the checkitems",
-                        },
                         "resource_code[1]": {
                             required: "Please add the resource code",
                         },
-                        "remarks[1]": {
-                            required: "Please add remarks",
-                        },
-                        "location[1]": {
-                            required: "Please select the location",
-                        },
                         "type[1]": {
-                            required: "Please select the fire extinguishers type",
+                            required: "Please select the valve type",
                         },
-                        "approach[1]": {
-                            required: "Please fill this field",
+                        "location_isv[1]": {
+                            required: "Please enter the location",
                         },
-                        "discharge_tube[1]": {
-                            required: "Please Select the status of Discharge tube"
+                        "size_isv[1]": {
+                            required: "Please specify the size",
+                            number: "Size must be a valid number"
                         },
-                        "cylinder_pressure[1]": {
-                            required: "Please enter the pressure of the cylinder",
+                        "isv_status[1]": {
+                            required: "Please select the status of the valve",
                         },
-                        "capacity[1]": {
-                            required: "Please add the capacity",
+                        "wheel_operation[1]": {
+                            required: "Please select the status of ISV operation wheel",
                         },
-                        "description[1]": {
-                            required: "Please enter the description",
+                        "leakage[1]": {
+                            required: "Please select the leakage status",
                         },
-                        "safety_pin[1]": {
-                            required: "Please select the status of safety pin",
+                        "open[1]": {
+                            required: "Please select the open status"
                         },
+                        "close[1]": {
+                            required: "Please select the close status"
+                        },
+                        "remarks[1]":{
+                            required: "Please add remarks",
+                        }
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
@@ -612,7 +607,7 @@
                     var newFormSet = `
                         <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Isolation Valve Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -636,120 +631,131 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                                            class="form-control" value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
+                                                            class="form-control"
+                                                            value="{{ FireSequence(ISOLATION_VALVE_INSPECTION) }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location-${form_set_count}"
+                                                            class="form-label require">{{ __('inspection.location_isv') }}</label>
+                                                        <input type="text" name="location_isv[${form_set_count}]" id = "location_isv"
+                                                            class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                        <input type="text" name="resource_code[${form_set_count}]" id = "resource_code"
+                                                            class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.size_isv') }}</label>
+                                                        <input type="number" name="size_isv[${form_set_count}]" id = "size_isv"
+                                                            class="form-control" value="">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.isv_status') }}</label>
+                                                        <select name="isv_status[${form_set_count}]" id="isv_status-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            
+                                                            <option value="">Select Status Of Valve</option>
+                                                            <option value="{{ encryptId(FUNCTIONAL) }}">
+                                                                {{ __('inspection.functional') }}</option>
+                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">
+                                                                {{ __('inspection.non_functional') }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department-${form_set_count}"
+                                                            class="form-label require">{{ __('inspection.wheel_operation') }}</label>
+                                                        <select name="wheel_operation[${form_set_count}]" id="wheel_operation-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
-                                                           
+                                                            <option value="">Select Status Of ISV Operation Wheel</option>
+                                                            <option value="{{ encryptId(FUNCTIONAL) }}">
+                                                                {{ __('inspection.functional') }}</option>
+                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">
+                                                                {{ __('inspection.non_functional') }}</option>
                                                         </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.description') }}</label>
-                                                        <textarea name="description[${form_set_count}]" id="description" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.type') }}</label>
+                                                            class="form-label require">{{ __('inspection.leakage') }}</label>
+                                                        <select name="leakage[${form_set_count}]" id="leakage-${form_set_count}"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status Of ISV Operation Wheel</option>
+                                                            <option value="{{ encryptId(YES) }}">
+                                                                {{ __('inspection.no') }}</option>
+                                                            <option value="{{ encryptId(NO) }}">
+                                                                {{ __('inspection.yes') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.valve_type') }}</label>
                                                         <select name="type[${form_set_count}]" id="type-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">{{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">{{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">{{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">{{ __('inspection.FOAM') }}</option>
+                                                            <option value="">Select Valve Type</option>
+                                                            <option value="{{ encryptId(GATE) }}">
+                                                                {{ __('inspection.GATE') }}</option>
+                                                            <option value="{{ encryptId(BALL) }}">
+                                                                {{ __('inspection.BALL') }}</option>
+                                                            <option value="{{ encryptId(BUTTERFLY) }}">
+                                                                {{ __('inspection.BUTTERFLY') }}</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
-                                                        <input type="number" name="cylinder_pressure[${form_set_count}]" id = "cylinder_pressure-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
-                                                        <select name="discharge_tube[${form_set_count}]" id="discharge_tube-${form_set_count}"
+                                                            class="form-label require">{{ __('inspection.open') }}</label>
+                                                        <select name="open[${form_set_count}]" id="open-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Discharge Tube</option>
-                                                            <option value="{{ encryptId(FUNCTIONAL) }}">{{ __('inspection.functional') }}</option>
-                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">{{ __('inspection.non_functional') }}</option>
+                                                            <option value="">Select Status</option>
+                                                            <option value="{{ encryptId(OPEN) }}">
+                                                                Opened</option>
+                                                            <option value="{{ encryptId(CLOSE) }}">
+                                                                Closed</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.close') }}</label>
+                                                        <select name="close[${form_set_count}]" id="close-${form_set_count}"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status</option>
+                                                            <option value="{{ encryptId(OPEN) }}">
+                                                                Opened</option>
+                                                            <option value="{{ encryptId(CLOSE) }}">
+                                                                Closed</option>
                                                         </select>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
-                                                        <select name="safety_pin[${form_set_count}]" id="safety_pin-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Safety Pin</option>
-                                                            <option value="{{ encryptId(PRESENT) }}">{{ __('inspection.present') }}</option>
-                                                            <option value="{{ encryptId(MISSING) }}">{{ __('inspection.missing') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[1]" id="approach" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
                                                 <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
-
-
                                             </div>
                     `;
 
@@ -763,20 +769,6 @@
 
                     $('.form-wrapper').append(newFormSetElement);
 
-                    $("select[name='department[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the department',
-                        }
-                    });
-
-                    $("select[name='location[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the location',
-                        }
-                    });
-
                     $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
@@ -784,74 +776,77 @@
                         }
                     });
 
-                    $("textarea[name='description[" + form_set_count + "]']").rules('add', {
+                    $("input[name='location_isv[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please provide a description',
+                            required: 'Please enter the location',
+                        }
+                    });
+
+                    $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        uniqueItemCode: true,
+                        messages: {
+                            required: 'Please enter the resource code',
+                            uniqueItemCode: 'Resource code must be unique'
+                        }
+                    });
+
+                    $("input[name='size_isv[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        number: true,
+                        messages: {
+                            required: 'Please specify the size',
+                            number: 'Size must be a valid number',
+                        }
+                    });
+
+                    $("select[name='isv_status[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please select the status of the valve',
+                        }
+                    });
+
+                    $("select[name='wheel_operation[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please select the status of ISV operation wheel',
+                        }
+                    });
+
+                    $("select[name='leakage[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please select the leakage status',
                         }
                     });
 
                     $("select[name='type[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the type',
+                            required: 'Please select the valve type',
                         }
                     });
 
-                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
+                    $("select[name='open[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        number: true,
                         messages: {
-                            required: 'Please specify the capacity',
-                            number: 'Capacity must be a valid number',
+                            required: 'Please select the open status',
                         }
                     });
 
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        number: true,
-                        min: 1,
-                        messages: {
-                            required: 'Please specify the quantity',
-                            number: 'Quantity must be a valid number',
-                            min: 'Quantity must be at least 1',
-                        }
-                    });
-
-                    $("input[name='cylinder_pressure[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        number: true,
-                        messages: {
-                            required: 'Please specify the cylinder pressure',
-                            number: 'Cylinder pressure must be a valid number',
-                        }
-                    });
-
-                    $("select[name='discharge_tube[" + form_set_count + "]']").rules('add', {
+                    $("select[name='close[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the discharge tube status',
-                        }
-                    });
-
-                    $("select[name='safety_pin[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please select the safety pin status',
-                        }
-                    });
-
-                    $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please specify the approach details',
+                            required: 'Please select the close status',
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add remarks',
+                            required: 'Please enter remarks',
                         }
                     });
 

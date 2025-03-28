@@ -360,6 +360,14 @@ class AppServiceProvider extends ServiceProvider
         defined('PRESENT') or define('PRESENT',1);
         defined('MISSING') or define('MISSING',2);
 
+        // Valve Types
+        defined('GATE') or define('GATE',1);
+        defined('BALL') or define('BALL',2);
+        defined('BUTTERFLY') or define('BUTTERFLY',3);
+
+        defined('OPEN') or define('OPEN',1);
+        defined('CLOSE') or define('CLOSE',2);
+
         View::composer('*', function ($view) {
 
             /**

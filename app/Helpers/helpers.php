@@ -2047,6 +2047,34 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+                case FIRE_EXTINGUISHER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_EXTINGUISHER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case ISOLATION_VALVE_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', ISOLATION_VALVE_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
 
                 case OHC_TYPE_FLOOR_STRETCHER:
                     $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
@@ -2231,8 +2259,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('HooterSequence')) {
         function FireSequence($type)
         {
-            switch($type)
-            {
+            switch ($type) {
                 case HOOTER_INSPECTION:
                     return 'HTR-000001';
                     break;
@@ -2243,6 +2270,10 @@ if (!function_exists('getMonth')) {
 
                 case FIRE_EXTINGUISHER_INSPECTION:
                     return 'FEX-000001';
+                    break;
+
+                case ISOLATION_VALVE_INSPECTION:
+                    return 'IVS-000001';
                     break;
             }
         }

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Extinguisher Inspection Approve')
-@section('pageurl', admin_url('fire/fire_extinguisher-inspection/list'))
+@section('title', 'Isolation Valve Inspection Approve')
+@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/fire_extinguisher-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -116,7 +116,7 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                FIRE_EXTINGUISHER_INSPECTION,
+                                                ISOLATION_VALVE_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -267,7 +267,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}"
@@ -321,7 +321,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/fire_extinguisher-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -345,7 +345,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection->id,
-                                                        FIRE_EXTINGUISHER_INSPECTION,
+                                                        ISOLATION_VALVE_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -427,7 +427,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->created_by,
                                                         $inspection->id,
-                                                        FIRE_EXTINGUISHER_INSPECTION,
+                                                        ISOLATION_VALVE_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -479,7 +479,7 @@
                                                     $signature = GetSignature(
                                                         $inspection_details->verified_by,
                                                         $inspection->id,
-                                                        FIRE_EXTINGUISHER_INSPECTION,
+                                                        ISOLATION_VALVE_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -532,7 +532,7 @@
                                                 $signature = GetSignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection->id,
-                                                    FIRE_EXTINGUISHER_INSPECTION,
+                                                    ISOLATION_VALVE_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -583,7 +583,7 @@
                                                 $signature = GetSignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection->id,
-                                                    FIRE_EXTINGUISHER_INSPECTION,
+                                                    ISOLATION_VALVE_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -620,7 +620,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/capa/submit') }}" autocomplete="off"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/capa/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}"
@@ -661,7 +661,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/fire_extinguisher-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -669,7 +669,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/capa/reverify/submit') }}"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}"
@@ -720,7 +720,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/level-one/verify/submit') }}"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}"
@@ -773,7 +773,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('fire/fire_extinguisher-inspection/level-two/verify/submit') }}"
+                                        action="{{ admin_url('fire/isolating-valve-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}"

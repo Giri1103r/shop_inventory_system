@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fire Extinguisher Inspection | KARAM</title>
+    <title>Isolation Valve Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Fire Extinguisher Inspection </td>
+                    Isolation Valve Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire Extinguisher Inspection
+                    Isolation Valve Inspection
                 </td>
             </tr>
         </table>
@@ -195,85 +195,88 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire Extinguisher Inspection Details
+                    Isolation Valve Inspection Details
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
-        <thead>
-            <tr>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
-                <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARKS</th>
-            </tr>
-            <tr>
-                <th style="border: 1px solid black; padding: 8px;">CYLINDER PRESSURE</th>
-                <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
-                <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
-                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
-                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
-                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
-                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
-            </tr>
-        </thead>
+    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <tr>
+            <th rowspan="2"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
+                SR.NO</th>
+            <th rowspan="2"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
+                LOCATION OF ISV</th>
+            <th rowspan="2"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+                RESOURCE CODE</th>
+            <th rowspan="2"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+                SIZE OF ISV (MM)</th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
+                ITEMS</th>
+            <th rowspan="2"
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+                REMARKS</th>
+        </tr>
+        <tr>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                STATUS OPEN</th>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                STATUS CLOSE</th>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                WHEEL OPERATION</th>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                STATUS OF ISV</th>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                LEAKAGE (Y/N)</th>
+            <th
+                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+                VALVE TYPE</th>
+        </tr>
 
-        <tbody>
-            @foreach ($inspection as $details)
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
-                    <!-- SL -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
-                    <!-- FIRE POINT NO. -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ GetDeptName($details->department) }}</td> <!-- DEPARTMENT -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getLocationname($details->location) }}</td> <!-- LOCATION -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $details->cylinder_pressure }}</td> <!-- CYLINDER PRESSURE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->safety_pin == PRESENT)
-                            {{ __('inspection.present') }}
-                        @elseif($details->safety_pin == MISSING)
-                            {{ __('inspection.missing') }}
-                        @endif
-                    </td> <!-- SAFETY PIN -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->approach }}
-                    </td> <!-- APPROACH -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->discharge_tube == FUNCTIONAL)
-                            {{ __('inspection.functional') }}
-                        @elseif($details->discharge_tube == NON_FUNCTIONAL)
-                            {{ __('inspection.non_functional') }}
-                        @endif
-                    </td> <!-- DISCHARGE TUBE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->type == ABC)
-                            {{ __('inspection.ABC') }}
-                        @elseif($details->type == CO2)
-                            {{ __('inspection.CO2') }}
-                        @elseif($details->type == WATER)
-                            {{ __('inspection.WATER') }}
-                        @elseif($details->type == FOAM)
-                            {{ __('inspection.FOAM') }}
-                        @endif
-                    </td> <!-- TYPE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->capacity }}
-                    </td> <!-- CAPACITY -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->quantity }}
-                    </td> <!-- QUANTITY -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->description }}
-                    </td> <!-- DESCRIPTION -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->remarks }}</td>
-                    <!-- REMARKS -->
-                </tr>
-            @endforeach
-        </tbody>
-
+        @foreach ($inspection as $details)
+            <tr>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->location_isv }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->resource_code }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->size_isv }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->open == OPEN ? 'Opened' : 'Closed' }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->close == OPEN ? 'Opened' : 'Closed' }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->wheel_operation == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->isv_status == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->leakage == YES ? __('inspection.yes') : __('inspection.no') }}
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    @if ($details->type == GATE)
+                        {{ __('inspection.GATE') }}
+                    @elseif ($details->type == BALL)
+                        {{ __('inspection.BALL') }}
+                    @elseif ($details->type == BUTTERFLY)
+                        {{ __('inspection.BUTTERFLY') }}
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+            </tr>
+        @endforeach
     </table>
 
 
@@ -301,7 +304,8 @@
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                    <td width="48%" style="padding:5px;">
+                        {{ Displaydateformat($forklift_details->created_at) }}
                     </td>
                 </tr>
             @endif
@@ -395,7 +399,8 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b>
+                </td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->capa_ehs_remarks }}
@@ -431,7 +436,8 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b>
+                </td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_one_manager_remarks }}
@@ -473,7 +479,8 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b>
+                </td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_two_manager_remarks }}
@@ -519,7 +526,8 @@
                                     <td>{{ $log->remarks ?? 'N/A' }}</td>
                                     <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
                                     </td>
-                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}</td>
+                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
+                                    </td>
                                     <td>{{ displaydateformat($log->created_at) }}</td>
                                 </tr>
                             @endforeach
