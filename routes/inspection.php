@@ -33,6 +33,7 @@ use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
@@ -619,4 +620,21 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+});
+
+Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
+    Route::GET('list', [PASystemInspectionController::class, 'Index']);
+    Route::POST('list', [PASystemInspectionController::class, 'Index']);
+    Route::GET('add', [PASystemInspectionController::class, 'Add']);
+    Route::POST('add/submit', [PASystemInspectionController::class, 'Store']);
+    Route::GET('view/{id}', [PASystemInspectionController::class, 'View']);
+    Route::GET('verification/{id}/{employee_type}', [PASystemInspectionController::class, 'approvals']);
+    Route::POST('ehsofficer/verify/submit', [PASystemInspectionController::class, 'EHSOfficerSubmit']);
+    Route::POST('capa/submit', [PASystemInspectionController::class, 'CAPASubmit']);
+    Route::POST('capa/reverify/submit', [PASystemInspectionController::class, 'CAPAVerifySubmit']);
+    Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
+    Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
+    Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+    Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
 });
