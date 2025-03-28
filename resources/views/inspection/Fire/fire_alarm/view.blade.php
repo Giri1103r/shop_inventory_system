@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Isolation Valve Inspection View')
-@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
+@section('title', 'Fire Alarm Inspection View')
+@section('pageurl', admin_url('fire/fire-alarm-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/fire-alarm-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -117,7 +117,7 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                ISOLATION_VALVE_INSPECTION,
+                                                FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -154,7 +154,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Isolation Valve Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire Alarm Inspection Checklist</h4>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -310,7 +310,7 @@
                                                     $signature = GetSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        ISOLATION_VALVE_INSPECTION,
+                                                        FIRE_ALARM_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -349,7 +349,7 @@
                                                         $signature = GetSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            ISOLATION_VALVE_INSPECTION,
+                                                            FIRE_ALARM_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -412,7 +412,7 @@
                                                 $signature = GetSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    ISOLATION_VALVE_INSPECTION,
+                                                    FIRE_ALARM_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -465,7 +465,7 @@
                                             $signature = GetSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                ISOLATION_VALVE_INSPECTION,
+                                                FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -517,7 +517,7 @@
                                             $signature = GetSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                ISOLATION_VALVE_INSPECTION,
+                                                FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -568,7 +568,7 @@
                                             $signature = GetSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                ISOLATION_VALVE_INSPECTION,
+                                                FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -595,7 +595,7 @@
                                             $signature = GetSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                ISOLATION_VALVE_INSPECTION,
+                                                FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

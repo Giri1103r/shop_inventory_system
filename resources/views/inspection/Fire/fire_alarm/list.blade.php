@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Isolation Valve Inspection')
-@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
+@section('title', 'Fire Alarm Inspection')
+@section('pageurl', admin_url('fire/fire-alarm-inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/isolating-valve-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/fire-alarm-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -127,7 +127,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/isolating-valve-inspection/list') }}",
+                        url: "{{ admin_url('fire/fire-alarm-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -205,7 +205,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/isolating-valve-inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/fire-alarm-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -225,7 +225,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/isolating-valve-inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/fire-alarm-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
@@ -291,7 +291,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/isolating-valve-inspection/list/status') }}",
+                                url: "{{ admin_url('fire/fire-alarm-inspection/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -359,7 +359,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/isolating-valve-inspection/list/delete') }}",
+                                url: "{{ admin_url('fire/fire-alarm-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

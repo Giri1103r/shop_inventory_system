@@ -337,6 +337,7 @@ class AppServiceProvider extends ServiceProvider
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
+        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
 
         // OPTIONS
         defined('YES') or define('YES',1);
@@ -360,6 +361,14 @@ class AppServiceProvider extends ServiceProvider
 
         defined('PRESENT') or define('PRESENT',1);
         defined('MISSING') or define('MISSING',2);
+
+        // Valve Types
+        defined('GATE') or define('GATE',1);
+        defined('BALL') or define('BALL',2);
+        defined('BUTTERFLY') or define('BUTTERFLY',3);
+
+        defined('OPEN') or define('OPEN',1);
+        defined('CLOSE') or define('CLOSE',2);
 
         View::composer('*', function ($view) {
 
