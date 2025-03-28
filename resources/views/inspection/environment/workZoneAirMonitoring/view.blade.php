@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work Noise Monitoring Show')
-@section('pageurl', admin_url('environment/work-noise/list'))
+@section('title', 'Work Zone Air Monitoring Show')
+@section('pageurl', admin_url('environment/work-zone/air/list'))
 
 
 @section('content')
@@ -23,7 +23,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('environment/work-zone/air/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -36,13 +37,13 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring</h4>
+                                                <h4 class="text-white">Work Zone Air Monitoring</h4>
                                             </div>
                                         </div>
                                         <div class="row">
 
                                             <div class="col-md-4 form-input">
-                                                <label class="form-label">Work Noise No</label>
+                                                <label class="form-label">Work Zone Air Monitoring No</label>
                                                 <div class="view_data">
                                                     {{ isset($environmentData->environment_no) ? $environmentData->environment_no : '' }}
                                                 </div>
@@ -100,93 +101,113 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring Details</h4>
+                                                <h4 class="text-white">Work Zone Air Monitoring Details</h4>
                                             </div>
                                         </div>
 
                                         <div id="lesson_learned_block">
-                                            @foreach ($workNoiseDataList as $workNoiseData)
+                                            @foreach ($workZoneAirDataList as $workZoneAirData)
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->sr_no ?? '-' }}
+                                                            {{ $workZoneAirData->sr_no ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
                                                         <label for="" class="form-label">Location</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->location_name ?? '-' }}
+                                                            {{ $workZoneAirData->location_name ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
                                                         <label for="" class="form-label">Unit</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->unit_name ?? '-' }}
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba ?? '-' }}
+                                                            {{ $workZoneAirData->unit_name ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring) ?? '-' }}
+                                                            {{ Displaydateformat($workZoneAirData->date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Next Due Date of
                                                             Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring) ?? '-' }}
+                                                            {{ Displaydateformat($workZoneAirData->next_due_date_of_monitoring) ?? '-' }}
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">SPM (Session 1)</label>
+                                                        <div class="view_data">
+                                                            {{ $workZoneAirData->spm ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)
-                                                            ({{ $workNoiseData->noise_level_dba_dropdown == 1 ? 'Day' : 'Night' }})
-                                                        </label>
+                                                        <label class="form-label">SO2 (Session 1)</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba_no ?? '-' }}
+                                                            {{ $workZoneAirData->so2 ?? '-' }}
                                                         </div>
 
                                                     </div>
-                                                
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">NO2 (Session 1)</label>
+                                                        <div class="view_data">
+                                                            {{ $workZoneAirData->no2 ?? '-' }}
+                                                        </div>
 
+                                                    </div>
+                                                    
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring_date) ?? '-' }}
+                                                            {{ Displaydateformat($workZoneAirData->date_of_monitoring2) ?? '-' }}
                                                         </div>
                                                     </div>
-
-
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
+                                                        <label class="form-label">Next Due Date of
+                                                            Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring_date) ?? '-' }}
+                                                            {{ Displaydateformat($workZoneAirData->next_due_date_of_monitoring2) ?? '-' }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">SPM (Session 2)</label>
+                                                        <div class="view_data">
+                                                            {{ $workZoneAirData->spm_session2 ?? '-' }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">SO2 (Session 1)</label>
+                                                        <div class="view_data">
+                                                            {{ $workZoneAirData->so2_session2 ?? '-' }}
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">NO2 (Session 1)</label>
+                                                        <div class="view_data">
+                                                            {{ $workZoneAirData->no2_session2 ?? '-' }}
                                                         </div>
 
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Act/Rule</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->act_rule ?? '-' }}
+                                                            {{ $workZoneAirData->act_rule ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->remark ?? '-' }}
+                                                            {{ $workZoneAirData->remark ?? '-' }}
                                                         </div>
                                                     </div>
 

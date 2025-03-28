@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work Noise Monitoring Show')
-@section('pageurl', admin_url('environment/work-noise/list'))
+@section('title', 'DG Set Stack Emission Monitoring Show')
+@section('pageurl', admin_url('environment/dg-set-stack-emission/list'))
 
 
 @section('content')
@@ -23,7 +23,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('environment/dg-set-stack-emission/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -36,13 +37,13 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring</h4>
+                                                <h4 class="text-white">DG Set Stack Emission Monitoring</h4>
                                             </div>
                                         </div>
                                         <div class="row">
 
                                             <div class="col-md-4 form-input">
-                                                <label class="form-label">Work Noise No</label>
+                                                <label class="form-label">DG Set Stack Emission Monitoring No</label>
                                                 <div class="view_data">
                                                     {{ isset($environmentData->environment_no) ? $environmentData->environment_no : '' }}
                                                 </div>
@@ -100,93 +101,66 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring Details</h4>
+                                                <h4 class="text-white">DG Set Stack Emission Monitoring Details</h4>
                                             </div>
                                         </div>
 
                                         <div id="lesson_learned_block">
-                                            @foreach ($workNoiseDataList as $workNoiseData)
+                                            @foreach ($DgSetDataList as $DgSetData)
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->sr_no ?? '-' }}
+                                                            {{ $DgSetData->sr_no ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Location</label>
+                                                        <label for="" class="form-label">D.G Set Resource Code</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->location_name ?? '-' }}
+                                                            {{ $DgSetData->dg_no ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
+                                                        <label for="" class="form-label">KVA Rating</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->unit_name ?? '-' }}
+                                                            {{ $DgSetData->kva_rating ?? '-' }}
                                                         </div>
                                                     </div>
 
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label  mt-2">Installation Location</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba ?? '-' }}
+                                                            {{ $DgSetData->location ?? '-' }}
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input  mt-2">
+                                                        <label for="" class="form-label">Engine Sr. No.</label>
+                                                        <div class="view_data">
+                                                            {{ $DgSetData->engine_srno ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring) ?? '-' }}
+                                                            {{ Displaydateformat($DgSetData->date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Next Due Date of
                                                             Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring) ?? '-' }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)
-                                                            ({{ $workNoiseData->noise_level_dba_dropdown == 1 ? 'Day' : 'Night' }})
-                                                        </label>
-                                                        <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba_no ?? '-' }}
-                                                        </div>
-
-                                                    </div>
-                                                
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring_date) ?? '-' }}
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring_date) ?? '-' }}
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Act/Rule</label>
-                                                        <div class="view_data">
-                                                            {{ $workNoiseData->act_rule ?? '-' }}
+                                                            {{ Displaydateformat($DgSetData->next_due_date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->remark ?? '-' }}
+                                                            {{ $DgSetData->remark ?? '-' }}
                                                         </div>
                                                     </div>
 

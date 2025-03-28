@@ -12,24 +12,24 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\AmbientNoiseMonitoring;
+use App\Models\Inspection\environment\DgSetStackEmissionMonitoring;
 use App\Models\Inspection\environment\Environment;
 use App\Models\Inspection\environment\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 
-class AmbientNoiseMonitoringController extends Controller
+class DgSetStackEmissionMonitoringController extends Controller
 {
     private $location;
     private $unit;
-    private $ambient_noise_monitoring;
+    private $dgset_emission;
     private $upload_log;
     private $environment;
     private $static_docno;
 
     public function __construct()
     {
-        $this->ambient_noise_monitoring = new AmbientNoiseMonitoring();
+        $this->dgset_emission = new DgSetStackEmissionMonitoring();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->environment = new Environment();
@@ -41,7 +41,7 @@ class AmbientNoiseMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                   $type = AMBIENTNOISE;
+                   $type = DGSET;
                     $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
@@ -64,7 +64,7 @@ class AmbientNoiseMonitoringController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/ambient-noise/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('environment/dg-set-stack-emission/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                            
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -83,30 +83,28 @@ class AmbientNoiseMonitoringController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', AMBIENTNOISE)->where('status', '1')->get();
+        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', DGSET)->where('status', '1')->get();
 
         $data = array(
             'environmentList' => $environmentList,
         );
-        return view('inspection.environment.ambientNoiseMonitoring.list', $data);
+        return view('inspection.environment.dgSetMonitoring.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                ['type', "AmbientNoise"],
+                ['type', "DgSet"],
                 ['status', '1']
             ])->first();
             
             $data = array(
-                'locationList' => $locationList,
                 'staticDocno' => $staticDocno,
             );
-            return view('inspection.environment.ambientNoiseMonitoring.add', $data);
+            return view('inspection.environment.dgSetMonitoring.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -114,10 +112,10 @@ class AmbientNoiseMonitoringController extends Controller
     {
         try {
             $rules = [
-                'ambient_noise_no' => 'required',
+                'dg_set_no' => 'required',
             ];
             $messages = [
-                'ambient_noise_no.required' => "Ambient Noise No is Required",
+                'dg_set_no.required' => "DG Set Stack Emission  No is Required",
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -125,11 +123,11 @@ class AmbientNoiseMonitoringController extends Controller
             }
 
             try {
-                $env_no = $request->ambient_noise_no;
-               $type = AMBIENTNOISE;
+                $env_no = $request->dg_set_no;
+               $type = DGSET;
                 $environment =   $this->environment->store($env_no, $type);
  
-                $this->ambient_noise_monitoring->store($environment->id);
+                $this->dgset_emission->store($environment->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -137,56 +135,39 @@ class AmbientNoiseMonitoringController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('environment/ambient-noise/list'));
+            return redirect(admin_url('environment/dg-set-stack-emission/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('environment/ambient-noise/list'));
+            return redirect(admin_url('environment/dg-set-stack-emission/list'));
         }
     }
 
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $subcategory_name = $request->subcategory_name;
-            $category_id = decryptId($request->category_id);
-            $id = $request->id;
-            if ($id == '') {
-                $record = $this->ambient_noise_monitoring->uniqueCheck($subcategory_name, $category_id);
-            } else {
-                $id = decryptId($id);
-                $record = $this->ambient_noise_monitoring->ExistuniqueCheck($subcategory_name, $category_id, $id);
-            }
-            if ($record->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
-        }
-    }
+  
 
     public function View($id)
     {
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-               $type = AMBIENTNOISE;
+               $type = DGSET;
                 $environmentData =   $this->environment->selectOne($id,$type);
-                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
+                $DgSetDataList = $this->dgset_emission->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                    ['type', "AmbientNoise"],
+                    ['type', "DgSet"],
                     ['status', '1']
                 ])->first();
                 $data = array(
                     'environmentData' => $environmentData,
-                    'ambientNoiseDataList' => $ambientNoiseDataList,
+                    'DgSetDataList' => $DgSetDataList,
                     'staticDocno' => $staticDocno,
                 );
             }
-            return view('inspection.environment.ambientNoiseMonitoring.view', $data);
+            return view('inspection.environment.dgSetMonitoring.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('environment/ambient-noise/list'));
+            return redirect(admin_url('environment/dg-set-stack-emission/list'));
         }
     }
 
@@ -196,9 +177,9 @@ class AmbientNoiseMonitoringController extends Controller
 
         try {
             $id = decryptId($request->id);
-           $type = AMBIENTNOISE;
+           $type = DGSET;
             $environmentID = $this->environment->statuschange($id,$type);
-            $this->ambient_noise_monitoring->statuschange($id);
+            $this->dgset_emission->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
         } catch (Exception $ex) {
@@ -210,11 +191,11 @@ class AmbientNoiseMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-           $type = AMBIENTNOISE;
+           $type = DGSET;
             $allData =   $this->environment->exportdata($type);
             $header = [
                 __("common.sno"),
-                __("Ambient Noise Monitoring Id"),
+                __("Ambient Air Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -235,7 +216,7 @@ class AmbientNoiseMonitoringController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Ambient Noise Monitoring.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Ambient Air Monitoring Yearly.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -250,12 +231,12 @@ class AmbientNoiseMonitoringController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-           $type = AMBIENTNOISE;
+           $type = DGSET;
             $allData =   $this->environment->exportdata($type);
 
             $header = [
                 __("common.sno"),
-                __("Ambient Noise Monitoring Id"),
+                __("Ambient Air Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -264,7 +245,7 @@ class AmbientNoiseMonitoringController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Ambient Noise Monitoring",
+                'pagetitle' => "Ambient Air Monitoring Yearly",
             );
 
             $property = [
@@ -279,14 +260,14 @@ class AmbientNoiseMonitoringController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.environment.ambientNoiseMonitoring.pdf', $data);
+            $view = view('inspection.environment.dgSetMonitoring.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Ambient Noise Monitoring Details.pdf";
+            $filename = "Ambient Air Monitoring Yearly Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);

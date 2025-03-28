@@ -261,14 +261,35 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'AUDIT-ANALYSIS-' . getautogen($count);
             case 'ambientNoiseNo':
-                $count = Environment::where('type',1)->withoutGlobalScopes()->count();
+                $count = Environment::where('type', 1)->withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AMBIENT-NOISE-' . getautogen($count);
                 break;
             case 'workNoiseNo':
-                $count = Environment::where('type',2)->withoutGlobalScopes()->count();
+                $count = Environment::where('type', 2)->withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'WORK-NOISE-' . getautogen($count);
+                break;
+            case 'ambientAirNo':
+                $count = Environment::where('type', 3)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AMBIENT-AIR-' . getautogen($count);
+                break;
+            case 'workZoneAirNo':
+                $count = Environment::where('type', 4)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'WORKZONE-AIR-' . getautogen($count);
+                break;
+            case 'dgsetNo':
+                $count = Environment::where('type', 5)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DG-SET-' . getautogen($count);
+                break;
+            case 'luxNo':
+                $count = Environment::where('type', 6)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'LUX-' . getautogen($count);
+                break;
             case 'SPLB':
                 $count = SafetyPettyChecklist::withoutGlobalScopes()->count();
                 $count = $count + 1;

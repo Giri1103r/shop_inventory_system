@@ -6,10 +6,10 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class WorkNoiseMonitoring extends Model
+class LuxMonitoring extends Model
 {
 
-    protected $table = 'inspection_environment_work_noise_monitoring';
+    protected $table = 'inspection_environment_lux_monitoring';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -18,13 +18,13 @@ class WorkNoiseMonitoring extends Model
         'sr_no',
         'location_id',
         'unit_id',
-        'noise_level_dba',
+        'department_id',
         'date_of_monitoring',
         'next_due_date_of_monitoring',
-        'noise_level_dba_dropdown',
-        'noise_level_dba_no',
-        'date_of_monitoring_date',
-        'next_due_date_of_monitoring_date',
+        'lux_level1',
+        'lux_level2',
+        'date_of_monitoring2',
+        'next_due_date_of_monitoring2',
         'act_rule',
         'remark',
         'status',
@@ -53,13 +53,13 @@ class WorkNoiseMonitoring extends Model
                     'sr_no' =>  $monitorData['sr_no'],
                     'location_id' => decryptId($monitorData['location_id']),
                     'unit_id' => decryptId($monitorData['unit_id']),
-                    'noise_level_dba' =>  $monitorData['noise_level_dba'],
+                    'department_id' => decryptId($monitorData['department_id']),
                     'date_of_monitoring' => DBdateformat($monitorData['date_of_monitoring']),
                     'next_due_date_of_monitoring' => DBdateformat($monitorData['next_due_date_of_monitoring']),
-                    'noise_level_dba_dropdown' =>  decryptId($monitorData['noise_level_dba_dropdown']),
-                    'noise_level_dba_no' =>  $monitorData['noise_level_dba_no'],
-                    'date_of_monitoring_date' => DBdateformat($monitorData['date_of_monitoring_date']),
-                    'next_due_date_of_monitoring_date' => DBdateformat($monitorData['next_due_date_of_monitoring_date']),
+                    'lux_level1' =>  $monitorData['lux_level1'],
+                    'lux_level2' =>  $monitorData['lux_level2'],
+                    'date_of_monitoring2' => DBdateformat($monitorData['date_of_monitoring2']),
+                    'next_due_date_of_monitoring2' => DBdateformat($monitorData['next_due_date_of_monitoring2']),
                     'act_rule' =>  $monitorData['act_rule'],
                     'remark' =>  $monitorData['remark'],
                     'created_by' => Auth::id(),
@@ -73,20 +73,21 @@ class WorkNoiseMonitoring extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_environment_work_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no');
-        $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
-        $query = $query->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id');
-        $query = $query->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id');
-     
+        $query = $this->select('inspection_environment_lux_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no','masters_department.department_name');
+        $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_lux_monitoring.environment_id', '=', 'inspection_environment_table.id');
+        $query = $query->leftJoin('masters_location', 'inspection_environment_lux_monitoring.location_id', '=', 'masters_location.id');
+        $query = $query->leftJoin('masters_department', 'inspection_environment_lux_monitoring.department_id', '=', 'masters_department.id');
+        $query = $query->leftJoin('masters_unit', 'inspection_environment_lux_monitoring.unit_id', '=', 'masters_unit.id');
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
 
     public function selectOne($envId)
     {
-        $data = $this->select('inspection_environment_work_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
-            ->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
-            ->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_work_noise_monitoring.environment_id', $envId)->where('inspection_environment_work_noise_monitoring.status', 1)
+        $data = $this->select('inspection_environment_lux_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no','masters_department.department_name')
+            ->leftJoin('masters_location', 'inspection_environment_lux_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_lux_monitoring.environment_id', '=', 'inspection_environment_table.id')->leftJoin('masters_department', 'inspection_environment_lux_monitoring.department_id', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'inspection_environment_lux_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_lux_monitoring.environment_id', $envId)->where('inspection_environment_lux_monitoring.status', 1)
             ->get();
         return $data;
     }

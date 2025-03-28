@@ -107,7 +107,7 @@ class Environment extends Model
 
     public function selectOne($id, $type)
     {
-        $data = $this->select('inspection_environment_table.*')->where('type', $type)->where('status', 1)
+        $data = $this->select('inspection_environment_table.*')->where('type', $type)->where('id',$id)->where('status', 1)
             ->first();
         return $data;
     }
@@ -130,34 +130,39 @@ class Environment extends Model
         return $this->where('type', $envtype)->where('id', $id)->update($update_data);
     }
 
-
-    // protected static function booted()
-    // {
-    //     static::addGlobalScope(new TrashScope('inspection_environment_table'));
-
-    //     static::created(function ($model) {
-
-    //         $uniqueId = 'AMBIENT-NOISE-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-    //         $model->update(['environment_no' => $uniqueId]);
-    //     });
-    // }
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_environment_table'));
 
-        static::created(function ($model) {
-            $prefix = 'GENERIC'; 
-            if ($model->type == 'AMBIENT') {
-                $prefix = 'AMBIENT-NOISE';
-            } elseif ($model->type == 'WORK') {
-                $prefix = 'WORK-NOISE';
+        static::creating(function ($model) {
+            $uniqueId = str_pad($model->id, 5, '0', STR_PAD_LEFT);
+
+            $code = match ($model->type) {
+                1 => 'AMBIENT-NOISE',
+                2 => 'WORK-NOISE',
+                3 => 'AMBIENT-AIR',
+                4 => 'WORKZONE-AIR',
+                5 => 'DG-SET',
+                6 => 'LUX',
+                default => 'GENERIC',
+            };
+
+            $lastenv = self::withoutGlobalScope(TrashScope::class)
+                ->where('environment_no', 'like', "$code-%")
+                ->orderBy('environment_no', 'desc')
+                ->first();
+
+            $nextNumber = 1;
+
+            if ($lastenv) {
+                // Extract the last four-digit number after the hyphen
+                preg_match('/-(\d{5})$/', $lastenv->environment_no, $matches);
+                if (!empty($matches[1])) {
+                    $nextNumber = (int) $matches[1] + 1;
+                }
             }
 
-            $uniqueId = $prefix . '-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-
-            // Update the model
-            $model->update(['environment_no' => $uniqueId]);
+            $model->environment_no = sprintf('%s-%05d', $code, $nextNumber);
         });
     }
 }

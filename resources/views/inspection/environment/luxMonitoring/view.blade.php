@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work Noise Monitoring Show')
-@section('pageurl', admin_url('environment/work-noise/list'))
+@section('title', 'Lux Monitoring Show')
+@section('pageurl', admin_url('environment/lux/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('environment/lux/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -36,13 +36,13 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring</h4>
+                                                <h4 class="text-white">Lux Monitoring</h4>
                                             </div>
                                         </div>
                                         <div class="row">
 
                                             <div class="col-md-4 form-input">
-                                                <label class="form-label">Work Noise No</label>
+                                                <label class="form-label">Lux Monitoring No</label>
                                                 <div class="view_data">
                                                     {{ isset($environmentData->environment_no) ? $environmentData->environment_no : '' }}
                                                 </div>
@@ -100,93 +100,92 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Work Noise Monitoring Details</h4>
+                                                <h4 class="text-white">Lux Monitoring Details</h4>
                                             </div>
                                         </div>
 
                                         <div id="lesson_learned_block">
-                                            @foreach ($workNoiseDataList as $workNoiseData)
+                                            @foreach ($luxDataList as $luxData)
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->sr_no ?? '-' }}
+                                                            {{ $luxData->sr_no ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
                                                         <label for="" class="form-label">Location</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->location_name ?? '-' }}
+                                                            {{ $luxData->location_name ?? '-' }}
                                                         </div>
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
                                                         <label for="" class="form-label">Unit</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->unit_name ?? '-' }}
+                                                            {{ $luxData->unit_name ?? '-' }}
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label">Department</label>
+                                                        <div class="view_data">
+                                                            {{ $luxData->department_name ?? '-' }}
+                                                        </div>
+                                                    </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                        <label class="form-label">Lux Level</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba ?? '-' }}
+                                                            {{ $luxData->lux_level1 ?? '-' }}
                                                         </div>
                                                     </div>
-
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring) ?? '-' }}
+                                                            {{ Displaydateformat($luxData->date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Next Due Date of
                                                             Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring) ?? '-' }}
+                                                            {{ Displaydateformat($luxData->next_due_date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
+
+
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)
-                                                            ({{ $workNoiseData->noise_level_dba_dropdown == 1 ? 'Day' : 'Night' }})
-                                                        </label>
+                                                        <label class="form-label">Lux Level</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->noise_level_dba_no ?? '-' }}
+                                                            {{ $luxData->lux_level2 ?? '-' }}
                                                         </div>
-
                                                     </div>
-                                                
-
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring_date) ?? '-' }}
+                                                            {{ Displaydateformat($luxData->date_of_monitoring2) ?? '-' }}
                                                         </div>
                                                     </div>
-
-
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
+                                                        <label class="form-label">Next Due Date of
+                                                            Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($workNoiseData->next_due_date_of_monitoring_date) ?? '-' }}
+                                                            {{ Displaydateformat($luxData->next_due_date_of_monitoring2) ?? '-' }}
                                                         </div>
-
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Act/Rule</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->act_rule ?? '-' }}
+                                                            {{ $luxData->act_rule ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->remark ?? '-' }}
+                                                            {{ $luxData->remark ?? '-' }}
                                                         </div>
                                                     </div>
 
