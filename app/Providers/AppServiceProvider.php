@@ -369,6 +369,10 @@ class AppServiceProvider extends ServiceProvider
         defined('OPEN') or define('OPEN',1);
         defined('CLOSE') or define('CLOSE',2);
 
+        // Condition Of The Glass
+        defined('INTACT') or define('INTACT',1);
+        defined('BROKEN') or define('BROKEN',2);
+
         View::composer('*', function ($view) {
 
             /**

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
@@ -454,6 +455,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('exportViewPdf/{id}', [IsolationValveController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [IsolationValveController::class, 'ExportExcel']);
         Route::GET('export/pdf', [IsolationValveController::class, 'ExportPDF']);
+    });
+
+    Route::group(['prefix' => 'fire-alarm-inspection/'], function () {
+        Route::GET('list', [FireAlarmController::class, 'Index']);
+        Route::POST('list', [FireAlarmController::class, 'Index']);
+        Route::GET('add', [FireAlarmController::class, 'Add']);
+        Route::POST('add/submit', [FireAlarmController::class, 'Store']);
+        Route::GET('view/{id}', [FireAlarmController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [FireAlarmController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [FireAlarmController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [FireAlarmController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [FireAlarmController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [FireAlarmController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [FireAlarmController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [FireAlarmController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [FireAlarmController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [FireAlarmController::class, 'ExportPDF']);
     });
 });
 

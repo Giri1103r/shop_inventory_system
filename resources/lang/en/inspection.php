@@ -180,4 +180,9 @@ return [
     'BALL' => 'Ball Valve',
     'BUTTERFLY' => 'Butterfly Valve',
 
+    // Fire Alarm
+    'glass' => 'Condition Of Glass Component',
+    'hammer' => 'Status Of Hammer',
+    'mannual_call_point' => 'Mannual Call Point',
+ 
 ];

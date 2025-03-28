@@ -200,83 +200,59 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-        <tr>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
-                SR.NO</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
-                LOCATION OF ISV</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                RESOURCE CODE</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                SIZE OF ISV (MM)</th>
-            <th colspan="6"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
-                ITEMS</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                REMARKS</th>
-        </tr>
-        <tr>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OPEN</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS CLOSE</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                WHEEL OPERATION</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OF ISV</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                LEAKAGE (Y/N)</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                VALVE TYPE</th>
-        </tr>
-
-        @foreach ($inspection as $details)
+    <table border="1" style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
             <tr>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->location_isv }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->resource_code }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->size_isv }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->open == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->close == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->wheel_operation == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->isv_status == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->leakage == YES ? __('inspection.yes') : __('inspection.no') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    @if ($details->type == GATE)
-                        {{ __('inspection.GATE') }}
-                    @elseif ($details->type == BALL)
-                        {{ __('inspection.BALL') }}
-                    @elseif ($details->type == BUTTERFLY)
-                        {{ __('inspection.BUTTERFLY') }}
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+                <th rowspan="2">SR. NO</th>
+                <th rowspan="2">DEPARTMENT</th>
+                <th rowspan="2">RESOURCE CODE</th>
+                <th colspan="4">CHECK ITEMS</th>
+                <th rowspan="2">APPROACH</th>
+                <th rowspan="2">REMARK</th>
             </tr>
-        @endforeach
+
+            <tr>
+                <th>QUANTITY</th>
+                <th>GLASS</th>
+                <th>HAMMER</th>
+                <th>MANUAL CALL POINT</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach ($inspection as $details)
+                <tr>
+                    <td>{{ $details->sr_no }}</td>
+                    <td>{{ GetDeptName($details->department) }}</td>
+                    <td>{{ $details->resource_code }}</td>
+                    <td>{{ $details->quantity }}</td>
+                    <td>
+                        @if ($details->glass == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @else
+                            {{ __('inspection.non_functional') }}
+                        @endif
+                    </td>
+                    <td>
+                        @if ($details->hammer == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @else
+                            {{ __('inspection.non_functional') }}
+                        @endif
+                    </td>
+                    <td>
+                        @if ($details->mannual_call_point == PRESENT)
+                            {{ __('inspection.present') }}
+                        @else
+                            {{ __('inspection.missing') }}
+                        @endif
+                    </td>
+                    <td>{{ $details->approach }}</td>
+                    <td>{{ $details->remarks }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+
     </table>
 
 
