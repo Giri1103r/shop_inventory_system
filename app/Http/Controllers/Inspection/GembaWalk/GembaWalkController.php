@@ -256,7 +256,6 @@ class GembaWalkController extends Controller
 
             Session::flash('success', 'Your data has been created successfully!');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
         }
@@ -270,9 +269,10 @@ class GembaWalkController extends Controller
                 $id = decryptId($id);
 
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
-                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($id);
-                $gembaWalk_verified_singnature = $this->gembaWalk->selectVerifiedSingnature($id);
-
+                $getUserId = $this->gembaWalk->getUserId($id);
+                $type = GEMBA_WALK;
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type); 
+                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by,$id,$type);
                 $status_log = $this->statusLog->selectOne($id);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
@@ -283,7 +283,6 @@ class GembaWalkController extends Controller
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
                     'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature,
-
                     'status_log' => $status_log,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
@@ -293,18 +292,21 @@ class GembaWalkController extends Controller
             }
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
 
     public function approvals($id)
-    {
+    
+    {                
         try {
             $id = decryptId($id);
             if (Auth::check()) {
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
-                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($id);
+                $getUserId = $this->gembaWalk->getUserId($id);
+                $type = GEMBA_WALK;
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type); 
+
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
@@ -494,7 +496,6 @@ class GembaWalkController extends Controller
             Session::flash('success', __('inspection.capa_action_success_msg'));
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('inspection/gemba-walk/list'));
@@ -507,7 +508,9 @@ class GembaWalkController extends Controller
             if (Auth::check()) {
                 $gembaWalk_id = decryptId($id);
                 $gembaWalk_details = $this->gembaWalk->selectOne($gembaWalk_id);
-                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($gembaWalk_id);
+                $getUserId = $this->gembaWalk->getUserId($gembaWalk_id);
+                $type = GEMBA_WALK;
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type); 
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $floorID = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 2)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $data = array(
@@ -527,7 +530,6 @@ class GembaWalkController extends Controller
 
     public function capaReviewSubmit(Request $request)
     {
-        // dd($request->all());
         try {
             $rules = [
                 'officer_name' => 'required',
@@ -547,7 +549,6 @@ class GembaWalkController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            // dd($validator);
             $gembaWalk_id = decryptId($request->id);
 
             $upload_status = GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2;
@@ -635,7 +636,9 @@ class GembaWalkController extends Controller
                 $gembaWalk_details = $this->gembaWalk->selectOne($gembaWalk_id);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($gembaWalk_id);
-                $gembaWalk_approved_singnature = $this->gembaWalk->selectSingnature($gembaWalk_id);
+                $getUserId = $this->gembaWalk->getUserId($gembaWalk_id);
+                $type = GEMBA_WALK;
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type); 
                 $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
 
 
@@ -648,7 +651,6 @@ class GembaWalkController extends Controller
                     'ehsId' => $ehsId,
 
                 );
-                // dd($data);
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
@@ -843,6 +845,10 @@ class GembaWalkController extends Controller
             if (Auth::check()) {
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
                 $status_log = $this->statusLog->selectOne($id);
+                $getUserId = $this->gembaWalk->getUserId($id);
+                $type = GEMBA_WALK;
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type); 
+                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by,$id,$type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
@@ -852,7 +858,10 @@ class GembaWalkController extends Controller
                     'status_log' => $status_log,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
-                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details
+                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details,
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
+                    'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature
+
                 ];
             }
 

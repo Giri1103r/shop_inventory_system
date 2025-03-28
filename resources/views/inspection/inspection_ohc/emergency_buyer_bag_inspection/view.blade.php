@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid  Checklist View')
-@section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
+@section('title', 'Emergency First Aid Bag Checklist')
+@section('pageurl', admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -13,14 +13,13 @@
         <div class="container-fluid main-content">
             <!-- row -->
             <div class="row">
-
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/first-aid-box/weekly-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -28,77 +27,27 @@
 
                                 <div class="basic-form mx-3">
 
-
                                     <div class="row">
 
                                         <div class="col-md-4 mb-2">
-                                            <label
-                                                class="form-label view_label">Documnet Number</label>
-                                            <div class="view_data">
-                                                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">Date of Inspection</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
+
+                                                </div>
                                             </div>
                                         </div>
-
                                         
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Issue Date</label>
+                                                    class="form-label require">Location First Aid Bag</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->issue_date) }}
-                                                </div>
-                                            </div>
-                                        </div>
+                                                    {{ isset($inspection_details->location_first_aid_bag) ? $inspection_details->location_first_aid_bag : '' }}
 
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">Revision Date</label>
-                                                <div class="view_data">
-                                                    {{ $inspection_details->revision_date }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require"> Date of Inspection   </label>
-                                                <div class="view_data">
-                                                    {{ $inspection_details->revision_date }}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Location ID</label>
-                                                <div class="view_data">
-                                                    {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Unit ID</label>
-                                                <div class="view_data">
-                                                    {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                         <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">First Aid Box No</label>
-                                                <div class="view_data">
-                                                    {{ isset($inspection_details->first_aid_box_no) ? $inspection_details->first_aid_box_no : '' }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">First Aider Name</label>
-                                                <div class="view_data">
-                                                    {{ getFirstAider(isset($inspection_details->first_aider) ? $inspection_details->first_aider : '') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -107,11 +56,40 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Shift</label>
                                                 <div class="view_data">
-                                                    {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+                                                    {{ getShift(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
                                                 </div>
                                             </div>
                                         </div>
 
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">Due Date</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($inspection_details->due_date) ? $inspection_details->due_date : '') }}
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Unit ID</label>
+                                                <div class="view_data">
+                                                    {{ getUnitname(isset($inspection_details->unit_id) ? $inspection_details->unit_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                         <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Frequency</label>
+                                                <div class="view_data">
+                                                    {{ getFrequencyname(isset($inspection_details->frequency_id) ? $inspection_details->frequency_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <table class="table table-bordered table-striped">
                                             <thead class="table-secondary">
@@ -155,15 +133,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                  
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
+    </div>    
 
 
-    @stop
+@stop

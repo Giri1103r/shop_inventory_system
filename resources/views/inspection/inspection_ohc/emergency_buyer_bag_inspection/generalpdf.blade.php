@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> Weekly First Aid Checklist | KARAM</title>
+    <title> EMERGENCY BUYER BAG IBSPECTION | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    FIRST AID BAG INSPECTION CHECKLIST</td>
+                     FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,78 +149,58 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    WEEKLY  FIRST AID CHECKLIST
+                    EMERGENCY BUYER BAG IBSPECTION 
                 </td>
             </tr>
         </table>
     </div>
 
     <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Documnet No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ $inspection_details->doc_no }}
-            </td>
-        </tr>
+       
 
         <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $inspection_details->revision_date }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b> Date of Inspection</b></td>
+            <td width="50%" style="padding:5px;"><b> Date od Inspection</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ Displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="50%" style="padding:5px;"><b>Location First Aid Bag</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
+                {{ isset($inspection_details->location_first_aid_bag) ? $inspection_details->location_first_aid_bag : '' }}
             </td>
         </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aid Box No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->first_aid_box_no) ? $inspection_details->first_aid_box_no : '' }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aider Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getFirstAider(isset($inspection_details->first_aider) ? $inspection_details->first_aider : '') }}
-            </td>
-        </tr>
-
         <tr>
             <td width="50%" style="padding:5px;"><b>Shift</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+                {{ getShift(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
+            </td>
+        </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Due Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($inspection_details->due_date) ? $inspection_details->due_date : '') }}
+            </td>
+        </tr>
+       
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($inspection_details->unit_id) ? $inspection_details->unit_id : '') }}
+            </td>
+        </tr>
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Frequency</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFrequencyname(isset($inspection_details->frequency_id) ? $inspection_details->frequency_id : '') }}
             </td>
         </tr>
 
@@ -244,7 +224,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                     FIRST AID CHECKLIST
+                    WEEKLY FIRST AID CHECKLIST
                 </td>
             </tr>
         </table>
@@ -254,18 +234,24 @@
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.sr_no') }}</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                    Medicine Name</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                   Medicine Name</th>
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Freeze Quantity</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Expiry Date</th>
-
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                
+                <th
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.remarks') }}</th>
             </tr>
 
@@ -303,7 +289,7 @@
                     {{ isset($inspection_details->remark_by) ? $inspection_details->remark_by : '' }}
                 </td>
             </tr>
-
+            
 
         </tbody>
     </table>

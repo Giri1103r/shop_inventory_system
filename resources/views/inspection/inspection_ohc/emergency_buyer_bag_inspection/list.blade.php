@@ -19,39 +19,50 @@
                             href="{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
-                    {{-- <div id="search" class="collapse">
+                    <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label for="rate" class="form-label require ">
+                                                    Date of Inspection</label>
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="date_of_inspection"
+                                                        id="date_of_inspection" class="form-control"autocomplete="off">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label for="location_id" class="form-label">
-                                                    Location</label>
-                                                <select name="location_id" id="location_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Location</option>
-                                                    @foreach ($location as $loc)
-                                                        <option value="{{ encryptId($loc->id) }}">
-                                                            {{ $loc->location_name }}</option>
+                                                <label class="form-label require">Location First Aid Bag</label>
+                                                <input type="text" name="location_first_aid_bag"
+                                                    id = "location_first_aid_bag" class="form-control"
+                                                    placeholder="Enter Location">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift_id" id="shift_id" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($shift as $list)
+                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-2">
+                                        <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Unit</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -66,26 +77,17 @@
                                         </div>
                                        
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
+                                        
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </form>
                         <hr>
-                    </div> --}}
+                    </div>
 
 
                     <div class="card-body">
@@ -95,11 +97,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Location</th>
+                                        <th>Date of Inspection</th>
+                                        <th>Location First Aid Bag</th>
+                                        <th>Shift</th>
                                         <th>Unit</th>
-                                        <th>Status</th>
                                         <th>Created By</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -125,14 +126,12 @@
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
 
-            var fromDatepicker = flatpickr("#issue_date", {
+            var fromDatepicker = flatpickr("#date_of_inspection", {
             dateFormat: "d-m-Y",
+            });
+        
         });
 
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-        });
-        });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
@@ -184,11 +183,10 @@
                         .attr('content')
                     },
                     data: function(d) {
-                        d.doc_no = $('#document_number').val();
-                        d.issue_date = $('#issue_date').val();
-                        d.location = $('#location_id').val();
-                        d.unit = $('#unit_id').val();
-                        d.status = $('#status').val();
+                        d.date_of_inspection = $('#date_of_inspection').val();
+                        d.location_first_aid_bag = $('#location_first_aid_bag').val();
+                        d.shift_id = $('#shift_id').val();
+                        d.unit_id = $('#unit_id').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -203,26 +201,21 @@
                         searchable: true,
                     },
                     {
-                        data: 'doc_no',
-                        name: 'doc_no'
+                        data: 'date_of_inspection',
+                        name: 'date_of_inspection'
                     },
                     {
-                        data: 'issue_date',
-                        name: 'issue_date'
+                        data: 'location_first_aid_bag',
+                        name: 'location_first_aid_bag'
                     },
                     {
-                        data: 'location_name',
-                        name: 'location_name'
+                        data: 'shift',
+                        name: 'shift'
                     },
                     {
                         data: 'unit_name',
                         name: 'unit_name'
                     },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                   
                     {
                         data: 'created_by',
                         name: 'created_by'
@@ -260,22 +253,20 @@
                         text: '{{ __('common.pdf') }}',
                         action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    doc_no = $('#document_number').val();
-                                    issue_date = $('#issue_date').val();
-                                    loc = $('#location_id').val();
-                                    unit = $('#unit_id').val();
-                                    status = $('#status').val();
+                                    date_of_inspection = $('#date_of_inspection').val();
+                                    location_first_aid_bag = $('#location_first_aid_bag').val();
+                                    shift_id = $('#shift_id').val();
+                                    unit_id = $('#unit_id').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/pdf') }}" +
+                                        "{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
-                                        '&issue_date=' + issue_date +
-                                        '&location_id=' + loc +
-                                        '&unit_id=' + unit +
-                                        '&status=' + status 
+                                        '&date_of_inspection=' + date_of_inspection +
+                                        '&location_first_aid_bag=' + location_first_aid_bag +
+                                        '&shift_id=' + shift_id +
+                                        '&unit_id=' + unit_id 
 
                                 }
                             },
@@ -283,24 +274,21 @@
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-                                    
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    doc_no = $('#document_number').val();
-                                    issue_date = $('#issue_date').val();
-                                    loc = $('#location_id').val();
-                                    unit = $('#unit_id').val();
-                                    status = $('#status').val();
+                                    date_of_inspection = $('#date_of_inspection').val();
+                                    location_first_aid_bag = $('#location_first_aid_bag').val();
+                                    shift_id = $('#shift_id').val();
+                                    unit_id = $('#unit_id').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
-                                        "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/excel') }}" +
+                                        "{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/export/excel') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
-                                        '&issue_date=' + issue_date +
-                                        '&location_id=' + loc +
-                                        '&unit_id=' + unit +
-                                        '&status=' + status 
+                                        '&date_of_inspection=' + date_of_inspection +
+                                        '&location_first_aid_bag=' + location_first_aid_bag +
+                                        '&shift_id=' + shift_id +
+                                        '&unit_id=' + unit_id 
  
 
                                 }

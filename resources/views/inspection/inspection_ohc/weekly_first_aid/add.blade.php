@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid')
+@section('title', 'Weekly First Aid Checklist')
 @section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
 
 

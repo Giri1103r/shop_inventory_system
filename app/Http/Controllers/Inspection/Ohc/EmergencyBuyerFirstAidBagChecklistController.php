@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\Ohc\EmergencyBuyerFirstAidChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
+use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+
+
 
 
 
@@ -19,6 +26,10 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
     private $unit;
     private $shift;
     private $medicine;
+    private $emergency_buyer_first_aid_bag;
+    private $signature;
+    private $frequency;
+
 
 
     public function __construct()
@@ -26,13 +37,17 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
         $this->unit = new Unit();
         $this->shift = new Shift();
         $this->medicine = new FirstAidEquipment();
+        $this->emergency_buyer_first_aid_bag = new EmergencyBuyerFirstAidChecklist();
+        $this->signature = new OhcSignature();
+        $this->frequency = new Frequency();
+
 
     }
     public function Index(Request $request){
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->weekly_first_aid->list();
+                    $data = $this->emergency_buyer_first_aid_bag->list();
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -44,29 +59,29 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                             }
                             return $text;
                         })
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
-                        })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
 
                         ->addColumn('action', function ($row) {
-                            $btn = '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
+                            $btn = '<a href="' . admin_url('ohc/emergency-buyer-first-aid-bag/checklist/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>';
                         
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/emergency-buyer-first-aid-bag/checklist/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
                         
                             return $btn;
                         })
                         
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status', 'created_at'])
+                        ->rawColumns(['action', 'created_by', 'date_of_inspection', 'created_at'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -79,13 +94,13 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 }
             }
         }
-        // $location = $this->location->getLocationname();
-        // $unit = $this->unit->getunit();
-        // $data = array(
-        //     'location'=>$location,
-        //     'unit'=>$unit
-        // );
-        return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.list');
+        $unit = $this->unit->getunit();
+        $shift = $this->shift->getShiftname();
+        $data = array(
+            'unit'=>$unit,
+            'shift'=>$shift
+        );
+        return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.list',$data   );
     }
 
     public function Add(Request $request)
@@ -94,11 +109,15 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
             $medicines = $this->medicine->getFirstAidData();
+            $frequency = $this->frequency->getFrequency();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicines' => $medicines,
+                'frequency' => $frequency,
+
             );
+            // dd($data);
             
             return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.add',$data);
 
@@ -113,11 +132,11 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
         try {
             $rules = [
                 'date_of_inspection' => 'required',
-                'location_first_bag' => 'required',
+                'location_first_aid_bag' => 'required',
                 'shift' => 'required',
                 'next_due_date' => 'required',
                 'unit_id' => 'required',
-                'frequency' => 'required',
+                'frequency_id' => 'required',
                 'medicine_id.*' => 'required',
                 'freeze_quantity.*' => 'required',
                 'available_quantity.*' => 'required',
@@ -128,11 +147,11 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             
             $messages = [
                 'date_of_inspection.required' => 'Date of inspection is required.',
-                'location_first_bag.required' => 'Location of the first aid bag is required.',
+                'location_first_aid_bag.required' => 'Location of the first aid bag is required.',
                 'shift.required' => 'Shift selection is required.',
                 'next_due_date.required' => 'Next due date is required.',
                 'unit_id.required' => 'Unit selection is required.',
-                'frequency.required' => 'Frequency is required.',
+                'frequency_id.required' => 'Frequency is required.',
                 'medicine_id.*.required' => 'Medicine ID is required.',
                 'freeze_quantity.*.required' => 'Freeze quantity is required.',
                 'available_quantity.*.required' => 'Available quantity is required.',
@@ -147,11 +166,16 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             
-            
             try {
-                
+
+                $emergency_buyer_first_aid_bag = $this->emergency_buyer_first_aid_bag->store();
+                $emergency_buyer_first_aid_bag_id = $emergency_buyer_first_aid_bag->id;
+                $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
+                $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($emergency_buyer_first_aid_bag_id);
+                $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+
                 Session::flash('success', 'Your data has been created successfully!');
-                return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
+                return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
                 
             } catch (Exception $ex) {
                 dd($ex);
@@ -159,6 +183,172 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             }
             
         } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+
+    public function View(Request $request)
+    {
+        try {
+            
+            $id = decryptId($request->id);
+            $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($id);
+            $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
+            $inspection_data = json_decode($inspection_details->inspection_data, true);
+            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+
+            $data = array(
+                'inspection_details' => $inspection_details,
+                'inspection_file' => $inspection_file,
+                'inspection_data' => $inspection_data,
+            );
+
+            return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.view',$data);
+
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+
+            if (Auth::check()) {
+                $id = decryptId($request->id);
+                $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($id);
+                $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
+                $inspection_data = json_decode($inspection_details->inspection_data, true);
+                $inspection_created_by = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+
+                $data = array(
+                    'inspection_details' => $inspection_details,
+                    'inspection_created_by' => $inspection_created_by,
+                    'inspection_data' => $inspection_data,
+                );
+            }
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.inspection_ohc.emergency_buyer_bag_inspection.generalpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Emergency Buyer Bag Inspection Details.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->emergency_buyer_first_aid_bag->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Date Of Inspection',
+                'Location First Aid Bag',
+                'Shift',
+                'Unit',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+                $export = [];
+                $export[] =  $i;
+                $export[] =  Displaydateformat($data->date_of_inspection);
+                $export[] =  $data->location_first_aid_bag;
+                $export[] =  getShift($data->shift_id);
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Emergency Buyer Bag Inspection.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            ini_set("pcre.backtrack_limit", "5000000");
+
+            $allData = $this->emergency_buyer_first_aid_bag->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                'Date Of Inspection',
+                'Location First Aid Bag',
+                'Shift',
+                'Unit',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Emergency Buyer Bag Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.emergency_buyer_bag_inspection.pdf', $data);
+            $html = $view->render();
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Emergency Buyer Bag Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
             report($ex);
         }
     }

@@ -195,6 +195,13 @@
                     {{ displayDateformat($gembaWalk->created_at ?? '') }}
                 </td>
             </tr>
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Signature</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
+                        alt="" style="height: 60px; width:60px;"></td>
+            </tr>
         </table>
     @else
         <p style="text-align:center; color:red; font-weight:bold;">No Gemba Walk Details Available</p>
@@ -659,6 +666,12 @@
                         <td width="48%" style="padding:5px;">N/A</td>
                     </tr>
                 @endif
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($gembaWalk_verified_singnature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
             </table>
         </div>
 
