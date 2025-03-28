@@ -63,6 +63,7 @@ use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
+use App\Http\Controllers\Ohcmanagement\Master\HospitalDetailsController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
@@ -170,7 +171,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
         Route::middleware(['islogin', 'language'])->group(function () {
-           
+
             Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
             Route::get('home', [AdminController::class, 'index'])->name('home');
             Route::get('profile', [AdminController::class, 'profileView']);
@@ -233,7 +234,7 @@ Route::middleware(['securityheader'])->group(function () {
             /**
              * File Upload Error Log
              */
-            
+
 
 
             Route::get('uploadlog/list', [UploadLogController::class, 'index']);
@@ -832,6 +833,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/approval/submit', [MedicineController::class, 'approvalsubmit']);
             });
 
+            Route::group(['prefix' => 'ohc/hospital-details'], function () {
+                Route::get('/list', [HospitalDetailsController::class, 'index']);
+                Route::post('/list', [HospitalDetailsController::class, 'index']);
+                Route::get('/add', [HospitalDetailsController::class, 'add']);
+                Route::post('/add/submit', [HospitalDetailsController::class, 'store']);
+                Route::get('/edit/{id}', [HospitalDetailsController::class, 'edit']);
+                Route::post('/edit/submit', [HospitalDetailsController::class, 'update']);
+                Route::get('/view/{id}', [HospitalDetailsController::class, 'view']);
+                Route::post('/delete', [HospitalDetailsController::class, 'delete']);
+                Route::get('/export/excel', [HospitalDetailsController::class, 'exportExcel']);
+                Route::get('/export/pdf', [HospitalDetailsController::class, 'exportPdf']);
+                Route::get('/sampledownload', [HospitalDetailsController::class, 'DownloadSample']);
+                Route::get('/import', [HospitalDetailsController::class, 'import']);
+                Route::post('/import/submit', [HospitalDetailsController::class, 'importSubmit']);
+                Route::post('/status', [HospitalDetailsController::class, 'statusChange']);
+                Route::post('/unique', [HospitalDetailsController::class, 'Uniquecheck']);
+                Route::post('/hsn-unique', [HospitalDetailsController::class, 'hsnNumber']);
+                Route::get('/approval/view/{id}', [HospitalDetailsController::class, 'approval']);
+                Route::post('/approval/submit', [HospitalDetailsController::class, 'approvalsubmit']);
+            });
+
             Route::group(['prefix' => 'ohc/vendor'], function () {
                 Route::get('/list', [VendorController::class, 'index']);
                 Route::post('/list', [VendorController::class, 'index']);
@@ -1132,7 +1154,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::post('/delete/{row_id}', [MedicineFirstAidController::class, 'delete']);
                 Route::get('/editquantity/{quantity_id}', [MedicineFirstAidController::class, 'editquantity']);
-
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });
 
@@ -1486,6 +1507,9 @@ Route::middleware(['securityheader'])->group(function () {
 
                 });
             });
+
+
+
         });
     });
 });

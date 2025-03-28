@@ -203,6 +203,8 @@ class AppServiceProvider extends ServiceProvider
         defined('FIRST_AID_BAG_INSPECTION_CHECKLIST') or define('FIRST_AID_BAG_INSPECTION_CHECKLIST', 17);
         defined('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE') or define('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE', 11);
         defined('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST') or define('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST', 16);
+      
+        defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST',15);
 
 
         // IMS  EHS_REVIEW
@@ -333,10 +335,13 @@ class AppServiceProvider extends ServiceProvider
         defined('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
 
         // Fire
-        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);
-        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP', 14);
-        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION', 3);
-        defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION', 5);
+        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+        defined('EMERGENCY_LIGHT_INSPECTION') or define('EMERGENCY_LIGHT_INSPECTION',2);
+        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
+        defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
+        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
+        defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION',7);
 
         // OPTIONS
         defined('YES') or define('YES', 1);
@@ -360,6 +365,18 @@ class AppServiceProvider extends ServiceProvider
 
         defined('PRESENT') or define('PRESENT', 1);
         defined('MISSING') or define('MISSING', 2);
+
+        // Valve Types
+        defined('GATE') or define('GATE',1);
+        defined('BALL') or define('BALL',2);
+        defined('BUTTERFLY') or define('BUTTERFLY',3);
+
+        defined('OPEN') or define('OPEN',1);
+        defined('CLOSE') or define('CLOSE',2);
+
+        // Condition Of The Glass
+        defined('INTACT') or define('INTACT',1);
+        defined('BROKEN') or define('BROKEN',2);
 
         View::composer('*', function ($view) {
 

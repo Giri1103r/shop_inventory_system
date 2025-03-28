@@ -224,7 +224,7 @@ class IsolationValveController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Fire Extinguisher Inspection",
+                    'message' => "Fire Associate create the Isolation Valve Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -235,7 +235,7 @@ class IsolationValveController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Fire Extinguisher Inspection';
+            $title = 'Fire Associate create the Isolation Valve Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('fire/isolating-valve-inspection/verification/' . encryptId($id) . '/ehs');
@@ -261,7 +261,6 @@ class IsolationValveController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
@@ -329,7 +328,7 @@ class IsolationValveController extends Controller
             $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
             $inspection_details = $this->isolation_valve->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully';
+                $message = 'Isolation Valve Inspection Approved Successfully';
                 $web_link =   admin_url('fire/isolating-valve-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -609,7 +608,7 @@ class IsolationValveController extends Controller
             $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
             $inspection_details = $this->isolation_valve->selectOne($id);
             if ($status == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully!';
+                $message = 'Isolation Valve Inspection Approved Successfully!';
                 $web_link =   admin_url('fire/isolating-valve-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
@@ -702,7 +701,7 @@ class IsolationValveController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Fire Extinguisher Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Isolation Valve Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -735,7 +734,7 @@ class IsolationValveController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Fire Extinguisher Inspection",
+                'pagetitle' => "Isolation Valve Inspection",
             );
 
             $property = [
@@ -777,7 +776,7 @@ class IsolationValveController extends Controller
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Fire Extinguisher Inspection",
+                    'pagetitle' => "Isolation Valve Inspection",
                     'inspection' => $inspection,
                 ];
             }
@@ -798,7 +797,7 @@ class IsolationValveController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Isolation Valve Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

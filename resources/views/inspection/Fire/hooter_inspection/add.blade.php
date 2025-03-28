@@ -181,7 +181,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
-                                                            class="form-control" value="{{ HooterSequence() }}" readonly>
+                                                            class="form-control" value="{{ FireSequence(HOOTER_INSPECTION) }}" readonly>
                                                     </div>
                                                 </div>
 
@@ -530,7 +530,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                                            class="form-control" value="{{ HooterSequence() }}" readonly>
+                                                            class="form-control" value="{{ FireSequence(HOOTER_INSPECTION) }}" readonly>
                                                     </div>
                                                 </div>
 
