@@ -179,5 +179,7 @@ return [
     'GATE' => 'Gate Valve',
     'BALL' => 'Ball Valve',
     'BUTTERFLY' => 'Butterfly Valve',
+    'action_taken' => 'Action Taken',
+    'fire_mock_drill_observation' => 'Fire Mock Drill Observation',
 
 ];

@@ -335,6 +335,7 @@ class AppServiceProvider extends ServiceProvider
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_MOCK_DRILL_INSPECION') or define('FIRE_MOCK_DRILL_INSPECION',18);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
         defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
@@ -343,7 +344,7 @@ class AppServiceProvider extends ServiceProvider
         defined('YES') or define('YES',1);
         defined('NO') or define('NO',2);
 
-        //  template constant
+        //  template constants
         defined('PRODUCTION') or define('PRODUCTION',1);
 
         // Fire File Upload

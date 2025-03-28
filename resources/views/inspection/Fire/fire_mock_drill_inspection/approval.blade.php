@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Forklift Inspection')
-@section('pageurl', admin_url('safety/forklift-inspection/list'))
+@section('title', 'Fire MockDrill Observation Report')
+@section('pageurl', admin_url('fire/fire-mock-drill-observation/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('safety/forklift-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/fire-mock-drill-observation/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.rev_data') }}</label>
                                                 <div class="view_data">
                                                     {{ $inspection_details->rev_data }}
                                                 </div>
@@ -76,13 +76,12 @@
                                                 </div>
                                             </div>
                                         @endif
-
                                         <hr>
                                         @foreach ($inspection as $details)
                                             <div class="form-wrapper">
                                                 <div class="row mt-4 form-set">
                                                     <div class="card-header-inner p-2">
-                                                        <h4 class="text-white">Forklift Inspection</h4>
+                                                        <h4 class="text-white">Fire MockDrill Observation Report</h4>
                                                     </div>
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -98,14 +97,6 @@
                                                                 class="form-label ">{{ __('inspection.department') }}</label>
                                                             <div class="view_data">
                                                                 {{ getDepartment($details->department_id) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label ">{{ __('inspection.unit') }}</label>
-                                                            <div class="view_data">
-                                                                {{ getUnitname($details->unit_id) }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -180,66 +171,116 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         @endforeach
-                                        @if (isset($inspection_details->approval_remarks))
-                                            <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Approval</h4>
-                                            </div>
+                                    </div>
+                                    <div>
+                                        <div class="card-header-inner p-2">
+                                            <h4 class="text-white">APPROVAL</h4>
+
+                                        </div>
+                                        <form method="POST" id="forklistassessmentAdd"
+                                            action="{{ admin_url('fire/fire-mock-drill-observation/verify/submit') }}"
+                                            autocomplete="off" enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="hidden" value="{{ encryptId($inspection_details->id) }}"
+                                                name="id">
                                             <div class="row">
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.level_one_manager') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUserName($inspection_details->updated_by) }}
-                                                        </div>
-                                                    </div>
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                    <input type="text" name="name" id = "name" class="form-control"
+                                                        value="{{ getUserName(Auth::id()) }}" readonly>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
-                                                        </div>
-                                                    </div>
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <input type="text" name="date" id = "date"
+                                                        class="form-control" value="{{ todayDate() }}" readonly>
                                                 </div>
-                                                @php
-                                                    $signature = GetSafetySignature(
-                                                        $inspection_details->updated_by,
-                                                        $inspection_details->id,
-                                                        FORKLIFT_INSPECTION,
-                                                    );
-                                                @endphp
-                                                @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    @if (isset(Auth::user()->signature_upload))
+                                                        <label class="form-label"
+                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                    @else
+                                                        <div class="form-input col-md-12 mb-2">
+                                                            <label class="form-label require">Signature</label>
+                                                            <input type="file" name="signature_image"
+                                                                id="signature_upload" class="form-control form-control-sm"
+                                                                accept="image/*" placeholder="Enter the image">
+                                                            <small>Allowed file types: jpg, jpeg, png</small>
+                                                            <div id="signature_upload" class="text-danger"></div>
                                                         </div>
-                                                    </div>
-                                                @endif
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->approval_remarks }}
-                                                    </div>
+                                                    @endif
+                                                </div>
+
+                                                <div class="col-md-12 mb-2 form-input" id="capa_remarks">
+                                                    <label for="capa_remarks" class="form-label">Remarks</label>
+                                                    <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                        name="capa_remarks"></textarea>
+                                                </div>
+                                                <div class="submit-button" style="text-align: right;">
+                                                    <x-button-approve></x-button-approve>
+                                                    <x-button-reject></x-button-reject>
                                                 </div>
                                             </div>
-                                        @endif
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
 
-        @stop
-        @push('script')
-        @endpush
+            </div>
+        </div>
+
+    @stop
+    @push('script')
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
+        </script>
+    @endpush
