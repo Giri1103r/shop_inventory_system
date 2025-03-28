@@ -103,15 +103,16 @@ class HospitalDetails extends Model
         return $datas;
     }
 
-    public function uniqueCheck($hospital_name)
+    public function uniqueCheck($hospital_name,$mobile_no)
     {
 
-        return $this->where('hospital_name', $hospital_name)->get();
+        return $this->where('hospital_name', $hospital_name)->orwhere('mobile_no',$mobile_no)->get();
     }
 
-    public function existUniqueCheck($hospital_name, $id)
+    public function existUniqueCheck($hospital_name, $mobile_no, $id)
     {
         return $this->where('hospital_name', $hospital_name)
+        ->orwhere('mobile_no',$mobile_no)
             ->where('id', '!=', $id)
             ->get();
     }
@@ -138,10 +139,10 @@ class HospitalDetails extends Model
         $request = request();
 
         $update_array = array(
-            'hospital_name'         => ($request->hospital_name),
-            'mobile_no'   => ($request->mobile_no),
-            'address'   => ($request->address),
-            'tel_no'   => ($request->tel_no),
+            'hospital_name'  => ($request->hospital_name),
+            'mobile_no' => ($request->mobile_no),
+            'address' => ($request->address),
+            'tel_no' => ($request->tel_no),
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         );

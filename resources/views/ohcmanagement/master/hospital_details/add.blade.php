@@ -41,7 +41,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Hospital Name</label>
                                                     <input type="text" name="hospital_name" id="hospital_name"
-                                                        class="form-control" placeholder="Hospital Name" >
+                                                        class="form-control" placeholder="Hospital Name">
                                                 </div>
                                             </div>
 
@@ -49,8 +49,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Mobile Number </label>
-                                                    <input type="text" name="mobile_no" id="mobile_no" class="form-control"
-                                                        placeholder="Enter the Mobile Number">
+                                                    <input type="text" name="mobile_no" id="mobile_no"
+                                                        class="form-control" placeholder="Enter the Mobile Number">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-     
+
     </div>
 
 @stop
@@ -99,6 +99,12 @@
 
 
         $(function() {
+            // Custom method for regex validation
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "Enter a valid telephone number with 7-15 digits.");
+
             $('#HospitalDetails').validate({
                 rules: {
                     hospital_name: {
@@ -111,6 +117,9 @@
                                 hospital_name: function() {
                                     return $('#hospital_name').val();
                                 },
+                                mobile_no: function() {
+                                    return $('#mobile_no').val();
+                                },
                             },
                         },
                     },
@@ -119,10 +128,21 @@
                         digits: true,
                         minlength: 10,
                         maxlength: 10,
+                        remote: {
+                            url: '{{ admin_url('ohc/hospital-details/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+
+                                mobile_no: function() {
+                                    return $('#mobile_no').val();
+                                },
+                            },
+                        },
                     },
                     tel_no: {
                         required: true,
-
+                        regex: /^(\+?[0-9]{1,4})?[0-9]{7,15}$/,
                     },
                     address: {
                         required: true,
@@ -132,18 +152,19 @@
                 messages: {
                     hospital_name: {
                         required: "Hospital name is required.",
-                        remote: "Hospital Name already Exist",
+                        remote: "Hospital Name already exists.",
                     },
                     tel_no: {
-                        required: "Telephone Number is Required.",
+                        required: "Telephone Number is required.",
+                        regex: "Enter a valid telephone number with 7-15 digits.",
                     },
                     mobile_no: {
-                        required: "Mobile Number is Required.",
-                        digits: "Mobile Number Should Be Numeric",
+                        required: "Mobile Number is required.",
+                        digits: "Mobile Number should be numeric.",
                         maxlength: "Maximum 10 digits are required.",
                         minlength: "Minimum 10 digits are required.",
+                        remote: "Mobile Number Should Be Unique.",
                     },
-
                     address: {
                         required: "Address is required.",
                         maxlength: "Address cannot exceed 300 characters.",

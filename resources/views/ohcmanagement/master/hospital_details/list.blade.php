@@ -91,6 +91,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Hospital Name</th>
                                         <th>Mobile Number</th>
+                                        <th>Telephone Number</th>
                                         <th>Address</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -181,7 +182,10 @@
                         data: 'mobile_no',
                         name: 'mobile_no'
                     },
-
+                    {
+                        data: 'tel_no',
+                        name: 'tel_no'
+                    },
                     {
                         data: 'address',
                         name: 'address'
@@ -330,7 +334,7 @@
                 });
             });
 
-     
+
         });
     </script>
 @endpush

@@ -192,26 +192,8 @@ class HospitalDetailsController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $rules = [
-                'medicine' => 'required',
-                'pack' => 'required',
-                // 'hsn' => 'required',
-                // 'unit_id' => 'required',
-                'threshold_limit' => 'required',
-                // 'expire_date' => 'required',
-
-            ];
-            $messages = [
-                'medicine.required' => 'Please enter the medicine name.',
-                'pack.required' => 'Please enter the pack details.',
-                'threshold_limit.required' => 'Please enter the threshold limit.',
 
 
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
 
             $this->hospital_details->updates($id);
 
@@ -229,16 +211,17 @@ class HospitalDetailsController extends Controller
     {
         if ($request->ajax()) {
             $hospital_name = $request->hospital_name;
+            $mobile_no = $request->mobile_no;
 
 
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = $this->hospital_details->uniqueCheck($hospital_name);
+                $isUnique = $this->hospital_details->uniqueCheck($hospital_name,$mobile_no);
             } else {
                 $id = decryptId($id);
 
-                $isUnique = $this->hospital_details->existUniqueCheck($hospital_name, $id);
+                $isUnique = $this->hospital_details->existUniqueCheck($hospital_name,$mobile_no, $id);
             }
 
             if ($isUnique->count()) {
@@ -294,7 +277,7 @@ class HospitalDetailsController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->hospital_details;
+                $export[] =  $data->hospital_name;
                 $export[] =  $data->mobile_no;
                 $export[] =  $data->tel_no;
                 $export[] =  $data->address;

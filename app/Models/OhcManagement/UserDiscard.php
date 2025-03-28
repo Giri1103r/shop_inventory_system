@@ -12,9 +12,12 @@ class UserDiscard extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'unit_id',
-        'department_id',
+        'medicine_id',
+        'batch_no',
         'discard_date',
+        'approved_by',
+        'approve_status',
+        'approver_remarks',
         'status',
         'trash',
         'created_by',
@@ -31,20 +34,9 @@ class UserDiscard extends Model
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
         $query = $this->select(
-            'ohc_management_discard.id as discard_id',
-            'ohc_management_discard_medicine.id as med_id',
-            'ohc_management_discard_medicine.status as medicine_status',
-            'ohc_management_discard.*',
-            'ohc_management_discard_medicine.*'
-        )
-        ->join('ohc_management_discard_medicine', 'ohc_management_discard.id', '=', 'ohc_management_discard_medicine.req_id')
-        ->where('ohc_management_discard_medicine.trash', 'NO')
-        ->where('ohc_management_discard.trash', 'NO')
-        ->orderBy('med_id', 'desc')
-        ->orderBy('discard_id', 'desc');
+            'ohc_management_discard.*'
 
-
-
+        );
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
@@ -56,45 +48,17 @@ class UserDiscard extends Model
         $userRole = string_to_array($user->role);
         $unit_id = ($user->unit_id);
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-            $query->orderBy('ohc_management_discard.id', 'DESC');
-        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
-            $query->orderBy('ohc_management_discard.id', 'DESC');
-        } else {
-            $query->where('ohc_management_discard.created_by', Auth::id())->where('unit_id',$unit_id);
-        }
-
-
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
-
         }
-
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('ohc_management_discard_medicine.status', decryptId($request->status));
-
-        }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_discard.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_discard.created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_discard.created_at', '<=', $endDate);
-        }
-
 
         $org_total_counts = $query->count();
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('discard_id', 'desc');
+        $query->orderBy('id', 'desc');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -105,34 +69,23 @@ class UserDiscard extends Model
         ];
     }
 
-    public function store()
+    public function store($data)
     {
         $request = request();
-
+        $today = Carbon::today();
         $insert_array = [
-            'unit_id' =>Auth::user()->unit_id,
-            'department_id' =>decryptId($request->department_id),
-            'discard_date' => DBdateformat($request->discard_date),
-            'created_by' => Auth::id(),
+            'medicine_id' => $data->medicine_id,
+            'batch_no' => $data->medicine_id,,
+            'discard_date' => $today,
+            'approved_by' => Auth::id(),
+            'approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
+            'approver_remarks'  => $request->remarks,
+            'status' => Auth::id(),
+            'trash',
+            'created_by',
+
         ];
-
-        return $this->create($insert_array);
     }
-    public function updates($id, $user_discard)
-    {
-
-        $request = request();
-
-        $update_array = array(
-          'unit_id' => $user_discard->unit_id,
-            'department_id' =>decryptId($request->department_id),
-            'discard_date' => DBdateformat($request->discard_date),
-            'updated_by' => Auth::id(),
-        );
-
-        return $this->where('id', $id)->update($update_array);
-    }
-
     public function selectOne($id)
     {
 
@@ -176,17 +129,8 @@ class UserDiscard extends Model
 
         $search = '';
         $query = $this->select(
-            'ohc_management_discard.id as discard_id',
-            'ohc_management_discard_medicine.id as medicine_id',
-            'ohc_management_discard.*',
-            'ohc_management_discard_medicine.*'
-        )
-        ->join('ohc_management_discard_medicine', 'ohc_management_discard.id', '=', 'ohc_management_discard_medicine.req_id')
-        ->where('ohc_management_discard_medicine.trash', 'NO')
-        ->where('ohc_management_discard.trash', 'NO')
-        ->orderBy('discard_id', 'desc')
-        ->limit(10)
-        ->offset(0);
+            'ohc_management_discard.*'
+        );
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -196,35 +140,6 @@ class UserDiscard extends Model
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%');
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-            $query->orderBy('ohc_management_discard.id', 'DESC');
-        }  elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
-            $query->orderBy('ohc_management_discard.id', 'DESC');
-        } else {
-            $query->where('ohc_management_discard.created_by', Auth::id())->where('ohc_management_discard.unit_id',$unit_id);
-        }
-        if ($request->has('unit_id') && $request->unit_id) {
-
-            $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
-
-        }
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('ohc_management_discard_medicine.status', decryptId($request->status));
-
-        }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_discard.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('from_date') && !empty($request->from_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_discard.created_at', '>=', $startDate);
-        } elseif ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_discard.created_at', '<=', $endDate);
-        }
-
 
         $query->orderBy('discard_id', 'DESC');
 
@@ -234,17 +149,15 @@ class UserDiscard extends Model
 
     public function approvereject($id, $data)
     {
-        return $this->where('id', $id)->update(['approve_status' => $data['approve_status'],
-        'approved_by'=>Auth::id(),
-    ]);
-    }
-    // status closed
-
-    public function updatestatus($id){
-        return $this->where('id',$id)->update(['approve_status'=>STATUS_OHC_CLOSE]);
+        return $this->where('id', $id)->update([
+            'approve_status' => $data['approve_status'],
+            'approved_by' => Auth::id(),
+        ]);
     }
 
-    // sending the data to email
 
-
+    public function updatestatus($id)
+    {
+        return $this->where('id', $id)->update(['approve_status' => STATUS_OHC_CLOSE]);
+    }
 }
