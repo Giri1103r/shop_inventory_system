@@ -41,7 +41,7 @@ class AmbientNoiseMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $type = 1;
+                   $type = AMBIENTNOISE;
                     $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
@@ -83,7 +83,7 @@ class AmbientNoiseMonitoringController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', '1')->where('status', '1')->get();
+        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', AMBIENTNOISE)->where('status', '1')->get();
 
         $data = array(
             'environmentList' => $environmentList,
@@ -126,7 +126,7 @@ class AmbientNoiseMonitoringController extends Controller
 
             try {
                 $env_no = $request->ambient_noise_no;
-                $type = 1;
+               $type = AMBIENTNOISE;
                 $environment =   $this->environment->store($env_no, $type);
  
                 $this->ambient_noise_monitoring->store($environment->id);
@@ -169,7 +169,7 @@ class AmbientNoiseMonitoringController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $type = 1;
+               $type = AMBIENTNOISE;
                 $environmentData =   $this->environment->selectOne($id,$type);
                 $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
@@ -196,7 +196,7 @@ class AmbientNoiseMonitoringController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $type = 1;
+           $type = AMBIENTNOISE;
             $environmentID = $this->environment->statuschange($id,$type);
             $this->ambient_noise_monitoring->statuschange($id);
 
@@ -210,7 +210,7 @@ class AmbientNoiseMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-            $type = 1;
+           $type = AMBIENTNOISE;
             $allData =   $this->environment->exportdata($type);
             $header = [
                 __("common.sno"),
@@ -250,7 +250,7 @@ class AmbientNoiseMonitoringController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-            $type = 1;
+           $type = AMBIENTNOISE;
             $allData =   $this->environment->exportdata($type);
 
             $header = [

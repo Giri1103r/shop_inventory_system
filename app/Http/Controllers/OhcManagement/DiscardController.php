@@ -51,7 +51,7 @@ class DiscardController extends Controller
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
         $this->user_discard = new UserDiscard();
-        $this->discard = new Discard();
+
         $this->medicine_stock = new MedicineStock();
         $this->unit = new Unit();
         $this->department = new Department();
@@ -81,13 +81,6 @@ class DiscardController extends Controller
                             }
 
 
-                            if ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->med_id) . "' data-type='1'>Active</span>";
-                                } elseif ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->med_id) . "' data-type='0'>In-Active</span>";
-                                }
-                            }
 
                             return $text;
                         })
@@ -124,7 +117,7 @@ class DiscardController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -159,61 +152,7 @@ class DiscardController extends Controller
         }
     }
 
-    public function store(Request $request)
-    {
-        try {
-            $rules = [
-                'unit_id' => 'required',
-                'department_id' => 'required',
-                'discard_date' => 'required',
-
-            ];
-            $messages = [
-                'department_id.required' => 'Please select a Deparment.',
-                'unit_id.required' => 'Please select a unit.',
-                'discard_date.required' => 'Please select the expiry date.',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            try {
-                // Store user medicine requisition
-                $user_discard = $this->user_discard->store();
-                $medicine = $this->discard->store($user_discard);
-                $user_discard_id = $this->user_discard->selectOne($user_discard->id);
-                $discard = $this->discard->selectOne($user_discard->id);
-                foreach ($discard as $medicine) {
-                    $medicine_id = $medicine->medicine_id;
-                    $unitId = $user_discard_id->unit_id;
-                    $issuedQuantity = $medicine->quantity;
-
-
-                    $inventory = $this->inventory
-                        ->where('medicine_id', $medicine_id)
-                        ->where('unit_id', $unitId)
-                        ->first();
-
-                    if ($inventory) {
-                        $inventory->decrement('balance', $issuedQuantity);
-                    }
-                }
-
-                Session::flash('success', 'Your data has been created successfully!');
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
-            return redirect(admin_url('ohc/discard/list'));
-        } catch (Exception $ex) {
-
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/discard/list'));
-        }
-    }
+  
 
 
     public function view(Request $request)

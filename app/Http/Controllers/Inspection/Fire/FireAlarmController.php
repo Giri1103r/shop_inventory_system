@@ -12,15 +12,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
-use App\Models\Inspection\Fire\FireAlarmInspection;
-use App\Models\Inspection\Fire\FireAlarmInspectionDetails;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\Fire\FireAlarmInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\Fire\FireAlarmInspectionDetails;
 
 class FireAlarmController extends Controller
 {
@@ -260,6 +261,7 @@ class FireAlarmController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -753,7 +755,7 @@ class FireAlarmController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire Alarm Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -796,7 +798,7 @@ class FireAlarmController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire Alarm Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

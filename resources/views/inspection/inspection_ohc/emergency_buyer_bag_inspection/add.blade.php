@@ -54,8 +54,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location First Aid Bag</label>
-                                                    <input type="text" name="location_first_bag"
-                                                        id = "location_first_bag" class="form-control"
+                                                    <input type="text" name="location_first_aid_bag"
+                                                        id = "location_first_aid_bag" class="form-control"
                                                         placeholder="Enter Location">
                                                 </div>
                                             </div>
@@ -105,8 +105,14 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Frequency</label>
-                                                    <input type="text" name="frequency" id = "frequency"
-                                                        class="form-control" placeholder="Enter Frequancy">
+                                                    <select name="frequency_id" id="frequency_id" class="form-control single-select"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Frequency</option>
+                                                        @foreach ($frequency as $frequency)
+                                                            <option value="{{ encryptId($frequency->id) }}">
+                                                                {{ $frequency->frequency_name }}</option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
 
@@ -257,7 +263,7 @@
                     date_of_inspection: {
                         required: true,
                     },
-                    location_first_bag: {
+                    location_first_aid_bag: {
                         required: true,
                     },
                     shift: {
@@ -281,7 +287,7 @@
                     date_of_inspection: {
                         required: "Date of Inspection is required",
                     },
-                    location_first_bag: {
+                    location_first_aid_bag: {
                         required: "Location First Aid Bag is required",
                     },
                     shift: {

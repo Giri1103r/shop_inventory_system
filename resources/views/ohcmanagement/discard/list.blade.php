@@ -19,10 +19,7 @@
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary"
-                            href="{{ admin_url('ohc/discard/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+
 
                     </div>
 
@@ -98,13 +95,11 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Unit </th>
-                                        <th>Department</th>
-                                        <th>Medicine</th>
+                                        <th>Medicine Name</th>
                                         <th>Quantity</th>
+                                        <th>Discard date</th>
                                         <th>Remarks</th>
-                                        <th>Discard Date</th>
-                                        <th data-priority="2">{{ __('common.status') }}</th>
+                                      
                                         <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -127,31 +122,7 @@
                 location.reload();
             });
 
-            $(document).on('change', '#unit_id', function() {
-                var unitId = $(this).val();
-                if (unitId) {
-                    $.ajax({
-                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#department_id').empty().append(
-                                '<option value="">Select Department</option>');
-                            $.each(data, function(key, value) {
-                                $('#department_id').append('<option value="' + value
-                                    .id + '">' + value.name + '</option>');
-                            });
-                            $('#department_id').trigger('change.');
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching department. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#department_id').empty().append('<option value="">Select Department</option>');
-                    $('#department_id').trigger('change.');
-                }
-            });
+
 
             var fromDatepicker = flatpickr("#from_date", {
                 dateFormat: "d-m-Y",
@@ -247,14 +218,6 @@
                 },
 
                 {
-                    data: 'unit_id',
-                    name: 'unit_id'
-                },
-                {
-                    data: 'department_id',
-                    name: 'department_id'
-                },
-                {
                     data: 'medicine_id',
                     name: 'medicine_id'
                 },
@@ -263,17 +226,15 @@
                     name: 'quantity'
                 },
                 {
-                    data: 'remarks',
-                    name: 'remarks'
-                },
-                {
                     data: 'discard_date',
                     name: 'discard_date'
                 },
+
                 {
-                    data: 'medicine_status',
-                    name: 'medicine_status'
+                    data: 'approver_remarks',
+                    name: 'approver_remarks'
                 },
+
                 {
                     data: 'action',
                     name: 'action'

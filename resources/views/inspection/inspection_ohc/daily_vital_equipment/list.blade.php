@@ -32,15 +32,7 @@
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
+                            
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -64,7 +56,6 @@
                                         <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
                                         <th>{{ __('inspection.rev_date') }}</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -125,7 +116,6 @@
                             d.doc_no = $('#doc_no').val();
                             d.issue_date = $('#issue_date').val();
                             d.revision_date = $('#revision_date').val();
-                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -151,10 +141,6 @@
                         {
                             data: 'revision_data',
                             name: 'revision_data',
-                        },
-                        {
-                            data: 'status',
-                            name: 'status',
                         },
                         {
                             data: 'action',
@@ -187,16 +173,14 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
-                                        status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
+                                            "{{ admin_url('ohc/daily-vital-equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&doc_no=' + doc_no +
-                                            '&issue_date=' + issue_date +
-                                            '&status=' + status
+                                            '&issue_date=' + issue_date 
                                     }
                                 },
                                 {
@@ -206,15 +190,13 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
-                                        status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
+                                            "{{ admin_url('ohc/daily-vital-equipment/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&doc_no=' + doc_no +
-                                            '&issue_date=' + issue_date +
-                                            '&status=' + status
+                                            '&issue_date=' + issue_date 
                                     }
                                 },
                             ]
@@ -245,156 +227,6 @@
                     }, 150);
                 });
 
-                /* Status Change */
-                $(document).on('click', '.statusChange', function() {
-                    var id = $(this).data('id');
-                    var types = $(this).data('type');
-                    if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Daily Vital Equipment checklist') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
-
-                    } else {
-                        var title = '{{ __('Do You want to Activate Daily Vital Equipment checklist') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-
-
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('ohc/daily-vital-equipment/list/status') }}",
-                                type: 'post',
-
-                                data: {
-                                    id: id,
-                                    types: types
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-                });
-
-
-                /* Delete Record */
-                $(document).on('click', '.recordDelete', function() {
-
-                    var id = $(this).data('id');
-                    var login_id = $(this).data('login_id');
-
-                    var title = '{{ __('Do You want to Delete Daily Vital Equipment checklist') }}';
-                    var text = '{{ __('common.delete') }}';
-                    var btncolor = '#dc3545'
-
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        denyButtonColor: '#28a745',
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('ohc/daily-vital-equipment/list/delete') }}",
-                                type: 'post',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                        .attr('content')
-                                },
-                                data: {
-                                    id: id,
-                                    login_id: login_id
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    if (data.status === 406 && data.responseJSON.msg ===
-                                        'module_exits') {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                        });
-                                    } else {
-                                        $.notify(data.responseJSON.msg, "error");
-                                    }
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
-
-
-                });
 
             });
         </script>

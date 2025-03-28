@@ -40,7 +40,9 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
+use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Safety\SignatureUpload;
@@ -2075,6 +2077,19 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+                case FIRE_ALARM_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_ALARM_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
 
                 case OHC_TYPE_FLOOR_STRETCHER:
                     $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
@@ -2089,6 +2104,19 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
+                 
+                    case GEMBA_WALK:
+                        $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
+                        if ($name == null) {
+                            $name = User::where('id', $userid)->first();
+                            if ($name == null) {
+                                return null;
+                            }
+                            return $name->signature_upload;
+                        } else {
+                            return $name->file_path;
+                        }
             }
         }
     }
@@ -2263,7 +2291,9 @@ if (!function_exists('getMonth')) {
                 case HOOTER_INSPECTION:
                     return 'HTR-000001';
                     break;
-
+                case EMERGENCY_LIGHT_INSPECTION:
+                    return 'EML-000001';
+                    break;
                 case MONTHLY_FIRE_PUMP:
                     return 'MFPI-000001';
                     break;
@@ -2274,6 +2304,10 @@ if (!function_exists('getMonth')) {
 
                 case ISOLATION_VALVE_INSPECTION:
                     return 'IVS-000001';
+                    break;
+
+                case FIRE_ALARM_INSPECTION:
+                    return 'FAI-000001';
                     break;
             }
         }

@@ -8,6 +8,26 @@
                 overflow-x: auto;
                 width: 100%
             }
+
+            .bg-red {
+                background-color: #FF0000 !important;
+                color: #FFFFFF !important;
+            }
+
+            .bg-orange {
+                background-color: #FFA500 !important;
+                color: #000000 !important;
+            }
+
+            .table-danger {
+                background-color: #ffcccc !important;
+                /* Light red */
+            }
+
+            .table-warning {
+                background-color: #ffeb99 !important;
+                /* Light orange */
+            }
         </style>
     @endpush
     <div class="container-fluid">
@@ -74,6 +94,7 @@
                                         <th>Medicine Name</th>
                                         <th>Batch Number</th>
                                         <th>Expire Date</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -160,7 +181,7 @@
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
                         alert('Session has expired. You will be redirected to the login page.');
-                        window.location.href = "{{ url('') }}"; // Redirect to login page
+                        window.location.href = "{{ url('') }}";
                     }
                 }
             },
@@ -176,16 +197,36 @@
 
 
                 {
-                    data: 'batch_number',
-                    name: 'batch_number'
+                    data: 'batch_no',
+                    name: 'batch_no'
                 },
 
                 {
                     data: 'expire_date',
                     name: 'expire_date'
                 },
-
+                {
+                    data: 'action',
+                    name: 'action'
+                },
+                {
+                    data: 'row_class',
+                    name: 'row_class',
+                    visible: false
+                }
             ],
+            createdRow: function(row, data, dataIndex) {
+                $(row).removeClass('odd even');
+                if (data.row_class) {
+                    $(row).css('background-color', data.row_class);
+
+                    if (data.row_class === '#FF0000') {
+                        $(row).css('color', '#FFFFFF'); // White text for red background
+                    } else if (data.row_class === '#FFA500') {
+                        $(row).css('color', '#000000'); // Black text for orange background
+                    }
+                }
+            },
             language: {
                 paginate: {
                     first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
@@ -201,13 +242,111 @@
                 [10, 25, 50, 100],
                 [10, 25, 50, 100]
             ],
-            buttons: [
-                {
-                    extend: 'pageLength',
-                    text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                }
-            ],
+            buttons: [{
+                extend: 'pageLength',
+                text: '{{ __('common.show') }} 10 {{ __('common.records') }}'
+            }],
         });
+
+
+        $(document).on('click', '.discard', function() {
+            var id = $(this).data('id');
+            var login_id = $(this).data('login_id');
+
+            var title = '{{ __('Do You want to Discard the Medicine Details') }}';
+            var text = '{{ __('Submit') }}';
+            var btncolor = '#28a745';
+
+            Swal.fire({
+                title: title,
+                icon: 'warning',
+                html: `
+        <div style="text-align: left;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Enter Quantity:') }}</label>
+            <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%;">
+
+            <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>
+            <textarea id="remarks" class="swal2-textarea" placeholder="{{ __('Enter your remarks here...') }}" style="width: 80%; height: 80px;"></textarea>
+        </div>
+    `,
+                showCloseButton: true,
+                confirmButtonText: text,
+                confirmButtonColor: btncolor,
+                customClass: {
+                    confirmButton: 'btn-skew'
+                },
+                preConfirm: () => {
+                    var quantity = document.getElementById('quantity').value;
+                    var remarks = document.getElementById('remarks').value;
+
+
+                    if (!remarks) {
+                        Swal.showValidationMessage('{{ __('Remarks are required!') }}');
+                    } else if (!quantity || quantity <= 0) {
+                        Swal.showValidationMessage('{{ __('Quantity must be greater than 0!') }}');
+                    }
+
+                    return {
+                        remarks,
+                        quantity
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var remarks = result.value.remarks;
+                    var quantity = result.value.quantity;
+
+                    $.ajax({
+                        url: "{{ admin_url('ohc/medicine-expire-report/discard') }}",
+                        type: 'post',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            id: id,
+                            login_id: login_id,
+                            remarks: remarks,
+                            quantity: quantity
+                        },
+                        success: function(response) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-right',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal
+                                        .stopTimer);
+                                    toast.addEventListener('mouseleave', Swal
+                                        .resumeTimer);
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.msg
+                            });
+                            table.draw();
+                        },
+                        error: function(data) {
+                            if (data.status === 406 && data.responseJSON.msg ===
+                                'module_exits') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Location Deletion Failed: Module Dependencies Exist.',
+                                });
+                            } else {
+                                $.notify(data.responseJSON.msg, "error");
+                            }
+                        }
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire('{{ __('Action Closed') }}', '', 'info');
+                }
+            });
+        });
+
 
         $(document).on('click', '.stockClose', function() {
             var id = $(this).data('id');

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aid  Checklist View')
+@section('title', 'Weekly First Aid  Checklist View')
 @section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
