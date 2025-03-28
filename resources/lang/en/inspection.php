@@ -180,4 +180,19 @@ return [
     'BALL' => 'Ball Valve',
     'BUTTERFLY' => 'Butterfly Valve',
 
+    // Fire Alarm
+    'glass' => 'Condition Of Glass Component',
+    'hammer' => 'Status Of Hammer',
+    'mannual_call_point' => 'Mannual Call Point',
+
+    // Sprinklar System Inspection
+    'water_leakage' => 'Water Leakages In Pipes',
+    'painting' => 'Painting',
+    'QBD' => 'QBD Condition',
+    'condition_of_flow_meter' => 'Condition Of Flow Meter',
+    'main_isolation' => 'Main Isolation Valve Condition',
+    'drain_condition' => 'Drain Valve Condition',
+    'ok' => 'Ok',
+    'not_ok' => 'Not Ok',
+ 
 ];

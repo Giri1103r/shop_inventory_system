@@ -7,6 +7,7 @@ use App\Mail\Ohc\MedicineReceivingRequestEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
+use App\Models\Ohcmanagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineReceiving;
@@ -42,6 +43,7 @@ class MedicineReceivingController extends Controller
     private $user;
     private $inventory;
     private $status;
+    private $expire_medicine;
 
     public function __construct()
     {
@@ -54,6 +56,7 @@ class MedicineReceivingController extends Controller
         $this->inventory = new Inventory();
         $this->unit = new Unit();
         $this->status = new ReceivingStatus();
+        $this->expire_medicine = new ExpireMedicine();
     }
     public function index(Request $request)
     {
@@ -316,10 +319,7 @@ class MedicineReceivingController extends Controller
                 'quantity' => 'required',
                 'batch_number' => 'required',
                 'expire_date' => 'required',
-                // 'hsn_id' => 'required',
                 'rate' => 'required',
-                // 'pack_id' => 'required',
-
             ];
 
 
@@ -329,9 +329,7 @@ class MedicineReceivingController extends Controller
                 'quantity.required' => 'Quantity is required',
                 'batch_number.required' => 'Quantity is required',
                 'expire_date.required' => 'Expire Date is required',
-                // 'hsn_id.required' => 'HSN Numner is required',
                 'rate.required' => 'Rate is required',
-                // 'pack_id.required => Pack Details is required',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -453,7 +451,6 @@ class MedicineReceivingController extends Controller
                 $ehsverify = $this->ohc_status->ehsverifydata($id);
                 $l1ehsverify = $this->ohc_status->ehsL1verifydata($id);
                 $ehsheadverify = $this->ohc_status->ehsheadverifydata($id);
-                // $stockopen = $this->ohc_status->stockopen($id);
 
                 $data = array(
                     'medicine_receiving' => $medicine_receiving,
@@ -462,7 +459,6 @@ class MedicineReceivingController extends Controller
                     'ehsverify' => $ehsverify,
                     'l1ehsverify' => $l1ehsverify,
                     'ehsheadverify' => $ehsheadverify,
-                    // 'stockopen' => $stockopen,
                 );
             }
             return view('ohcmanagement.medicine_receiving.approve', $data);
@@ -832,6 +828,7 @@ class MedicineReceivingController extends Controller
                 $remarks = $request->remarks;
 
                 $data = $this->medicine_receiving->selectOne($id);
+                $this->expire_medicine->store($data);
                 $ids = $data->medicine_id;
 
 
@@ -903,13 +900,13 @@ class MedicineReceivingController extends Controller
                 notificationSave($notificationData);
                 return response()->json(['msg' => 'Stock request closed successfully!']);
             } catch (\Exception $ex) {
-                Log::error('Stock Close Error: ' . $ex->getMessage());
+              dd($ex);
 
                 return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
             }
 
         } catch (\Exception $ex) {
-            Log::error('Stock Close Error: ' . $ex->getMessage());
+            dd($ex);
 
             return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
         }
@@ -1046,6 +1043,8 @@ class MedicineReceivingController extends Controller
         }
     }
 
+
+
     public function ExportPdf(Request $request)
     {
 
@@ -1105,6 +1104,9 @@ class MedicineReceivingController extends Controller
             report($ex);
         }
     }
+
+
+
     public function hsnnumber(Request $request)
     {
         $medicineId = decryptId($request->medicine_id);
@@ -1120,6 +1122,9 @@ class MedicineReceivingController extends Controller
 
         return response()->json(['error' => 'No HSN number found'], 404);
     }
+
+
+
     public function checkExistmedicineId(Request $request)
     {
         $medicineId = decryptId($request->medicine_id);
@@ -1128,9 +1133,11 @@ class MedicineReceivingController extends Controller
 
         if ($data->count()) {
             return Response::json(false);
-        } //dd($data);
+        }
         return Response::json(true);
     }
+
+
     public function packid(Request $request)
     {
         $medicineId = decryptId($request->medicine_id);
@@ -1146,26 +1153,5 @@ class MedicineReceivingController extends Controller
 
         return response()->json(['error' => 'No HSN number found'], 404);
     }
-    // public function list(Request $request, $unit_id)
-    // {
-    //     $unit_id = decryptId($unit_id);
-    //     $medicine = $this->medicine_stock->ajaxList($unit_id);
 
-
-    //     $medicineIds = collect($medicine)->pluck('id')->map(fn($id) => decryptId($id))->toArray();
-
-
-    //     $excludedMedicineIds = $this->medicine_receiving
-    //         ->whereIn('medicine_id', $medicineIds)
-    //         ->where('approve_status', '!=', 'STATUS_OHC_CLOSE')
-    //         ->pluck('medicine_id')
-    //         ->toArray();
-
-
-    //     $filteredMedicine = collect($medicine)->filter(function ($med) use ($excludedMedicineIds) {
-    //         return !in_array(decryptId($med['id']), $excludedMedicineIds);
-    //     })->values();
-
-    //     return response()->json($filteredMedicine);
-    // }
 }

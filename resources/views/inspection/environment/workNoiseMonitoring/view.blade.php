@@ -140,7 +140,7 @@
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <div class="view_data">
-                                                            {{ $workNoiseData->date_of_monitoring ?? '-' }}
+                                                            {{ Displaydateformat($workNoiseData->date_of_monitoring) ?? '-' }}
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">

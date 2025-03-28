@@ -73,7 +73,7 @@ class IsolationValveDetails extends Model
                 'type' => decryptId($type[$index]),
                 'open' => decryptId($open[$index]),
                 'close' => decryptId($close[$index]),
-                'remarks' => $remarks,
+                'remarks' => $remarks[$index],
                 'created_by' => Auth::id(),
             );
 

@@ -63,6 +63,7 @@ use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
+use App\Http\Controllers\Ohcmanagement\Master\HospitalDetailsController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
@@ -832,6 +833,27 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/approval/submit', [MedicineController::class, 'approvalsubmit']);
             });
 
+            Route::group(['prefix' => 'ohc/hospital-details'], function () {
+                Route::get('/list', [HospitalDetailsController::class, 'index']);
+                Route::post('/list', [HospitalDetailsController::class, 'index']);
+                Route::get('/add', [HospitalDetailsController::class, 'add']);
+                Route::post('/add/submit', [HospitalDetailsController::class, 'store']);
+                Route::get('/edit/{id}', [HospitalDetailsController::class, 'edit']);
+                Route::post('/edit/submit', [HospitalDetailsController::class, 'update']);
+                Route::get('/view/{id}', [HospitalDetailsController::class, 'view']);
+                Route::post('/delete', [HospitalDetailsController::class, 'delete']);
+                Route::get('/export/excel', [HospitalDetailsController::class, 'exportExcel']);
+                Route::get('/export/pdf', [HospitalDetailsController::class, 'exportPdf']);
+                Route::get('/sampledownload', [HospitalDetailsController::class, 'DownloadSample']);
+                Route::get('/import', [HospitalDetailsController::class, 'import']);
+                Route::post('/import/submit', [HospitalDetailsController::class, 'importSubmit']);
+                Route::post('/status', [HospitalDetailsController::class, 'statusChange']);
+                Route::post('/unique', [HospitalDetailsController::class, 'Uniquecheck']);
+                Route::post('/hsn-unique', [HospitalDetailsController::class, 'hsnNumber']);
+                Route::get('/approval/view/{id}', [HospitalDetailsController::class, 'approval']);
+                Route::post('/approval/submit', [HospitalDetailsController::class, 'approvalsubmit']);
+            });
+
             Route::group(['prefix' => 'ohc/vendor'], function () {
                 Route::get('/list', [VendorController::class, 'index']);
                 Route::post('/list', [VendorController::class, 'index']);
@@ -1485,6 +1507,9 @@ Route::middleware(['securityheader'])->group(function () {
 
                 });
             });
+
+
+
         });
     });
 });

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> FIRST AID BAG INSPECTION CHECKLIST| KARAM</title>
+    <title> Weekly First Aid Checklist | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                     FIRST AID BAG INSPECTION CHECKLIST</td>
+                    FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                     FIRST AID  CHECKLIST
+                    WEEKLY  FIRST AID CHECKLIST
                 </td>
             </tr>
         </table>
@@ -244,7 +244,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    WEEKLY FIRST AID CHECKLIST
+                     FIRST AID CHECKLIST
                 </td>
             </tr>
         </table>
@@ -254,24 +254,18 @@
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                   Medicine Name</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                    Medicine Name</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Freeze Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Expiry Date</th>
-                
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.remarks') }}</th>
             </tr>
 
@@ -309,7 +303,7 @@
                     {{ isset($inspection_details->remark_by) ? $inspection_details->remark_by : '' }}
                 </td>
             </tr>
-            
+
 
         </tbody>
     </table>

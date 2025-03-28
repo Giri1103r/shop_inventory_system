@@ -7,6 +7,7 @@ use App\Mail\Ohc\MedicineReceivingRequestEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
+use App\Models\Ohcmanagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineReceiving;
@@ -35,7 +36,7 @@ class MedicineExpireController extends Controller
 {
     private $medicine;
     private $vendor;
-    private $medicine_receiving;
+    private $expire_medicine;
     private $medicine_stock;
     private $ohc_status;
     private $unit;
@@ -47,7 +48,7 @@ class MedicineExpireController extends Controller
     {
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
-        $this->medicine_receiving = new MedicineReceiving();
+        $this->expire_medicine = new ExpireMedicine();
         $this->medicine_stock = new MedicineStock();
         $this->ohc_status = new OhcStatuslog();
         $this->user = new User();
@@ -60,20 +61,45 @@ class MedicineExpireController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data = $this->medicine_receiving->expirelist();
+                    $data = $this->expire_medicine->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('medicine_id', function ($row) {
                             return getMedicinename($row->medicine_id);
                         })
 
+                        ->addColumn('row_class', function ($row) {
+                            $expireDate = Carbon::parse($row->expire_date);
+                            $today = Carbon::today();
+                            $oneMonthAhead = $today->copy()->addMonth();
+
+                            if ($expireDate->lessThanOrEqualTo($today)) {
+                                return '#FF0000';
+                            } elseif ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
+                                return '#FFA500';
+                            } else {
+                                return null;
+                            }
+                        })
+                        ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id', 'pack', 'row_class'])
 
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
                         })
+                        ->editColumn('action', function ($row) {
+                            $btn = '';
+                            if (CheckUserPermission('view')) {
+                            $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid text-dark fa-eye"></i></a>';
+                            }
+                            $expireDate = Carbon::parse($row->expire_date);
+                            $today = Carbon::today();
+                            if ($expireDate->lessThanOrEqualTo($today)) {
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                            }
+                            return $btn;
+                        })
 
-
-                        ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id','pack'])
+                        ->rawColumns(['action', 'expire_date', 'approve_status', 'row_class','pack'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -81,7 +107,7 @@ class MedicineExpireController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -103,7 +129,7 @@ class MedicineExpireController extends Controller
 
         try {
 
-            $allData = $this->medicine_receiving->expireexportdata();
+            $allData = $this->expire_medicine->expireexportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -144,13 +170,26 @@ class MedicineExpireController extends Controller
             report($ex);
         }
     }
+    public function discard(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $remarks = $request->remarks;
+            $quantity = $request->quantity;
+            $expire_medicine = $this->expire_medicine->find($id);
+            $this->discard->close($id, $remarks);
+            return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
+        } catch (Exception $ex) {
 
+            return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
+        }
+    }
     public function ExportPdf(Request $request)
     {
 
         try {
 
-            $allData = $this->medicine_receiving->expireexportdata();
+            $allData = $this->expire_medicine->expireexportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');

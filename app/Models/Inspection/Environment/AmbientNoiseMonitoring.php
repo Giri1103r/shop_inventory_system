@@ -81,21 +81,7 @@ class AmbientNoiseMonitoring extends Model
         $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
         $query = $query->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id');
-        // dd($query);
-
-        if ($request->has('ambient_noise_id') && $request->ambient_noise_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.ambient_noise_id', decryptId($request->ambient_noise_id));
-        }
-        if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.location_id', decryptId($request->location_id));
-        }
-        if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.unit_id', decryptId($request->unit_id));
-        }
-
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_environment_ambient_noise_monitoring.status', decryptId($request->status));
-        }
+        
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }

@@ -41,7 +41,7 @@ class WorkNoiseMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $type = 2;
+                    $type = WORKNOISE;
                     $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
@@ -83,7 +83,7 @@ class WorkNoiseMonitoringController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', '2')->where('status', '1')->get();
+        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', WORKNOISE)->where('status', '1')->get();
 
         $data = array(
             'environmentList' => $environmentList,
@@ -126,7 +126,7 @@ class WorkNoiseMonitoringController extends Controller
 
             try {
                 $env_no = $request->work_noise_no;
-                $type = 2;
+                $type = WORKNOISE;
                 $environment =   $this->environment->store($env_no, $type);
  
                 $this->work_noise_monitoring->store($environment->id);
@@ -152,7 +152,7 @@ class WorkNoiseMonitoringController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $type = 2;
+                $type = WORKNOISE;
                 $environmentData =   $this->environment->selectOne($id,$type);
                 $workNoiseDataList = $this->work_noise_monitoring->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
@@ -179,7 +179,7 @@ class WorkNoiseMonitoringController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $type = 2;
+            $type = WORKNOISE;
             $environmentID = $this->environment->statuschange($id,$type);
             $this->work_noise_monitoring->statuschange($id);
 
@@ -193,7 +193,7 @@ class WorkNoiseMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-            $type = 2;
+            $type = WORKNOISE;
             $allData =   $this->environment->exportdata($type);
             $header = [
                 __("common.sno"),
@@ -233,7 +233,7 @@ class WorkNoiseMonitoringController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-            $type = 2;
+            $type = WORKNOISE;
             $allData =   $this->environment->exportdata($type);
 
             $header = [
