@@ -40,6 +40,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
@@ -2061,6 +2062,19 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
+                 
+                    case GEMBA_WALK:
+                        $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
+                        if ($name == null) {
+                            $name = User::where('id', $userid)->first();
+                            if ($name == null) {
+                                return null;
+                            }
+                            return $name->signature_upload;
+                        } else {
+                            return $name->file_path;
+                        }
             }
         }
     }

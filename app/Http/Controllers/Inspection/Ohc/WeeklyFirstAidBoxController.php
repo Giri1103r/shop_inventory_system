@@ -42,12 +42,10 @@ class WeeklyFirstAidBoxController extends Controller
         $this->weekly_first_aid = new WeeklyFirstAidBox();
         $this->signature = new OhcSignature();
         $this->user = new User();
-
-
-
     }
 
-    public function Index(Request $request){
+    public function Index(Request $request)
+    {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -77,14 +75,14 @@ class WeeklyFirstAidBoxController extends Controller
                             $btn = '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>';
-                        
+
                             $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                        
+
                             return $btn;
                         })
-                        
+
                         ->rawColumns(['action', 'issue_date', 'created_by', 'status', 'created_at'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
@@ -101,11 +99,11 @@ class WeeklyFirstAidBoxController extends Controller
         $location = $this->location->getLocationname();
         $unit = $this->unit->getunit();
         $data = array(
-            'location'=>$location,
-            'unit'=>$unit
+            'location' => $location,
+            'unit' => $unit
         );
 
-        return view('inspection.inspection_ohc.weekly_first_aid.list',$data);
+        return view('inspection.inspection_ohc.weekly_first_aid.list', $data);
     }
 
 
@@ -124,9 +122,8 @@ class WeeklyFirstAidBoxController extends Controller
                 'location' => $location,
                 'medicines' => $medicines,
             );
-            
-            return view('inspection.inspection_ohc.weekly_first_aid.add',$data);
 
+            return view('inspection.inspection_ohc.weekly_first_aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -136,7 +133,7 @@ class WeeklyFirstAidBoxController extends Controller
     public function Store(Request $request)
     {
         try {
-            
+
             try {
 
                 $weekly_first_aid = $this->weekly_first_aid->store();
@@ -144,25 +141,23 @@ class WeeklyFirstAidBoxController extends Controller
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_details = $this->weekly_first_aid->selectOne($weekly_first_aid_id);
                 $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
-                
-                
+
+
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
-                
             } catch (Exception $ex) {
                 dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
-            
         } catch (Exception $ex) {
             report($ex);
         }
     }
-    
+
     public function View(Request $request)
     {
         try {
-            
+
             $id = decryptId($request->id);
             $inspection_details = $this->weekly_first_aid->selectOne($id);
             $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
@@ -175,7 +170,7 @@ class WeeklyFirstAidBoxController extends Controller
                 'inspection_data' => $inspection_data,
             );
 
-            return view('inspection.inspection_ohc.weekly_first_aid.view',$data);
+            return view('inspection.inspection_ohc.weekly_first_aid.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -187,7 +182,7 @@ class WeeklyFirstAidBoxController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            
+
             if (Auth::check()) {
                 $id = decryptId($request->id);
                 $inspection_details = $this->weekly_first_aid->selectOne($id);
@@ -200,7 +195,6 @@ class WeeklyFirstAidBoxController extends Controller
                     'inspection_created_by' => $inspection_created_by,
                     'inspection_data' => $inspection_data,
                 );
-                
             }
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -214,7 +208,7 @@ class WeeklyFirstAidBoxController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.inspection_ohc.weekly_first_aid.generalpdf',$data)->render();
+            $html = view('inspection.inspection_ohc.weekly_first_aid.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
             $filename = "Weekly First Aid Details.pdf";
@@ -237,10 +231,10 @@ class WeeklyFirstAidBoxController extends Controller
 
             $header = [
                 __("common.sno"),
-                    'Document No',
-                    'Issue Date',
-                    'Location',
-                    'Unit',
+                'Document No',
+                'Issue Date',
+                'Location',
+                'Unit',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -285,10 +279,10 @@ class WeeklyFirstAidBoxController extends Controller
 
             $header = [
                 __("common.sno"),
-                    'Document No',
-                    'Issue Date',
-                    'Location',
-                    'Unit',
+                'Document No',
+                'Issue Date',
+                'Location',
+                'Unit',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
