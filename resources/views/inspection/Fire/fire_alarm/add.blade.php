@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Isolation Valve Inspection Add')
-@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
+@section('title', 'Fire Alarm Inspection Add')
+@section('pageurl', admin_url('fire/fire-alarm-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/fire-alarm-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -28,7 +28,7 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('fire/isolating-valve-inspection/add/submit') }}"
+                                        action="{{ admin_url('fire/fire-alarm-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
@@ -158,7 +158,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Isolation Valve Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire Alarm Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -183,7 +183,7 @@
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
                                                             class="form-control"
-                                                            value="{{ FireSequence(ISOLATION_VALVE_INSPECTION) }}"
+                                                            value="{{ FireSequence(FIRE_ALARM_INSPECTION) }}"
                                                             readonly>
                                                     </div>
                                                 </div>
@@ -313,7 +313,7 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Isolation Valve Inspection Observation</h4>
+                                                    <h4 class="text-white">Fire Alarm Inspection Observation</h4>
                                                 </div>
 
                                                 {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -607,7 +607,7 @@
                     var newFormSet = `
                         <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Isolation Valve Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire Alarm Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -632,7 +632,7 @@
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
                                                             class="form-control"
-                                                            value="{{ FireSequence(ISOLATION_VALVE_INSPECTION) }}"
+                                                            value="{{ FireSequence(FIRE_ALARM_INSPECTION) }}"
                                                             readonly>
                                                     </div>
                                                 </div>
