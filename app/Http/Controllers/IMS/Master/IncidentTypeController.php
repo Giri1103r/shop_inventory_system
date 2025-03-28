@@ -123,8 +123,8 @@ class IncidentTypeController extends Controller
             ];
             $messages = [
 
-                'incident_type_name.required' => 'Please enter vendor Name',
-                'short_name.required' => 'Please enter license number',
+                'incident_type_name.required' => 'Please enter incident type Name',
+                'short_name.required' => 'Please enter short name number',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -191,36 +191,28 @@ class IncidentTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
+           
             $rules = [
 
-                'vendor_name' => 'required',
-                'license_no' => 'required',
-                'address' => 'required',
+                'incident_type_name' => 'required',
+                'short_name' => 'required',
             ];
             $messages = [
 
-                'vendor_name.required' => 'Please enter vendor Name',
-                'license_no.required' => 'Please enter license number',
-                'address.required' => 'Please enter vendor Address',
+                'incident_type_name.required' => 'Please enter incident type Name',
+                'short_name.required' => 'Please enter short name number',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            $this->vendor->updates($id);
-
-            // $vendor = $this->vendor->find($id);
-            // $this->user->vendorUpdate($vendor->login_id);
-
+            $this->incidenttype->updates($id);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('ohc/vendor/list'));
+            return redirect(admin_url('incident/type-master/list'));
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/vendor/list'));
+            return redirect(admin_url('incident/type-master/list'));
         }
     }
 

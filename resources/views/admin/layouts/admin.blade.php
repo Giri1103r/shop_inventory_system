@@ -344,43 +344,50 @@
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('keydown', function(e) {
-                
-                if (e.keyCode === 123 || 
+
+                if (e.keyCode === 123 ||
                     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                    (e.ctrlKey && e.keyCode === 85) || 
+                    (e.ctrlKey && e.keyCode === 85) ||
                     (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
                 ) {
-                    e.preventDefault(); 
+                    e.preventDefault();
                 }
             });
 
             (function() {
                 var devtoolsOpen = false;
-                var threshold = 160; 
+                var threshold = 160;
                 var interval = setInterval(function() {
                     var widthThreshold = window.outerWidth - window.innerWidth > threshold;
                     var heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                        devtoolsOpen = true; 
-                        logBlockedUser();
+                       
+                        var startTime = new Date();
+                        debugger;
+                        var endTime = new Date();
+                        if (endTime - startTime > 100) {
+                            devtoolsOpen = true;
+                            logBlockedUser();
+                        }
+                       
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
-                        devtoolsOpen = false; 
+                        devtoolsOpen = false;
                     }
-                }, 5000); 
+                }, 5000);
 
             })();
 
             document.addEventListener('dragstart', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('selectstart', function(e) {
-                e.preventDefault(); 
+                e.preventDefault();
             });
 
             document.addEventListener('mousedown', function(e) {
@@ -391,7 +398,7 @@
 
             function logBlockedUser() {
                 $.ajax({
-                    url: "{{ url('blocked-save') }}", 
+                    url: "{{ url('blocked-save') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': "{{ csrf_token() }}"
@@ -402,7 +409,7 @@
                     dataType: "json",
                     success: function(response) {
                         if (response.success) {
-                            window.location.href = "{{ url('blocked') }}"; 
+                            window.location.href = "{{ url('blocked') }}";
                         }
                     },
                     error: function(xhr) {
@@ -413,6 +420,7 @@
             }
         </script>
     @endif
+
 
     <script type="text/javascript" nonce="projectcab">
         $.ajaxSetup({

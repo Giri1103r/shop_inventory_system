@@ -31,6 +31,9 @@ use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
+use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -546,6 +549,25 @@ Route::group(['prefix' => 'ohc/master/first-aid-stock/'], function () {
 });
 
 
+Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
+    Route::get('list', [WeeklyFirstAidBoxController::class, 'index']);
+    Route::post('list', [WeeklyFirstAidBoxController::class, 'index']);
+    Route::get('add', [WeeklyFirstAidBoxController::class, 'add']);
+    Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
+    Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
+    Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+});
+
+
+Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
+    Route::get('list', [OHCHygieneCleaningChecklistController::class, 'index']);
+    Route::post('list', [OHCHygieneCleaningChecklistController::class, 'index']);
+    Route::get('add', [OHCHygieneCleaningChecklistController::class, 'add']);
+    Route::post('add/submit', [OHCHygieneCleaningChecklistController::class, 'store']);
+    Route::get('view/{id}', [OHCHygieneCleaningChecklistController::class, 'view']);
+    Route::get('generalpdf/{id}', [OHCHygieneCleaningChecklistController::class, 'generalpdf']);
+});
+
 
 Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('list', [WeeklyFirstAidBoxController::class, 'index']);
@@ -554,6 +576,61 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
     Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
     Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+    Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
+    Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
+    Route::post('status', [WeeklyFirstAidBoxController::class, 'statusChange']);
+
+});
+
+Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], function () {
+    Route::get('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'index']);
+    Route::get('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'add']);
+    Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
+
 
 
 });
+
+
+Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
+    Route::GET('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::POST('list', [DailyVitalEquipmentController::class, 'Index']);
+    Route::GET('add', [DailyVitalEquipmentController::class, 'Add']);
+    Route::POST('add/submit', [DailyVitalEquipmentController::class, 'Store']);
+    Route::GET('view/{id}', [DailyVitalEquipmentController::class, 'View']);
+    Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
+    Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

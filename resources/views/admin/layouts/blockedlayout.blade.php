@@ -152,6 +152,16 @@
                 padding: 8px 16px;
             }
         }
+
+        .warning-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #D32F2F;
+            margin-bottom: 20px;
+            background: rgba(255, 235, 59, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -161,6 +171,10 @@
             <img id="dark-logo" src="{{ public_image('logo-dark.png') }}" alt="Logo">
             <div class="code" style="margin-top:-12px;">
                 @yield('code')
+            </div>
+            <div class="warning-message">
+                Developer tools have been disabled in the production environment. <br>
+                Please close them to continue using the application.
             </div>
             <h4>@yield('message')</h4>
             <a href="{{ admin_url('home') }}"><button>Back to Home</button></a>
