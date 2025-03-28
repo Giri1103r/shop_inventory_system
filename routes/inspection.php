@@ -31,6 +31,7 @@ use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
@@ -402,6 +403,24 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [HooterInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [HooterInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [HooterInspectionController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'emergency-light-inspection/'], function () {
+        Route::GET('list', [EmergencyLightInspectionController::class, 'Index']);
+        Route::POST('list', [EmergencyLightInspectionController::class, 'Index']);
+        Route::GET('add', [EmergencyLightInspectionController::class, 'Add']);
+        Route::POST('add/submit', [EmergencyLightInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [EmergencyLightInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [EmergencyLightInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [EmergencyLightInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [EmergencyLightInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [EmergencyLightInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [EmergencyLightInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [EmergencyLightInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [EmergencyLightInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [EmergencyLightInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [EmergencyLightInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [EmergencyLightInspectionController::class, 'GetDepartment']);
     });
 
     Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'], function () {

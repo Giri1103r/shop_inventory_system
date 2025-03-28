@@ -2231,12 +2231,13 @@ if (!function_exists('getMonth')) {
     if (!function_exists('HooterSequence')) {
         function FireSequence($type)
         {
-            switch($type)
-            {
+            switch ($type) {
                 case HOOTER_INSPECTION:
                     return 'HTR-000001';
                     break;
-
+                case EMERGENCY_LIGHT_INSPECTION:
+                    return 'EML-000001';
+                    break;
                 case MONTHLY_FIRE_PUMP:
                     return 'MFPI-000001';
                     break;
