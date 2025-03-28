@@ -55,51 +55,41 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($occupational_health_center->doc_no) ? $occupational_health_center->doc_no : '' }}
+                                            {{ isset($monthly_first_aid->doc_no) ? $monthly_first_aid->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Review date</label>
                                         <div class="view_data">
-                                            {{ isset($occupational_health_center->revision_date) ? $occupational_health_center->revision_date : '' }}
+                                            {{ isset($monthly_first_aid->revision_date) ? $monthly_first_aid->revision_date : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issued Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($occupational_health_center->issue_date) ? $occupational_health_center->issue_date : '') }}
+                                            {{ DisplaydateFormat(isset($monthly_first_aid->issue_date) ? $monthly_first_aid->issue_date : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Next Due On</label>
-                                        <div class="view_data">
-                                            {{ DisplaydateFormat(isset($occupational_health_center->next_due) ? $occupational_health_center->next_due : '') }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date Of Inspection</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($occupational_health_center->date_of_inspection) ? $occupational_health_center->date_of_inspection : '') }}
+                                            {{ DisplaydateFormat(isset($monthly_first_aid->date_of_inspection) ? $monthly_first_aid->date_of_inspection : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Shift</label>
                                         <div class="view_data">
-                                            {{ getShift(isset($occupational_health_center->shift) ? $occupational_health_center->shift : '') }}
+                                            {{ getShift(isset($monthly_first_aid->shift) ? $monthly_first_aid->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Location</label>
+                                        <label class="form-label view_label">Frequency</label>
                                         <div class="view_data">
-                                            {{ getLocationname(isset($occupational_health_center->location) ? $occupational_health_center->location : '') }}
+                                            {{ getFrequencyname(isset($monthly_first_aid->frequency) ? $monthly_first_aid->frequency : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
-                                        <div class="view_data">
-                                            {{ getUnitname(isset($occupational_health_center->unit) ? $occupational_health_center->unit : '') }}
-                                        </div>
-                                    </div>
+
                                     @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
@@ -124,20 +114,20 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($occupational_health_center->created_by) }}
+                                            {{ getusername($monthly_first_aid->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($occupational_health_center->created_at) }}
+                                            {{ displayDateformat($monthly_first_aid->created_at) }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($occupational_health_center->status == 1)
+                                            @if ($monthly_first_aid->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}
@@ -152,85 +142,105 @@
                                         <h4 class="text-white">Monthly First Aid Box Audit Checklist</h4>
                                     </div>
                                 </div>
-
                                 <div class="table-responsive">
                                     <div class="col-md-12">
                                         <table class="table table-bordered">
-                                            <thead class="bg-secondary text-white">
+                                            <thead class="bg-secondary" style="color: #ffff">
                                                 <tr>
-                                                    <th colspan="3">Check Points</th>
-                                                    @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
-                                                    @endforeach
-                                                    <th>Quantity</th>
-                                                    <th colspan="3">Remarks</th>
+                                                    <th>S.NO</th>
+                                                    <th>Unit</th>
+                                                            <th>Department</th>
+                                                            <th>First Aid Box Number</th>
+                                                            <th>Does the first-aid register is being properly maintened as &
+                                                                when require.</th>
+                                                            <th>Does the first-aid box is bieng inspect as per periodicity.</th>
+                                                            <th>Does the First- aid box inspection Checklist is being filled as per periodicity.</th>
+                                                            <th>Does the First-aid box is being maintained as per the freeze
+                                                                quantity.</th>
+                                                            <th>Does the medical requisition slip record is being
+                                                                maintained.</th>
+                                                            <th>Does the first-aid box is clean.</th>
+                                                            <th>Does the first-aid box sticker available.</th>
+                                                            <th>Does the First aid material index is available.</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @php
-                                                    $decodedData = json_decode($inspectionCkeclist->checklist, true);
-                                                    $checkItems = $decodedData['check_item'] ?? [];
-                                                    $statuses = $decodedData['status'] ?? [];
-                                                    $remarks = $decodedData['remarks'] ?? [];
-                                                    $quantity = $decodedData['quantity'] ?? [];
-                                                @endphp
-
-                                                @foreach ($checkItems as $groupId => $checkPoints)
-                                                    @php $rowCount = count($checkPoints); @endphp
-
-                                                    @foreach ($checkPoints as $index => $checkPoint)
+                                                @if (empty($monthly_first_aid_audit_checklist) || $monthly_first_aid_audit_checklist->isEmpty())
+                                                    <tr>
+                                                        <td colspan="12" class="text-center">No data is available</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach ($monthly_first_aid_audit_checklist as $index => $log)
                                                         <tr>
-                                                            @if ($index == 0)
-                                                                <td rowspan="{{ $rowCount }}">
-                                                                    {{ getSubcategoryname($groupId) }}
-                                                                </td>
-                                                            @endif
-
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
-                                                            </td>
-
-                                                            @foreach ($getoption as $option)
-                                                            <td style="text-align: center;">
-                                                                @if ($option == 'Yes')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @elseif ($option == 'No')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @elseif ($option == 'N/A')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
+                                                            <td>{{ $index + 1 }}</td>
+                                                            <td>{{ getUnitname($log->unit_id) }}</td>
+                                                            <td>{{getDepartment( $log->department_id) }}</td>
+                                                            <td>{{ $log->first_aid_box_no }}</td>
+                                                            <td>
+                                                                @if ($log->first_aid_register_maintained == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
-                                                        @endforeach
-
-                                                        <td >
-                                                            {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
-                                                        </td>
-
-
-                                                            <td colspan="3">
-                                                                {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                                                            <td>
+                                                                @if ($log->first_aid_box_inspect_periodicity == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->first_aid_box_checklist_periodicity == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->first_aid_box_freeze_quantity == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->medicine_requisition_slip_record == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->first_aid_box_clean == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->first_aid_box_sticker == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
+                                                            </td>
+                                                            <td>
+                                                                @if ($log->first_aid_material_index == 1)
+                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                @else
+                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                @endif
                                                             </td>
                                                         </tr>
                                                     @endforeach
-                                                @endforeach
+                                                @endif
                                             </tbody>
-
-
 
                                         </table>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

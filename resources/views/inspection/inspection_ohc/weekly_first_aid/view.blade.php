@@ -136,22 +136,16 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    
                                     <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
-                                            <label class="form-label" style="display: block;">{{ __('inspection.signature') }}</label>
-                                            @if(!empty($creater_signature->signature_upload))
-                                                <img src="{{ admin_url($creater_signature->signature_upload) }}" 
-                                                     alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                            @elseif(!empty($inspection_file->file_path))
-                                                <img src="{{ admin_url($inspection_file->file_path) }}" 
-                                                     alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                            @else
-                                                <img src="{{ asset('images/default-signature.png') }}" 
-                                                     alt="No Signature Available" style="width: 100px; margin-top:-10px">
-                                            @endif
-                                        </div> 
+                                            <label class="form-label"
+                                                style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($inspection_file) }}"
+                                                alt="Signature Upload" style="width: 100px; margin-top:-10px">
+                                           
+                                        </div>
                                     </div>
-                                    
 
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">

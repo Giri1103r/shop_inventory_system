@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> FIRST AID BAG INSPECTION CHECKLIST| KARAM</title>
+    <title>OHC Hygiene Inspection Checklist | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                     FIRST AID BAG INSPECTION CHECKLIST</td>
+                    OHC Hygiene Inspection Checklist </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,19 +149,13 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                     FIRST AID  CHECKLIST
+                    OHC Hygiene Inspection Checklist
                 </td>
             </tr>
         </table>
     </div>
 
     <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Documnet No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ $inspection_details->doc_no }}
-            </td>
-        </tr>
 
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
@@ -171,59 +165,12 @@
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $inspection_details->revision_date }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b> Date of Inspection</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Location</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aid Box No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->first_aid_box_no) ? $inspection_details->first_aid_box_no : '' }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aider Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getFirstAider(isset($inspection_details->first_aider) ? $inspection_details->first_aider : '') }}
-            </td>
-        </tr>
-
-        <tr>
             <td width="50%" style="padding:5px;"><b>Shift</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
+                {{ getShiftname($inspection_details->shift_id) ? getShiftname($inspection_details->shift_id) : '' }}
             </td>
         </tr>
-
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -244,75 +191,99 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    WEEKLY FIRST AID CHECKLIST
+                    OHC Hygiene Inspection Checklist Checklist
                 </td>
             </tr>
         </table>
     </div>
 
 
-    <table style="width: 100%; border-collapse: collapse; padding: 5px;">
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                   Medicine Name</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                    Freeze Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Expiry Date</th>
-                
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    {{ __('inspection.remarks') }}</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Date
+                </th>
+                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Shift
+                </th>
+                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Description/Equipment
+                </th>
+                <th colspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Cleaning and Sanitization
+                </th>
+                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Remarks
+                </th>
+                @isset($nursing_signature)
+                    <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                        Nursing Officer Remarks
+                    </th>
+                @endisset
             </tr>
-
-        </thead>
-        <tbody>
-            @foreach ($inspection_data as $medicines)
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $loop->iteration }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getMedicinename($medicines['medicine_id']) }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $medicines['freeze_quantity'] }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $medicines['available_quantity'] }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ Displaydateformat($medicines['expired_date']) }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $medicines['remarks'] }}</td>
-                </tr>
-            @endforeach
             <tr>
-                <td colspan="7"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
+                <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
+                    YES
+                </td>
+                <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
+                    NO
+                </td>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                    {{ Displaydateformat($inspection_details->issue_date) }}
+                </td>
+                <td style="border: 1px solid black; padding: 12px;">
+                    {{ getShiftname($inspection_details->shift_id) }}
+                </td>
+                <td style="border: 1px solid black; padding: 12px;">
+                    {{ $inspection_details->inspection_question }}
+                </td>
+                @if ($inspection_details->inspection_value == 1)
+                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                        <span style="color: green;">✓</span>
+                    </td>
+                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                    </td>
+                @else
+                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                    </td>
+                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                        <span style="color: red;">X</span>
+                    </td>
+                @endif
+                <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                    {{ $inspection_details->cleaner_remarks }}
+                </td>
+                @if ($inspection_details->updated_by)
+                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
+                        {{ isset($inspection_details->nursing_officer_remarks) ? $inspection_details->nursing_officer_remarks : '-' }}
+                    </td>
+                @endif
+            </tr>
+            <tr>
+                <td colspan="3" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature" style="height: 50px; margin-top:2px;">
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
-            </tr>
-
-            <tr>
-                <td colspan="7"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <b>Remark By</b> :
-                    {{ isset($inspection_details->remark_by) ? $inspection_details->remark_by : '' }}
+                <td colspan="4" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($inspection_details->updated_by != null)
+                        <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature" style="height: 50px;">
+                        <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
                 </td>
             </tr>
-            
-
         </tbody>
     </table>
+
+
+
     <br>
 
 </body>

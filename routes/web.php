@@ -170,7 +170,7 @@ Route::middleware(['securityheader'])->group(function () {
         Route::post('password/reset-password/submit', [LoginController::class, 'passwordResetSubmit']);
 
         Route::middleware(['islogin', 'language'])->group(function () {
-           
+
             Route::get('dashboard', [AdminController::class, 'index'])->middleware('role:dashboard,view');
             Route::get('home', [AdminController::class, 'index'])->name('home');
             Route::get('profile', [AdminController::class, 'profileView']);
@@ -233,7 +233,7 @@ Route::middleware(['securityheader'])->group(function () {
             /**
              * File Upload Error Log
              */
-            
+
 
 
             Route::get('uploadlog/list', [UploadLogController::class, 'index']);
@@ -1132,7 +1132,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::post('/delete/{row_id}', [MedicineFirstAidController::class, 'delete']);
                 Route::get('/editquantity/{quantity_id}', [MedicineFirstAidController::class, 'editquantity']);
-
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });
 

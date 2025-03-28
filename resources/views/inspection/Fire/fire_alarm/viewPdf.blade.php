@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Isolation Valve Inspection | KARAM</title>
+    <title>Fire Alarm Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Isolation Valve Inspection </td>
+                    Fire Alarm Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Isolation Valve Inspection
+                    Fire Alarm Inspection
                 </td>
             </tr>
         </table>
@@ -195,7 +195,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Isolation Valve Inspection Details
+                    Fire Alarm Inspection Details
                 </td>
             </tr>
         </table>

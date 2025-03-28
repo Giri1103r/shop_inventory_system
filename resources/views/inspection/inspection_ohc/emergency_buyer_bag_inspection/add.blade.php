@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid')
-@section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
+@section('title', 'Emergency First Aid Bag Checklist')
+@section('pageurl', admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'))
 
 
 @section('content')
@@ -23,14 +23,14 @@
 
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/first-aid-box/weekly-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
-                                <form method="POST" id="WeeklyFirstAidAdd" enctype="multipart/form-data"
-                                    action="{{ admin_url('ohc/first-aid-box/weekly-inspection/add/submit') }}">
+                                <form method="POST" id="EmergencyFirstAidBagAdd" enctype="multipart/form-data"
+                                    action="{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/add/submit') }}">
                                     @csrf
 
                                     <div class="basic-form">
@@ -38,43 +38,8 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Document Number</label>
-                                                    <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
-                                                        Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Review
-                                                        Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
-                                                            autocomplete="off" readonly>
-
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Date Of
-                                                        Inspection</label>
+                                                    <label for="rate" class="form-label require ">
+                                                        Date of Inspection</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_inspection"
                                                             id="date_of_inspection" class="form-control"autocomplete="off">
@@ -84,11 +49,14 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aid Box Number</label>
-                                                    <input type="text" name="first_aid_box_no" id = "first_aid_box_no"
-                                                        class="form-control">
+                                                    <label class="form-label require">Location First Aid Bag</label>
+                                                    <input type="text" name="location_first_bag"
+                                                        id = "location_first_bag" class="form-control"
+                                                        placeholder="Enter Location">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -105,20 +73,21 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="location_id" class="form-label">
-                                                        Location</label>
-                                                    <select name="location_id" id="location_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Location</option>
-                                                        @foreach ($location as $loc)
-                                                            <option value="{{ encryptId($loc->id) }}">
-                                                                {{ $loc->location_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label for="rate" class="form-label require ">
+                                                        Next Due Date</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due_date" id="next_due_date"
+                                                            class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
@@ -135,19 +104,15 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aider Name</label>
-                                                    <select name="first_aider" id="first_aider"
-                                                        class="form-control single-select" style="width: 100%">
-                                                        <option value="">Select the option</option>
-                                                        @foreach ($First_aid as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->certifier_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    <label class="form-label require">Frequency</label>
+                                                    <input type="text" name="frequency" id = "frequency"
+                                                        class="form-control" placeholder="Enter Frequancy">
                                                 </div>
                                             </div>
 
-                                            <div class=" mt-3">
+
+
+                                            <div class="mb-3 mt-3">
                                                 <table class="table table-bordered table-striped">
                                                     <thead class="table-secondary">
                                                         <tr>
@@ -201,8 +166,18 @@
 
                                             </div>
 
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label"> PPE'S For Visitors:-</label>
+                                                    <div class="view_data">
+                                                        05 Air Plugs, 05 Pairs Cotton Gloves, 02 Piars Rubber Gloves, 05
+                                                        Mask, 04 specticals.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="row m-2">
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                <div class="col-md-6 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -220,7 +195,7 @@
                                                     @endif
                                                 </div>
 
-                                                <div class="col-md-4 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Remark By</label>
                                                         <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
@@ -265,7 +240,7 @@
                 e.preventDefault();
                 location.reload();
             });
-            flatpickr("#issue_date", {
+            flatpickr("#next_due_date", {
                 dateFormat: "d-m-Y",
             });
             flatpickr("#date_of_inspection", {
@@ -276,74 +251,51 @@
             });
 
 
-            $('#WeeklyFirstAidAdd').validate({
+            $('#EmergencyFirstAidBagAdd').validate({
                 rules: {
-                    document_no: {
-                        required: true,
-                    },
-                    issue_date: {
-                        required: true,
-                    },
-                    review_date: {
-                        required: true,
-                    },
+                   
                     date_of_inspection: {
                         required: true,
                     },
-                    first_aid_box_no: {
+                    location_first_bag: {
                         required: true,
                     },
                     shift: {
                         required: true,
                     },
-                    location_id: {
+                    next_due_date: {
                         required: true,
                     },
                     unit_id: {
                         required: true,
                     },
-                    first_aider: {
+                    frequency: {
                         required: true,
-                    },
-                    next_due: {
-                        required: true,
-                        date: true
                     },
                     signature_image: {
                         required: true,
                     }
                 },
                 messages: {
-                    document_no: {
-                        required: "Document Number is required",
-                    },
-                    issue_date: {
-                        required: "Issued Date is required",
-                    },
-                    review_date: {
-                        required: "Review Date is required",
-                    },
+                    
                     date_of_inspection: {
                         required: "Date of Inspection is required",
                     },
-                    first_aid_box_no: {
-                        required: "First Aid Box Number is required",
+                    location_first_bag: {
+                        required: "Location First Aid Bag is required",
                     },
                     shift: {
-                        required: "Shift is required",
+                        required: "Shift selection is required",
                     },
-                    location_id: {
-                        required: "Location is required",
+                    next_due_date: {
+                        required: "Next Due Date is required",
                     },
                     unit_id: {
-                        required: "Unit is required",
+                        required: "Unit selection is required",
                     },
-                    first_aider: {
-                        required: "First Aider Name is required",
-                    },
-                    next_due: {
-                        required: "Next Due Date is required",
-                        date: "Please enter a valid date"
+                    frequency: {
+                        required: "Frequency is required",
+                        digits: "Please enter a valid number"
                     },
                     signature_image: {
                         required: "Signature is required",
@@ -369,7 +321,7 @@
             });
 
 
-            $('#WeeklyFirstAidAdd').on('change input',
+            $('#EmergencyFirstAidBagAdd').on('change input',
                 'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
                 function() {
                     $(this).valid();

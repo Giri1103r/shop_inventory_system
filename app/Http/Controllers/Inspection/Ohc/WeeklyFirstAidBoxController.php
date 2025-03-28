@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+
 
 class WeeklyFirstAidBoxController extends Controller
 {
@@ -96,7 +98,14 @@ class WeeklyFirstAidBoxController extends Controller
                 }
             }
         }
-        return view('inspection.inspection_ohc.weekly_first_aid.list');
+        $location = $this->location->getLocationname();
+        $unit = $this->unit->getunit();
+        $data = array(
+            'location'=>$location,
+            'unit'=>$unit
+        );
+
+        return view('inspection.inspection_ohc.weekly_first_aid.list',$data);
     }
 
 
@@ -126,7 +135,6 @@ class WeeklyFirstAidBoxController extends Controller
 
     public function Store(Request $request)
     {
-        // dd($request->all());
         try {
             
             try {
@@ -136,20 +144,21 @@ class WeeklyFirstAidBoxController extends Controller
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_details = $this->weekly_first_aid->selectOne($weekly_first_aid_id);
                 $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
-
+                
+                
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
-
+                
             } catch (Exception $ex) {
                 dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
-
+            
         } catch (Exception $ex) {
             report($ex);
         }
     }
-
+    
     public function View(Request $request)
     {
         try {
@@ -157,17 +166,14 @@ class WeeklyFirstAidBoxController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->weekly_first_aid->selectOne($id);
             $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
-            $inspection_file = $this->signature->getFiles($inspection_details->created_by, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $creater_signature = $this->user->where('id',$inspection_details->created_by)->first();
+            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
-                'creater_signature' => $creater_signature,
             );
-
 
             return view('inspection.inspection_ohc.weekly_first_aid.view',$data);
         } catch (Exception $ex) {
@@ -186,7 +192,7 @@ class WeeklyFirstAidBoxController extends Controller
                 $id = decryptId($request->id);
                 $inspection_details = $this->weekly_first_aid->selectOne($id);
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
-                $inspection_created_by = $this->signature->getFilesByEmpId($inspection_details->created_by, $inspection_type);
+                $inspection_created_by = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
                 $inspection_data = json_decode($inspection_details->inspection_data, true);
 
                 $data = array(
@@ -217,6 +223,121 @@ class WeeklyFirstAidBoxController extends Controller
             dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->weekly_first_aid->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                    'Document No',
+                    'Issue Date',
+                    'Location',
+                    'Unit',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $i = 1;
+            foreach ($allData as $data) {
+                $export = [];
+                $export[] =  $i;
+                $export[] =  $data->doc_no;
+                $export[] =  $data->issue_date;
+                $export[] =  getLocationname($data->location);
+                $export[] =  getUnitname($data->unit);
+                $export[] =  getusername($data->created_by);
+                $export[] =  Displaydateformat($data->created_at);
+                $exportData[] = $export;
+
+                $i++;
+            }
+
+            $writer = SimpleExcelWriter::streamDownload('Weekly First Aid.xlsx')
+                ->addHeader($header)
+                ->addRows(
+                    $exportData
+                );
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            ini_set("pcre.backtrack_limit", "5000000");
+
+            $allData = $this->weekly_first_aid->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $header = [
+                __("common.sno"),
+                    'Document No',
+                    'Issue Date',
+                    'Location',
+                    'Unit',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "First Aid Name",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.weekly_first_aid.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Weekly First Aid.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+        }
+    }
+
+    public function StatusChange(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+
+            $this->weekly_first_aid->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('First Aid  Status is changed')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong, Please try after sometimes!'], 406);
         }
     }
 }

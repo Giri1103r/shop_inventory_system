@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly First Aid Box Audit Checklist')
-@section('pageurl', admin_url('ohc/first-aid-box/monthly-audit/list'))
+@section('title', 'OHC HYGIENE CLEANING CHECKLIST')
+@section('pageurl', admin_url('ohc/ohc-hygiene-cleaning-checklist/list'))
 
 
 @section('content')
@@ -11,11 +11,11 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/first-aid-box/monthly-audit/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -23,49 +23,35 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        <div class="col-md-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('inspection.shifts') }}</label>
+                                            <select name="shift_id" id="shift_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Shift</option>
+                                                @foreach ($shifts as $shift)
+                                                    <option value="{{ encryptId($shift->id) }}">
+                                                        {{ $shift->shift }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
-                                                <select name="shift" id="shift" style="width: 100%"
-                                                    class="form-control single-select">
-                                                    <option value="">Select the option</option>
-                                                    @foreach ($shift as $list)
-                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">Frequency</label>
-                                                <select name="frequency" id="frequency" style="width: 100%"
-                                                    class="form-control single-select">
-                                                    <option value="">Select the option</option>
-                                                    @foreach ($frequency as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->frequency_name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR NURSING OFFICER ACTION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">INSPECTION COMPLETED</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -87,12 +73,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
-                                        <th>Shift</th>
-                                        <th>Frequency</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('inspection.date') }}</th>
+                                        <th>{{ __('Shift') }}</th>
+                                        <th>{{ __('Checklist Status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -100,7 +83,6 @@
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -114,9 +96,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+
             flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
             });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -143,7 +127,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/first-aid-box/monthly-audit/list') }}",
+                        url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -152,9 +136,8 @@
                         data: function(d) {
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.shift = $('#shift').val();
-                            d.frequency = $('#frequency').val();
+                            d.shift_id = $('#shift_id').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -168,30 +151,17 @@
                             orderable: false,
                             searchable: true,
                         },
-
                         {
-                            data: 'doc_no',
-                            name: 'document_no'
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date'
-                        },
-                        {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'date',
+                            name: 'date',
                         },
                         {
                             data: 'shift',
-                            name: 'shift'
+                            name: 'shift',
                         },
                         {
-                            data: 'frequency',
-                            name: 'frequency'
-                        },
-                        {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'checklist_status',
+                            name: 'checklist_status',
                         },
                         {
                             data: 'action',
@@ -222,22 +192,18 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        shift = $('#shift').val();
-                                        frequency = $('#frequency').val();
+                                        shift_id = $('#shift_id').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aid-box/monthly-audit/export/pdf') }}" +
+                                            "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&shift=' + shift +
-                                            '&frequency=' + frequency
+                                            '&shift_id=' + shift_id +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                                 {
@@ -247,18 +213,16 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        shift_id = $('#shift_id').val();
+                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aid-box/monthly-audit/export/excel') }}" +
+                                            "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&shift=' + shift +
-                                            '&frequency=' + frequency
+                                            '&shift_id=' + shift_id +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]
@@ -294,14 +258,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title =
-                            '{{ __('Do You want to In-Activate Monthly First Aid Box Audit Checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title =
-                            '{{ __('Do You want to In-Activate Monthly First Aid Box Audit Checklist') }}';
+                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -321,7 +283,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/first-aid-box/monthly-audit/status') }}",
+                                url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -364,7 +326,84 @@
 
 
                 /* Delete Record */
+                $(document).on('click', '.recordDelete', function() {
 
+                    var id = $(this).data('id');
+                    var login_id = $(this).data('login_id');
+
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var text = '{{ __('common.delete') }}';
+                    var btncolor = '#dc3545'
+
+                    Swal.fire({
+                        title: title,
+                        icon: 'warning',
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: text,
+                        confirmButtonColor: btncolor,
+                        denyButtonColor: '#28a745',
+                        customClass: {
+                            confirmButton: 'btn-skew',
+                            cancelButton: 'btn-skew'
+                        },
+                    }).then((result) => {
+
+                        if (result.value) {
+                            $.ajax({
+                                url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list/delete') }}",
+                                type: 'post',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                        .attr('content')
+                                },
+                                data: {
+                                    id: id,
+                                    login_id: login_id
+                                },
+                                success: function(response) {
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-right',
+                                        showConfirmButton: false,
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        didOpen: (toast) => {
+                                            toast.addEventListener(
+                                                'mouseenter',
+                                                Swal.stopTimer)
+                                            toast.addEventListener(
+                                                'mouseleave',
+                                                Swal.resumeTimer
+                                            )
+                                        }
+                                    });
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: response.msg
+                                    });
+                                    table.draw();
+                                },
+                                error: function(data) {
+                                    if (data.status === 406 && data.responseJSON.msg ===
+                                        'module_exits') {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        });
+                                    } else {
+                                        $.notify(data.responseJSON.msg, "error");
+                                    }
+                                }
+                            });
+                        } else if (result.isDenied) {
+                            Swal.fire('Something went wrong', '', 'info');
+                        }
+                    })
+
+
+                });
 
             });
         </script>

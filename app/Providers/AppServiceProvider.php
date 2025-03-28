@@ -190,13 +190,14 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 9);
-        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8); 
+        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8);
         defined('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST') or define('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST', 7);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
 
         defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST',15);
         defined('OHC_TYPE_MONTHLY_MEDICINE_STORE') or define('OHC_TYPE_MONTHLY_MEDICINE_STORE',19);
         defined('OHC_OPD_MEDICINE_INSPECTION') or define('OHC_OPD_MEDICINE_INSPECTION',20);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
@@ -258,6 +259,11 @@ class AppServiceProvider extends ServiceProvider
         defined('OBSERVATION_PENDING') or define('OBSERVATION_PENDING', 1);
         defined('OBSERVATION_REJECTED') or define('OBSERVATION_REJECTED', 2);
         defined('OBSERVATION_APPROVED') or define('OBSERVATION_APPROVED', 3);
+
+        //OHC Hygiene Checklist
+        defined('CLEANER_SUBMITTED_THE_CHECKLIST') or define('CLEANER_SUBMITTED_THE_CHECKLIST', 1);
+        defined('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST') or define('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST', 2);
+
 
 
         // INSPECTION OHC
@@ -331,6 +337,7 @@ class AppServiceProvider extends ServiceProvider
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
+        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
 
         // OPTIONS
         defined('YES') or define('YES',1);
@@ -354,6 +361,14 @@ class AppServiceProvider extends ServiceProvider
 
         defined('PRESENT') or define('PRESENT',1);
         defined('MISSING') or define('MISSING',2);
+
+        // Valve Types
+        defined('GATE') or define('GATE',1);
+        defined('BALL') or define('BALL',2);
+        defined('BUTTERFLY') or define('BUTTERFLY',3);
+
+        defined('OPEN') or define('OPEN',1);
+        defined('CLOSE') or define('CLOSE',2);
 
         View::composer('*', function ($view) {
 

@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Monthly First Aid Box Audit Checklist')
+@section('title', 'Weekly First Aid  PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -24,30 +24,20 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->doc_no}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->issue_date) }}
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->revision_date) }}
-                        </td>
+                            {{ getLocationname($value->location) }}
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
-                        </td>
+                        </td><td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit) }}
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date_of_inspection) }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getShift($value->shift) }}
-                        </td>
-                      
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getFrequency($value->frequency) }}
-                        </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

@@ -163,5 +163,21 @@ return [
     'non_functional' => 'Non Functional',
     'present' => 'Present',
     'missing' => 'Missing',
- 
+    'ohc_hygiene_cleaning_checklist' => 'Is Floor Tiles, wall, Dust Bin, Washbasin, Bed, Bedsheet, Computer Table, window, window cover, Fire Extinguishers, Fan, AC, Body Weigh Measurement, Almirah, Wall Boards, Stickers & others all useful equipment has been cleaned properly?',
+
+    // Isolation Valve Inspection
+    'location_isv' => 'Location Of ISV',
+    'size_isv' => 'Size Of ISV',
+    'wheel_operation' => 'Wheel Operation',
+    'leakage' => 'Leakage',
+    'valve_type' => 'Valve Type',
+    'open' => 'Open State Status',
+    'close' => 'Close State Status',
+    'isv_status'=> 'Current Status Of ISV',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'GATE' => 'Gate Valve',
+    'BALL' => 'Ball Valve',
+    'BUTTERFLY' => 'Butterfly Valve',
+
 ];

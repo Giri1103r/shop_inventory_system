@@ -87,6 +87,12 @@ class MonthlyFirstAidboxController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('shift', function ($row) {
+                            return getShift($row->shift);
+                        })
+                        ->addColumn('frequency', function ($row) {
+                            return getFrequencyname($row->frequency);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -115,8 +121,16 @@ class MonthlyFirstAidboxController extends Controller
                 }
             }
         }
+        $shift = $this->shift->getShiftname();
+        $frequency = $this->frequency->getFrequency();
+        $data = array(
 
-        return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.list');
+            'shift' => $shift,
+            'frequency' => $frequency,
+
+
+        );
+        return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.list',$data);
     }
 
     public function Add(Request $request)
@@ -144,9 +158,10 @@ class MonthlyFirstAidboxController extends Controller
     public function Store(Request $request)
     {
         try {
+
             $store = $this->monthly_first_aid->store();
             $inspection_type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
-            $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->store($store->id);
+            $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->store($store);
             $id = $store->id;
             $files = $this->signature->requestorsignatureUpload($inspection_type, $id);
 
@@ -154,7 +169,7 @@ class MonthlyFirstAidboxController extends Controller
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -170,10 +185,15 @@ class MonthlyFirstAidboxController extends Controller
                 $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
             }
 
+            $requestorsignature =  $monthly_first_aid->created_by;
+
+            $type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
+            $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+            $signatureview = $this->user->where('id', $requestorsignature)->first();
             $data = [
                 'monthly_first_aid' => $monthly_first_aid,
                 'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
-
+                'signatureview' => $signatureview,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
             ];
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
@@ -192,11 +212,15 @@ class MonthlyFirstAidboxController extends Controller
                 $monthly_first_aid = $this->monthly_first_aid->selectOne($id);
                 $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
             }
+            $requestorsignature =  $monthly_first_aid->created_by;
 
+            $type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
+            $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+            $signatureview = $this->user->where('id', $requestorsignature)->first();
             $data = [
                 'monthly_first_aid' => $monthly_first_aid,
                 'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
-
+                'signatureview' => $signatureview,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
             ];
 
@@ -219,7 +243,7 @@ class MonthlyFirstAidboxController extends Controller
 
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -242,9 +266,9 @@ class MonthlyFirstAidboxController extends Controller
                 'Document Number',
                 'Review date',
                 'Issued Date',
-                'Unit',
-                'Department',
-                'Approve Status',
+                'Date of Inspection',
+                'Shift',
+                'frequency',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -257,9 +281,9 @@ class MonthlyFirstAidboxController extends Controller
                 $export[] =  $data->doc_no;
                 $export[] =  $data->revision_date;
                 $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getUnitname($data->department);
-                $export[] = getohcrequisitionfloorstatus($data->approve_status);
+                $export[] =  Displaydateformat($data->date_of_inspection);
+                $export[] =  getShift($data->shift);
+                $export[] =  getFrequencyname($data->frequency);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -292,9 +316,9 @@ class MonthlyFirstAidboxController extends Controller
                 'Document Number',
                 'Review date',
                 'Issued Date',
-                'Unit',
-                'Department',
-                'Status',
+                'Date of Inspection',
+                'Shift',
+                'frequency',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
