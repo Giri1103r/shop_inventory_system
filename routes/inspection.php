@@ -37,8 +37,21 @@ use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
-use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+
+use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
+use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
+use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
+use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
+use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
+use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
+use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
+use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
+use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
+use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -167,18 +180,12 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::post('list', [AmbientNoiseMonitoringController::class, 'index']);
         Route::get('add', [AmbientNoiseMonitoringController::class, 'add']);
         Route::post('add/submit', [AmbientNoiseMonitoringController::class, 'store']);
-        Route::get('edit/{id}', [AmbientNoiseMonitoringController::class, 'edit']);
-        Route::post('edit/submit', [AmbientNoiseMonitoringController::class, 'update']);
         Route::get('view/{id}', [AmbientNoiseMonitoringController::class, 'view']);
         Route::post('delete', [AmbientNoiseMonitoringController::class, 'delete']);
         Route::get('export/excel', [AmbientNoiseMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [AmbientNoiseMonitoringController::class, 'exportPdf']);
-        Route::get('sample_download', [AmbientNoiseMonitoringController::class, 'DownloadSample']);
-        Route::get('import', [AmbientNoiseMonitoringController::class, 'import']);
-        Route::post('import/Submit', [AmbientNoiseMonitoringController::class, 'importSubmit']);
         Route::post('status', [AmbientNoiseMonitoringController::class, 'statusChange']);
         Route::post('unique', [AmbientNoiseMonitoringController::class, 'Uniquecheck']);
-        Route::get('employeeName', [AmbientNoiseMonitoringController::class, 'employeename']);
     });
 
     Route::group(['prefix' => 'work-noise/'], function () {
@@ -186,18 +193,60 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::post('list', [WorkNoiseMonitoringController::class, 'index']);
         Route::get('add', [WorkNoiseMonitoringController::class, 'add']);
         Route::post('add/submit', [WorkNoiseMonitoringController::class, 'store']);
-        Route::get('edit/{id}', [WorkNoiseMonitoringController::class, 'edit']);
-        Route::post('edit/submit', [WorkNoiseMonitoringController::class, 'update']);
         Route::get('view/{id}', [WorkNoiseMonitoringController::class, 'view']);
         Route::post('delete', [WorkNoiseMonitoringController::class, 'delete']);
         Route::get('export/excel', [WorkNoiseMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [WorkNoiseMonitoringController::class, 'exportPdf']);
-        Route::get('sample_download', [WorkNoiseMonitoringController::class, 'DownloadSample']);
-        Route::get('import', [WorkNoiseMonitoringController::class, 'import']);
-        Route::post('import/Submit', [WorkNoiseMonitoringController::class, 'importSubmit']);
         Route::post('status', [WorkNoiseMonitoringController::class, 'statusChange']);
         Route::post('unique', [WorkNoiseMonitoringController::class, 'Uniquecheck']);
-        Route::get('employeeName', [WorkNoiseMonitoringController::class, 'employeename']);
+    });
+
+    Route::group(['prefix' => 'ambient-air/yearly/'], function () {
+        Route::get('list', [AmbientAirMonitoringYearlyController::class, 'index']);
+        Route::post('list', [AmbientAirMonitoringYearlyController::class, 'index']);
+        Route::get('add', [AmbientAirMonitoringYearlyController::class, 'add']);
+        Route::post('add/submit', [AmbientAirMonitoringYearlyController::class, 'store']);
+        Route::get('view/{id}', [AmbientAirMonitoringYearlyController::class, 'view']);
+        Route::post('delete', [AmbientAirMonitoringYearlyController::class, 'delete']);
+        Route::get('export/excel', [AmbientAirMonitoringYearlyController::class, 'exportExcel']);
+        Route::get('export/pdf', [AmbientAirMonitoringYearlyController::class, 'exportPdf']);
+        Route::post('status', [AmbientAirMonitoringYearlyController::class, 'statusChange']);
+    });
+
+    Route::group(['prefix' => 'work-zone/air/'], function () {
+        Route::get('list', [WorkZoneAirMonitoringController::class, 'index']);
+        Route::post('list', [WorkZoneAirMonitoringController::class, 'index']);
+        Route::get('add', [WorkZoneAirMonitoringController::class, 'add']);
+        Route::post('add/submit', [WorkZoneAirMonitoringController::class, 'store']);
+        Route::get('view/{id}', [WorkZoneAirMonitoringController::class, 'view']);
+        Route::post('delete', [WorkZoneAirMonitoringController::class, 'delete']);
+        Route::get('export/excel', [WorkZoneAirMonitoringController::class, 'exportExcel']);
+        Route::get('export/pdf', [WorkZoneAirMonitoringController::class, 'exportPdf']);
+        Route::post('status', [WorkZoneAirMonitoringController::class, 'statusChange']);
+    });
+
+    Route::group(['prefix' => 'dg-set-stack-emission/'], function () {
+        Route::get('list', [DgSetStackEmissionMonitoringController::class, 'index']);
+        Route::post('list', [DgSetStackEmissionMonitoringController::class, 'index']);
+        Route::get('add', [DgSetStackEmissionMonitoringController::class, 'add']);
+        Route::post('add/submit', [DgSetStackEmissionMonitoringController::class, 'store']);
+        Route::get('view/{id}', [DgSetStackEmissionMonitoringController::class, 'view']);
+        Route::post('delete', [DgSetStackEmissionMonitoringController::class, 'delete']);
+        Route::get('export/excel', [DgSetStackEmissionMonitoringController::class, 'exportExcel']);
+        Route::get('export/pdf', [DgSetStackEmissionMonitoringController::class, 'exportPdf']);
+        Route::post('status', [DgSetStackEmissionMonitoringController::class, 'statusChange']);
+    });
+
+    Route::group(['prefix' => 'lux/'], function () {
+        Route::get('list', [LuxMonitoringController::class, 'index']);
+        Route::post('list', [LuxMonitoringController::class, 'index']);
+        Route::get('add', [LuxMonitoringController::class, 'add']);
+        Route::post('add/submit', [LuxMonitoringController::class, 'store']);
+        Route::get('view/{id}', [LuxMonitoringController::class, 'view']);
+        Route::post('delete', [LuxMonitoringController::class, 'delete']);
+        Route::get('export/excel', [LuxMonitoringController::class, 'exportExcel']);
+        Route::get('export/pdf', [LuxMonitoringController::class, 'exportPdf']);
+        Route::post('status', [LuxMonitoringController::class, 'statusChange']);
     });
 });
 

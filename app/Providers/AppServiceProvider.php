@@ -280,7 +280,14 @@ class AppServiceProvider extends ServiceProvider
         defined('MEDICAL_ASSISTANT_APPROVED') or define('MEDICAL_ASSISTANT_APPROVED', 9);
         defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
 
+        //environment
 
+        defined('AmbientNoise') or define('AMBIENTNOISE', 1);
+        defined('WORKNOISE') or define('WORKNOISE', 2);
+        defined('AMBIENT_AIR') or define('AMBIENT_AIR', 3);
+        defined('WORKZONE_AIR') or define('WORKZONE_AIR', 4);
+        defined('DGSET') or define('DGSET', 5);
+        defined('LUX') or define('LUX', 6);
 
         //Notification Type
         defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
@@ -303,6 +310,7 @@ class AppServiceProvider extends ServiceProvider
         defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
         defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
         defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 0);
+
 
         defined('GEMBA_WALK') or define('GEMBA_WALK', 16);
         defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
