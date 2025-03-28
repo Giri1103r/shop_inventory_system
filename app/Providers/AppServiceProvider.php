@@ -197,6 +197,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_AMOUNT_RECEIVEDBY_INSPECTION') or define('OHC_AMOUNT_RECEIVEDBY_INSPECTION', 2);
 
         defined('OHC_TYPE_FLOOR_STRETCHER') or define('OHC_TYPE_FLOOR_STRETCHER',13);
+        defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST',15);
         defined('OHC_TYPE_MONTHLY_MEDICINE_STORE') or define('OHC_TYPE_MONTHLY_MEDICINE_STORE',19);
         defined('OHC_OPD_MEDICINE_INSPECTION') or define('OHC_OPD_MEDICINE_INSPECTION',20);
         defined('OHC_AUDITOR_SIGN') or define('OHC_AUDITOR_SIGN',1);
@@ -337,6 +338,7 @@ class AppServiceProvider extends ServiceProvider
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
+        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
 
         // OPTIONS
         defined('YES') or define('YES',1);
@@ -360,6 +362,18 @@ class AppServiceProvider extends ServiceProvider
 
         defined('PRESENT') or define('PRESENT',1);
         defined('MISSING') or define('MISSING',2);
+
+        // Valve Types
+        defined('GATE') or define('GATE',1);
+        defined('BALL') or define('BALL',2);
+        defined('BUTTERFLY') or define('BUTTERFLY',3);
+
+        defined('OPEN') or define('OPEN',1);
+        defined('CLOSE') or define('CLOSE',2);
+
+        // Condition Of The Glass
+        defined('INTACT') or define('INTACT',1);
+        defined('BROKEN') or define('BROKEN',2);
 
         View::composer('*', function ($view) {
 

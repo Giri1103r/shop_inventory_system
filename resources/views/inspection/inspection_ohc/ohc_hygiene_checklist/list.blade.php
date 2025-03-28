@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Isolation Valve Inspection')
-@section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
+@section('title', 'OHC HYGIENE CLEANING CHECKLIST')
+@section('pageurl', admin_url('ohc/ohc-hygiene-cleaning-checklist/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/isolating-valve-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -23,37 +23,34 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        <div class="col-md-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('inspection.shifts') }}</label>
+                                            <select name="shift_id" id="shift_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Shift</option>
+                                                @foreach ($shifts as $shift)
+                                                    <option value="{{ encryptId($shift->id) }}">
+                                                        {{ $shift->shift }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{encryptId('6')}}">CLOSED</option>
-                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR NURSING OFFICER ACTION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">INSPECTION COMPLETED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -76,10 +73,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
-                                        <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('inspection.date') }}</th>
+                                        <th>{{ __('Shift') }}</th>
+                                        <th>{{ __('Checklist Status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -99,6 +95,10 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
             });
 
             $(function() {
@@ -127,7 +127,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/isolating-valve-inspection/list') }}",
+                        url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -136,7 +136,7 @@
                         data: function(d) {
                             d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.shift_id = $('#shift_id').val();
                             d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
@@ -151,22 +151,17 @@
                             orderable: false,
                             searchable: true,
                         },
-
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'date',
+                            name: 'date',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'shift',
+                            name: 'shift',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
-                        },
-                        {
-                            data: 'inspection_status',
-                            name: 'inspection_status',
+                            data: 'checklist_status',
+                            name: 'checklist_status',
                         },
                         {
                             data: 'action',
@@ -197,19 +192,17 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        shift_id = $('#shift_id').val();
                                         inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/isolating-valve-inspection/export/pdf') }}" +
+                                            "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&shift_id=' + shift_id +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -220,16 +213,15 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        shift_id = $('#shift_id').val();
                                         inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/isolating-valve-inspection/export/excel') }}" +
+                                            "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&shift_id=' + shift_id +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -291,7 +283,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/isolating-valve-inspection/list/status') }}",
+                                url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -359,7 +351,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/isolating-valve-inspection/list/delete') }}",
+                                url: "{{ admin_url('ohc/ohc-hygiene-cleaning-checklist/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

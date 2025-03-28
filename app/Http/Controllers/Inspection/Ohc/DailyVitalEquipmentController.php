@@ -37,17 +37,6 @@ class DailyVitalEquipmentController extends Controller
                     $data =  $this->daily_vital->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('status', function ($row) {
-                            $text = "<span style='color:red'>In-Active</span>";
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
-                            }
-                            // }
-                            return $text;
-                        })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -61,11 +50,11 @@ class DailyVitalEquipmentController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/daily-vital-equipment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                        </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                    </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'status' ,'created_date', 'created_by', 'issue_date'])
+                        ->rawColumns(['action' ,'created_date', 'created_by', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -112,12 +101,11 @@ class DailyVitalEquipmentController extends Controller
             $daily_vital = $this->daily_vital->store();
             $id = $daily_vital->id;
             $inspection_type = OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST;
-            $signature_update = $this->signature->signatureUpload($id,$inspection_type);
+            $signature_update = $this->signature->requestorsignatureUpload($inspection_type,$id);
 
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -129,12 +117,12 @@ class DailyVitalEquipmentController extends Controller
         try {
             $id = decryptId($request->id);
             $daily_vital = $this->daily_vital->selectOne($id);
-       
             $data = [
                 'daily_vital' => $daily_vital,
             ];
             return view('inspection.inspection_ohc.daily_vital_equipment.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -157,7 +145,6 @@ class DailyVitalEquipmentController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -170,7 +157,6 @@ class DailyVitalEquipmentController extends Controller
                 $export[] =  $data->doc_no;
                 $export[] =  $data->issue_date;
                 $export[] = $data->revision_data;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -183,6 +169,7 @@ class DailyVitalEquipmentController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -203,7 +190,6 @@ class DailyVitalEquipmentController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

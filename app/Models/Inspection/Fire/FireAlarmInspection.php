@@ -6,9 +6,9 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class IsolationValve extends Model
+class FireAlarmInspection extends Model
 {
-    protected $table = 'inspection_fire_isolation_valve';
+    protected $table = 'inspection_fire_fire_alarm';
 
     protected $fillable = [
         'id',
@@ -52,7 +52,7 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*');
+        $query = $this->select('inspection_fire_fire_alarm.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -66,17 +66,17 @@ class IsolationValve extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_isolation_valve.document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_fire_alarm.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_isolation_valve.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_fire_fire_alarm.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_isolation_valve.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_fire_alarm.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_fire_alarm.inspection_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -84,25 +84,25 @@ class IsolationValve extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "revision_data":
-                    $query->orderBy('inspection_fire_isolation_valve.revision_data', $columnorder);
+                    $query->orderBy('inspection_fire_fire_alarm.revision_data', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_fire_fire_alarm.issue_date', $columnorder);
                     break;
                 case "document_number":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.document_number', $columnorder);
+                    $query = $query->orderBy('inspection_fire_fire_alarm.document_number', $columnorder);
                     break;
                 case "inspection_status":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.inspection_status', $columnorder);
+                    $query = $query->orderBy('inspection_fire_fire_alarm.inspection_status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_fire_fire_alarm.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_fire_fire_alarm.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_fire_isolation_valve.id', 'DESC');
+                    $query = $query->orderBy('inspection_fire_fire_alarm.id', 'DESC');
                     break;
             }
         }
@@ -151,7 +151,7 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*');
+        $query = $this->select('inspection_fire_fire_alarm.*');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -162,17 +162,17 @@ class IsolationValve extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_isolation_valve.document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_fire_alarm.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_isolation_valve.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_fire_fire_alarm.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_isolation_valve.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_fire_alarm.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_fire_alarm.inspection_status', decryptId($request->inspection_status));
         }
         $query->orderBy('id', 'DESC');
 
@@ -289,6 +289,6 @@ class IsolationValve extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_isolation_valve'));
+        static::addGlobalScope(new TrashScope('inspection_fire_fire_alarm'));
     }
 }

@@ -6,25 +6,23 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class IsolationValveDetails extends Model
+class FireAlarmInspectionDetails extends Model
 {
-    protected $table = 'inspection_fire_isolation_valve_details';
+    protected $table = 'inspection_fire_fire_valve_details';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
         'inspection_id',
-        'location_isv',
         'sr_no',
         'resource_code',
-        'size_isv',
-        'isv_status',
-        'wheel_operation',
-        'leakage',
-        'type',
-        'open',
-        'close',
+        'department',
+        'quantity',
+        'glass',
+        'hammer',
+        'mannual_call_point',
+        'approach',
         'remarks',
         'created_by',
         'updated_by',
@@ -49,30 +47,26 @@ class IsolationValveDetails extends Model
         $request = request();
 
         $sr_no = $request->sr_no;
-        $location_isv = $request->location_isv;
+        $department = $request->department;
         $resource_code = $request->resource_code;
-        $size_isv = $request->size_isv;
-        $wheel_operation = $request->wheel_operation;
-        $leakage = $request->leakage;
-        $type = $request->type;
-        $open = $request->open;
-        $close = $request->close;
-        $status_isv = $request->isv_status;
+        $quantity = $request->quantity;
+        $hammer = $request->hammer;
+        $mannual_call_point = $request->mannual_call_point;
+        $approach = $request->approach;
+        $glass = $request->glass;
         $remarks = $request->remarks;
         
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
-                'location_isv' => $location_isv[$index],
+                'department' => decryptId($department[$index]),
                 'resource_code' => $resource_code[$index],
-                'size_isv' => $size_isv[$index],
-                'isv_status' => decryptId($status_isv[$index]),
-                'wheel_operation' => decryptId($wheel_operation[$index]),
-                'leakage' => decryptId($leakage[$index]),
-                'type' => decryptId($type[$index]),
-                'open' => decryptId($open[$index]),
-                'close' => decryptId($close[$index]),
+                'quantity' => $quantity[$index],
+                'glass' => decryptId($glass[$index]),
+                'hammer' => decryptId($hammer[$index]),
+                'mannual_call_point' => decryptId($mannual_call_point[$index]),
+                'approach' => $approach[$index],
                 'remarks' => $remarks[$index],
                 'created_by' => Auth::id(),
             );
@@ -89,6 +83,6 @@ class IsolationValveDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_isolation_valve_details'));
+        static::addGlobalScope(new TrashScope('inspection_fire_fire_valve_details'));
     }
 }
