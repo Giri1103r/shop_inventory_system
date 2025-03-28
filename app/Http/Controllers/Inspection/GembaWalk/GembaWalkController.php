@@ -256,7 +256,6 @@ class GembaWalkController extends Controller
 
             Session::flash('success', 'Your data has been created successfully!');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
         }
@@ -293,7 +292,6 @@ class GembaWalkController extends Controller
             }
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -498,7 +496,6 @@ class GembaWalkController extends Controller
             Session::flash('success', __('inspection.capa_action_success_msg'));
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('inspection/gemba-walk/list'));
