@@ -5,17 +5,14 @@ use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
-use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
-use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
-use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
@@ -27,8 +24,10 @@ use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
-use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
+use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
@@ -36,6 +35,7 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -601,6 +601,10 @@ Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
     Route::get('add', [OHCHygieneCleaningChecklistController::class, 'add']);
     Route::post('add/submit', [OHCHygieneCleaningChecklistController::class, 'store']);
     Route::get('view/{id}', [OHCHygieneCleaningChecklistController::class, 'view']);
+    Route::get('export/pdf', [OHCHygieneCleaningChecklistController::class, 'ExportPDF']);
+    Route::get('export/excel', [OHCHygieneCleaningChecklistController::class, 'ExportExcel']);
+    Route::get('approval/{id}', [OHCHygieneCleaningChecklistController::class, 'approval']);
+    Route::post('verify/submit', [OHCHygieneCleaningChecklistController::class, 'approvalSubmit']);
     Route::get('generalpdf/{id}', [OHCHygieneCleaningChecklistController::class, 'generalpdf']);
 });
 
@@ -615,16 +619,12 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
     Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
     Route::post('status', [WeeklyFirstAidBoxController::class, 'statusChange']);
-
 });
 
 Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], function () {
     Route::get('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'index']);
     Route::get('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'add']);
     Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
-
-
-
 });
 
 
@@ -638,35 +638,3 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

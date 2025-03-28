@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Daily Vital Equipment Pdf')
+@section('title', 'OHC HYGIENE CLEANING CHECKLIST PDF')
 @section('content')
 
     <div style="width:100%;">
@@ -24,16 +24,16 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no }}
+                            {{ Displaydateformat($value->issue_date) }}
+
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
-                        </td>
+                            {{ getShiftName($value->shift_id) }}
 
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_data }}
+                            {{ $value->checklist_status == '1' ? 'Waiting For Nursing Officer Action' : 'Inspection Completed' }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

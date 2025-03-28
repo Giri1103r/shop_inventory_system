@@ -35,7 +35,9 @@ class OHCHygieneCleaningChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_hygiene_checklist.*');
+        $query = $this->select('inspection_ohc_hygiene_checklist.*')
+            ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
+
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -45,28 +47,24 @@ class OHCHygieneCleaningChecklist extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('document_number', 'LIKE', '%' . $search . '%')
                     ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('shift', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('shift_id') && $request->shift_id) {
+            $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
+        if ($request->has('inspection_status') && $request->inspection_status) {
+            $query = $query->where('checklist_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_hygiene_checklist.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -94,6 +92,61 @@ class OHCHygieneCleaningChecklist extends Model
             'created_by' => Auth::id(),
             'checklist_status' => CLEANER_SUBMITTED_THE_CHECKLIST,
         ];
-        $this->create($insert_array);
+        return $this->create($insert_array);
+    }
+
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_ohc_hygiene_checklist.*')
+            ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
+
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        // if ($request->search['value'] != null || $request->search['value'] != '') {
+        //     $search = $request->search['value'];
+
+        //     $query->where(function ($query) use ($search) {
+        //         $query
+        //             ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('shift', 'LIKE', '%' . $search . '%');
+        //     });
+        // }
+
+        if ($request->has('shift_id') && $request->shift_id) {
+            $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        }
+        if ($request->has('inspection_status') && $request->inspection_status) {
+            $query = $query->where('checklist_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
+        }
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('inspection_ohc_hygiene_checklist.id', 'DESC');
+
+        return  $query->get();
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
+    public function approvalSubmit()
+    {
+        $request = request();
+        $update_array = [
+            'nursing_officer_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'checklist_status' => NURSING_OFFICER_SUBMITTED_THE_CHECKLIST,
+        ];
+        $this->where('id', decryptId($request->id))->update($update_array);
     }
 }
