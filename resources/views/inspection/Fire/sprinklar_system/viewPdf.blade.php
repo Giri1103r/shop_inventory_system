@@ -200,84 +200,103 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-        <tr>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
-                SR.NO</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
-                LOCATION OF ISV</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                RESOURCE CODE</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                SIZE OF ISV (MM)</th>
-            <th colspan="6"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
-                ITEMS</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                REMARKS</th>
-        </tr>
-        <tr>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OPEN</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS CLOSE</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                WHEEL OPERATION</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OF ISV</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                LEAKAGE (Y/N)</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                VALVE TYPE</th>
-        </tr>
-
-        @foreach ($inspection as $details)
+    <table
+        style="width: 100%; border-collapse: collapse; background-color: white; font-family: Arial, sans-serif; font-size: 14px;">
+        <thead>
             <tr>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->location_isv }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->resource_code }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->size_isv }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->open == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->close == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->wheel_operation == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->isv_status == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->leakage == YES ? __('inspection.yes') : __('inspection.no') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    @if ($details->type == GATE)
-                        {{ __('inspection.GATE') }}
-                    @elseif ($details->type == BALL)
-                        {{ __('inspection.BALL') }}
-                    @elseif ($details->type == BUTTERFLY)
-                        {{ __('inspection.BUTTERFLY') }}
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">SR. NO
+                </th>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">
+                    DEPARTMENT/ LOCATION</th>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">QUANTITY
+                </th>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">RESOURCE
+                    CODE</th>
+                <th colspan="6"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">CHECK
+                    ITEMS (OK / NOT OK)</th>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">REMARK
+                </th>
             </tr>
-        @endforeach
+            <tr>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">WATER
+                    LEAKAGE IN PIPE</th>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">PAINTING
+                </th>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">QBD
+                    CONDITION</th>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">
+                    CONDITION OF FLOW METER</th>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">MAIN
+                    ISOLATION VALVE CONDITION</th>
+                <th style="border: 2px solid black; padding: 10px; text-align: center; background-color: #ddd;">DRAIN
+                    VALVE CONDITION</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($inspection as $details)
+                <tr style="background-color: {{ $loop->even ? '#f9f9f9' : 'white' }};">
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        {{ GetDeptName($details->department) }}</td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->quantity }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        {{ $details->resource_code }}</td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->water_leakage == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->painting == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->qbd == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->condition_of_flow_meter == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->main_isolation == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">
+                        @if ($details->drain_condition == OK)
+                            {{ __('inspection.ok') }}
+                        @else
+                            {{ __('inspection.not_ok') }}
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
+
 
 
 

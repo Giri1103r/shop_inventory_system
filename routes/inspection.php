@@ -5,14 +5,18 @@ use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
+use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
+use App\Http\Controllers\Inspection\Fire\SprinklarSystemController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
@@ -24,19 +28,16 @@ use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
-use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
-use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
+use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
-use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
+use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
-use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
-use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -491,6 +492,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('exportViewPdf/{id}', [FireAlarmController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [FireAlarmController::class, 'ExportExcel']);
         Route::GET('export/pdf', [FireAlarmController::class, 'ExportPDF']);
+    });
+
+    Route::group(['prefix' => 'sprinkler-inspection'], function () {
+        Route::GET('list', [SprinklarSystemController::class, 'Index']);
+        Route::POST('list', [SprinklarSystemController::class, 'Index']);
+        Route::GET('add', [SprinklarSystemController::class, 'Add']);
+        Route::POST('add/submit', [SprinklarSystemController::class, 'Store']);
+        Route::GET('view/{id}', [SprinklarSystemController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [SprinklarSystemController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [SprinklarSystemController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [SprinklarSystemController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [SprinklarSystemController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [SprinklarSystemController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [SprinklarSystemController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [SprinklarSystemController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [SprinklarSystemController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [SprinklarSystemController::class, 'ExportPDF']);
     });
 });
 

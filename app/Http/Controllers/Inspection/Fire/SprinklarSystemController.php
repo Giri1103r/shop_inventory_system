@@ -205,7 +205,7 @@ class SprinklarSystemController extends Controller
         try {
 
             $inspection = $this->sprinklar_system->store();
-            $inspection_type = ISOLATION_VALVE_INSPECTION;
+            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->sprinklar_system_details->store($id);
@@ -251,7 +251,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -272,12 +272,12 @@ class SprinklarSystemController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = ISOLATION_VALVE_INSPECTION;
+            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
 
             $inspection = $this->sprinklar_system->selectOne($id);
             $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
 
             $data = array(
                 'inspection' => $inspection,
@@ -298,12 +298,12 @@ class SprinklarSystemController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = ISOLATION_VALVE_INSPECTION;
+            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
 
             $inspection = $this->sprinklar_system->selectOne($id);
             $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
 
             $data = array(
                 'inspection' => $inspection,
@@ -325,7 +325,7 @@ class SprinklarSystemController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->sprinklar_system->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
             $inspection_details = $this->sprinklar_system->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Sprinklar System Inspection Approved Successfully';
@@ -372,7 +372,7 @@ class SprinklarSystemController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -396,7 +396,7 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
             $sprinklar_system_inspection = $this->sprinklar_system->capaSubmit($id);
             $inspection_details = $this->sprinklar_system->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -433,7 +433,7 @@ class SprinklarSystemController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -457,7 +457,7 @@ class SprinklarSystemController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $sprinklar_system_inspection = $this->sprinklar_system->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
             $inspection_details = $this->sprinklar_system->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -507,7 +507,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -531,7 +531,7 @@ class SprinklarSystemController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $sprinklar_system_inspection = $this->sprinklar_system->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
             $inspection_details = $this->sprinklar_system->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -581,7 +581,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -605,7 +605,7 @@ class SprinklarSystemController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $sprinklar_system_inspection = $this->sprinklar_system->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(ISOLATION_VALVE_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
             $inspection_details = $this->sprinklar_system->selectOne($id);
             if ($status == 1) {
                 $message = 'Sprinklar System Inspection Approved Successfully!';
@@ -651,7 +651,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => ISOLATION_VALVE_INSPECTION,
+                'type' => SPRINKLAR_SYSTEM_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -769,7 +769,7 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,ISOLATION_VALVE_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id,SPRINKLAR_SYSTEM_INSPECTION);
                 $forklift_details = $this->sprinklar_system->selectOne($id);
                 $inspection = $this->sprinklar_system_details->GetDetails($forklift_details->id);
 

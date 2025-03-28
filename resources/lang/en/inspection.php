@@ -192,5 +192,7 @@ return [
     'condition_of_flow_meter' => 'Condition Of Flow Meter',
     'main_isolation' => 'Main Isolation Valve Condition',
     'drain_condition' => 'Drain Valve Condition',
+    'ok' => 'Ok',
+    'not_ok' => 'Not Ok',
  
 ];

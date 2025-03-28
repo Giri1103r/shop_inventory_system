@@ -376,6 +376,9 @@ class AppServiceProvider extends ServiceProvider
         defined('INTACT') or define('INTACT',1);
         defined('BROKEN') or define('BROKEN',2);
 
+        defined('OK') or define('OK',1);
+        defined('NOT_OK') or define('NOT_OK',2);
+
         View::composer('*', function ($view) {
 
             /**

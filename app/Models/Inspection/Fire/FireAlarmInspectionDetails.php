@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FireAlarmInspectionDetails extends Model
 {
-    protected $table = 'inspection_fire_fire_valve_details';
+    protected $table = 'inspection_fire_fire_alarm_details';
 
     protected $primaryKey = 'id';
 
