@@ -565,6 +565,10 @@ Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
     Route::get('add', [OHCHygieneCleaningChecklistController::class, 'add']);
     Route::post('add/submit', [OHCHygieneCleaningChecklistController::class, 'store']);
     Route::get('view/{id}', [OHCHygieneCleaningChecklistController::class, 'view']);
+    Route::get('export/pdf', [OHCHygieneCleaningChecklistController::class, 'ExportPDF']);
+    Route::get('export/excel', [OHCHygieneCleaningChecklistController::class, 'ExportExcel']);
+    Route::get('approval/{id}', [OHCHygieneCleaningChecklistController::class, 'approval']);
+    Route::post('verify/submit', [OHCHygieneCleaningChecklistController::class, 'approvalSubmit']);
     Route::get('generalpdf/{id}', [OHCHygieneCleaningChecklistController::class, 'generalpdf']);
 });
 
@@ -579,16 +583,12 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
     Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
     Route::post('status', [WeeklyFirstAidBoxController::class, 'statusChange']);
-
 });
 
 Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], function () {
     Route::get('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'index']);
     Route::get('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'add']);
     Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
-
-
-
 });
 
 
@@ -602,35 +602,3 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
