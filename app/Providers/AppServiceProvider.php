@@ -334,6 +334,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
+        defined('EMERGENCY_LIGHT_INSPECTION') or define('EMERGENCY_LIGHT_INSPECTION',2);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);

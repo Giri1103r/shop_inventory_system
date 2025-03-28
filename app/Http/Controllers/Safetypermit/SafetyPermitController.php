@@ -136,7 +136,6 @@ class SafetyPermitController extends Controller
                             $permitDate = date('Y-m-d', strtotime($row->date));
                             $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
                             $today = date('Y-m-d');
-
                             if ($today == $nextDay) {
                                 if (($row->permit_status == STATUS_PERMIT_EXPIRED)
                                     && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
@@ -145,6 +144,12 @@ class SafetyPermitController extends Controller
                                     class="permitExtension" title="' . __('Permit Extension') . '">
                                     <i class="fa fa-external-link"></i></a>';
                                 }
+                            } else if (($permitDate == $today) && ($row->permit_status == STATUS_PERMIT_EXPIRED)
+                                && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+                            ) {
+                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
+                                class="permitExtension" title="' . __('Permit Extension') . '">
+                                <i class="fa fa-external-link"></i></a>';
                             }
 
 
@@ -458,7 +463,7 @@ class SafetyPermitController extends Controller
 
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
-           
+
             report($ex);
             Session::flash('error', 'Something Went Wrong Please try again after some time');
             return redirect('safetypermit/list');
