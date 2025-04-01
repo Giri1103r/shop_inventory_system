@@ -37,7 +37,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Document Number">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -52,7 +52,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
+                                                    <input type="text" name="revision_data" id = "revision_data"
                                                         class="form-control" value="{{ getDocumentReviewDate('PA-0') }}"
                                                         readonly>
                                                 </div>
@@ -104,7 +104,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
+                                                    <select name="unit" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
@@ -201,7 +201,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit_id[1]" id="unit_id"
+                                                        <select name="unit_id[1]" id="unit_id_1"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -215,7 +215,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Remarks</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                        <textarea name="remark[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -225,9 +225,9 @@
                                                         <select name="audio_quality[1]" id="audio_quality"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Audio Quality</option>
-                                                            <option value="1">Good</option>
-                                                            <option value="2">Fair</option>
-                                                            <option value="3">Poor</option>
+                                                            <option value="{{ encryptId(1) }}">Good</option>
+                                                            <option value="{{ encryptId(2) }}">Fair</option>
+                                                            <option value="{{ encryptId(3) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -238,9 +238,9 @@
                                                         <select name="mic_condition[1]" id="mic_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Mic Condition</option>
-                                                            <option value="1">Good</option>
-                                                            <option value="2">Fair</option>
-                                                            <option value="3">Poor</option>
+                                                            <option value="{{ encryptId(1) }}">Good</option>
+                                                            <option value="{{ encryptId(2) }}">Fair</option>
+                                                            <option value="{{ encryptId(3) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -258,9 +258,9 @@
                                                         <select name="physical_condition[1]" id="Physical Condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Physical Condition</option>
-                                                            <option value="1">Good</option>
-                                                            <option value="2">Fair</option>
-                                                            <option value="3">Poor</option>
+                                                            <option value="{{ encryptId(1) }}">Good</option>
+                                                            <option value="{{ encryptId(2) }}">Fair</option>
+                                                            <option value="{{ encryptId(3) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -271,9 +271,9 @@
                                                         <select name="cable_condition[1]" id="cable_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Cable Condition</option>
-                                                            <option value="1">Good</option>
-                                                            <option value="2">Fair</option>
-                                                            <option value="3">Poor</option>
+                                                            <option value="{{ encryptId(1) }}">Good</option>
+                                                            <option value="{{ encryptId(2) }}">Fair</option>
+                                                            <option value="{{ encryptId(3) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -283,12 +283,12 @@
                                                         <select name="operation[1]" id="operation"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Operation</option>
-                                                            <option value="1">Functional</option>
-                                                            <option value="2">Non-functional</option>
+                                                            <option value="{{ encryptId(1) }}">Functional</option>
+                                                            <option value="{{ encryptId(2) }}">Non-functional</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                              
+
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -372,7 +372,7 @@
                         next_due: {
                             required: true,
                         },
-                        unit_id: {
+                        unit: {
                             required: true,
                         },
                         frequency_id: {
@@ -384,11 +384,13 @@
                         "mic_condition[1]": {
                             required: true,
                         },
-                        "remarks[1]": {
+                        "remark[1]": {
                             required: true,
                         },
                         "mic_quantity[1]": {
                             required: true,
+                            number: true,
+                            min: 1,
                         },
                         "physical_condition[1]": {
                             required: true,
@@ -429,7 +431,7 @@
                         issue_date: {
                             required: "Date Of Audit is required",
                         },
-                        rev_date: {
+                        revision_data: {
                             required: "Revision Date required",
                         },
                         inspection_date: {
@@ -444,7 +446,7 @@
                         next_due: {
                             required: "Next due is required",
                         },
-                        unit_id: {
+                        unit: {
                             required: "Unit is required",
                         },
                         frequency_id: {
@@ -458,8 +460,10 @@
                         },
                         "mic_quantity[1]": {
                             required: "Please Enter the Mic Quantity",
+                            number: 'Mic Quantity must be a valid number',
+                            min: 'Quantity must be at least 1',
                         },
-                        "remarks[1]": {
+                        "remark[1]": {
                             required: "Please add remarks",
                         },
                         "location[1]": {
@@ -568,10 +572,10 @@
                                     </select>
                                 </div>
                             </div>
-                                <div class="col-md-4 mb-2">
+                            <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                    <select name="unit_id[${form_set_count}]" id="unit_id"
+                                    <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Unit</option>
                                         @foreach ($units as $unit)
@@ -585,19 +589,19 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Remarks</label>
-                                    <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                    <textarea name="remark[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
                                 </div>
                             </div>
                              <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Audio Quality</label>
-                                    <select name="audio_quality[${form_set_count}]" id="audio_quality"
+                                    <select name="audio_quality[${form_set_count}]" id="audio_quality-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Audio Quality</option>
-                                        <option value="1">Good</option>
-                                        <option value="2">Fair</option>
-                                        <option value="3">Poor</option>
+                                       <option value="{{ encryptId(1) }}">Good</option>
+                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                        <option value="{{ encryptId(3) }}">Poor</option>
                                     </select>
                                 </div>
                             </div>
@@ -605,12 +609,12 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Mic Condition</label>
-                                    <select name="mic_condition[${form_set_count}]" id="mic_condition"
+                                    <select name="mic_condition[${form_set_count}]" id="mic_condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Mic Condition</option>
-                                        <option value="1">Good</option>
-                                        <option value="2">Fair</option>
-                                        <option value="3">Poor</option>
+                                       <option value="{{ encryptId(1) }}">Good</option>
+                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                        <option value="{{ encryptId(3) }}">Poor</option>
                                     </select>
                                 </div>
                             </div>
@@ -625,12 +629,12 @@
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Physical Condition</label>
-                                    <select name="physical_condition[${form_set_count}]" id="Physical Condition"
+                                    <select name="physical_condition[${form_set_count}]" id="Physical Condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Physical Condition</option>
-                                        <option value="1">Good</option>
-                                        <option value="2">Fair</option>
-                                        <option value="3">Poor</option>
+                                        <option value="{{ encryptId(1) }}">Good</option>
+                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                        <option value="{{ encryptId(3) }}">Poor</option>
                                     </select>
                                 </div>
                             </div>
@@ -638,23 +642,23 @@
                                 <div class="form-group form-input">
                                     <label class="form-label require">Cable
                                         Condition</label>
-                                    <select name="cable_condition[${form_set_count}]" id="cable_condition"
+                                    <select name="cable_condition[${form_set_count}]" id="cable_condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Cable Condition</option>
-                                        <option value="1">Good</option>
-                                        <option value="2">Fair</option>
-                                        <option value="3">Poor</option>
+                                        <option value="{{ encryptId(1) }}">Good</option>
+                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                        <option value="{{ encryptId(3) }}">Poor</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Operation </label>
-                                    <select name="operation[${form_set_count}]" id="operation"
+                                    <select name="operation[${form_set_count}]" id="operation-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Operation</option>
-                                        <option value="1">Functional</option>
-                                        <option value="2">Non-functional</option>
+                                        <option value="{{ encryptId(1) }}">Functional</option>
+                                        <option value="{{ encryptId(2) }}">Non-functional</option>
                                     </select>
                                 </div>
                             </div>
@@ -668,6 +672,48 @@
                     GetLocations(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
+
+                    $('select[name^="unit_id["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Unit",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="audio_quality["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Audio Quality",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="mic_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Mic Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="physical_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Physical Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="cable_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Cable Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="operation["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select OPeration",
+                            width: '100%'
+                        });
+                    });
 
                     $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
                         required: true,
@@ -736,7 +782,7 @@
                         }
                     });
 
-                    $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
+                    $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please add remarks',
@@ -832,7 +878,7 @@
                     $(this).find('select[name^="physical_condition"]').attr('name', 'physical_condition[' + idx + ']');
                     $(this).find('select[name^="cable_condition"]').attr('name', 'cable_condition[' + idx + ']');
                     $(this).find('select[name^="operation"]').attr('name', 'operation[' + idx + ']');
-                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'remark[' + idx + ']');
 
                     $(this).find('select').select2();
                 });

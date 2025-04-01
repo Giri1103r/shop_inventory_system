@@ -18,7 +18,7 @@ class PASystemChecklist extends Model
         'unit',
         'audio_quality',
         'mic_condition',
-        'mic_quality',
+        'mic_quantity',
         'physical_condition',
         'cable_condition',
         'operation',
@@ -46,34 +46,40 @@ class PASystemChecklist extends Model
     {
         $request = request();
 
-        $sr_no = $request->sr_no;
-        $department = $request->department;
-        $description = $request->description;
-        $location = $request->location;
-        $quantity = $request->quantity;
-        $type = $request->type;
-        $capacity = $request->capacity;
-        $cylinder_pressure = $request->cylinder_pressure ?? [];
-        $discharge_tube = $request->discharge_tube ?? [];
-        $approach = $request->approach ?? [];
-        $safety_pin = $request->safety_pin ?? [];
-        $remarks = $request->remarks;
+        // $sr_no = $request->sr_no;
+        // $location = $request->location;
+        // $unit_id = $request->unit_id;
+        // $audio_quality = $request->audio_quality;
+        // $mic_condition = $request->mic_condition;
+        // $mic_quantity = $request->mic_quantity;
+        // $physical_condition = $request->physical_condition;
+        // $cable_condition = $request->cable_condition;
+        // $operation = $request->operation;
+        // $remark = $request->remark;
+        $sr_no = $request->sr_no ?? [];
+        $location = $request->location ?? [];
+        $unit_id = $request->unit_id ?? [];
+        $audio_quality = $request->audio_quality ?? [];
+        $mic_condition = $request->mic_condition ?? [];
+        $mic_quantity = $request->mic_quantity ?? [];
+        $physical_condition = $request->physical_condition ?? [];
+        $cable_condition = $request->cable_condition ?? [];
+        $operation = $request->operation ?? [];
+        $remark = $request->remark ?? [];
 
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'fire_pa_system_id' => $id,
                 'sr_no' => $sr_no_value,
-                'description' => $description[$index],
-                'department' => decryptId($department[$index]),
+                'unit' => decryptId($unit_id[$index]),
                 'location' => decryptId($location[$index]),
-                'remarks' => $remarks[$index],
-                'type' => decryptId($type[$index]),
-                'quantity' => $quantity[$index],
-                'capacity' => $capacity[$index],
-                'cylinder_pressure' => $cylinder_pressure[$index],
-                'discharge_tube' => decryptId($discharge_tube[$index]),
-                'safety_pin' => decryptId($safety_pin[$index]),
-                'approach' => $approach[$index],
+                'audio_quality' => decryptId($audio_quality[$index]),
+                'mic_condition' => decryptId($mic_condition[$index]),
+                'mic_quantity' => $mic_quantity[$index],
+                'physical_condition' => decryptId($physical_condition[$index]),
+                'cable_condition' => decryptId($cable_condition[$index]),
+                'operation' => decryptId($operation[$index]),
+                'remark' => $remark[$index],
                 'created_by' => Auth::id(),
             );
 

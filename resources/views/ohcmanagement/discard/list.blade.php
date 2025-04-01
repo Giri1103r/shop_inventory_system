@@ -99,7 +99,7 @@
                                         <th>Quantity</th>
                                         <th>Discard date</th>
                                         <th>Remarks</th>
-                                      
+                                        {{-- <th data-priority="2">{{ __('common.status') }}</th> --}}
                                         <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -234,7 +234,10 @@
                     data: 'approver_remarks',
                     name: 'approver_remarks'
                 },
-
+                // {
+                //     data: 'approve_status',
+                //     name: 'approve_status'
+                // },
                 {
                     data: 'action',
                     name: 'action'

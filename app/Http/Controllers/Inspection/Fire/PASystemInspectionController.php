@@ -54,7 +54,7 @@ class PASystemInspectionController extends Controller
     }
 
     public function Index(Request $request)
-    { 
+    {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -199,31 +199,12 @@ class PASystemInspectionController extends Controller
         }
     }
 
-    public function GetDepartment(Request $request)
-    {
-        try {
-            $department = $this->department->getdepartment();
-            $departments = [];
-
-            foreach ($department as $department) {
-                $departments[] = [
-                    'id' => encryptId($department->id),
-                    'department_name' => $department->department_name,
-                ];
-            }
-
-            return response()->json($departments);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Something went wrong !'], 406);
-        }
-    }
-
     public function Store(Request $request)
     {
         try {
 
             $inspection = $this->pa_system->store();
+
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
             $id = $inspection->id;
 
@@ -333,6 +314,7 @@ class PASystemInspectionController extends Controller
             );
             return view('inspection.fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));

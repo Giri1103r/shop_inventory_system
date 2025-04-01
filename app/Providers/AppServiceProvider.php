@@ -120,6 +120,7 @@ class AppServiceProvider extends ServiceProvider
         defined('TYPE_OHC_MEDICINE_STOCK') or define('TYPE_OHC_MEDICINE_STOCK', 6);
         defined('TYPE_OHC_ISSUANCE') or define('TYPE_OHC_ISSUANCE', 7);
         defined('TYPE_OHC_MEDICAL_FITNESS') or define('TYPE_OHC_MEDICAL_FITNESS', 8);
+        defined('TYPE_OHC_MEDICINE_DISCARD') or define('TYPE_OHC_MEDICINE_DISCARD', 9);
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
 
 
@@ -186,8 +187,10 @@ class AppServiceProvider extends ServiceProvider
         // medical discard approval
 
 
-        defined('OHC_DISCARD_EHS_APPROVAL_PENDING') or define('OHC_DISCARD_EHS_APPROVAL_PENDING', 1);
-        defined('OHC_DISCARD_EHS_APPROVED') or define('OHC_DISCARD_EHS_APPROVED', 2);
+        defined('OHC_DISCARD_MEDICINE_CREATION') or define('OHC_DISCARD_MEDICINE_CREATION', 1);
+        defined('OHC_DISCARD_EHS_APPROVAL_PENDING') or define('OHC_DISCARD_EHS_APPROVAL_PENDING', 2);
+        defined('OHC_DISCARD_EHS_APPROVED') or define('OHC_DISCARD_EHS_APPROVED', 3);
+        defined('OHC_DISCARD_EHS_REJECTED') or define('OHC_DISCARD_EHS_REJECTED', 4);
 
 
         // inspection ohc
@@ -212,7 +215,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE') or define('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE', 11);
         defined('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST') or define('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST', 16);
 
-        defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST',15);
+        defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST', 15);
 
 
         // IMS  EHS_REVIEW
@@ -351,15 +354,15 @@ class AppServiceProvider extends ServiceProvider
         defined('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
 
         // Fire
-        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
-        defined('EMERGENCY_LIGHT_INSPECTION') or define('EMERGENCY_LIGHT_INSPECTION',2);
-        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
-        defined('FIRE_MOCK_DRILL_INSPECION') or define('FIRE_MOCK_DRILL_INSPECION',18);
-        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
-        defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
-        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
-        defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION',7);
-        defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION',12);
+        defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);
+        defined('EMERGENCY_LIGHT_INSPECTION') or define('EMERGENCY_LIGHT_INSPECTION', 2);
+        defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP', 14);
+        defined('FIRE_MOCK_DRILL_INSPECION') or define('FIRE_MOCK_DRILL_INSPECION', 18);
+        defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION', 3);
+        defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION', 5);
+        defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION', 6);
+        defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION', 7);
+        defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
 
         // OPTIONS
         defined('YES') or define('YES', 1);
@@ -385,19 +388,19 @@ class AppServiceProvider extends ServiceProvider
         defined('MISSING') or define('MISSING', 2);
 
         // Valve Types
-        defined('GATE') or define('GATE',1);
-        defined('BALL') or define('BALL',2);
-        defined('BUTTERFLY') or define('BUTTERFLY',3);
+        defined('GATE') or define('GATE', 1);
+        defined('BALL') or define('BALL', 2);
+        defined('BUTTERFLY') or define('BUTTERFLY', 3);
 
-        defined('OPEN') or define('OPEN',1);
-        defined('CLOSE') or define('CLOSE',2);
+        defined('OPEN') or define('OPEN', 1);
+        defined('CLOSE') or define('CLOSE', 2);
 
         // Condition Of The Glass
-        defined('INTACT') or define('INTACT',1);
-        defined('BROKEN') or define('BROKEN',2);
+        defined('INTACT') or define('INTACT', 1);
+        defined('BROKEN') or define('BROKEN', 2);
 
-        defined('OK') or define('OK',1);
-        defined('NOT_OK') or define('NOT_OK',2);
+        defined('OK') or define('OK', 1);
+        defined('NOT_OK') or define('NOT_OK', 2);
 
         View::composer('*', function ($view) {
 

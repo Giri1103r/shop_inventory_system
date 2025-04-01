@@ -2190,6 +2190,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getDiscardStatus')) {
+        function getDiscardStatus($id)
+        {
+            if ($id == OHC_DISCARD_EHS_APPROVAL_PENDING) {
+                return 'EHS Head Approval Pending';
+            } else if ($id == OHC_DISCARD_EHS_APPROVED) {
+                return 'EHS Head Approved';
+            } else if ($id == OHC_DISCARD_EHS_REJECTED) {
+                return 'EHS Head rejected';
+            }
+
+            return 'OHC Creation';
+        }
+    }
+
     if (!function_exists('getShiftname')) {
 
         function getShiftname($shift_id)

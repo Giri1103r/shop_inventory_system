@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Ohcmanagement\Master;
+namespace App\Models\OhcManagement\Master;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;

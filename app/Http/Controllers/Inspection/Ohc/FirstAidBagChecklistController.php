@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\ohc;
+namespace App\Http\Controllers\Inspection\Ohc;
 
 use Exception;
 use Illuminate\Http\Request;
