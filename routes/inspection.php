@@ -727,4 +727,6 @@ Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
     Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
     Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
     Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
+    Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
+
 });

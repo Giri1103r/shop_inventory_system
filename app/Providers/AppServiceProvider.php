@@ -350,6 +350,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
         defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);
         defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION',7);
+        defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION',12);
 
         // OPTIONS
         defined('YES') or define('YES', 1);
