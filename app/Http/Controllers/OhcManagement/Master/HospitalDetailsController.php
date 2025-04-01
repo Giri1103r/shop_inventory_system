@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Ohcmanagement\Master;
+namespace App\Http\Controllers\OhcManagement\Master;
 
 
 use App\Http\Controllers\Controller;
