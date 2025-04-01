@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
@@ -121,6 +122,36 @@ class OHCHygieneCleaningChecklistController extends Controller
     public function store(Request $request)
     {
         try {
+
+            $rules = [
+                'issue_date' => 'required',
+                'shift_id' => 'required',
+                'inspection' => 'required',
+                'remarks' => 'required',
+                'signature_image' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (is_null($user->signature_upload)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required.',
+                'shift_id.required' => 'Shift ID is required.',
+                'inspection.required' => 'Inspection is required.',
+                'remarks.required' => 'Remarks is required.',
+                'signature_image' => 'Signature is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $ohc_hygiene_inspection = $this->ohc_hygiene->store();
             $signature_update = $this->signature->requestorsignatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $ohc_hygiene_inspection->id);
             Session::flash('success', __('common.created_msg'));

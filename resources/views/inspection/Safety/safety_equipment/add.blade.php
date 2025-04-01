@@ -37,7 +37,10 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number" value={{ old('doc_no') }}>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -45,8 +48,12 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value={{ old('issue_date') }}>
                                                 </div>
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -62,7 +69,8 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">{{ __('inspection.fire_safety_equipment') }}</h4>
+                                                    <h4 class="text-white">{{ __('inspection.fire_safety_equipment') }}
+                                                    </h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end gap-0 m-2">
@@ -83,10 +91,14 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Equipment</option>
                                                             @foreach ($equipment as $equipment)
-                                                                <option value="{{ encryptId($equipment->id) }}">
+                                                                <option value="{{ encryptId($equipment->id) }}"
+                                                                    {{ old('equipment_name.1') == encryptId($equipment->id) ? 'selected' : '' }}>
                                                                     {{ $equipment->equipment_name }}</option>
                                                             @endforeach
                                                         </select>
+                                                        @error('equipment_name.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -95,6 +107,9 @@
                                                             class="form-label require">{{ __('inspection.item_code') }}</label>
                                                         <input type="text" name="item_code[1]" id = "item_code"
                                                             class="form-control">
+                                                        @error('item_code.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -104,9 +119,16 @@
                                                         <select name="standard_norms[1]" id="standard_norms"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Standard/Norms</option>
-                                                            <option value="{{ encryptId(STANDARD) }}">STANDARD</option>
-                                                            <option value="{{ encryptId(NORMS) }}">NORMS</option>
+                                                            <option value="{{ encryptId(STANDARD) }}"
+                                                                {{ old('standard_norms.1') == encryptId(STANDARD) ? 'selected' : '' }}>
+                                                                STANDARD</option>
+                                                            <option value="{{ encryptId(NORMS) }}"
+                                                                {{ old('standard_norms.1') == encryptId(NORMS) ? 'selected' : '' }}>
+                                                                NORMS</option>
                                                         </select>
+                                                        @error('standard_norms.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -115,6 +137,9 @@
                                                             class="form-label require">{{ __('inspection.equipment_category') }}</label>
                                                         <input type="text" name="equipment_category[1]"
                                                             id = "equipment_category" class="form-control">
+                                                        @error('equipment_category.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -123,6 +148,9 @@
                                                             class="form-label require">{{ __('inspection.unit_of_measurement') }}</label>
                                                         <input type="text" name="unit_of_measurement[1]"
                                                             id = "unit_of_measurement" class="form-control">
+                                                        @error('unit_of_measurement.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -131,6 +159,9 @@
                                                             class="form-label require">{{ __('inspection.minimum_order_value') }}</label>
                                                         <input type="text" name="minimum_order_value[1]"
                                                             id = "minimum_order_value" class="form-control">
+                                                        @error('minimum_order_value.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -139,6 +170,9 @@
                                                             class="form-label require">{{ __('inspection.economic_order_quantity') }}</label>
                                                         <input type="text" name="economic_order_quantity[1]"
                                                             id = "economic_order_quantity" class="form-control">
+                                                        @error('economic_order_quantity.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -148,18 +182,32 @@
                                                         <select name="observation_status[1]" id="observation_status"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Observation Status</option>
-                                                            <option value="{{ encryptId(1) }}">Active</option>
-                                                            <option value="{{ encryptId(0) }}">DeActive</option>
+                                                            <option value="{{ encryptId(1) }}"
+                                                                {{ old('observation_status.1') == encryptId(1) ? 'selected' : '' }}>
+                                                                Active</option>
+                                                            <option value="{{ encryptId(0) }}"
+                                                                {{ old('observation_status.1') == encryptId(0) ? 'selected' : '' }}>
+                                                                DeActive</option>
+                                                            @error('observation_status.1')
+                                                                <div class="error">{{ $message }}</div>
+                                                            @enderror
                                                         </select>
+                                                        @error('observation_status.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{old('remarks.1')}}</textarea>
 
                                                     </div>
+                                                    @error('remarks.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+
                                                 </div>
 
                                             </div>

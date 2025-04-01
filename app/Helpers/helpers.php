@@ -1807,6 +1807,19 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetEHSHead')) {
+        function GetEHSHead()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_EHS_HEAD . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
     if (!function_exists('GetLevelOneManager')) {
         function GetLevelOneManager()
         {
@@ -2121,17 +2134,17 @@ if (!function_exists('getMonth')) {
                     }
 
 
-                    case GEMBA_WALK:
-                        $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
+                case GEMBA_WALK:
+                    $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            $name = User::where('id', $userid)->first();
-                            if ($name == null) {
-                                return null;
-                            }
-                            return $name->signature_upload;
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
