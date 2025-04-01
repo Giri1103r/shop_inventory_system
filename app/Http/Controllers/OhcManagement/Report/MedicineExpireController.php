@@ -82,8 +82,22 @@ class MedicineExpireController extends Controller
                             } elseif ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
                                 return '#FFA500';
                             } else {
-                                return null;
+                                return '#FFFFFF';
                             }
+                        })
+                        ->addColumn('approve_status', function ($row) {
+                            $text = '';
+                            switch ($row->approve_status) {
+                                case OHC_DISCARD_EHS_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                                    break;
+                                    case OHC_DISCARD_EHS_APPROVAL_PENDING:
+                                        $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
+                                        break;
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
                         })
                         ->rawColumns(['action', 'expire_date', 'approve_status', 'hsn_id', 'pack', 'row_class'])
 
@@ -93,12 +107,15 @@ class MedicineExpireController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid text-dark fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->id) ) . '" class="" title="View"><i class="fa-solid text-dark fa-eye"></i></a>';
                             }
                             $expireDate = Carbon::parse($row->expire_date);
                             $today = Carbon::today();
-                            if ($expireDate->lessThanOrEqualTo($today)) {
+                            if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVAL_PENDING && $row->approve_status != OHC_DISCARD_EHS_APPROVED)  {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                            }
+                            if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
+                                $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-white"></i></a> ';
                             }
                             return $btn;
                         })
@@ -126,7 +143,151 @@ class MedicineExpireController extends Controller
 
         return view('ohcmanagement.report.expiremedicine.list', $data);
     }
+    public function approval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $medicine = $this->expire_medicine->selectOne($id);
 
+                $unit = $this->unit->getunit();
+                $data = array(
+                    'medicine' => $medicine,
+                );
+            }
+
+                return view('ohcmanagement.report.expiremedicine.approve', $data);
+
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-expire-report/list'));
+        }
+    }
+    public function view(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $medicine = $this->expire_medicine->selectOne($id);
+                $logData = $this->ohc_status->where('reference_id', $id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
+                $unit = $this->unit->getunit();
+                $data = array(
+                    'medicine' => $medicine,
+                );
+            }
+
+                return view('ohcmanagement.report.expiremedicine.view', $data);
+
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medicine-expire-report/list'));
+        }
+    }
+
+    public function approvalsubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $rules = [
+                'approver_name' => 'required',
+                'remarks' => 'required',
+            ];
+            $messages = [
+                'approver_name.required' => 'Approver name is required.',
+                'remarks.required' => 'Remarks are required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            try {
+                $action = $request->input('action');
+                $approveStatus = $action == 'approve' ? OHC_DISCARD_EHS_APPROVED : OHC_DISCARD_EHS_REJECTED;
+                $remarks = $request->input('remarks');
+                $updateData = [
+                    'remarks' => $remarks,
+                    'approved_by' => Auth::id(),
+                    'approve_status' =>  $approveStatus,
+                ];
+                $ehshead =  $this->expire_medicine->ehsheadapproval($id, $updateData);
+                $ehsheaddiscard =  $this->discard->ehsheadapproval($id, $updateData);
+                $details = $this->expire_medicine->selectOne($id);
+                $ohcStatus = $this->ohc_status->medicineexpireapproval($id, $updateData);
+
+                $createdby = $this->expire_medicine->where('id', $id)->value('created_by');
+                $email = $this->user->where('id', $createdby)->value('email');
+
+
+                if (!$email) {
+
+                    return redirect()->back()->with('error', 'User email not found.');
+                }
+
+                $action = $request->action;
+                if ($action == 'approve') {
+                    $mailsubject =  'Medicine  Has Been Approved for the discard';
+
+                    Mail::to($email)->queue(new MedicineExpireEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => getMedicinename($details->medicine_id ). 'has been approved by the' . Auth::user()->name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/medicine-expire-report/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
+                    ];
+                    notificationSave($notificationData);
+                    $count = $this->unit->getUnitcount();
+                    $this->inventory->store($details, $count);
+                } else {
+                    $mailsubject =  'Medicine Name Has Been Rejected';
+                    $details['mail_subject'] =   $mailsubject;
+                    Mail::to($email)->queue(new MedicineExpireEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => getMedicinename($details->medicine_id ) . 'has been rejected by the' . $details->approver_name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/medicine-expire-report/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
+                    ];
+                    notificationSave($notificationData);
+                }
+
+                $this->medicine->approval($id, $updateData);
+
+                return redirect(admin_url('ohc/medicine-expire-report/list'))
+                    ->with('success', 'Request has been processed successfully.');
+            } catch (Exception $ex) {
+                report($ex);
+                return redirect(admin_url('ohc/medicine-expire-report/list'))
+                    ->with('error', 'Something went wrong, Please try again later.');
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return redirect(admin_url('ohc/medicine-expire-report/list'))
+                ->with('error', 'Something went wrong, Please try again later.');
+        }
+    }
 
     public function ExportExcel(Request $request)
     {
@@ -180,9 +341,11 @@ class MedicineExpireController extends Controller
             $id = decryptId($request->id);
             $remarks = $request->remarks;
             $quantity = $request->quantity;
-            $expire_medicine = $this->expire_medicine->find($id);
-            $this->discard->store($id, $remarks,$expire_medicine);
 
+            $expire_medicine = $this->expire_medicine->selectOne($id);
+            $medicinediscard = $this->expire_medicine->medicinediscard($id,  $quantity,  $remarks);
+            $this->discard->store($id, $remarks,$expire_medicine);
+            $this->ohc_status->medicineexpire($id);
             $details = $this->expire_medicine->selectOne($id);
             // Email details
             $mailsubject = getUsername($details ->created_by) .'Request the Medicine for the Discard';
@@ -230,9 +393,9 @@ class MedicineExpireController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-            return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
+            return response()->json(['status' => 'success', 'msg' => __('Discards the Medicine Successfully')], 200);
         } catch (Exception $ex) {
-
+dd($ex);
             return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
         }
     }

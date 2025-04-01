@@ -71,6 +71,12 @@
                                             {{ isset($opd_first_aid->treatment_provided) ? $opd_first_aid->treatment_provided : '' }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Cheif Complaint') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($opd_first_aid->cheif_complaint) ? $opd_first_aid->cheif_complaint : '' }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Treatment start Time') }}</label>
                                         <div class="view_data">
@@ -82,6 +88,13 @@
                                         <label class="form-label view_label">{{ __('Treatment end Time') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->treatment_end_time) ? $opd_first_aid->treatment_end_time : '' }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Hospital Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getHospitalname(isset($opd_first_aid->hospital_id) ? $opd_first_aid->hospital_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

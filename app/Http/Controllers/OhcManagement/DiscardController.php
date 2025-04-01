@@ -69,8 +69,7 @@ class DiscardController extends Controller
                         ->addIndexColumn()
 
                         ->addColumn('medicine_status', function ($row) {
-                            $user = Auth::user(); // Get the authenticated user
-
+                            $user = Auth::user();
 
                             $text = "<span style='color:red'>In-Active</span>";
 
@@ -86,7 +85,18 @@ class DiscardController extends Controller
                         })
 
 
+                        ->addColumn('approve_status', function ($row) {
+                            $text = '';
+                            switch ($row->approve_status) {
+                                case OHC_DISCARD_EHS_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                                    break;
 
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
+                        })
 
                         ->editColumn('discard_date', function ($row) {
                             return displaydateformat($row->discard_date);
@@ -103,13 +113,13 @@ class DiscardController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
+                                $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id) ) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
                             }
 
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'discard_date', 'medicine_status', 'unit_id', 'department_id', 'medicine_id'])
+                        ->rawColumns(['action', 'discard_date', 'approve_status', 'unit_id', 'department_id', 'medicine_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -152,152 +162,35 @@ class DiscardController extends Controller
         }
     }
 
-  
+
 
 
     public function view(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $medicine_id = decryptId($request->medicineId);
+
             if (Auth::check()) {
                 $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->firstdata($medicine_id, $id);
+
             }
             $unit = $this->unit->getunit();
-            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
+            $logData = $this->ohcStatus->where('reference_id', $user_discard->expire_id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
             $data = array(
                 'user_discard' => $user_discard,
-                'discard' => $discard,
-                'logdata' => $logData,
+                'logData' => $logData,
+
 
             );
             return view('ohcmanagement.discard.view', $data);
         } catch (Exception $ex) {
-        }
-    }
-
-    // edit
-
-    public function edit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $medicine_id = decryptId($request->medicineId);
-// dd( $id, $medicine_id);
-            if (Auth::check()) {
-                $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->firstdata($medicine_id,$id);
-            }
-            $departmentList = $this->department->getdepartment();
-            $unit = $this->unit->getuserunit();
-            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
-            $medicine = $this->inventory->dicardmedicine($user_discard->unit_id);
-            $data = array(
-                'user_discard' => $user_discard,
-                'discard' => $discard,
-                'logdata' => $logData,
-                'unit' => $unit,
-                'departmentList' => $departmentList,
-                'medicine' =>  $medicine
-
-            );
-            return view('ohcmanagement.discard.edit', $data);
-        } catch (Exception $ex) {
-        }
-    }
-    // update
-    public function update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $ids = decryptId($request->medicineid);
-            $validator = Validator::make($request->all(), [
-                'unit_id' => 'required',
-                'department_id' => 'required',
-                'discard_date' => 'required',
-            ], [
-                'department_id.required' => 'Please select a Department.',
-                'unit_id.required' => 'Please select a unit.',
-                'discard_date.required' => 'Please select the discard date.',
-            ]);
-
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            $user_discard = $this->user_discard->selectOne($id);
-             $discard = $this->discard->medicinedetails($id,$ids);
-             $newQuantity = $request->quantity;
-             $oldquantity = $discard->quantity;
-             if ($oldquantity > $newQuantity) {
-                $difference = $oldquantity - $newQuantity;
-
-
-
-                $this->inventory
-                    ->where('medicine_id',   $discard->medicine_id)
-                    ->where('unit_id', $user_discard->unit_id)
-                    ->increment('balance', $difference);
-            } elseif ($oldquantity < $newQuantity) {
-                $difference = $newQuantity - $oldquantity;
-
-                $this->inventory
-                    ->where('medicine_id', $discard->medicine_id)
-                    ->where('unit_id', $user_discard->unit_id)
-                    ->decrement('balance', $difference);
-            }
-            $this->user_discard->updates($id, $user_discard);
-            $this->discard->updates($ids, $id);
-
-            Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('ohc/discard/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try again later!');
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/discard/list'));
         }
     }
-    // General PDF
 
 
-    public function StatusChange(Request $request)
-    {
-
-        try {
-            // $id = decryptId($request->discard_id);
-            $ids = decryptId($request->medicine_id);
-            // $this->user_discard->statuschange($id);
-            $this->discard->statuschange($ids);
-            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    // unique
-
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $medicine_id = decryptId($request->medicine_id);
-            $id = decryptId($request->id);
-            $medicineid = decryptId($request->medicineid);
-// dd($medicine_id,$id, $medicineid);
-            if (empty($id)) {
-                $isUnique = $this->discard->uniqueCheck($medicine_id);
-            } else {
-
-                // dd( $unit_id );
-                $isUnique = $this->discard->existUniqueCheck($medicine_id, $id,$medicineid);
-            }
-
-            if ($isUnique->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
-        }
-    }
 
     public function ExportExcel(Request $request)
     {
