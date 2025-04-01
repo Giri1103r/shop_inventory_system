@@ -289,7 +289,7 @@ class AppServiceProvider extends ServiceProvider
 
         //environment
 
-        defined('AmbientNoise') or define('AMBIENTNOISE', 1);
+        defined('AMBIENTNOISE') or define('AMBIENTNOISE', 1);
         defined('WORKNOISE') or define('WORKNOISE', 2);
         defined('AMBIENT_AIR') or define('AMBIENT_AIR', 3);
         defined('WORKZONE_AIR') or define('WORKZONE_AIR', 4);

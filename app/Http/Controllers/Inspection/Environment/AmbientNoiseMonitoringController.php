@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Inspection\environment\AmbientNoiseMonitoring;
 use App\Models\Inspection\environment\Environment;
-use App\Models\Inspection\environment\InspectionStaticDocno;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection\Environment;
+namespace App\Models\Inspection;
 
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
@@ -44,13 +44,10 @@ class InspectionStaticDocno extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('environment_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('status', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('environment_id') && $request->environment_id) {
-            $query = $query->where('inspection_static_docno.environment_id', decryptId($request->environment_id));
-        }
       
         if ($request->has('status') && $request->status) {
             $query = $query->where('inspection_static_docno.status', decryptId($request->status));
@@ -75,45 +72,6 @@ class InspectionStaticDocno extends Model
         return $datas;
     }
 
-    public function store()
-    {
-        $request = request();
-        $insert_array = [
-            'checklist_type_id' => decryptId($request->checklist_type_id),
-            'checklist_sub_type_id' => decryptId($request->checklist_sub_type_id),
-            'created_by' => Auth::id(),
-        ];
-        return $this->create($insert_array);
-    }
-    public function updates($id)
-    {
-
-        $request = request();
-
-        $update_array = array(
-            'checklist_type_id' => decryptId($request->checklist_type_id),
-            'checklist_sub_type_id' => decryptId($request->checklist_sub_type_id),
-            'updated_by' => Auth::id()
-        );
-        return $this->where('id', $id)->update($update_array);
-    }
-    public function exportdata()
-    {
-        $request = request();
-        $search = '';
-        $query = $this->select('inspection_static_docno.*');
-        // dd($query);
-
-        if ($request->has('ambient_noise_id') && $request->ambient_noise_id) {
-            $query = $query->where('inspection_static_docno.ambient_noise_id', decryptId($request->ambient_noise_id));
-        }
-      
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_static_docno.status', decryptId($request->status));
-        }
-        $query->orderBy('id', 'DESC');
-        return  $query->get();
-    }
 
     public function selectOne($id)
     {
@@ -141,27 +99,11 @@ class InspectionStaticDocno extends Model
     }
 
 
-    public function UniqueCheck($subcategory_name, $category_id)
-    {
-
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)->get();
-    }
-
-    public function ExistuniqueCheck($subcategory_name, $category_id, $id)
-    {
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)
-            ->where('id', '!=', $id)
-            ->get();
-    }
+   
 
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_static_docno'));
 
-        static::created(function ($model) {
-
-            $uniqueId = 'SUBCAT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['subcategory_id' => $uniqueId]);
-        });
     }
 }

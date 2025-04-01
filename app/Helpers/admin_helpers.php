@@ -260,6 +260,7 @@ if (!function_exists('getsequence')) {
                 $count = AuditAnalysis::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AUDIT-ANALYSIS-' . getautogen($count);
+                break;
             case 'ambientNoiseNo':
                 $count = Environment::where('type', 1)->withoutGlobalScopes()->count();
                 $count = $count + 1;
