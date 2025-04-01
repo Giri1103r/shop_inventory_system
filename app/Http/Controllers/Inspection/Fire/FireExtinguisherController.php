@@ -152,7 +152,7 @@ class FireExtinguisherController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.fire_extinguisher.list', $data);
+        return view('inspection.fire.fire_extinguisher.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,7 +172,7 @@ class FireExtinguisherController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.fire_extinguisher.add', $data);
+            return view('inspection.fire.fire_extinguisher.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -286,7 +286,7 @@ class FireExtinguisherController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.fire_extinguisher.view', $data);
+            return view('inspection.fire.fire_extinguisher.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -312,7 +312,7 @@ class FireExtinguisherController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.fire_extinguisher.approve', $data);
+            return view('inspection.fire.fire_extinguisher.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -750,7 +750,7 @@ class FireExtinguisherController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -794,7 +794,7 @@ class FireExtinguisherController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.fire_extinguisher.viewPdf',$data);
+            $html = view('inspection.fire.fire_extinguisher.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

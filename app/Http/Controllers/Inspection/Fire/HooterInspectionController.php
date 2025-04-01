@@ -152,7 +152,7 @@ class HooterInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.hooter_inspection.list', $data);
+        return view('inspection.fire.hooter_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,7 +172,7 @@ class HooterInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.hooter_inspection.add', $data);
+            return view('inspection.fire.hooter_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -285,7 +285,7 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.view', $data);
+            return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -311,7 +311,7 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.approve', $data);
+            return view('inspection.fire.hooter_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -749,7 +749,7 @@ class HooterInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -793,7 +793,7 @@ class HooterInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.hooter_inspection.viewPdf',$data);
+            $html = view('inspection.fire.hooter_inspection.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

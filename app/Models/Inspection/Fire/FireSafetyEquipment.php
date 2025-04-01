@@ -6,10 +6,10 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class CertifiedFireFighter extends Model
+class FireSafetyEquipment extends Model
 {
 
-    protected $table = 'inspection_fire_certified_fire_fighter';
+    protected $table = 'inspection_fire_fire_safety_equipmentr';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -17,11 +17,13 @@ class CertifiedFireFighter extends Model
         'doc_no_id',
         'fire_id',
         'sr_no',    
-        'emp_name',
-        'department_id',
-        'emp_code',
-        'emp_phone',
-        'emp_status',
+        'name_of_fire_safety',
+        'resource_code',
+        'series_code',
+        'unit_id',
+        'allotted_series_code',
+        'total_allotted_code',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -47,11 +49,13 @@ class CertifiedFireFighter extends Model
                     'doc_no_id' => decryptId($request->docNo_id),
                     'fire_id' => $fireId,
                     'sr_no' =>  $fireData['sr_no'],
-                    'emp_name' =>  $fireData['emp_name'],
-                    'department_id' => decryptId($fireData['department_id']),
-                    'emp_code' =>  $fireData['emp_code'],
-                    'emp_phone' =>  $fireData['emp_phone'],
-                    'emp_status' => decryptId($fireData['emp_status']),
+                    'name_of_fire_safety' =>  $fireData['name_of_fire_safety'],
+                    'resource_code' =>  $fireData['resource_code'],
+                    'series_code' =>  $fireData['series_code'],
+                    'unit_id' => decryptId($fireData['unit_id']),
+                    'allotted_series_code' =>  $fireData['allotted_series_code'],
+                    'total_allotted_code' =>  $fireData['total_allotted_code'],
+                    'remark' => $fireData['remark'],
                     'created_by' => Auth::id(),
                 ];
                 $this->create($data);
@@ -63,9 +67,9 @@ class CertifiedFireFighter extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_certified_fire_fighter.*', 'masters_department.department_name',  'inspection_fire_table.fire_no');
-        $query = $query->leftJoin('inspection_fire_table', 'inspection_fire_certified_fire_fighter.fire_id', '=', 'inspection_fire_table.id');
-        $query = $query->leftJoin('masters_department', 'inspection_fire_certified_fire_fighter.department_id', '=', 'masters_department.id');
+        $query = $this->select('inspection_fire_fire_safety_equipmentr.*', 'masters_unit.unit_name',  'inspection_fire_table.fire_no');
+        $query = $query->leftJoin('inspection_fire_table', 'inspection_fire_fire_safety_equipmentr.fire_id', '=', 'inspection_fire_table.id');
+        $query = $query->leftJoin('masters_unit', 'inspection_fire_fire_safety_equipmentr.unit_id', '=', 'masters_unit.id');
      
         $query->orderBy('id', 'DESC');
         return  $query->get();
@@ -73,9 +77,9 @@ class CertifiedFireFighter extends Model
 
     public function selectOne($fireId)
     {
-        $data = $this->select('inspection_fire_certified_fire_fighter.*', 'masters_department.department_name','inspection_fire_table.fire_no')
-            ->leftJoin('masters_department', 'inspection_fire_certified_fire_fighter.department_id', '=', 'masters_department.id')->leftJoin('inspection_fire_table', 'inspection_fire_certified_fire_fighter.fire_id', '=', 'inspection_fire_table.id')
-           ->where('inspection_fire_certified_fire_fighter.fire_id', $fireId)->where('inspection_fire_certified_fire_fighter.status', 1)
+        $data = $this->select('inspection_fire_fire_safety_equipmentr.*', 'masters_unit.unit_name','inspection_fire_table.fire_no')
+            ->leftJoin('masters_unit', 'inspection_fire_fire_safety_equipmentr.unit_id', '=', 'masters_unit.id')->leftJoin('inspection_fire_table', 'inspection_fire_fire_safety_equipmentr.fire_id', '=', 'inspection_fire_table.id')
+           ->where('inspection_fire_fire_safety_equipmentr.fire_id', $fireId)->where('inspection_fire_fire_safety_equipmentr.status', 1)
             ->get();
         return $data;
     }

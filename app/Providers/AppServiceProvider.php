@@ -71,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
         defined('ROLE_USER') or define('ROLE_USER', 9);
         defined('ROLE_VISE_PRESIDENT') or define('ROLE_VISE_PRESIDENT', 10);
+        defined('ROLE_INFRA_LEAD') or define('ROLE_INFRA_LEAD', 11);
         defined('ROLE_WORKER_REQUEST') or define('ROLE_WORKER_REQUEST', 12);
         defined('ROLE_PARAMEDICS') or define('ROLE_PARAMEDICS', 13);
         defined('ROLE_L1_EHS_OFFCIER') or define('ROLE_L1_EHS_OFFCIER', 14);

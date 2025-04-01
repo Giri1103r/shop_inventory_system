@@ -153,7 +153,7 @@ class PASystemInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.pa_system_inspection.list', $data);
+        return view('inspection.fire.pa_system_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -173,7 +173,7 @@ class PASystemInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.pa_system_inspection.add', $data);
+            return view('inspection.fire.pa_system_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -286,7 +286,7 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.view', $data);
+            return view('inspection.fire.pa_system_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -312,7 +312,7 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.approve', $data);
+            return view('inspection.fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -795,7 +795,7 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.pa_system_inspection.viewPdf',$data);
+            $html = view('inspection.fire.pa_system_inspection.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

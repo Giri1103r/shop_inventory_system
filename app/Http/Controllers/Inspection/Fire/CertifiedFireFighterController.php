@@ -13,26 +13,23 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Inspection\Fire\CertifiedFireFighter;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Fire\Fire;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Master\Location;
-use App\Models\Master\Unit;
+use App\Models\Master\Department;
 
 class CertifiedFireFighterController extends Controller
 {
-    private $location;
-    private $unit;
+    private $department;
     private $certified_fire_fighter;
     private $upload_log;
-    private $environment;
+    private $fire;
     private $static_docno;
 
     public function __construct()
     {
         $this->certified_fire_fighter = new CertifiedFireFighter();
-        $this->unit = new Unit();
-        $this->location = new Location();
-        $this->environment = new Environment();
+        $this->department = new Department();
+        $this->fire = new Fire();
         $this->static_docno = new InspectionStaticDocno();
     }
 
@@ -41,8 +38,8 @@ class CertifiedFireFighterController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $type = WORKNOISE;
-                    $data  = $this->environment->list($type);
+                    $type = 2;
+                    $data  = $this->fire->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -56,8 +53,8 @@ class CertifiedFireFighterController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydatetimeformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -71,7 +68,7 @@ class CertifiedFireFighterController extends Controller
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -83,28 +80,28 @@ class CertifiedFireFighterController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', WORKNOISE)->where('status', '1')->get();
+        $fireList  = $this->fire->select('id', 'fire_no')->where('type', 2)->where('status', '1')->get();
 
         $data = array(
-            'environmentList' => $environmentList,
+            'fireList' => $fireList,
         );
-        return view('inspection.environment.workNoiseMonitoring.list', $data);
+        return view('inspection.fire.certifiedFireFighter.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
                 ['type', "CertifiedFireFighter"],
                 ['status', '1']
             ])->first();
             
             $data = array(
-                'locationList' => $locationList,
+                'departmentList' => $departmentList,
                 'staticDocno' => $staticDocno,
             );
-            return view('inspection.environment.workNoiseMonitoring.add', $data);
+            return view('inspection.fire.certifiedFireFighter.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -114,10 +111,10 @@ class CertifiedFireFighterController extends Controller
     {
         try {
             $rules = [
-                'work_noise_no' => 'required',
+                'certified_fire_fighter_no' => 'required',
             ];
             $messages = [
-                'work_noise_no.required' => "Work Noise No is Required",
+                'certified_fire_fighter_no.required' => "Certified Fire Fighter No is Required",
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -125,11 +122,11 @@ class CertifiedFireFighterController extends Controller
             }
 
             try {
-                $env_no = $request->work_noise_no;
-                $type = WORKNOISE;
-                $environment =   $this->environment->store($env_no, $type);
+                $fire_no = $request->certified_fire_fighter_no;
+                $type = 2;
+                $fire =   $this->fire->store($fire_no, $type);
  
-                $this->certified_fire_fighter->store($environment->id);
+                $this->certified_fire_fighter->store($fire->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -152,20 +149,20 @@ class CertifiedFireFighterController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $type = WORKNOISE;
-                $environmentData =   $this->environment->selectOne($id,$type);
-                $workNoiseDataList = $this->certified_fire_fighter->selectOne($id);
+                $type = 2;
+                $fireData =   $this->fire->selectOne($id,$type);
+                $certifiedFireDataList = $this->certified_fire_fighter->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
                     ['type', "CertifiedFireFighter"],
                     ['status', '1']
                 ])->first();
                 $data = array(
-                    'environmentData' => $environmentData,
-                    'workNoiseDataList' => $workNoiseDataList,
+                    'fireData' => $fireData,
+                    'certifiedFireDataList' => $certifiedFireDataList,
                     'staticDocno' => $staticDocno,
                 );
             }
-            return view('inspection.environment.workNoiseMonitoring.view', $data);
+            return view('inspection.fire.certifiedFireFighter.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -179,8 +176,8 @@ class CertifiedFireFighterController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $type = WORKNOISE;
-            $environmentID = $this->environment->statuschange($id,$type);
+            $type = 2;
+            $fireID = $this->fire->statuschange($id,$type);
             $this->certified_fire_fighter->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
@@ -193,11 +190,11 @@ class CertifiedFireFighterController extends Controller
     public function ExportExcel()
     {
         try {
-            $type = WORKNOISE;
-            $allData =   $this->environment->exportdata($type);
+            $type = 2;
+            $allData =   $this->fire->exportdata($type);
             $header = [
                 __("common.sno"),
-                __("Work Noise Monitoring Id"),
+                __("Certified Fire Fighter Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -208,7 +205,7 @@ class CertifiedFireFighterController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->environment_no;
+                $export[] = $data->fire_no;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -218,7 +215,7 @@ class CertifiedFireFighterController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Work Noise Monitoring.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Certified Fire Fighter Monitoring.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -233,12 +230,12 @@ class CertifiedFireFighterController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-            $type = WORKNOISE;
-            $allData =   $this->environment->exportdata($type);
+            $type = 2;
+            $allData =   $this->fire->exportdata($type);
 
             $header = [
                 __("common.sno"),
-                __("Work Noise Monitoring Id"),
+                __("Certified Fire Fighter Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -247,7 +244,7 @@ class CertifiedFireFighterController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Work Noise Monitoring",
+                'pagetitle' => "Certified Fire Fighter Monitoring",
             );
 
             $property = [
@@ -262,14 +259,14 @@ class CertifiedFireFighterController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.environment.workNoiseMonitoring.pdf', $data);
+            $view = view('inspection.fire.certifiedFireFighter.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Work Noise Monitoring Details.pdf";
+            $filename = "Certified Fire Fighter Monitoring Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
