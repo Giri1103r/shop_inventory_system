@@ -101,7 +101,7 @@ class MedicalFitnessCertificate extends Model
     {
         $request = request();
 
-        $destinationPath = 'uploads/ohc_file';
+        $destinationPath = 'uploads/ohc_management/medical_fitness';
 
         if (!File::exists(public_path($destinationPath))) {
             File::makeDirectory(public_path($destinationPath), 0777, true, true);

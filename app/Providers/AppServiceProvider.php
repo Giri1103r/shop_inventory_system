@@ -182,6 +182,13 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
         defined('STATUS_OHC_MEDICAL_DOCTOR_REJECTED') or define('STATUS_OHC_MEDICAL_DOCTOR_REJECTED', 6);
 
+        // medical discard approval
+
+
+        defined('OHC_DISCARD_EHS_APPROVAL_PENDING') or define('OHC_DISCARD_EHS_APPROVAL_PENDING', 1);
+        defined('OHC_DISCARD_EHS_APPROVED') or define('OHC_DISCARD_EHS_APPROVED', 2);
+
+
         // inspection ohc
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);
@@ -203,7 +210,7 @@ class AppServiceProvider extends ServiceProvider
         defined('FIRST_AID_BAG_INSPECTION_CHECKLIST') or define('FIRST_AID_BAG_INSPECTION_CHECKLIST', 17);
         defined('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE') or define('OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE', 11);
         defined('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST') or define('OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST', 16);
-      
+
         defined('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST') or define('DAILY_OHC_HYGIENE_CLEANING_CHECKLIST',15);
 
 
@@ -346,6 +353,7 @@ class AppServiceProvider extends ServiceProvider
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION',1);
         defined('EMERGENCY_LIGHT_INSPECTION') or define('EMERGENCY_LIGHT_INSPECTION',2);
         defined('MONTHLY_FIRE_PUMP') or define('MONTHLY_FIRE_PUMP',14);
+        defined('FIRE_MOCK_DRILL_INSPECION') or define('FIRE_MOCK_DRILL_INSPECION',18);
         defined('FIRE_EXTINGUISHER_INSPECTION') or define('FIRE_EXTINGUISHER_INSPECTION',3);
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION',5);
         defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION',6);

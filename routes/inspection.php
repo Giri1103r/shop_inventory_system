@@ -38,12 +38,14 @@ use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Fire\FireMockDrillInspectionController;
+use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -518,6 +520,22 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [IsolationValveController::class, 'ExportPDF']);
     });
 
+    Route::group(['prefix' => 'fire-mock-drill-observation'], function () {
+        Route::GET('list', [FireMockDrillInspectionController::class, 'Index']);
+        Route::POST('list', [FireMockDrillInspectionController::class, 'Index']);
+        Route::GET('add', [FireMockDrillInspectionController::class, 'Add']);
+        Route::POST('add/submit', [FireMockDrillInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [FireMockDrillInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [FireMockDrillInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [FireMockDrillInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [FireMockDrillInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [FireMockDrillInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [FireMockDrillInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [FireMockDrillInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [FireMockDrillInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [FireMockDrillInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [FireMockDrillInspectionController::class, 'ExportPDF']);
+    });
     Route::group(['prefix' => 'fire-alarm-inspection/'], function () {
         Route::GET('list', [FireAlarmController::class, 'Index']);
         Route::POST('list', [FireAlarmController::class, 'Index']);

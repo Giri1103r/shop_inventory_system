@@ -1,43 +1,39 @@
 <?php
 
-namespace App\Models\Inspection\Safety;
+namespace App\Models\Inspection\Fire;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class ForkLiftInspection extends Model
+class FireMockDrillInspection extends Model
 {
-    protected $table = 'inspection_safety_forklift_inspection';
+    protected $table = 'inspection_fire_mock_drill_observation';
     protected $primaryKey = 'id';
-
     protected $fillable = [
         'id',
         'doc_no',
         'issue_date',
-        'rev_data',
-        'inspection_date',
-        'observation_status',
-        'approval_remarks',
-        'status',
-        'trash',
+        'revision_data',
+        'inspection_status',
         'created_by',
         'updated_by',
         'created_at',
         'updated_at',
+        'status',
+        'trash',
     ];
 
-    protected $attributes = [
+    protected $attribute = [
         'status' => 1,
         'trash' => 'NO',
     ];
-
 
     public function list()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*');
+        $query = $this->select('inspection_fire_mock_drill_observation.*');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -50,40 +46,40 @@ class ForkLiftInspection extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_forklift_inspection.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_mock_drill_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_mock_drill_observation.observation_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "rev_data":
-                    $query->orderBy('inspection_safety_forklift_inspection.rev_data', $columnorder);
+                case "revision_data":
+                    $query->orderBy('inspection_fire_mock_drill_observation.revision_data', $columnorder);
                     break;
                 case "issue_date":
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.issue_date', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.issue_date', $columnorder);
                     break;
                 case "doc_no":
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.doc_no', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.doc_no', $columnorder);
                     break;
                 case "inspection_status":
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.inspection_status', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.observation_status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_safety_forklift_inspection.id', 'DESC');
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.id', 'DESC');
                     break;
             }
         }
@@ -112,10 +108,10 @@ class ForkLiftInspection extends Model
         $data = array(
             'doc_no' => $request->doc_no,
             'issue_date' => DBdateformat($request->issue_date),
-            'rev_data' => $request->rev_date,
+            'revision_data' => $request->rev_date,
             'inspection_date' => DBdateformat($request->inspection_date),
             'created_by' => Auth::id(),
-            'observation_status' => OBSERVATION_PENDING,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
         );
 
         return $this->create($data);
@@ -126,28 +122,28 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*');
+        $query = $this->select('inspection_fire_mock_drill_observation.*');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('rev_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_forklift_inspection.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_mock_drill_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_forklift_inspection.rev_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_mock_drill_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_mock_drill_observation.observation_status', decryptId($request->inspection_status));
         }
         $query->orderBy('id', 'DESC');
 

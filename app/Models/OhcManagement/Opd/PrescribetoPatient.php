@@ -6,6 +6,7 @@ use App\Models\Master\Department;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 
 class PrescribetoPatient extends Model
 {
@@ -36,6 +37,7 @@ class PrescribetoPatient extends Model
         'fitness_certificate',
         'closed_description',
         'cancel_remarks',
+        'file_upload',
         'status',
         'trash',
         'created_by',
@@ -137,7 +139,24 @@ class PrescribetoPatient extends Model
         } else {
             $employeeId =   $request->emp_id;
         }
+        $destinationPath = 'uploads/ohc_management/opd/prescribe_to_patient';
 
+        if (!File::exists(public_path($destinationPath))) {
+            File::makeDirectory(public_path($destinationPath), 0777, true, true);
+        }
+
+        $ohc_file_path = null;
+
+        if ($request->hasFile('file')) {
+
+            $ohc_file = $request->file('file');
+
+            $ohc_file_name = time() . '_' . $ohc_file->getClientOriginalName();
+            $ohc_file->move(public_path($destinationPath), $ohc_file_name);
+
+            $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
+        }
+      
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' =>  $unit->id ?? null,
@@ -162,6 +181,7 @@ class PrescribetoPatient extends Model
             'closed_description' => $request->close_description,
             'suggested_details' => $request->details,
             'created_by' => Auth::id(),
+            'file_upload'=> $ohc_file_path,
             'dob' => DBdateformat($request->dob)
         ];
 

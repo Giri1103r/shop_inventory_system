@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="opdpatient"
-                                        action="{{ admin_url('ohc/prescribe-to-patient/add/submit') }}">
+                                        action="{{ admin_url('ohc/prescribe-to-patient/add/submit') }}" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -322,8 +322,17 @@
                                                     <div class="form-group form-input">
                                                         <label for="hospital_name" class="form-label require">Hospital
                                                             Name</label>
-                                                        <input type="text" name="hospital_name" id="hospital_name"
-                                                            class="form-control">
+
+
+                                                        <select name="hospital_name" id="hospital_name"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">select the Hospital Name</option>
+                                                            @foreach ($hospital as $list)
+                                                                <option value="{{ $list->id }}">
+                                                                    {{ $list->hospital_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -390,6 +399,14 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4 mb-2 file_upload " style="display: none;">
+                                                        <div class="form-group form-input">
+                                                            <label for="Fitness" class="require">File Upload</label>
+                                                            <input type="file" name="file" id="file"
+                                                                class="form-control">
+                                                            <small>Allowed file types: PDF, DOCX, DOC</small>
+                                                        </div>
+                                                    </div>
                                                     <div class="col-md-8 mb-2">
                                                         <div class="form-group form-input">
                                                             <label for="close" class="form-label require">Close the
@@ -434,11 +451,7 @@
 @stop
 @push('script')
     <script>
-        // company name
-
-
         // date picker and time picker
-
 
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#date", {
@@ -538,8 +551,6 @@
         });
 
 
-
-
         $(document).ready(function() {
 
             $('#is_reffered').change(function() {
@@ -561,10 +572,6 @@
             });
 
 
-
-
-
-
             // suggested by
 
             $('#suggested_by').change(function() {
@@ -577,6 +584,18 @@
                 }
             });
 
+            // for the fitness certificate is required
+
+            $('#fitness_certificate').change(function() {
+                var selectedValue = $(this).val();
+
+                if (selectedValue == '1') {
+                    $('.file_upload').show();
+                } else {
+                    $('.file_upload').hide();
+                }
+            });
+            // vechile
             $('#vechicle').change(function() {
                 var selectedValue = $(this).val();
 
@@ -1017,8 +1036,7 @@
                         required: function() {
                             return $('#is_reffered').is(':checked');
                         },
-                        minlength: 3,
-                        maxlength: 100
+
                     },
                     first_aider: {
                         required: function() {
@@ -1049,6 +1067,13 @@
                                 '2';
                         }
                     },
+                    file: {
+                        required: function() {
+                            return $('#fitness_certificate').val() ==
+                                '1';
+                        },
+                        extension: "pdf|doc|docx"
+                    },
                     close_description: {
                         required: function() {
                             return $('#patient_status').val() ==
@@ -1075,15 +1100,17 @@
                         required: "Please enter unit name.",
 
                     },
+                    file: {
+                        required: "File is required.",
+                        extension: "Please Select the valid mime Type."
+                    },
                     emp_name: {
                         required: "Please enter employee name.",
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
-                       
+
                     },
-                    // company_name: {
-                    //     required: "Please enter Company name.",
-                    // },
+
                     department: {
                         required: "Please enter department Name.",
                     },
@@ -1152,8 +1179,7 @@
                     },
                     hospital_name: {
                         required: "Hospital name is required .",
-                        minlength: "Hospital name must be at least 3 characters.",
-                        maxlength: "Hospital name must not exceed 100 characters.",
+
 
                     },
                     first_aider: {
