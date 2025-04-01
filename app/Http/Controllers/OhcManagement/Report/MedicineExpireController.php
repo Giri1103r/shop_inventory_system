@@ -111,12 +111,12 @@ class MedicineExpireController extends Controller
                             }
                             $expireDate = Carbon::parse($row->expire_date);
                             $today = Carbon::today();
-                            if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVAL_PENDING && $row->approve_status != OHC_DISCARD_EHS_APPROVED)  {
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
-                            }
-                            if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
-                                $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-white"></i></a> ';
-                            }
+                            // if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVAL_PENDING && $row->approve_status != OHC_DISCARD_EHS_APPROVED)  {
+                            //     $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                            // }
+                            // if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
+                            //     $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-white"></i></a> ';
+                            // }
                             return $btn;
                         })
 
@@ -128,7 +128,7 @@ class MedicineExpireController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -395,7 +395,7 @@ class MedicineExpireController extends Controller
             notificationSave($notificationData);
             return response()->json(['status' => 'success', 'msg' => __('Discards the Medicine Successfully')], 200);
         } catch (Exception $ex) {
-dd($ex);
+report($ex);
             return response()->json(['status' => 'error', 'msg' => __('ptw.Please try After Some time')], 406);
         }
     }

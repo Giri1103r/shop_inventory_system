@@ -127,7 +127,7 @@ class DiscardController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -184,7 +184,7 @@ class DiscardController extends Controller
             );
             return view('ohcmanagement.discard.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/discard/list'));
         }

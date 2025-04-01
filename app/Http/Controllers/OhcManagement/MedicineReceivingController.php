@@ -900,13 +900,13 @@ class MedicineReceivingController extends Controller
                 notificationSave($notificationData);
                 return response()->json(['msg' => 'Stock request closed successfully!']);
             } catch (\Exception $ex) {
-              dd($ex);
+              report($ex);
 
                 return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
             }
 
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
 
             return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
         }
