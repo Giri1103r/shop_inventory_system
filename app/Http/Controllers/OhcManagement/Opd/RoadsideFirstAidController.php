@@ -14,16 +14,29 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Opd\IsReffered;
+use App\Models\OhcManagement\Opd\ReferedVechicle;
 
 class RoadsideFirstAidController extends Controller
 {
     private $ohc_opd_roadside_first_aid;
     private $injured_condition;
+    private $hospital;
+    private $isreffered;
+    private $refered_vechicle;
+
 
     public function __construct()
     {
         $this->ohc_opd_roadside_first_aid = new RoadsideFirstAid();
         $this->injured_condition = new InjuredCondition();
+        $this->hospital = new HospitalDetails();
+        $this->isreffered = new IsReffered();
+        $this->refered_vechicle = new ReferedVechicle();
+
+
+
     }
     public function index(Request $request)
     {
@@ -93,10 +106,13 @@ class RoadsideFirstAidController extends Controller
     public function add()
     {
         try {
-
+            $hospital = $this->hospital->getHospitalname();
             $injuredCondition = $this->injured_condition->getinjurred();
+            $reffered = $this->refered_vechicle->getreffered();
             $data = [
-                'injuredCondition' => $injuredCondition
+                'injuredCondition' => $injuredCondition,
+                'hospital' => $hospital,
+                'reffered' => $reffered,
             ];
 
             return view('ohcmanagement.ohc-opd.roadside-firstaid.add', $data);
@@ -158,9 +174,15 @@ class RoadsideFirstAidController extends Controller
                 $opd_roadside_first_aid = $this->ohc_opd_roadside_first_aid->selectOne($id);
             }
             $injuredCondition = $this->injured_condition->getinjurred();
+            $reffered = $this->refered_vechicle->getreffered();
+            $hospital = $this->hospital->getHospitalname();
+
+
             $data = array(
                 'opd_roadside_first_aid' => $opd_roadside_first_aid,
-                'injuredCondition' => $injuredCondition
+                'injuredCondition' => $injuredCondition,
+                'hospital' => $hospital,
+                'reffered' => $reffered,
             );
             return view('ohcmanagement.ohc-opd.roadside-firstaid.edit', $data);
         } catch (Exception $ex) {

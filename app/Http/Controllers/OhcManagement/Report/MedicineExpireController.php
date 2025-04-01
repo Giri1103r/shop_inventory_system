@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\OhcManagement\Report;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Ohc\MedicineExpireEmail;
 use App\Mail\Ohc\MedicineReceivingRequestEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -15,6 +16,7 @@ use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\OhcManagement\Report\Inventory;
 use App\Models\OhcManagement\Status\ReceivingStatus;
+use App\Models\OhcManagement\UserDiscard;
 use App\Models\UploadLog;
 use App\Models\User;
 use Carbon\Carbon;
@@ -43,6 +45,7 @@ class MedicineExpireController extends Controller
     private $user;
     private $inventory;
     private $status;
+    private $discard;
 
     public function __construct()
     {
@@ -55,6 +58,7 @@ class MedicineExpireController extends Controller
         $this->inventory = new Inventory();
         $this->unit = new Unit();
         $this->status = new ReceivingStatus();
+        $this->discard = new UserDiscard();
     }
     public function index(Request $request)
     {
@@ -177,7 +181,55 @@ class MedicineExpireController extends Controller
             $remarks = $request->remarks;
             $quantity = $request->quantity;
             $expire_medicine = $this->expire_medicine->find($id);
-            $this->discard->close($id, $remarks);
+            $this->discard->store($id, $remarks,$expire_medicine);
+
+            $details = $this->expire_medicine->selectOne($id);
+            // Email details
+            $mailsubject = getUsername($details ->created_by) .'Request the Medicine for the Discard';
+            $user_role = ROLE_EHS_HEAD;
+
+            // Fetch users with the specified role
+            $users = $this->user->whereRaw('FIND_IN_SET(?, role)', [$user_role])->get();
+            $userids = $users->pluck('id')->toArray();
+
+            if ($users->isNotEmpty()) {
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        $details = $this->expire_medicine->selectOne($id);
+
+                        if ($details ) {
+                            $emailDetails = $details->toArray();
+                            $emailDetails['name'] = $user->name;
+                            $emailDetails['email_id'] = $email_id;
+                            $emailDetails['ohc_type'] = "Request for the Medicine Dicard";
+
+
+                            Mail::to($emailDetails['email_id'])->queue(new MedicineExpireEmail($emailDetails));
+                        }
+                    }
+                }
+            }
+
+
+
+            $notificationData = array(
+                'notification_type' => 4,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Request For the Medicine by " . getUsername($details->created_by),
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' =>    $details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('ohc/medicine-requisition/approval/view/' . encryptId($details->id)),
+                'assigned_user' => array_to_string($userids),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
             return response()->json(['status' => 'success', 'msg' => __('Cancelled the OPD Patient Successfully')], 200);
         } catch (Exception $ex) {
 

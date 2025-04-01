@@ -1191,6 +1191,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/list', [MedicineExpireController::class, 'index']);
                 Route::get('/export/excel', [MedicineExpireController::class, 'exportExcel']);
                 Route::get('/export/pdf', [MedicineExpireController::class, 'exportPdf']);
+                Route::get('/discard', [MedicineExpireController::class, 'discard']);
             });
             Route::group(['prefix' => 'ohc/monthly-inventory'], function () {
                 Route::get('/list', [MonthlyInventoryController::class, 'index']);

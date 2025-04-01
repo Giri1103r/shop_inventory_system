@@ -133,7 +133,7 @@
                     </th>
                     <th colspan="4" style="border:1px solid black;">
                         <h3>
-                            <span><b>{{ $isreffered->hospital_name }}</b>
+                            <span><b>{{ gethospitalname($isreffered->hospital_name) }}</b>
                             </span>
                         </h3>
                     </th>

@@ -9,25 +9,7 @@
                 width: 100%
             }
 
-            .bg-red {
-                background-color: #FF0000 !important;
-                color: #FFFFFF !important;
-            }
 
-            .bg-orange {
-                background-color: #FFA500 !important;
-                color: #000000 !important;
-            }
-
-            .table-danger {
-                background-color: #ffcccc !important;
-                /* Light red */
-            }
-
-            .table-warning {
-                background-color: #ffeb99 !important;
-                /* Light orange */
-            }
         </style>
     @endpush
     <div class="container-fluid">
@@ -217,6 +199,7 @@
             ],
             createdRow: function(row, data, dataIndex) {
                 $(row).removeClass('odd even');
+
                 if (data.row_class) {
                     $(row).css('background-color', data.row_class);
 
@@ -224,6 +207,8 @@
                         $(row).css('color', '#FFFFFF'); // White text for red background
                     } else if (data.row_class === '#FFA500') {
                         $(row).css('color', '#000000'); // Black text for orange background
+                    } else {
+                        $(row).css('color', ''); // Default text color
                     }
                 }
             },
@@ -348,83 +333,6 @@
         });
 
 
-        $(document).on('click', '.stockClose', function() {
-            var id = $(this).data('id');
-            var login_id = $(this).data('login_id');
-
-            var title = "Do you want to close the stock request?";
-            var text = "Close";
-            var btncolor = "#28a745";
-
-            Swal.fire({
-                title: title,
-                icon: "warning",
-                input: "textarea",
-                inputPlaceholder: "Enter your remarks here...",
-                showCloseButton: true,
-                confirmButtonText: text,
-                confirmButtonColor: btncolor,
-                customClass: {
-                    confirmButton: "btn-skew"
-                },
-                preConfirm: (remarks) => {
-                    if (!remarks || remarks.trim() === "") {
-                        Swal.showValidationMessage("Remarks are required!");
-                        return false;
-                    }
-                    return remarks.trim();
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var remarks = result.value;
-
-                    // Proceed with AJAX request
-                    $.ajax({
-                        url: "{{ url('ohc/medicine-receiving-form/close') }}",
-                        type: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
-                        },
-                        data: {
-                            id: id,
-                            login_id: login_id,
-                            remarks: remarks
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                icon: "success",
-                                title: response.msg ||
-                                    "Stock request closed successfully!",
-                                toast: true,
-                                position: "top-right",
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                            table.draw();
-                        },
-                        error: function(xhr) {
-                            let errorMessage = "Something went wrong!";
-
-                            // Check if responseJSON exists and contains a 'msg'
-                            if (xhr.responseJSON && xhr.responseJSON.msg) {
-                                errorMessage = xhr.responseJSON.msg;
-                            } else if (xhr.status === 419) {
-                                errorMessage = "Session expired. Please refresh and try again.";
-                            } else if (xhr.status === 500) {
-                                errorMessage =
-                                    "Internal Server Error. Please check the server logs.";
-                            }
-
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: errorMessage
-                            });
-                        }
-                    });
-                }
-            });
-        });
+       
     </script>
 @endpush

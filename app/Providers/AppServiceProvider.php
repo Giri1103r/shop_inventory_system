@@ -182,6 +182,13 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED') or define('STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED', 5);
         defined('STATUS_OHC_MEDICAL_DOCTOR_REJECTED') or define('STATUS_OHC_MEDICAL_DOCTOR_REJECTED', 6);
 
+        // medical discard approval
+
+
+        defined('OHC_DISCARD_EHS_APPROVAL_PENDING') or define('OHC_DISCARD_EHS_APPROVAL_PENDING', 1);
+        defined('OHC_DISCARD_EHS_APPROVED') or define('OHC_DISCARD_EHS_APPROVED', 2);
+
+
         // inspection ohc
         defined('OHC_TYPE_MEDICINE_REQUISTION_FDO') or define('OHC_TYPE_MEDICINE_REQUISTION_FDO', 1);
         defined('OHC_TYPE_MEDICINE_REQUISTION_FLOOR') or define('OHC_TYPE_MEDICINE_REQUISTION_FLOOR', 2);

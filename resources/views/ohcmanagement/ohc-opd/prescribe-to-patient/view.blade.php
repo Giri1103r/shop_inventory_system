@@ -211,7 +211,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Hospital Name') }}</label>
                                         <div class="view_data">
-                                            {{ isset($isreffered->hospital_name) ? $isreffered->hospital_name : '' }}
+                                            {{ getHospitalname(isset($isreffered->hospital_name) ? $isreffered->hospital_name : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -248,6 +248,33 @@
                                             @endif
                                         </div>
 
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">File</label>
+                                        @if (isset($opdpatient) && $opdpatient && $opdpatient->file_upload)
+                                            <p>
+                                                @php
+                                                    $fileExtension = pathinfo(
+                                                        $opdpatient->file_upload,
+                                                        PATHINFO_EXTENSION,
+                                                    );
+                                                @endphp
+                                                @if (in_array($fileExtension, ['pdf', 'doc', 'docx']))
+                                                    <a href="{{ asset('public/' . $opdpatient->file_upload) }}"
+                                                        target="_blank">
+                                                        <i class="fas fa-eye text-danger"></i> View
+                                                    </a>
+                                                @else
+                                                    <a href="{{ asset('public/' . $opdpatient->file_upload) }}"
+                                                        target="_blank">
+                                                        <img src="{{ asset('public/' . $opdpatient->file_upload) }}"
+                                                            style="width: 100px" alt="image">
+                                                    </a>
+                                                @endif
+                                            </p>
+                                        @else
+                                            <p>No file is uploaded</p>
+                                        @endif
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Close the Description') }}</label>

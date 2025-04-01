@@ -14,17 +14,22 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\Ohcmanagement\Master\HospitalDetails;
 
 class FirstAidController extends Controller
 {
     private $ohc_opd_first_aid;
     private $work;
     private $employee;
+    private $hospital;
+
     public function __construct()
     {
         $this->ohc_opd_first_aid = new FirstAid();
         $this->employee = new Employee();
         $this->work = new Work();
+        $this->hospital = new HospitalDetails();
+
     }
     public function index(Request $request)
     {
@@ -93,8 +98,13 @@ class FirstAidController extends Controller
     public function add()
     {
         try {
+            $hospital = $this->hospital->getHospitalname();
+            $data = [
 
-            return view('ohcmanagement.ohc-opd.first-aid.add');
+                'hospital' => $hospital
+            ];
+
+            return view('ohcmanagement.ohc-opd.first-aid.add',$data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

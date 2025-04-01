@@ -14,6 +14,8 @@ class UserDiscard extends Model
     protected $fillable = [
         'medicine_id',
         'batch_no',
+        'quantity',
+        'expire_medicine',
         'discard_date',
         'approved_by',
         'approve_status',
@@ -69,21 +71,19 @@ class UserDiscard extends Model
         ];
     }
 
-    public function store($data)
+    public function store($expire_medicine)
     {
         $request = request();
         $today = Carbon::today();
         $insert_array = [
-            'medicine_id' => $data->medicine_id,
-            'batch_no' => $data->medicine_id,,
+            'medicine_id' => $expire_medicine->medicine_id,
+            'batch_no' => $expire_medicine->batch_no,
             'discard_date' => $today,
+            'expire_medicine_id' => $expire_medicine->id,
             'approved_by' => Auth::id(),
             'approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
-            'approver_remarks'  => $request->remarks,
-            'status' => Auth::id(),
-            'trash',
-            'created_by',
 
+            'created_by' => Auth::id(),
         ];
     }
     public function selectOne($id)
@@ -97,7 +97,10 @@ class UserDiscard extends Model
 
         return $data;
     }
-
+    public function ehsapproval($id, $approveStatus)
+    {
+        return $this->where('id', $id)->update(['approve_status' => $approveStatus]);
+    }
     public function statuschange($id)
     {
         $request = request();
