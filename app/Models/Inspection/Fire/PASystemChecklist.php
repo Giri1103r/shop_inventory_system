@@ -18,7 +18,7 @@ class PASystemChecklist extends Model
         'unit',
         'audio_quality',
         'mic_condition',
-        'mic_quality',
+        'mic_quantity',
         'physical_condition',
         'cable_condition',
         'operation',
@@ -45,17 +45,27 @@ class PASystemChecklist extends Model
     public function store($id)
     {
         $request = request();
-// dd($request->all());
-        $sr_no = $request->sr_no;
-        $location = $request->location;
-        $unit_id = $request->unit_id;
-        $audio_quality = $request->audio_quality;
-        $mic_condition = $request->mic_condition;
-        $mic_quality = $request->mic_quality;
-        $physical_condition = $request->physical_condition;
-        $cable_condition = $request->cable_condition;
-        $operation = $request->operation;
-        $remarks = $request->remarks;
+
+        // $sr_no = $request->sr_no;
+        // $location = $request->location;
+        // $unit_id = $request->unit_id;
+        // $audio_quality = $request->audio_quality;
+        // $mic_condition = $request->mic_condition;
+        // $mic_quantity = $request->mic_quantity;
+        // $physical_condition = $request->physical_condition;
+        // $cable_condition = $request->cable_condition;
+        // $operation = $request->operation;
+        // $remark = $request->remark;
+        $sr_no = $request->sr_no ?? [];
+        $location = $request->location ?? [];
+        $unit_id = $request->unit_id ?? [];
+        $audio_quality = $request->audio_quality ?? [];
+        $mic_condition = $request->mic_condition ?? [];
+        $mic_quantity = $request->mic_quantity ?? [];
+        $physical_condition = $request->physical_condition ?? [];
+        $cable_condition = $request->cable_condition ?? [];
+        $operation = $request->operation ?? [];
+        $remark = $request->remark ?? [];
 
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
@@ -63,13 +73,13 @@ class PASystemChecklist extends Model
                 'sr_no' => $sr_no_value,
                 'unit' => decryptId($unit_id[$index]),
                 'location' => decryptId($location[$index]),
-                'audio_quality' => $audio_quality[$index],
-                'mic_condition' => $mic_condition[$index],
-                'mic_quality' => $mic_quality[$index],
-                'physical_condition' => $physical_condition[$index],
-                'cable_condition' => $cable_condition[$index],
-                'operation' => $operation[$index],
-                'remarks' => $remarks[$index],
+                'audio_quality' => decryptId($audio_quality[$index]),
+                'mic_condition' => decryptId($mic_condition[$index]),
+                'mic_quantity' => $mic_quantity[$index],
+                'physical_condition' => decryptId($physical_condition[$index]),
+                'cable_condition' => decryptId($cable_condition[$index]),
+                'operation' => decryptId($operation[$index]),
+                'remark' => $remark[$index],
                 'created_by' => Auth::id(),
             );
 

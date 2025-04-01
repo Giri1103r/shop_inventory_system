@@ -54,7 +54,7 @@ class PASystemInspectionController extends Controller
     }
 
     public function Index(Request $request)
-    { 
+    {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -204,6 +204,7 @@ class PASystemInspectionController extends Controller
         try {
 
             $inspection = $this->pa_system->store();
+
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
             $id = $inspection->id;
 
@@ -313,6 +314,7 @@ class PASystemInspectionController extends Controller
             );
             return view('inspection.Fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
