@@ -179,118 +179,78 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                            class="form-label require">{{ __('inspection.unit') }}</label>
                                                         <div class="view_data">
-                                                            {{ GetDeptName($details->department) }}
+                                                            {{ getUnitname($details->unit) }}
                                                         </div>
                                                     </div>
                                                 </div>
 
+                                                
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.type') }}</label>
+                                                            class="form-label require">Audio Quality</label>
                                                         <div class="view_data">
-                                                            @if ($details->type == ABC)
-                                                                {{ __('inspection.ABC') }}
-                                                            @elseif($details->type == CO2)
-                                                                {{ __('inspection.CO2') }}
-                                                            @elseif($details->type == WATER)
-                                                                {{ __('inspection.WATER') }}
-                                                            @elseif($details->type == FOAM)
-                                                                {{ __('inspection.FOAM') }}
-                                                            @endif
-                                                        </div>
-
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->capacity }}
+                                                            {{ $details->audio_quality }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
+                                                            class="form-label require">Mic Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->quantity }}
+                                                            {{ $details->mic_condition }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
+                                                            class="form-label require">Mic Quantity</label>
                                                         <div class="view_data">
-                                                            {{ $details->cylinder_pressure }}
+                                                            {{ $details->mic_quantity }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
+                                                            class="form-label require">Physical Condition</label>
                                                         <div class="view_data">
-                                                            @if ($details->discharge_tube == FUNCTIONAL)
-                                                                {{ __('inspection.functional') }}
-                                                            @elseif($details->discharge_tube == NON_FUNCTIONAL)
-                                                                {{ __('inspection.non_functional') }}
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
-                                                        <div class="view_data">
-                                                            @if ($details->safety_pin == PRESENT)
-                                                                {{ __('inspection.present') }}
-                                                            @elseif($details->safety_pin == MISSING)
-                                                                {{ __('inspection.missing') }}
-                                                            @endif
+                                                            {{ $details->physical_condition }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
+                                                            class="form-label require">Cable Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->approach }}
+                                                            {{ $details->cable_condition }}
                                                         </div>
-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->remarks }}
-                                                            </div>
-
+                                                            class="form-label require">Operation</label>
+                                                        <div class="view_data">
+                                                            {{ $details->operation  }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.description') }}</label>
+                                                            class="form-label require">{{ __('inspection.remarks') }}
+                                                        </label>
                                                         <div class="view_data">
-                                                            {{ $details->description }}
+                                                            {{ $details->remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
                                             </div>
                                         </div>
                                     @endforeach
