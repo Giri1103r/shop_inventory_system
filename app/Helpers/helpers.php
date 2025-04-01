@@ -2324,6 +2324,9 @@ if (!function_exists('getMonth')) {
                 case FIRE_ALARM_INSPECTION:
                     return 'FAI-000001';
                     break;
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    return 'PA-000001';
+                    break;
             }
         }
     }

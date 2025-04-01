@@ -34,11 +34,6 @@
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="revision_data"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="revision_data" id="revision_data" class="form-control">
-                                        </div> --}}
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
