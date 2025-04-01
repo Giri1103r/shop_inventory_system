@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Opd\IsReffered;
 use App\Models\OhcManagement\Opd\ReferedVechicle;
 
@@ -153,14 +153,14 @@ class RoadsideFirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/roadside-first-aid/list'));
         }

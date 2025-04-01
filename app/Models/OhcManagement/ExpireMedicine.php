@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Ohcmanagement;
+namespace App\Models\OhcManagement;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;

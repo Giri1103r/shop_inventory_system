@@ -8,7 +8,7 @@ use App\Mail\Ohc\MedicineReceivingRequestEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
-use App\Models\Ohcmanagement\ExpireMedicine;
+use App\Models\OhcManagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineReceiving;
