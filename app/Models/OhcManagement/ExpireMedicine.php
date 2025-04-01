@@ -96,11 +96,25 @@ class ExpireMedicine extends Model
     public function selectOne($id)
     {
 
-        $data  = $this->select('ohc_management_expire_medicine.*')->where('req_id', $id)
-            ->get();
+        $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
+            ->first();
+        return $data;
+    }
+    public function medicinediscard($id,  $quantity,  $remarks)
+    {
+
+        $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
+            ->update(['approve_status'=>OHC_DISCARD_EHS_APPROVAL_PENDING,'quantity'=>$quantity,'remarks'=>$remarks]);
         return $data;
     }
 
+    public function ehsheadapproval($id, $updateData)
+    {
+
+        $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
+            ->update(['approve_status'=>$updateData['approve_status'],'approved_by'=>Auth::id()]);
+        return $data;
+    }
 
 
 }

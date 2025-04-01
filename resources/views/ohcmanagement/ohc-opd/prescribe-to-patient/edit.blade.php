@@ -359,7 +359,7 @@
 
                                                             <select name="hospital_name" id="hospital_name"
                                                             class="form-control single-select" style="width: 100%">
-                                                            <option value="">select the Suggested By</option>
+                                                            <option value="">select the Hospital Name</option>
                                                             @foreach ($hospital as $list)
                                                                 <option value="{{ $list->id }}"
                                                                     @if ($list->id == $isreffered->hospital_name) selected @endif>

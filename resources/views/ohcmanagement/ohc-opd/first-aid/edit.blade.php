@@ -133,15 +133,15 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="hospital_name" class="form-label require">Hospital
+                                                    <label for="hospital_id" class="form-label require">Hospital
                                                         Name</label>
 
-                                                        <select name="hospital_name" id="hospital_name"
+                                                        <select name="hospital_id" id="hospital_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the Suggested By</option>
                                                         @foreach ($hospital as $list)
-                                                            <option value="{{ $list->id }}"
-                                                                @if ($list->id == $isreffered->hospital_name) selected @endif>
+                                                            <option value="{{encryptId( $list->id) }}"
+                                                                @if ($list->id == $opd_first_aid->hospital_id) selected @endif>
                                                                 {{ $list->hospital_name }}
                                                             </option>
                                                         @endforeach
@@ -180,11 +180,11 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 hospital_name " style="display: none ">
+                                            <div class="col-md-4 refered_to " style="display: none ">
                                                 <div class="form-group form-input">
                                                     <label for="follow" class="form-label require">Refered To</label>
-                                                    <input type="text" name="hospital_name" class="form-control"
-                                                        value="{{ $opd_first_aid->referred_to }}" id="hospital_name">
+                                                    <input type="text" name="refered_to" class="form-control"
+                                                        value="{{ $opd_first_aid->referred_to }}" id="refered_to">
                                                 </div>
 
                                             </div>
@@ -266,9 +266,9 @@
             function toggleDetailsField() {
                 var selectedValue = $('#follow_up').val();
                 if (selectedValue == '1') {
-                    $('.hospital_name').show();
+                    $('.refered_to').show();
                 } else {
-                    $('.hospital_name').hide();
+                    $('.refered_to').hide();
                 }
             }
             toggleDetailsField();
@@ -397,10 +397,18 @@
                     follow_up: {
                         required: true,
                     },
-                    hospital_name: {
+                    refered_to: {
                         required: function() {
                             return $('#follow_up').val() == '1';
                         },
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    hospital_id: {
+                        required:true,
+                    },
+                    cheif_complaint: {
+                        required:true,
                         minlength: 3,
                         maxlength: 100
                     },
@@ -417,6 +425,14 @@
                     },
                     time_of_incident: {
                         required: "Time of incident is required.",
+                    },
+                    hospital_id: {
+                        required: "Hospital Name is required.",
+                    },
+                    cheif_complaint: {
+                        required:"Cheif Complaint is required.",
+                        minlength: "Minimum 3 characters are required",
+                        maxlength:"Maximum 100 characters are required",
                     },
                     treatment_provided: {
                         required: "Please specify the treatment provided.",

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Environment;
+namespace App\Http\Controllers\Inspection\Fire;
 
 use Exception;
 use Response;
@@ -12,24 +12,24 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\DgSetStackEmissionMonitoring;
+use App\Models\Inspection\Fire\CertifiedFireFighter;
 use App\Models\Inspection\environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 
-class DgSetStackEmissionMonitoringController extends Controller
+class CertifiedFireFighterController extends Controller
 {
     private $location;
     private $unit;
-    private $dgset_emission;
+    private $certified_fire_fighter;
     private $upload_log;
     private $environment;
     private $static_docno;
 
     public function __construct()
     {
-        $this->dgset_emission = new DgSetStackEmissionMonitoring();
+        $this->certified_fire_fighter = new CertifiedFireFighter();
         $this->unit = new Unit();
         $this->location = new Location();
         $this->environment = new Environment();
@@ -41,7 +41,7 @@ class DgSetStackEmissionMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                   $type = DGSET;
+                    $type = WORKNOISE;
                     $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
@@ -64,7 +64,7 @@ class DgSetStackEmissionMonitoringController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/dg-set-stack-emission/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/certified-fire-fighter/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                            
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -83,28 +83,30 @@ class DgSetStackEmissionMonitoringController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', DGSET)->where('status', '1')->get();
+        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', WORKNOISE)->where('status', '1')->get();
 
         $data = array(
             'environmentList' => $environmentList,
         );
-        return view('inspection.environment.dgSetMonitoring.list', $data);
+        return view('inspection.environment.workNoiseMonitoring.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
+            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                ['type', "DgSet"],
+                ['type', "CertifiedFireFighter"],
                 ['status', '1']
             ])->first();
             
             $data = array(
+                'locationList' => $locationList,
                 'staticDocno' => $staticDocno,
             );
-            return view('inspection.environment.dgSetMonitoring.add', $data);
+            return view('inspection.environment.workNoiseMonitoring.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -112,10 +114,10 @@ class DgSetStackEmissionMonitoringController extends Controller
     {
         try {
             $rules = [
-                'dg_set_no' => 'required',
+                'work_noise_no' => 'required',
             ];
             $messages = [
-                'dg_set_no.required' => "DG Set Stack Emission  No is Required",
+                'work_noise_no.required' => "Work Noise No is Required",
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -123,11 +125,11 @@ class DgSetStackEmissionMonitoringController extends Controller
             }
 
             try {
-                $env_no = $request->dg_set_no;
-               $type = DGSET;
+                $env_no = $request->work_noise_no;
+                $type = WORKNOISE;
                 $environment =   $this->environment->store($env_no, $type);
  
-                $this->dgset_emission->store($environment->id);
+                $this->certified_fire_fighter->store($environment->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -135,11 +137,11 @@ class DgSetStackEmissionMonitoringController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('environment/dg-set-stack-emission/list'));
+            return redirect(admin_url('fire/certified-fire-fighter/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('environment/dg-set-stack-emission/list'));
+            return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
     }
 
@@ -150,24 +152,24 @@ class DgSetStackEmissionMonitoringController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-               $type = DGSET;
+                $type = WORKNOISE;
                 $environmentData =   $this->environment->selectOne($id,$type);
-                $DgSetDataList = $this->dgset_emission->selectOne($id);
+                $workNoiseDataList = $this->certified_fire_fighter->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                    ['type', "DgSet"],
+                    ['type', "CertifiedFireFighter"],
                     ['status', '1']
                 ])->first();
                 $data = array(
                     'environmentData' => $environmentData,
-                    'DgSetDataList' => $DgSetDataList,
+                    'workNoiseDataList' => $workNoiseDataList,
                     'staticDocno' => $staticDocno,
                 );
             }
-            return view('inspection.environment.dgSetMonitoring.view', $data);
+            return view('inspection.environment.workNoiseMonitoring.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('environment/dg-set-stack-emission/list'));
+            return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
     }
 
@@ -177,9 +179,9 @@ class DgSetStackEmissionMonitoringController extends Controller
 
         try {
             $id = decryptId($request->id);
-           $type = DGSET;
+            $type = WORKNOISE;
             $environmentID = $this->environment->statuschange($id,$type);
-            $this->dgset_emission->statuschange($id);
+            $this->certified_fire_fighter->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
         } catch (Exception $ex) {
@@ -191,11 +193,11 @@ class DgSetStackEmissionMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-           $type = DGSET;
+            $type = WORKNOISE;
             $allData =   $this->environment->exportdata($type);
             $header = [
                 __("common.sno"),
-                __("Ambient Air Monitoring Id"),
+                __("Work Noise Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -216,7 +218,7 @@ class DgSetStackEmissionMonitoringController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Ambient Air Monitoring Yearly.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Work Noise Monitoring.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -231,12 +233,12 @@ class DgSetStackEmissionMonitoringController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-           $type = DGSET;
+            $type = WORKNOISE;
             $allData =   $this->environment->exportdata($type);
 
             $header = [
                 __("common.sno"),
-                __("Ambient Air Monitoring Id"),
+                __("Work Noise Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -245,7 +247,7 @@ class DgSetStackEmissionMonitoringController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Ambient Air Monitoring Yearly",
+                'pagetitle' => "Work Noise Monitoring",
             );
 
             $property = [
@@ -260,14 +262,14 @@ class DgSetStackEmissionMonitoringController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.environment.dgSetMonitoring.pdf', $data);
+            $view = view('inspection.environment.workNoiseMonitoring.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Ambient Air Monitoring Yearly Details.pdf";
+            $filename = "Work Noise Monitoring Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);

@@ -21,6 +21,8 @@ class FirstAid extends Model
         'treatment_end_time',
         'first_aider_name',
         'follow_up_required',
+        'cheif_complaint',
+        'hospital_id',
         'referred_to',
         'remarks',
         'status',
@@ -123,10 +125,13 @@ class FirstAid extends Model
             'treatment_end_time' => $request->treatment_end_time,
             'first_aider_name' => $request->first_aider_name,
             'follow_up_required' => $request->follow_up,
-            'referred_to' => $request->hospital_name,
+            'referred_to' => $request->refered_to,
+            'hospital_id' => decryptId($request->hospital_id),
+            'cheif_complaint' => $request->cheif_complaint,
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
         ];
+
         return $this->create($insert_array);
     }
 
@@ -144,7 +149,9 @@ class FirstAid extends Model
             'treatment_end_time' => $request->treatment_end_time,
             'first_aider_name' => $request->first_aider_name,
             'follow_up_required' => $request->follow_up,
-            'referred_to' => $request->hospital_name,
+            'referred_to' => $request->refered_to,
+            'hospital_id' => decryptId($request->hospital_id),
+            'cheif_complaint' => $request->cheif_complaint,
             'remarks' => $request->remarks,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),

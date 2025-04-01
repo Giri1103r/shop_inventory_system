@@ -291,6 +291,37 @@ class OhcStatuslog extends Model
 
         return $this->create($insert_data);
     }
+
+    // expire
+
+    public function medicineexpire($id){
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICINE_DISCARD,
+            'reference_id' => $id,
+            'from_status' => OHC_DISCARD_MEDICINE_CREATION,
+            'to_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_data);
+    }
+    // expire approval
+
+    public function medicineexpireapproval($id, $updateData)
+    {
+        $request = request();
+        $insert_data = [
+            'type' => TYPE_OHC_MEDICINE,
+            'reference_id' => $id,
+            'from_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
+            'to_status' => $updateData['approve_status'],
+            'remarks' =>  $request->remarks,
+            'created_by' => Auth::id(),
+        ];
+        return $this->create($insert_data);
+    }
     // get medicine log
     public function medicalfitnesslog($id)
     {
