@@ -201,7 +201,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit_id[1]" id="unit_id"
+                                                        <select name="unit_id[1]" id="unit_id_1"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -568,10 +568,10 @@
                                     </select>
                                 </div>
                             </div>
-                                <div class="col-md-4 mb-2">
+                            <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                    <select name="unit_id[${form_set_count}]" id="unit_id"
+                                    <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Unit</option>
                                         @foreach ($units as $unit)
@@ -592,7 +592,7 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Audio Quality</label>
-                                    <select name="audio_quality[${form_set_count}]" id="audio_quality"
+                                    <select name="audio_quality[${form_set_count}]" id="audio_quality-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Audio Quality</option>
                                         <option value="1">Good</option>
@@ -605,7 +605,7 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Mic Condition</label>
-                                    <select name="mic_condition[${form_set_count}]" id="mic_condition"
+                                    <select name="mic_condition[${form_set_count}]" id="mic_condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Mic Condition</option>
                                         <option value="1">Good</option>
@@ -625,7 +625,7 @@
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Physical Condition</label>
-                                    <select name="physical_condition[${form_set_count}]" id="Physical Condition"
+                                    <select name="physical_condition[${form_set_count}]" id="Physical Condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Physical Condition</option>
                                         <option value="1">Good</option>
@@ -638,7 +638,7 @@
                                 <div class="form-group form-input">
                                     <label class="form-label require">Cable
                                         Condition</label>
-                                    <select name="cable_condition[${form_set_count}]" id="cable_condition"
+                                    <select name="cable_condition[${form_set_count}]" id="cable_condition-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Cable Condition</option>
                                         <option value="1">Good</option>
@@ -650,7 +650,7 @@
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Operation </label>
-                                    <select name="operation[${form_set_count}]" id="operation"
+                                    <select name="operation[${form_set_count}]" id="operation-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Operation</option>
                                         <option value="1">Functional</option>
@@ -668,6 +668,48 @@
                     GetLocations(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
+
+                    $('select[name^="unit_id["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Unit",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="audio_quality["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Audio Quality",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="mic_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Mic Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="physical_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Physical Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="cable_condition["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select Cable Condition",
+                            width: '100%'
+                        });
+                    });
+
+                    $('select[name^="operation["]').each(function() {
+                        $(this).select2({
+                            placeholder: "Select OPeration",
+                            width: '100%'
+                        });
+                    });
 
                     $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
                         required: true,

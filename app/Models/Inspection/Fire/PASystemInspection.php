@@ -127,6 +127,7 @@ class PASystemInspection extends Model
 
     public function store()
     {
+        
         $request = request();
 
         $data = array(

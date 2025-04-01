@@ -199,28 +199,9 @@ class PASystemInspectionController extends Controller
         }
     }
 
-    public function GetDepartment(Request $request)
-    {
-        try {
-            $department = $this->department->getdepartment();
-            $departments = [];
-
-            foreach ($department as $department) {
-                $departments[] = [
-                    'id' => encryptId($department->id),
-                    'department_name' => $department->department_name,
-                ];
-            }
-
-            return response()->json($departments);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Something went wrong !'], 406);
-        }
-    }
-
     public function Store(Request $request)
     {
+        // dd($request->all());
         try {
 
             $inspection = $this->pa_system->store();
