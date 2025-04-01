@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work Noise Monitoring Add')
-@section('pageurl', admin_url('environment/work-noise/list'))
+@section('title', 'Certified Fire Fighter Add')
+@section('pageurl', admin_url('fire/certified-fire-fighter/list'))
 
 
 @section('content')
@@ -23,31 +23,36 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/certified-fire-fighter/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="addambient"
-                                        action="{{ admin_url('environment/work-noise/add/submit') }}">
+                                    <form method="POST" id="addfire"
+                                        action="{{ admin_url('fire/certified-fire-fighter/add/submit') }}">
                                         @csrf
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Work Noise Monitoring</h4>
+                                                    <h4 class="text-white">Certified Fire Fighter</h4>
                                                 </div>
                                             </div>
                                             <div class="row">
 
                                                 <div class="col-md-4 form-input">
-                                                    <label class="form-label">Work Noise No</label>
-                                                    <input type="text" class="form-control" name="work_noise_no"
-                                                        id="work_noise_no" value = "{{ getsequence('workNoiseNo') }}"
-                                                        readonly>
+                                                    <label class="form-label">Certified Fire Fighter No</label>
+                                                    <input type="text" class="form-control"
+                                                        name="certified_fire_fighter_no" id="certified_fire_fighter_no"
+                                                        value = "{{ getsequence('certifiedFireFighterNo') }}" readonly>
                                                 </div>
+                                                <input type="hidden" class="form-control" name="docNo_id"
+                                                    value="{{ encryptId($staticDocno->id) }}">
+
                                                 <div class="col-md-4 form-input">
+
                                                     <label class="form-label">Doc. No</label>
                                                     <input type="text" class="form-control" name="doc_no" id="doc_no"
                                                         readonly value="{{ $staticDocno->doc_no }}">
@@ -74,7 +79,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Work Noise Monitoring Details</h4>
+                                                    <h4 class="text-white">Certified Fire Fighter Details</h4>
                                                     <button class="btn btn-primary addmorebutton"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
@@ -89,91 +94,51 @@
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
-                                                        <input type="text" class="form-control sr-no"
-                                                            name="monitoring[1][sr_no]" id="sr_no_1" readonly
-                                                            value="WORK-0001">
+                                                        <input type="text" class="form-control" name="fire[1][sr_no]"
+                                                            id="sr_no_1" readonly value="SNO-0001">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Location</label>
+                                                        <label class="form-label">Name</label>
+                                                        <input type="text" class="form-control" name="fire[1][emp_name]"
+                                                            id="emp_name_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label">Department</label>
                                                         <select class="form-control single-select"
-                                                            name="monitoring[1][location_id]" style="width: 100%"
-                                                            id="location_id_1">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locationList as $list)
+                                                            name="fire[1][department_id]" style="width: 100%"
+                                                            id="department_id_1">
+                                                            <option value="">Select Department</option>
+                                                            @foreach ($departmentList as $list)
                                                                 <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->location_name }}</option>
+                                                                    {{ $list->department_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][unit_id]" style="width: 100%"
-                                                            id="unit_id_1">
-                                                            <option value="">Select Unit</option>
 
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Emp Code</label>
+                                                        <input type="text" name="fire[1][emp_code]" class="form-control"
+                                                            id="emp_code_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Contact Number</label>
+                                                        <input type="text" name="fire[1][emp_phone]"
+                                                            class="form-control" id="emp_phone_1">
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Status</label>
+                                                        <select class="form-control single-select"
+                                                            name="fire[1][emp_status]" style="width: 100%"
+                                                            id="emp_status_1">
+                                                            <option value="">Select Status </option>
+                                                            <option value="{{ encryptId(1) }}">Active</option>
+                                                            <option value="{{ encryptId(2) }}">Not Active</option>
                                                         </select>
                                                     </div>
 
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba]"
-                                                            class="form-control" id="noise_level_dba_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
-                                                        <input type="text" name="monitoring[1][date_of_monitoring]"
-                                                            class="form-control" id="date_of_monitoring_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
-                                                            Monitoring</label>
-                                                        <input type="text"
-                                                            name="monitoring[1][next_due_date_of_monitoring]"
-                                                            class="form-control" id="next_due_date_of_monitoring_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][noise_level_dba_dropdown]"
-                                                            style="width: 100%" id="noise_level_dba_dropdown_1">
-                                                            <option value="">Select NOISE LEVEL (dBA)</option>
-                                                            <option value="{{ encryptId(1) }}">Day</option>
-                                                            <option value="{{ encryptId(2) }}">Night</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba_no]"
-                                                            class="form-control" id="noise_level_dba_no_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
-                                                        <input type="text"
-                                                            name="monitoring[1][date_of_monitoring_date]"
-                                                            class="form-control" id="date_of_monitoring_date_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
-                                                        <input type="text"
-                                                            name="monitoring[1][next_due_date_of_monitoring_date]"
-                                                            class="form-control" id="next_due_date_of_monitoring_date_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Act/Rule</label>
-                                                        <input type="text" name="monitoring[1][act_rule]"
-                                                            class="form-control" id="act_rule_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Remark</label>
-                                                        <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
-                                                    </div>
 
                                                     <div class="col-md-2 text-right mt-2">
                                                         <button class="btn btn-danger removerowdata" type="button"
@@ -191,7 +156,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('environment/work-noise/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/certified-fire-fighter/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -218,25 +183,11 @@
 
 
         document.addEventListener("DOMContentLoaded", function() {
-            function initializeFlatpickr() {
-                flatpickr("input[id^='date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='date_of_monitoring_date_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='next_due_date_of_monitoring_date_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='next_due_date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
-                });
-            }
 
             function updateRowIndexes() {
                 $("#lesson_learned_block .lesson_learned_row").each(function(index) {
                     let newIndex = index + 1;
-                    let srNoValue = "WORK-" + String(newIndex).padStart(4, '0');
+                    let srNoValue = "SNO-" + String(newIndex).padStart(4, '0');
                     $(this).find("input, select, textarea").each(function() {
                         let oldName = $(this).attr("name");
                         let oldId = $(this).attr("id");
@@ -253,34 +204,8 @@
                     });
                     $(this).find(".sr-no").val(srNoValue);
                 });
-                initializeFlatpickr();
             }
 
-            $(document).on("change", "select[id^='location_id_']", function() {
-                let locationId = $(this).val();
-                let rowId = $(this).attr("id").match(/\d+/)[0];
-                let unitSelect = $("#unit_id_" + rowId);
-
-                if (locationId) {
-                    $.ajax({
-                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            unitSelect.empty().append('<option value="">Select Unit</option>');
-                            $.each(data, function(key, value) {
-                                unitSelect.append('<option value="' + value.id + '">' +
-                                    value.name + '</option>');
-                            });
-                        },
-                        error: function() {
-                            alert("Error fetching unit. Please try again.");
-                        },
-                    });
-                } else {
-                    unitSelect.empty().append('<option value="">Select Unit</option>');
-                }
-            });
 
             $("#dynamic-add-more").on("click", function() {
                 let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
@@ -313,7 +238,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("WORK-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name*='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -323,20 +248,21 @@
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[noise_level_dba]']").rules("add", {
-                    number: true,
+                newRow.find("input[name*='[emp_name]']").rules("add", {
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     messages: {
-                        number: "Only numeric values are allowed."
-                    }
-                });
-                newRow.find("input[name*='[noise_level_dba_no]']").rules("add", {
-                    number: true,
-                    messages: {
-                        number: "Only numeric values are allowed."
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
                     }
                 });
 
-                initializeFlatpickr();
+                newRow.find("input[name*='[emp_phone]']").rules("add", {
+                    pattern: /^[0-9]{10}$/,
+                    messages: {
+                        pattern: "Phone number must be exactly 10 digits (only numbers)."
+                    }
+                });
+
+
                 $('.single-select').select2();
             });
 
@@ -354,25 +280,27 @@
                 }
             });
 
-            initializeFlatpickr();
         });
-        $('#addambient').validate({
+        $('#addfire').validate({
 
             rules: {
-                'monitoring[1][noise_level_dba]': {
-                    number: true,
+                'fire[1][emp_name]': {
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                 },
-                'monitoring[1][noise_level_dba_no]': {
+                'fire[1][emp_phone]': {
                     number: true,
+                    pattern: /^[0-9]{10}$/,
                 },
             },
             messages: {
-                'monitoring[1][noise_level_dba]': {
-                    number: "Only numeric values are allowed."
+                'fire[1][emp_name]': {
+                    pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
 
                 },
-                'monitoring[1][noise_level_dba_no]': {
-                    number: "Only numeric values are allowed."
+                'fire[1][emp_phone]': {
+                    number: "Only numeric values are allowed.",
+                    pattern: "Phone number must be exactly 10 digits (only numbers)."
+
                 },
             },
             errorElement: 'span',

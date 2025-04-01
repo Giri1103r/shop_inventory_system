@@ -152,7 +152,7 @@ class FireMockDrillInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.fire_mock_drill_inspection.list', $data);
+        return view('inspection.fire.fire_mock_drill_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,7 +172,7 @@ class FireMockDrillInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.fire_mock_drill_inspection.add', $data);
+            return view('inspection.fire.fire_mock_drill_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -283,7 +283,7 @@ class FireMockDrillInspectionController extends Controller
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.fire_mock_drill_inspection.view', $data);
+            return view('inspection.fire.fire_mock_drill_inspection.view', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -310,7 +310,7 @@ class FireMockDrillInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.fire_mock_drill_inspection.approve', $data);
+            return view('inspection.fire.fire_mock_drill_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -748,7 +748,7 @@ class FireMockDrillInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -792,7 +792,7 @@ class FireMockDrillInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.fire_mock_drill_inspection.viewPdf',$data);
+            $html = view('inspection.fire.fire_mock_drill_inspection.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

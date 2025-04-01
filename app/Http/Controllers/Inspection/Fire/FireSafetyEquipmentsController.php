@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Environment;
+namespace App\Http\Controllers\Inspection\Fire;
 
 use Exception;
 use Response;
@@ -12,27 +12,25 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\AmbientAirMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Fire\FireSafetyEquipment;
+use App\Models\Inspection\Fire\Fire;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Models\Master\Unit;
 
-class AmbientAirMonitoringYearlyController extends Controller
+class FireSafetyEquipmentsController extends Controller
 {
-    private $location;
     private $unit;
-    private $ambient_air_monitoring;
+    private $fire_safety_equipment;
     private $upload_log;
-    private $environment;
+    private $fire;
     private $static_docno;
 
     public function __construct()
     {
-        $this->ambient_air_monitoring = new AmbientAirMonitoring();
+        $this->fire_safety_equipment = new FireSafetyEquipment();
         $this->unit = new Unit();
-        $this->location = new Location();
-        $this->environment = new Environment();
+        $this->fire = new Fire();
         $this->static_docno = new InspectionStaticDocno();
     }
 
@@ -41,8 +39,8 @@ class AmbientAirMonitoringYearlyController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                   $type = AMBIENT_AIR;
-                    $data  = $this->environment->list($type);
+                    $type = 3;
+                    $data  = $this->fire->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -56,7 +54,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_at', function ($row) {
+                        ->addColumn('created_date', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
@@ -64,14 +62,14 @@ class AmbientAirMonitoringYearlyController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/fire-safety/equipments/code-sheet/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                            
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -83,30 +81,30 @@ class AmbientAirMonitoringYearlyController extends Controller
                 }
             }
         }
-        $environmentList  = $this->environment->select('id', 'environment_no')->where('type', AMBIENT_AIR)->where('status', '1')->get();
+        $fireList  = $this->fire->select('id', 'fire_no')->where('type', 3)->where('status', '1')->get();
 
         $data = array(
-            'environmentList' => $environmentList,
+            'fireList' => $fireList,
         );
-        return view('inspection.environment.ambientAirMonitoring.list', $data);
+        return view('inspection.fire.fireSafetyEquipment.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
+            $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                ['type', "AmbientAir"],
+                ['type', "FireSafetyEquipment"],
                 ['status', '1']
             ])->first();
             
             $data = array(
-                'locationList' => $locationList,
+                'unitList' => $unitList,
                 'staticDocno' => $staticDocno,
             );
-            return view('inspection.environment.ambientAirMonitoring.add', $data);
+            return view('inspection.fire.fireSafetyEquipment.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -114,10 +112,10 @@ class AmbientAirMonitoringYearlyController extends Controller
     {
         try {
             $rules = [
-                'ambient_air_no' => 'required',
+                'fire_safety_equipment_no' => 'required',
             ];
             $messages = [
-                'ambient_air_no.required' => "Ambient Air No is Required",
+                'fire_safety_equipment_no.required' => "Certified Fire Fighter No is Required",
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -125,11 +123,11 @@ class AmbientAirMonitoringYearlyController extends Controller
             }
 
             try {
-                $env_no = $request->ambient_air_no;
-               $type = AMBIENT_AIR;
-                $environment =   $this->environment->store($env_no, $type);
+                $fire_no = $request->fire_safety_equipment_no;
+                $type = 3;
+                $fire =   $this->fire->store($fire_no, $type);
  
-                $this->ambient_air_monitoring->store($environment->id);
+                $this->fire_safety_equipment->store($fire->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -137,11 +135,11 @@ class AmbientAirMonitoringYearlyController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('environment/ambient-air/yearly/list'));
+            return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         } catch (Exception $ex) {
             dd($ex);
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('environment/ambient-air/yearly/list'));
+            return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }
     }
 
@@ -152,24 +150,24 @@ class AmbientAirMonitoringYearlyController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-               $type = AMBIENT_AIR;
-                $environmentData =   $this->environment->selectOne($id,$type);
-                $ambientAirDataList = $this->ambient_air_monitoring->selectOne($id);
+                $type = 3;
+                $fireData =   $this->fire->selectOne($id,$type);
+                $fireSafetyEquipmentDataList = $this->fire_safety_equipment->selectOne($id);
                 $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                    ['type', "AmbientAir"],
+                    ['type', "FireSafetyEquipment"],
                     ['status', '1']
                 ])->first();
                 $data = array(
-                    'environmentData' => $environmentData,
-                    'ambientAirDataList' => $ambientAirDataList,
+                    'fireData' => $fireData,
+                    'fireSafetyEquipmentDataList' => $fireSafetyEquipmentDataList,
                     'staticDocno' => $staticDocno,
                 );
             }
-            return view('inspection.environment.ambientAirMonitoring.view', $data);
+            return view('inspection.fire.fireSafetyEquipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('environment/ambient-air/yearly/list'));
+            return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }
     }
 
@@ -179,9 +177,9 @@ class AmbientAirMonitoringYearlyController extends Controller
 
         try {
             $id = decryptId($request->id);
-           $type = AMBIENT_AIR;
-            $environmentID = $this->environment->statuschange($id,$type);
-            $this->ambient_air_monitoring->statuschange($id);
+            $type = 3;
+            $fireID = $this->fire->statuschange($id,$type);
+            $this->fire_safety_equipment->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
         } catch (Exception $ex) {
@@ -193,11 +191,11 @@ class AmbientAirMonitoringYearlyController extends Controller
     public function ExportExcel()
     {
         try {
-           $type = AMBIENT_AIR;
-            $allData =   $this->environment->exportdata($type);
+            $type = 3;
+            $allData =   $this->fire->exportdata($type);
             $header = [
                 __("common.sno"),
-                __("Ambient Air Monitoring Id"),
+                __("Certified Fire Fighter Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -208,7 +206,7 @@ class AmbientAirMonitoringYearlyController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->environment_no;
+                $export[] = $data->fire_no;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -218,7 +216,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Ambient Air Monitoring Yearly.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Certified Fire Fighter Monitoring.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -233,12 +231,12 @@ class AmbientAirMonitoringYearlyController extends Controller
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
-           $type = AMBIENT_AIR;
-            $allData =   $this->environment->exportdata($type);
+            $type = 3;
+            $allData =   $this->fire->exportdata($type);
 
             $header = [
                 __("common.sno"),
-                __("Ambient Air Monitoring Id"),
+                __("Certified Fire Fighter Monitoring Id"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -247,7 +245,7 @@ class AmbientAirMonitoringYearlyController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Ambient Air Monitoring Yearly",
+                'pagetitle' => "Certified Fire Fighter Monitoring",
             );
 
             $property = [
@@ -262,14 +260,14 @@ class AmbientAirMonitoringYearlyController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.environment.ambientAirMonitoring.pdf', $data);
+            $view = view('inspection.fire.fireSafetyEquipment.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Ambient Air Monitoring Yearly Details.pdf";
+            $filename = "Certified Fire Fighter Monitoring Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);

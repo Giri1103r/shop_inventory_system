@@ -89,7 +89,7 @@
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
-                                                        <input type="text" class="form-control"
+                                                        <input type="text" class="form-control sr-no"
                                                             name="monitoring[1][sr_no]" id="sr_no_1" readonly
                                                             value="AMBIENT-0001">
                                                     </div>
@@ -256,6 +256,7 @@
             function updateRowIndexes() {
                 $("#lesson_learned_block .lesson_learned_row").each(function(index) {
                     let newIndex = index + 1;
+                    let srNoValue = "AMBIENT-" + String(newIndex).padStart(4, '0');
                     $(this).find("input, select, textarea").each(function() {
                         let oldName = $(this).attr("name");
                         let oldId = $(this).attr("id");
@@ -270,6 +271,7 @@
                             $(this).attr("id", newId);
                         }
                     });
+                    $(this).find(".sr-no").val(srNoValue);
                 });
                 initializeFlatpickr();
             }

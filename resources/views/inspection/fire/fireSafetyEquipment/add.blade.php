@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Work Noise Monitoring Add')
-@section('pageurl', admin_url('environment/work-noise/list'))
+@section('title', 'Fire Safety Equipments Resource Code Sheet')
+@section('pageurl', admin_url('fire/fire-safety/equipments/code-sheet/list'))
 
 
 @section('content')
@@ -23,31 +23,36 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('environment/work-noise/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/fire-safety/equipments/code-sheet/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="addambient"
-                                        action="{{ admin_url('environment/work-noise/add/submit') }}">
+                                    <form method="POST" id="addfire"
+                                        action="{{ admin_url('fire/fire-safety/equipments/code-sheet/add/submit') }}">
                                         @csrf
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Work Noise Monitoring</h4>
+                                                    <h4 class="text-white">Fire Safety Equipments</h4>
                                                 </div>
                                             </div>
                                             <div class="row">
 
                                                 <div class="col-md-4 form-input">
-                                                    <label class="form-label">Work Noise No</label>
-                                                    <input type="text" class="form-control" name="work_noise_no"
-                                                        id="work_noise_no" value = "{{ getsequence('workNoiseNo') }}"
-                                                        readonly>
+                                                    <label class="form-label">Fire Safety Equipments No</label>
+                                                    <input type="text" class="form-control"
+                                                        name="fire_safety_equipment_no" id="fire_safety_equipment_no"
+                                                        value = "{{ getsequence('fireSafetyNO') }}" readonly>
                                                 </div>
+                                                <input type="hidden" class="form-control" name="docNo_id"
+                                                    value="{{ encryptId($staticDocno->id) }}">
+
                                                 <div class="col-md-4 form-input">
+
                                                     <label class="form-label">Doc. No</label>
                                                     <input type="text" class="form-control" name="doc_no" id="doc_no"
                                                         readonly value="{{ $staticDocno->doc_no }}">
@@ -74,7 +79,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Work Noise Monitoring Details</h4>
+                                                    <h4 class="text-white">Fire Safety Equipments Details</h4>
                                                     <button class="btn btn-primary addmorebutton"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
@@ -89,91 +94,58 @@
 
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
-                                                        <input type="text" class="form-control sr-no"
-                                                            name="monitoring[1][sr_no]" id="sr_no_1" readonly
-                                                            value="WORK-0001">
+                                                        <input type="text" class="form-control" name="fire[1][sr_no]"
+                                                            id="sr_no_1" readonly value="SNO-0001">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Location</label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][location_id]" style="width: 100%"
-                                                            id="location_id_1">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locationList as $list)
+                                                        <label class="form-label">Name of Fire & Safety Equipment</label>
+                                                        <input type="text" class="form-control"
+                                                            name="fire[1][name_of_fire_safety]" id="name_of_fire_safety_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input">
+                                                        <label class="form-label">Resource Code No</label>
+                                                        <input type="text" class="form-control"
+                                                            name="fire[1][resource_code]" id="resource_code_1">
+                                                    </div>
+
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Series Code</label>
+                                                        <input type="text" name="fire[1][series_code]"
+                                                            class="form-control" id="series_code_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label">Unit</label>
+                                                        <select class="form-control single-select" name="fire[1][unit_id]"
+                                                            style="width: 100%" id="unit_id_1">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($unitList as $list)
                                                                 <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->location_name }}</option>
+                                                                    {{ $list->unit_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][unit_id]" style="width: 100%"
-                                                            id="unit_id_1">
-                                                            <option value="">Select Unit</option>
-
-                                                        </select>
-                                                    </div>
 
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba]"
-                                                            class="form-control" id="noise_level_dba_1">
+                                                        <label class="form-label">Allotted Series Code</label>
+                                                        <input type="text" name="fire[1][allotted_series_code]"
+                                                            class="form-control" id="allotted_series_code_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
-                                                        <input type="text" name="monitoring[1][date_of_monitoring]"
-                                                            class="form-control" id="date_of_monitoring_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
-                                                            Monitoring</label>
-                                                        <input type="text"
-                                                            name="monitoring[1][next_due_date_of_monitoring]"
-                                                            class="form-control" id="next_due_date_of_monitoring_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <select class="form-control single-select"
-                                                            name="monitoring[1][noise_level_dba_dropdown]"
-                                                            style="width: 100%" id="noise_level_dba_dropdown_1">
-                                                            <option value="">Select NOISE LEVEL (dBA)</option>
-                                                            <option value="{{ encryptId(1) }}">Day</option>
-                                                            <option value="{{ encryptId(2) }}">Night</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
-                                                        <input type="text" name="monitoring[1][noise_level_dba_no]"
-                                                            class="form-control" id="noise_level_dba_no_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
-                                                        <input type="text"
-                                                            name="monitoring[1][date_of_monitoring_date]"
-                                                            class="form-control" id="date_of_monitoring_date_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
-                                                        </label>
-                                                        <input type="text"
-                                                            name="monitoring[1][next_due_date_of_monitoring_date]"
-                                                            class="form-control" id="next_due_date_of_monitoring_date_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Act/Rule</label>
-                                                        <input type="text" name="monitoring[1][act_rule]"
-                                                            class="form-control" id="act_rule_1">
+                                                        <label class="form-label">Total Allotted Code</label>
+                                                        <input type="text" name="fire[1][total_allotted_code]"
+                                                            class="form-control" id="total_allotted_code_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
-                                                        <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
+                                                        <textarea name="fire[1][remark]" class="form-control" id="remark_1"> </textarea>
                                                     </div>
+
 
                                                     <div class="col-md-2 text-right mt-2">
                                                         <button class="btn btn-danger removerowdata" type="button"
@@ -191,7 +163,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('environment/work-noise/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/fire-safety/equipments/code-sheet/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -218,25 +190,11 @@
 
 
         document.addEventListener("DOMContentLoaded", function() {
-            function initializeFlatpickr() {
-                flatpickr("input[id^='date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='date_of_monitoring_date_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='next_due_date_of_monitoring_date_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='next_due_date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
-                });
-            }
 
             function updateRowIndexes() {
                 $("#lesson_learned_block .lesson_learned_row").each(function(index) {
                     let newIndex = index + 1;
-                    let srNoValue = "WORK-" + String(newIndex).padStart(4, '0');
+                    let srNoValue = "SNO-" + String(newIndex).padStart(4, '0');
                     $(this).find("input, select, textarea").each(function() {
                         let oldName = $(this).attr("name");
                         let oldId = $(this).attr("id");
@@ -253,34 +211,8 @@
                     });
                     $(this).find(".sr-no").val(srNoValue);
                 });
-                initializeFlatpickr();
             }
 
-            $(document).on("change", "select[id^='location_id_']", function() {
-                let locationId = $(this).val();
-                let rowId = $(this).attr("id").match(/\d+/)[0];
-                let unitSelect = $("#unit_id_" + rowId);
-
-                if (locationId) {
-                    $.ajax({
-                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            unitSelect.empty().append('<option value="">Select Unit</option>');
-                            $.each(data, function(key, value) {
-                                unitSelect.append('<option value="' + value.id + '">' +
-                                    value.name + '</option>');
-                            });
-                        },
-                        error: function() {
-                            alert("Error fetching unit. Please try again.");
-                        },
-                    });
-                } else {
-                    unitSelect.empty().append('<option value="">Select Unit</option>');
-                }
-            });
 
             $("#dynamic-add-more").on("click", function() {
                 let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
@@ -313,7 +245,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("WORK-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name*='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -323,20 +255,51 @@
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[noise_level_dba]']").rules("add", {
-                    number: true,
+                newRow.find("input[name*='[name_of_fire_safety]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     messages: {
-                        number: "Only numeric values are allowed."
-                    }
-                });
-                newRow.find("input[name*='[noise_level_dba_no]']").rules("add", {
-                    number: true,
-                    messages: {
-                        number: "Only numeric values are allowed."
+                        minlength: "The name must be at least 3 characters long.",
+                        maxlength: "The name cannot exceed 200 characters.",
+                        pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
                     }
                 });
 
-                initializeFlatpickr();
+                newRow.find("input[name*='[resource_code]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        minlength: "Resource code must be exactly 3 digits.",
+                        maxlength: "Resource code must be exactly 100 digits."
+                    }
+                });
+                newRow.find("input[name*='[series_code]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        minlength: "Resource code must be exactly 3 digits.",
+                        maxlength: "Resource code must be exactly 100 digits."
+                    }
+                });
+                newRow.find("input[name*='[allotted_series_code]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        minlength: "Resource code must be exactly 3 digits.",
+                        maxlength: "Resource code must be exactly 100 digits."
+                    }
+                });
+                newRow.find("input[name*='[total_allotted_code]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        minlength: "Resource code must be exactly 3 digits.",
+                        maxlength: "Resource code must be exactly 100 digits."
+                    }
+                });
+
+
                 $('.single-select').select2();
             });
 
@@ -354,26 +317,53 @@
                 }
             });
 
-            initializeFlatpickr();
         });
-        $('#addambient').validate({
-
+        $('#addfire').validate({
             rules: {
-                'monitoring[1][noise_level_dba]': {
-                    number: true,
+                'fire[1][name_of_fire_safety]': {
+                    minlength: 3,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/
                 },
-                'monitoring[1][noise_level_dba_no]': {
-                    number: true,
+                'fire[1][resource_code]': {
+                    minlength: 3,
+                    maxlength: 100
                 },
+                'fire[1][series_code]': {
+                    minlength: 3,
+                    maxlength: 100
+                },
+                'fire[1][allotted_series_code]': {
+                    minlength: 3,
+                    maxlength: 100
+                },
+                'fire[1][total_allotted_code]': {
+                    minlength: 3,
+                    maxlength: 100
+                }
             },
             messages: {
-                'monitoring[1][noise_level_dba]': {
-                    number: "Only numeric values are allowed."
-
+                'fire[1][name_of_fire_safety]': {
+                    minlength: "The name must be at least 3 characters long.",
+                    maxlength: "The name cannot exceed 200 characters.",
+                    pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
                 },
-                'monitoring[1][noise_level_dba_no]': {
-                    number: "Only numeric values are allowed."
+                'fire[1][resource_code]': {
+                    minlength: "Resource code must be exactly 3 digits.",
+                    maxlength: "Resource code must be exactly 100 digits."
                 },
+                'fire[1][series_code]': {
+                    minlength: "Series code must be at least 3 characters long.",
+                    maxlength: "Series code cannot exceed 100 characters."
+                },
+                'fire[1][allotted_series_code]': {
+                    minlength: "Allotted series code must be at least 3 characters long.",
+                    maxlength: "Allotted series code cannot exceed 100 characters."
+                },
+                'fire[1][total_allotted_code]': {
+                    minlength: "Total allotted code must be at least 3 characters long.",
+                    maxlength: "Total allotted code cannot exceed 100 characters."
+                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {

@@ -45,6 +45,7 @@ use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
+use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -581,6 +582,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/excel', [CertifiedFireFighterController::class, 'exportExcel']);
         Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
+    });
+    Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
+        Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::get('add', [FireSafetyEquipmentsController::class, 'add']);
+        Route::post('add/submit', [FireSafetyEquipmentsController::class, 'store']);
+        Route::get('view/{id}', [FireSafetyEquipmentsController::class, 'view']);
+        Route::post('delete', [FireSafetyEquipmentsController::class, 'delete']);
+        Route::get('export/excel', [FireSafetyEquipmentsController::class, 'exportExcel']);
+        Route::get('export/pdf', [FireSafetyEquipmentsController::class, 'exportPdf']);
+        Route::post('status', [FireSafetyEquipmentsController::class, 'statusChange']);
     });
 });
 
