@@ -9,6 +9,7 @@ use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
+use App\Models\Ohcmanagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
@@ -57,6 +58,7 @@ class PrescribetoPatientController extends Controller
     private $opd_firstaid;
     private $isreffered;
     private $inventory;
+    private $hospital;
 
     public function __construct()
     {
@@ -76,6 +78,7 @@ class PrescribetoPatientController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->inventory = new Inventory();
+        $this->hospital = new HospitalDetails();
     }
     public function index(Request $request)
     {
@@ -190,13 +193,15 @@ class PrescribetoPatientController extends Controller
             $patientstatus = $this->patient_status->getpatientstatus();
             $medicine  = $this->inventory->getmedicineUnitwise();
             $departmentList = $this->department->getdepartment();
+            $hospital = $this->hospital->getHospitalname();
             $data = array(
                 'unit' => $unit,
                 'suggestedBy' => $suggestedBy,
                 'reffered' => $reffered,
                 'patientstatus' => $patientstatus,
                 'departmentList' => $departmentList,
-                'medicine' => $medicine
+                'medicine' => $medicine,
+                'hospital' => $hospital,
 
             );
             return view('ohcmanagement.ohc-opd.prescribe-to-patient.add', $data);
@@ -325,7 +330,7 @@ class PrescribetoPatientController extends Controller
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
             // report($ex);
-            report($ex);  // Debugging
+            dd($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }
@@ -348,6 +353,7 @@ class PrescribetoPatientController extends Controller
             $medicine  = $this->inventory->getmedicineUnitwise();
             $suggestedname = $this->suggestedBy->getsuggestedname();
             $departmentList = $this->department->getdepartment();
+            $hospital = $this->hospital->getHospitalname();
 
             $data = array(
                 'unit' => $unit,
@@ -359,6 +365,7 @@ class PrescribetoPatientController extends Controller
                 'departmentList' => $departmentList,
                 'opd_firstaid' => $opd_firstaid,
                 'isreffered' => $isreffered,
+                'hospital' => $hospital,
 
             );
             // dd( $data);

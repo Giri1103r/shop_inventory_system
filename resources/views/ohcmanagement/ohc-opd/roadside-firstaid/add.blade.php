@@ -128,6 +128,68 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="isReffered row" style="display: none;">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label for="hospital_name" class="form-label require">Hospital
+                                                            Name</label>
+
+
+                                                        <select name="hospital_name" id="hospital_name"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">select the Hospital Name</option>
+                                                            @foreach ($hospital as $list)
+                                                                <option value="{{ $list->id }}">
+                                                                    {{ $list->hospital_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label for="first_aider" class="form-label require">First
+                                                            Aider</label>
+                                                        <select name="first_aider" id="first_aider" class="form-control "
+                                                            style="width: 100%">
+                                                            <option value="">select the First Aider</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Mobile Number</label>
+                                                        <input type="text" name="is_reffered_mobile_no"
+                                                            id="is_reffered_mobile_no" class="form-control" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label for="vechicle" class="form-label require">Reffered By
+                                                            Vechicle</label>
+                                                        <select name="vechicle" id="vechicle"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">select the Vechicle</option>
+                                                            @foreach ($reffered as $list)
+                                                                <option value="{{ $list->id }}">
+                                                                    {{ $list->refered_vechicle }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row other_vechicles"style="display: none;">
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label for="vechicle" class="form-label require">Reffered By
+                                                                other Vechicle</label>
+                                                            <input name="other_vechicle" id="vechicle"
+                                                                class="form-control">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 transport_method" style="display: none">
                                                 <div class="form-group form-input">
                                                     <label for="follow" class="form-label require">Transport
@@ -227,14 +289,18 @@
 
                 if (selectedValue == '1') {
                     $('.transport_method').show();
+                    $('.isReffered').show();
                 } else {
+                    $('.isReffered').hide();
                     $('.transport_method').hide();
                 }
             });
         });
 
 
-        $('#first_aider_name').select2({
+     // getting the first aider
+
+     $('#first_aider').select2({
             ajax: {
                 url: '{{ admin_url('ohc/prescribe-to-patient/firstaider') }}',
                 dataType: 'json',
@@ -259,6 +325,33 @@
             dropdownCssClass: 'form-control',
             selectionCssClass: 'form-control'
         });
+
+        // getting the first aiders number
+
+        $(document).on('change', '#first_aider', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/prescribe-to-patient/first-aider-number') }}",
+                    type: 'GET',
+                    data: {
+                        empId: empId
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+
+                        $('#is_reffered_mobile_no').val(data).prop('readonly', true);
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching mobile number. Please try again.');
+                    }
+                });
+            } else {
+
+                $('#is_reffered_mobile_no').val('').prop('readonly', true);
+            }
+        });
+
 
         // validation
         $(function() {

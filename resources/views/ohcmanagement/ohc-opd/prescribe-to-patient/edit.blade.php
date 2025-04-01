@@ -356,9 +356,17 @@
                                                     <div class="form-group form-input">
                                                         <label for="hospital_name" class="form-label require">Hospital
                                                             Name</label>
-                                                        <input type="text" name="hospital_name" id="hospital_name"
-                                                            value="{{ $isreffered->hospital_name }}"
-                                                            class="form-control">
+
+                                                            <select name="hospital_name" id="hospital_name"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">select the Suggested By</option>
+                                                            @foreach ($hospital as $list)
+                                                                <option value="{{ $list->id }}"
+                                                                    @if ($list->id == $isreffered->hospital_name) selected @endif>
+                                                                    {{ $list->hospital_name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -664,7 +672,7 @@
                         required: "Please enter employee name.",
                         minlength: "employee name must be at least 3 characters.",
                         maxlength: "employee name must not exceed 30 characters.",
-                        
+
                     },
                     // company_name: {
                     //     required: "Please enter Company name.",

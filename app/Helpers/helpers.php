@@ -1639,6 +1639,21 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getHospitalname')) {
+
+        function getHospitalname($userid)
+        {
+
+            $hospital_name = DB::table('ohc_master_hospital_details')->select('hospital_name')->where('id', $userid)->first();
+
+            if ($hospital_name == null) {
+                return '';
+            } else {
+                return $hospital_name->hospital_name;
+            }
+        }
+    }
     if (!function_exists('getSuggestedBy')) {
 
         function getSuggestedBy($userid)
@@ -2105,7 +2120,7 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
-                 
+
                     case GEMBA_WALK:
                         $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
                         if ($name == null) {

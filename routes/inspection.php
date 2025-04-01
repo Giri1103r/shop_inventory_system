@@ -14,6 +14,7 @@ use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Fire\SprinklarSystemController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
@@ -37,13 +38,14 @@ use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
-
-use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
-use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
+use App\Http\Controllers\Inspection\Fire\FireMockDrillInspectionController;
+use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
+use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
+use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -518,6 +520,22 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [IsolationValveController::class, 'ExportPDF']);
     });
 
+    Route::group(['prefix' => 'fire-mock-drill-observation'], function () {
+        Route::GET('list', [FireMockDrillInspectionController::class, 'Index']);
+        Route::POST('list', [FireMockDrillInspectionController::class, 'Index']);
+        Route::GET('add', [FireMockDrillInspectionController::class, 'Add']);
+        Route::POST('add/submit', [FireMockDrillInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [FireMockDrillInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [FireMockDrillInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [FireMockDrillInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [FireMockDrillInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [FireMockDrillInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [FireMockDrillInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [FireMockDrillInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [FireMockDrillInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [FireMockDrillInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [FireMockDrillInspectionController::class, 'ExportPDF']);
+    });
     Route::group(['prefix' => 'fire-alarm-inspection/'], function () {
         Route::GET('list', [FireAlarmController::class, 'Index']);
         Route::POST('list', [FireAlarmController::class, 'Index']);
@@ -710,4 +728,23 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+});
+
+Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
+    Route::GET('list', [PASystemInspectionController::class, 'Index']);
+    Route::POST('list', [PASystemInspectionController::class, 'Index']);
+    Route::GET('add', [PASystemInspectionController::class, 'Add']);
+    Route::POST('add/submit', [PASystemInspectionController::class, 'Store']);
+    Route::GET('view/{id}', [PASystemInspectionController::class, 'View']);
+    Route::GET('verification/{id}/{employee_type}', [PASystemInspectionController::class, 'approvals']);
+    Route::POST('ehsofficer/verify/submit', [PASystemInspectionController::class, 'EHSOfficerSubmit']);
+    Route::POST('capa/submit', [PASystemInspectionController::class, 'CAPASubmit']);
+    Route::POST('capa/reverify/submit', [PASystemInspectionController::class, 'CAPAVerifySubmit']);
+    Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
+    Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
+    Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+    Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
+    Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
+    Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
+
 });

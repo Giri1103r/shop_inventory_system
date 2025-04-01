@@ -68,7 +68,7 @@
                                                     <label class="form-label require">Medical Fitness Certificate
                                                         Upload</label>
                                                     <input type="file" name="file" id="file" class="form-control"
-                                                      > 
+                                                      >
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@
                     },
                     file: {
                         required: true,
-                        extension: "pdf|doc|docx" // Allow only PDF, DOC, DOCX
+                        extension: "pdf|doc|docx"
                     },
                     remarks: {
                         required: true,

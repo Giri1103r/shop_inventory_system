@@ -89,6 +89,12 @@
                                                     <textarea name="treatment_provided" id="treatment_provided" cols="30" rows="5" class="form-control"></textarea>
                                                 </div>
                                             </div>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Cheif Complaint</label>
+                                                    <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control"></textarea>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Treatment Start Time</label>
@@ -113,6 +119,23 @@
                                                             <span class="fas fa-clock"></span>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="hospital_name" class="form-label require">Hospital
+                                                        Name</label>
+
+
+                                                    <select name="hospital_name" id="hospital_name"
+                                                        class="form-control single-select" style="width: 100%">
+                                                        <option value="">select the Hospital Name</option>
+                                                        @foreach ($hospital as $list)
+                                                            <option value="{{ $list->id }}">
+                                                                {{ $list->hospital_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
