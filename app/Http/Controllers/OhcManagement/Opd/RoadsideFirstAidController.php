@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Opd\IsReffered;
 use App\Models\OhcManagement\Opd\ReferedVechicle;
 

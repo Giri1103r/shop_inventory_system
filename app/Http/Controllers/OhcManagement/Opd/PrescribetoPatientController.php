@@ -9,7 +9,7 @@ use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
