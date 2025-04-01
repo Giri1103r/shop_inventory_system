@@ -38,18 +38,10 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
 
-use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
-use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
-use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
-use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
-use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
-use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
-use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
-use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 
