@@ -87,9 +87,18 @@ class PASystemInspection extends Model
                 case "revision_data":
                     $query->orderBy('inspection_fire_pa_system.revision_data', $columnorder);
                     break;
+                // case "issue_date":
+                //     $query = $query->orderBy('inspection_fire_pa_system.issue_date', $columnorder);
+                //     break;
                 case "issue_date":
                     $query = $query->orderBy('inspection_fire_pa_system.issue_date', $columnorder);
                     break;
+
+                    if (isset($request->issue_date) && $request->issue_date) {
+                        $formattedDate = DBdateformat($request->issue_date);
+                        $query = $query->whereDate('issue_date', '=', $formattedDate);
+                    }
+
                 case "doc_no":
                     $query = $query->orderBy('inspection_fire_pa_system.doc_no', $columnorder);
                     break;
@@ -129,7 +138,7 @@ class PASystemInspection extends Model
     {
 
         $request = request();
-// dd($request->all());
+
         $data = array(
             'doc_no' => $request->doc_no,
             'issue_date' => DBdateformat($request->issue_date),
@@ -145,7 +154,7 @@ class PASystemInspection extends Model
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
         );
-// dd($data);
+
         return $this->create($data);
     }
 

@@ -751,7 +751,7 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.Fire.pa_system_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);

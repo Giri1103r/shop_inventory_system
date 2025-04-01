@@ -135,7 +135,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Fire Extinguisher Inspection Observation</h4>
+                                                <h4 class="text-white">Fire PA System Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -154,7 +154,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire PA System Checklist</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
