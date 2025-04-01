@@ -127,9 +127,9 @@ class PASystemInspection extends Model
 
     public function store()
     {
-        
-        $request = request();
 
+        $request = request();
+// dd($request->all());
         $data = array(
             'document_number' => $request->document_number,
             'issue_date' => $request->issue_date,
@@ -145,7 +145,7 @@ class PASystemInspection extends Model
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
         );
-
+// dd($data);
         return $this->create($data);
     }
 

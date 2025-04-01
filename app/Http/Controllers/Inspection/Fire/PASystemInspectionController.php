@@ -201,7 +201,6 @@ class PASystemInspectionController extends Controller
 
     public function Store(Request $request)
     {
-        // dd($request->all());
         try {
 
             $inspection = $this->pa_system->store();

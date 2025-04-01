@@ -45,35 +45,31 @@ class PASystemChecklist extends Model
     public function store($id)
     {
         $request = request();
-
+// dd($request->all());
         $sr_no = $request->sr_no;
-        $department = $request->department;
-        $description = $request->description;
         $location = $request->location;
-        $quantity = $request->quantity;
-        $type = $request->type;
-        $capacity = $request->capacity;
-        $cylinder_pressure = $request->cylinder_pressure ?? [];
-        $discharge_tube = $request->discharge_tube ?? [];
-        $approach = $request->approach ?? [];
-        $safety_pin = $request->safety_pin ?? [];
+        $unit_id = $request->unit_id;
+        $audio_quality = $request->audio_quality;
+        $mic_condition = $request->mic_condition;
+        $mic_quality = $request->mic_quality;
+        $physical_condition = $request->physical_condition;
+        $cable_condition = $request->cable_condition;
+        $operation = $request->operation;
         $remarks = $request->remarks;
 
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'fire_pa_system_id' => $id,
                 'sr_no' => $sr_no_value,
-                'description' => $description[$index],
-                'department' => decryptId($department[$index]),
+                'unit' => decryptId($unit_id[$index]),
                 'location' => decryptId($location[$index]),
+                'audio_quality' => $audio_quality[$index],
+                'mic_condition' => $mic_condition[$index],
+                'mic_quality' => $mic_quality[$index],
+                'physical_condition' => $physical_condition[$index],
+                'cable_condition' => $cable_condition[$index],
+                'operation' => $operation[$index],
                 'remarks' => $remarks[$index],
-                'type' => decryptId($type[$index]),
-                'quantity' => $quantity[$index],
-                'capacity' => $capacity[$index],
-                'cylinder_pressure' => $cylinder_pressure[$index],
-                'discharge_tube' => decryptId($discharge_tube[$index]),
-                'safety_pin' => decryptId($safety_pin[$index]),
-                'approach' => $approach[$index],
                 'created_by' => Auth::id(),
             );
 
