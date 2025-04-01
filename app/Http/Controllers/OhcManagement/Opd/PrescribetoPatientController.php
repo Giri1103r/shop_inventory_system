@@ -9,7 +9,7 @@ use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\UserMedicineIssuance;
@@ -330,7 +330,7 @@ class PrescribetoPatientController extends Controller
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         } catch (Exception $ex) {
             // report($ex);
-            dd($ex);  // Debugging
+            report($ex);  // Debugging
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('ohc/prescribe-to-patient/list'));
         }

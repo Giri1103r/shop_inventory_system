@@ -345,6 +345,7 @@
 
 
     @stack('scripts')
+
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
             document.addEventListener('contextmenu', function(e) {
@@ -352,6 +353,9 @@
             });
 
             document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey && e.keyCode === 65) || (e.ctrlKey && e.keyCode === 67)) {
+                    return;
+                }
 
                 if (e.keyCode === 123 ||
                     (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
@@ -370,7 +374,6 @@
                     var heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-
                         var startTime = new Date();
                         debugger;
                         var endTime = new Date();
@@ -378,19 +381,13 @@
                             devtoolsOpen = true;
                             logBlockedUser();
                         }
-
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
                         devtoolsOpen = false;
                     }
                 }, 5000);
-
             })();
 
             document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('selectstart', function(e) {
                 e.preventDefault();
             });
 
@@ -424,7 +421,6 @@
             }
         </script>
     @endif
-
 
     <script type="text/javascript" nonce="projectcab">
         $.ajaxSetup({

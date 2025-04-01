@@ -97,9 +97,15 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Hospital Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getHospitalname(isset($opd_roadside_first_aid->hospital_id) ? $opd_roadside_first_aid->hospital_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Transport Method') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($opd_roadside_first_aid->transport_method) ? $opd_roadside_first_aid->transport_method : '') }}
+                                            {{ getReferedVechicle(isset($opd_roadside_first_aid->transport_method) ? $opd_roadside_first_aid->transport_method : '') }}
                                         </div>
                                     </div>
 

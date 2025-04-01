@@ -37,6 +37,7 @@ use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Fire\Fire;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 /*
@@ -260,6 +261,7 @@ if (!function_exists('getsequence')) {
                 $count = AuditAnalysis::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AUDIT-ANALYSIS-' . getautogen($count);
+                break;
             case 'ambientNoiseNo':
                 $count = Environment::where('type', 1)->withoutGlobalScopes()->count();
                 $count = $count + 1;
@@ -289,6 +291,31 @@ if (!function_exists('getsequence')) {
                 $count = Environment::where('type', 6)->withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'LUX-' . getautogen($count);
+                break;
+            case 'dailyFirePumpHouseNo':
+                $count = Fire::where('type', 1)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DAILY-FIREPUMP-' . getautogen($count);
+                break;
+            case 'certifiedFireFighterNo':
+                $count = Fire::where('type', 2)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'CERTIFIED-FIREFIGHTER-' . getautogen($count);
+                break;
+            case 'fireSafetyNO':
+                $count = Fire::where('type', 3)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FIRESAFETY-EQ-' . getautogen($count);
+                break;
+            case 'preNocNo':
+                $count = Fire::where('type', 4)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FIRE-PRENOC-' . getautogen($count);
+                break;
+            case 'fireModularNo':
+                $count = Fire::where('type', 5)->withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FIRE-MODULAR-' . getautogen($count);
                 break;
             case 'SPLB':
                 $count = SafetyPettyChecklist::withoutGlobalScopes()->count();

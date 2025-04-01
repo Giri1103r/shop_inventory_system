@@ -8,11 +8,19 @@
                 overflow-x: auto;
                 width: 100%
             }
+            .red_class td {
+            background-color: rgb(255, 30, 0) !important;
+            color: rgb(255, 251, 251) !important;
+            border-bottom: 0.75px solid rgb(255, 255, 255) !important;
+        }
 
-
+        .pink_class td {
+            background-color: rgb(248, 163, 5) !important;
+            color: rgb(12, 3, 3) !important;
+        }
         </style>
     @endpush
-    <div class="container-fluid">
+    <div class="container-fluid">F
         <div class="row">
             <div class="col-12">
 
@@ -197,18 +205,21 @@
                     visible: false
                 }
             ],
-            createdRow: function(row, data, dataIndex) {
-                $(row).removeClass('odd even');
-
+            rowCallback: function(row, data, dataIndex) {
+                if (dataIndex % 2 === 0) {
+                    $(row).addClass('even');
+                } else {
+                    $(row).addClass('even');
+                }
                 if (data.row_class) {
                     $(row).css('background-color', data.row_class);
 
                     if (data.row_class === '#FF0000') {
-                        $(row).css('color', '#FFFFFF');
+                        $(row).addClass('red_class');
                     } else if (data.row_class === '#FFA500') {
-                        $(row).css('color', '#000000');
+                        $(row).addClass('pink_class  ');
                     } else {
-                        $(row).css('color', ''); 
+                        $(row).css('color', '');
                     }
                 }
             },
@@ -331,8 +342,5 @@
                 }
             });
         });
-
-
-
     </script>
 @endpush

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Inspection\environment\WorkZoneAirMonitoring;
 use App\Models\Inspection\environment\Environment;
-use App\Models\Inspection\environment\InspectionStaticDocno;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
 
@@ -56,8 +56,8 @@ class WorkZoneAirMonitoringController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydatetimeformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -71,7 +71,7 @@ class WorkZoneAirMonitoringController extends Controller
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

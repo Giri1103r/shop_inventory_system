@@ -104,17 +104,7 @@
                                                         class="form-control" placeholder="First Aid Provided">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">First Aider Name</label>
 
-                                                    <select name="first_aider_name" id="first_aider_name"
-                                                        placeholder="First Aider Name" class="form-control "
-                                                        style="width: 100%">
-                                                        <option value="">select the First Aider</option>
-                                                    </select>
-                                                </div>
-                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Transport to Medical
@@ -131,15 +121,15 @@
                                             <div class="isReffered row" style="display: none;">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label for="hospital_name" class="form-label require">Hospital
+                                                        <label for="hospital_id" class="form-label require">Hospital
                                                             Name</label>
 
 
-                                                        <select name="hospital_name" id="hospital_name"
+                                                        <select name="hospital_id" id="hospital_id"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the Hospital Name</option>
                                                             @foreach ($hospital as $list)
-                                                                <option value="{{ $list->id }}">
+                                                                <option value="{{ encryptId($list->id) }}">
                                                                     {{ $list->hospital_name }}
                                                                 </option>
                                                             @endforeach
@@ -159,19 +149,19 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Mobile Number</label>
-                                                        <input type="text" name="is_reffered_mobile_no"
-                                                            id="is_reffered_mobile_no" class="form-control" readonly>
+                                                        <input type="text" name="mobile_no" id="mobile_no"
+                                                            class="form-control" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label for="vechicle" class="form-label require">Reffered By
-                                                            Vechicle</label>
-                                                        <select name="vechicle" id="vechicle"
+                                                        <label for="transport_method" class="form-label require">Transport
+                                                            Method</label>
+                                                        <select name="transport_method" id="transport_method"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the Vechicle</option>
                                                             @foreach ($reffered as $list)
-                                                                <option value="{{ $list->id }}">
+                                                                <option value="{{ encryptId($list->id) }}">
                                                                     {{ $list->refered_vechicle }}
                                                                 </option>
                                                             @endforeach
@@ -190,15 +180,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 transport_method" style="display: none">
-                                                <div class="form-group form-input">
-                                                    <label for="follow" class="form-label require">Transport
-                                                        Method</label>
-                                                    <input type="text" name="transport_method" class="form-control"
-                                                        id="transport_method">
-                                                </div>
 
-                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Incident Report Filed</label>
@@ -298,9 +280,9 @@
         });
 
 
-     // getting the first aider
+        // getting the first aider
 
-     $('#first_aider').select2({
+        $('#first_aider').select2({
             ajax: {
                 url: '{{ admin_url('ohc/prescribe-to-patient/firstaider') }}',
                 dataType: 'json',
@@ -340,7 +322,7 @@
                     dataType: 'json',
                     success: function(data) {
 
-                        $('#is_reffered_mobile_no').val(data).prop('readonly', true);
+                        $('#mobile_no').val(data).prop('readonly', true);
                     },
                     error: function(xhr) {
                         alert('Error fetching mobile number. Please try again.');
@@ -348,7 +330,7 @@
                 });
             } else {
 
-                $('#is_reffered_mobile_no').val('').prop('readonly', true);
+                $('#mobile_no').val('').prop('readonly', true);
             }
         });
 
@@ -370,15 +352,7 @@
                         minlength: 3,
                         maxlength: 30,
                         regex: /^(?!\s*$)[a-zA-Z0-9\s]+$/,
-                        remote: {
-                            url: '{{ admin_url('ohc/roadside-first-aid/unique') }}',
-                            type: 'post',
-                            data: {
-                                emp_name: function() {
-                                    return $('#emp_name').val();
-                                }
-                            }
-                        }
+
                     },
                     date_of_incident: {
                         required: true,
@@ -403,15 +377,28 @@
                     transport_to_medical_facility: {
                         required: true,
                     },
-                    first_aider_name: {
-                        required: true,
+                    first_aider: {
+                        required: function() {
+                            return $('#transport_to_medical_facility').val() == '1';
+                        },
                     },
                     transport_method: {
                         required: function() {
                             return $('#transport_to_medical_facility').val() == '1';
                         },
-                        minlength: 3,
-                        maxlength: 100
+
+                    },
+                    hospital_id: {
+                        required: function() {
+                            return $('#transport_to_medical_facility').val() == '1';
+                        },
+
+                    },
+                    mobile_no: {
+                        required: function() {
+                            return $('#transport_to_medical_facility').val() == '1';
+                        },
+
                     },
                 },
                 messages: {
@@ -446,14 +433,21 @@
                     transport_to_medical_facility: {
                         required: "Please indicate if transport to a medical facility was required."
                     },
-                    first_aider_name: {
+                    first_aider: {
                         required: "Please enter the first aider's name."
                     },
                     transport_method: {
                         required: "Please specify the transport method.",
-                        minlength: "Transport method must be at least 3 characters.",
-                        maxlength: "Transport method must not exceed 100 characters."
-                    }
+
+                    },
+                    hospital_id: {
+                        required: "Please select the hospital name.",
+
+                    },
+                    mobile_no: {
+                        required: "Please enter the mobile number.",
+
+                    },
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

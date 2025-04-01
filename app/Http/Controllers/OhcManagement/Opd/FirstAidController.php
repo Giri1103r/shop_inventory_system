@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 
 class FirstAidController extends Controller
 {
@@ -164,8 +164,11 @@ class FirstAidController extends Controller
             if (Auth::check()) {
                 $opd_first_aid = $this->ohc_opd_first_aid->selectOne($id);
             }
+            $hospital = $this->hospital->getHospitalname();
+
             $data = array(
                 'opd_first_aid' => $opd_first_aid,
+                'hospital' => $hospital
 
             );
             return view('ohcmanagement.ohc-opd.first-aid.edit', $data);

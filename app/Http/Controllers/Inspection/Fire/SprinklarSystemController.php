@@ -152,7 +152,7 @@ class SprinklarSystemController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.sprinklar_system.list', $data);
+        return view('inspection.fire.sprinklar_system.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,7 +172,7 @@ class SprinklarSystemController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.sprinklar_system.add', $data);
+            return view('inspection.fire.sprinklar_system.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -285,7 +285,7 @@ class SprinklarSystemController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.sprinklar_system.view', $data);
+            return view('inspection.fire.sprinklar_system.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -311,7 +311,7 @@ class SprinklarSystemController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.sprinklar_system.approve', $data);
+            return view('inspection.fire.sprinklar_system.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -749,7 +749,7 @@ class SprinklarSystemController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -793,7 +793,7 @@ class SprinklarSystemController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.sprinklar_system.viewPdf',$data);
+            $html = view('inspection.fire.sprinklar_system.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
