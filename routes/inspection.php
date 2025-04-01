@@ -45,7 +45,7 @@ use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -535,6 +535,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('exportViewPdf/{id}', [FireMockDrillInspectionController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [FireMockDrillInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [FireMockDrillInspectionController::class, 'ExportPDF']);
+    });
     Route::group(['prefix' => 'fire-alarm-inspection/'], function () {
         Route::GET('list', [FireAlarmController::class, 'Index']);
         Route::POST('list', [FireAlarmController::class, 'Index']);

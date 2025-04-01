@@ -204,11 +204,11 @@
                     $(row).css('background-color', data.row_class);
 
                     if (data.row_class === '#FF0000') {
-                        $(row).css('color', '#FFFFFF'); // White text for red background
+                        $(row).css('color', '#FFFFFF');
                     } else if (data.row_class === '#FFA500') {
-                        $(row).css('color', '#000000'); // Black text for orange background
+                        $(row).css('color', '#000000');
                     } else {
-                        $(row).css('color', ''); // Default text color
+                        $(row).css('color', ''); 
                     }
                 }
             },
@@ -333,6 +333,6 @@
         });
 
 
-       
+
     </script>
 @endpush
