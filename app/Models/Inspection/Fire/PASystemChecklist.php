@@ -13,7 +13,7 @@ class PASystemChecklist extends Model
     protected $fillable = [
         'id',
         'fire_pa_system_id',
-        'serial_number',
+        'sr_no',
         'location',
         'unit',
         'audio_quality',

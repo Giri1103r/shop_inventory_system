@@ -53,7 +53,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FEX-0') }}"
+                                                        class="form-control" value="{{ getDocumentReviewDate('PA-0') }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -166,10 +166,6 @@
                                                         style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
                                                     <button type="button"
                                                         class="btn btn-danger remove-row d-flex align-items-center"
                                                         style="min-width: 130px;">
@@ -183,7 +179,7 @@
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
                                                             class="form-control"
-                                                            value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}"
+                                                            value="{{ FireSequence(FIRE_PA_SYSTEM_INSPECTION) }}"
                                                             readonly>
                                                     </div>
                                                 </div>
@@ -204,14 +200,13 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[1]" id="department"
+                                                        <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                        <select name="unit_id[1]" id="unit_id"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
-                                                            @foreach ($department as $department)
-                                                                <option value="{{ encryptId($department->id) }}">
-                                                                    {{ $department->department_name }}</option>
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($units as $unit)
+                                                                <option value="{{ encryptId($unit->id) }}">
+                                                                    {{ $unit->unit_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -219,99 +214,81 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.description') }}</label>
-                                                        <textarea name="description[1]" id="description" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                            class="form-label require">Remarks</label>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.type') }}</label>
-                                                        <select name="type[1]" id="type"
+                                                            class="form-label require">Audio Quality</label>
+                                                        <select name="audio_quality[1]" id="audio_quality"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">
-                                                                {{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">
-                                                                {{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">
-                                                                {{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">
-                                                                {{ __('inspection.FOAM') }}</option>
+                                                            <option value="">Select Audio Quality</option>
+                                                            <option value="1">Good</option>
+                                                            <option value="2">Fair</option>
+                                                            <option value="3">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[1]" id = "capacity"
+                                                            class="form-label require">Mic Condition</label>
+                                                        <select name="mic_condition[1]" id="mic_condition"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Mic Condition</option>
+                                                            <option value="1">Good</option>
+                                                            <option value="2">Fair</option>
+                                                            <option value="3">Poor</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Mic Quantity</label>
+                                                        <input type="text" name="mic_quantity[1]" id = "mic_quantity"
                                                             class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[1]" id = "quantity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
-                                                        <input type="number" name="cylinder_pressure[1]"
-                                                            id = "cylinder_pressure" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
-                                                        <select name="discharge_tube[1]" id="discharge_tube"
+                                                        <label class="form-label require">Physical Condition</label>
+                                                        <select name="physical_condition[1]" id="Physical Condition"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Discharge Tube</option>
-                                                            <option value="{{ encryptId(FUNCTIONAL) }}">
-                                                                {{ __('inspection.functional') }}</option>
-                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">
-                                                                {{ __('inspection.non_functional') }}</option>
+                                                            <option value="">Select Physical Condition</option>
+                                                            <option value="1">Good</option>
+                                                            <option value="2">Fair</option>
+                                                            <option value="3">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
-                                                        <select name="safety_pin[1]" id="safety_pin"
+                                                        <label class="form-label require">Cable
+                                                            Condition</label>
+                                                        <select name="cable_condition[1]" id="cable_condition"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Safety Pin</option>
-                                                            <option value="{{ encryptId(PRESENT) }}">
-                                                                {{ __('inspection.present') }}</option>
-                                                            <option value="{{ encryptId(MISSING) }}">
-                                                                {{ __('inspection.missing') }}</option>
+                                                            <option value="">Select Cable Condition</option>
+                                                            <option value="1">Good</option>
+                                                            <option value="2">Fair</option>
+                                                            <option value="3">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[1]" id="approach" class="form-control" style="resize: none;"></textarea>
-
+                                                        <label class="form-label require">Operation </label>
+                                                        <select name="operation[1]" id="operation"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Operation</option>
+                                                            <option value="1">Functional</option>
+                                                            <option value="2">Non-functional</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
-
-
+                                              
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -319,29 +296,11 @@
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">Fire PA System Observation</h4>
                                                 </div>
-
-                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div> --}}
-
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
                                                         <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -351,7 +310,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -419,57 +378,35 @@
                         frequency_id: {
                             required: true,
                         },
-                        identification_no: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            noSpaces: true,
-                        },
-                        forklift_type: {
+                        "audio_quality[1]": {
                             required: true,
                         },
-                        "check_items[1]": {
-                            required: true,
-                        },
-                        "quantity[1]": {
-                            required: true,
-                        },
-                        "department[1]": {
-                            required: true,
-                        },
-                        "resource_code[1]": {
+                        "mic_condition[1]": {
                             required: true,
                         },
                         "remarks[1]": {
                             required: true,
                         },
-                        "type[1]": {
+                        "mic_quantity[1]": {
                             required: true,
                         },
-                        "capacity[1]": {
+                        "physical_condition[1]": {
                             required: true,
                         },
-                        "description[1]": {
+                        "cable_condition[1]": {
                             required: true,
                         },
-                        "cylinder_pressure[1]": {
-                            required: true,
-                        },
-                        "discharge_tube[1]": {
-                            required: true,
-                        },
-                        "approach[1]": {
-                            required: true,
-                        },
-                        "safety_pin[1]": {
+                        "operation[1]": {
                             required: true,
                         },
                         "location[1]": {
                             required: true,
                         },
+                        "unit_id[1]": {
+                            required: true,
+                        },
                         device_image: {
                             required: true,
-                            // extension: "jpg",
                             filesize: 2097152
                         },
                         observation: {
@@ -513,17 +450,14 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
-                        "quantity[1]": {
-                            required: "Please add the quantity",
+                        "audio_quality[1]": {
+                            required: "Please select the Audio Quality",
                         },
-                        "department[1]": {
-                            required: "Please Select The Department",
+                        "mic_condition[1]": {
+                            required: "Please select the Mic Condition",
                         },
-                        "check_items[1]": {
-                            required: "Please add the checkitems",
-                        },
-                        "resource_code[1]": {
-                            required: "Please add the resource code",
+                        "mic_quantity[1]": {
+                            required: "Please Enter the Mic Quantity",
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
@@ -531,30 +465,20 @@
                         "location[1]": {
                             required: "Please select the location",
                         },
-                        "type[1]": {
-                            required: "Please select the fire extinguishers type",
+                        "physical_condition[1]": {
+                            required: "Please select the Physical Condition",
                         },
-                        "approach[1]": {
-                            required: "Please fill this field",
+                        "cable_condition[1]": {
+                            required: "Please Select the Cable Condition"
                         },
-                        "discharge_tube[1]": {
-                            required: "Please Select the status of Discharge tube"
+                        "operation[1]": {
+                            required: "Please select the Operation",
                         },
-                        "cylinder_pressure[1]": {
-                            required: "Please enter the pressure of the cylinder",
-                        },
-                        "capacity[1]": {
-                            required: "Please add the capacity",
-                        },
-                        "description[1]": {
-                            required: "Please enter the description",
-                        },
-                        "safety_pin[1]": {
-                            required: "Please select the status of safety pin",
+                        "unit_id[1]": {
+                            required: "Please select the Unit",
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            // extension: "Only JPG files are allowed.",
                             filesize: "Image must be under 2MB."
                         },
                         observation: {
@@ -595,8 +519,6 @@
                 $(document).on('click', '#add-row', function() {
                     let currentFormSets = $('.form-wrapper .form-set').length;
 
-
-
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
@@ -607,166 +529,150 @@
                         return;
                     }
 
-                    let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
+                    let newSerialNumber = 'PA-' + ('00000' + serial_number).slice(-5);
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire PA System Checklist</h4>
-                                                </div>
+                            <div class="card-header-inner p-2">
+                                <h4 class="text-white">Fire PA System Checklist</h4>
+                            </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
+                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                    style="min-width: 130px;">
+                                    Add
+                                </button>
+                                <button type="button"
+                                    class="btn btn-danger remove-row d-flex align-items-center"
+                                    style="min-width: 130px;">
+                                    <i class="fa-solid fa-trash me-2"></i> Remove
+                                </button>
+                            </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                                            class="form-control" value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
-                                                    </div>
-                                                </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                    <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                        class="form-control" value="{{ FireSequence(FIRE_PA_SYSTEM_INSPECTION) }}" readonly>
+                                </div>
+                            </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
-                                                           
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.description') }}</label>
-                                                        <textarea name="description[${form_set_count}]" id="description" class="form-control" style="resize: none;" rows="4"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.type') }}</label>
-                                                        <select name="type[${form_set_count}]" id="type-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">{{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">{{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">{{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">{{ __('inspection.FOAM') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
-                                                        <input type="number" name="cylinder_pressure[${form_set_count}]" id = "cylinder_pressure-${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
-                                                        <select name="discharge_tube[${form_set_count}]" id="discharge_tube-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Discharge Tube</option>
-                                                            <option value="{{ encryptId(FUNCTIONAL) }}">{{ __('inspection.functional') }}</option>
-                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">{{ __('inspection.non_functional') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.location') }}</label>
+                                    <select name="location[${form_set_count}]" id="location-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Location</option>
+                                    </select>
+                                </div>
+                            </div>
+                                <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                    <select name="unit_id[${form_set_count}]" id="unit_id"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Unit</option>
+                                        @foreach ($units as $unit)
+                                            <option value="{{ encryptId($unit->id) }}">
+                                                {{ $unit->unit_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Remarks</label>
+                                    <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                </div>
+                            </div>
+                             <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Audio Quality</label>
+                                    <select name="audio_quality[${form_set_count}]" id="audio_quality"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Audio Quality</option>
+                                        <option value="1">Good</option>
+                                        <option value="2">Fair</option>
+                                        <option value="3">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Mic Condition</label>
+                                    <select name="mic_condition[${form_set_count}]" id="mic_condition"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Mic Condition</option>
+                                        <option value="1">Good</option>
+                                        <option value="2">Fair</option>
+                                        <option value="3">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Mic Quantity</label>
+                                    <input type="text" name="mic_quantity[${form_set_count}]" id = "mic_quantity"
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Physical Condition</label>
+                                    <select name="physical_condition[${form_set_count}]" id="Physical Condition"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Physical Condition</option>
+                                        <option value="1">Good</option>
+                                        <option value="2">Fair</option>
+                                        <option value="3">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Cable
+                                        Condition</label>
+                                    <select name="cable_condition[${form_set_count}]" id="cable_condition"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Cable Condition</option>
+                                        <option value="1">Good</option>
+                                        <option value="2">Fair</option>
+                                        <option value="3">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Operation </label>
+                                    <select name="operation[${form_set_count}]" id="operation"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Operation</option>
+                                        <option value="1">Functional</option>
+                                        <option value="2">Non-functional</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
-                                                        <select name="safety_pin[${form_set_count}]" id="safety_pin-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status Of Safety Pin</option>
-                                                            <option value="{{ encryptId(PRESENT) }}">{{ __('inspection.present') }}</option>
-                                                            <option value="{{ encryptId(MISSING) }}">{{ __('inspection.missing') }}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[${form_set_count}]" id="approach" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
+                        </div>
                     `;
 
                     let newFormSetElement = $(newFormSet);
-
-                    let departmentSelect = newFormSetElement.find('select[name^="department"]');
-                    GetDepartment(departmentSelect);
 
                     let locationSelect = newFormSetElement.find('select[name^="location"]');
                     GetLocations(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
 
-                    $("select[name='department[" + form_set_count + "]']").rules('add', {
+                    $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the department',
+                            required: 'Serial number is required',
                         }
                     });
 
@@ -777,74 +683,56 @@
                         }
                     });
 
-                    $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
+                    $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Serial number is required',
+                            required: 'Please select the Unit',
                         }
                     });
 
-                    $("textarea[name='description[" + form_set_count + "]']").rules('add', {
+                    $("select[name='audio_quality[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please provide a description',
+                            required: 'Please select the Audio Quality',
                         }
                     });
 
-                    $("select[name='type[" + form_set_count + "]']").rules('add', {
+                    $("select[name='mic_condition[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the type',
+                            required: 'Please select the Mic Condition',
                         }
                     });
 
-                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        number: true,
-                        messages: {
-                            required: 'Please specify the capacity',
-                            number: 'Capacity must be a valid number',
-                        }
-                    });
-
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
+                    $("input[name='mic_quantity[" + form_set_count + "]']").rules('add', {
                         required: true,
                         number: true,
                         min: 1,
                         messages: {
-                            required: 'Please specify the quantity',
-                            number: 'Quantity must be a valid number',
+                            required: 'Please Enter the Mic Quantity',
+                            number: 'Mic Quantity must be a valid number',
                             min: 'Quantity must be at least 1',
                         }
                     });
 
-                    $("input[name='cylinder_pressure[" + form_set_count + "]']").rules('add', {
+                    $("select[name='physical_condition[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        number: true,
                         messages: {
-                            required: 'Please specify the cylinder pressure',
-                            number: 'Cylinder pressure must be a valid number',
+                            required: 'Please select the Physical Condition',
                         }
                     });
 
-                    $("select[name='discharge_tube[" + form_set_count + "]']").rules('add', {
+                    $("select[name='cable_condition[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the discharge tube status',
+                            required: 'Please select the Cable Condition',
                         }
                     });
 
-                    $("select[name='safety_pin[" + form_set_count + "]']").rules('add', {
+                    $("select[name='operation[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the safety pin status',
-                        }
-                    });
-
-                    $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Please specify the approach details',
+                            required: 'Please select the Operation',
                         }
                     });
 
@@ -854,7 +742,6 @@
                             required: 'Please add remarks',
                         }
                     });
-
 
                     serial_number++;
                     form_set_count++;
@@ -877,57 +764,40 @@
 
                     var newObsSet = `
                         <div class="row mt-4 form-obs">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire PA System Observation</h4>
-                                                </div>
+                            <div class="card-header-inner p-2">
+                                <h4 class="text-white">Fire PA System Observation</h4>
+                            </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
+                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                    style="width: 120px;">
+                                    Add
+                                </button>
+                                <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                    style="width: 150px;">
+                                    Add Observation
+                                </button>
+                                <button type="button"
+                                    class="btn btn-danger remove-row d-flex align-items-center"
+                                    style="width: 120px;">
+                                    <i class="fa-solid fa-trash me-2"></i> Remove
+                                </button>
+                            </div>
 
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.obs') }}</label>
+                                    <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
 
-                                                    </div>
-                                                </div>
+                                </div>
+                            </div>
 
-                                            </div>
+                        </div>
                     `;
 
                 });
             });
-
-            function GetDepartment(selectElement) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ admin_url('fire/hooter-inspection/get/department') }}",
-                    success: function(response) {
-                        if (response.length > 0) {
-                            let options = `<option value="">Select Department</option>`;
-                            response.forEach(department => {
-                                options +=
-                                    `<option value="${department.id}">${department.department_name}</option>`;
-                            });
-                            $(selectElement).html(options).trigger('change');
-                        }
-                    }
-                });
-            }
 
             function GetLocations(selectElement) {
                 $.ajax({
@@ -950,21 +820,19 @@
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
-                    let newSerialNumber = 'FEX-' + ('000000' + idx).slice(-6);
+                    let newSerialNumber = 'PA-' + ('000000' + idx).slice(-6);
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
+
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
                     $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
-                    $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
-                    $(this).find('textarea[name^="description"]').attr('name', 'description[' + idx + ']');
-                    $(this).find('select[name^="type"]').attr('name', 'type[' + idx + ']');
-                    $(this).find('input[name^="capacity"]').attr('name', 'capacity[' + idx + ']');
-                    $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
-                    $(this).find('input[name^="cylinder_pressure"]').attr('name', 'cylinder_pressure[' + idx + ']');
-                    $(this).find('select[name^="discharge_tube"]').attr('name', 'discharge_tube[' + idx + ']');
-                    $(this).find('select[name^="safety_pin"]').attr('name', 'safety_pin[' + idx + ']');
-                    $(this).find('textarea[name^="approach"]').attr('name', 'approach[' + idx + ']');
+                    $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
+                    $(this).find('select[name^="audio_quality"]').attr('name', 'audio_quality[' + idx + ']');
+                    $(this).find('select[name^="mic_condition"]').attr('name', 'mic_condition[' + idx + ']');
+                    $(this).find('input[name^="mic_quantity"]').attr('name', 'mic_quantity[' + idx + ']');
+                    $(this).find('select[name^="physical_condition"]').attr('name', 'physical_condition[' + idx + ']');
+                    $(this).find('select[name^="cable_condition"]').attr('name', 'cable_condition[' + idx + ']');
+                    $(this).find('select[name^="operation"]').attr('name', 'operation[' + idx + ']');
                     $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
-
 
                     $(this).find('select').select2();
                 });
