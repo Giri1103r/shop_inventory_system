@@ -159,6 +159,10 @@
             content: '*';
             color: red;
         }
+        .error{
+            color: red;
+            padding-top: 3px;
+        }
 
 
         /* Tooltip styling */
@@ -366,7 +370,7 @@
                     var heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
                     if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                       
+
                         var startTime = new Date();
                         debugger;
                         var endTime = new Date();
@@ -374,7 +378,7 @@
                             devtoolsOpen = true;
                             logBlockedUser();
                         }
-                       
+
                     } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
                         devtoolsOpen = false;
                     }

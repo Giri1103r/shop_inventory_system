@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Safety\Master\Equipment;
 use App\Models\Inspection\Safety\FireSafetyEquipment;
@@ -90,7 +91,6 @@ class FireSafetyEquipmentController extends Controller
             );
             return view('inspection.Safety.safety_equipment.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
@@ -100,6 +100,50 @@ class FireSafetyEquipmentController extends Controller
     public function Store(Request $request)
     {
         try {
+
+            $rules = [
+                'issue_date' => 'required',
+
+                'equipment_name.*' => 'required',
+                'item_code.*' => 'required',
+                'standard_norms.*' => 'required',
+                'equipment_category.*' => 'required',
+                'unit_of_measurement.*' => 'required',
+                'minimum_order_value.*' => 'required',
+                'economic_order_quantity.*' => 'required',
+                'observation_status.*' => 'required',
+                'remarks.*' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (is_null($user->signature_upload)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is required.',
+                'equipment_name.*.required' => 'Equipment Name is required.',
+                'item_code.*.required' => 'Item code  is required.',
+                'standard_norms.*.required' => 'Standard Norms is required.',
+                'equipment_category.*.required' => 'Equipment Category is required.',
+                'unit_of_measurement.*.required' => 'Unit of measurement is required.',
+                'minimum_order_value.*.required' => 'Minimum order value is required.',
+                'economic_order_quantity.*.required' => 'Economic Order Quantity is required.',
+                'observation_status.*.required' => 'Observation Status is required.',
+                'remarks.*.required' => 'Remarks is required.',
+                'signature_upload' => 'Signature is required.',
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $fire_safety_equipment_store = $this->safety_equipment->store();
             $fire_safety_id = $fire_safety_equipment_store->id;
@@ -282,5 +326,4 @@ class FireSafetyEquipmentController extends Controller
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
     }
-
 }

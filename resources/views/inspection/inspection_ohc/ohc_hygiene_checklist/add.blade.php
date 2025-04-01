@@ -81,7 +81,10 @@
                                                                 style="border: 1px solid black; text-align: center; padding: 12px;">
                                                                 <div class="form-input">
                                                                     <input type="date" class="issue_date form-control"
-                                                                        name="issue_date" />
+                                                                        name="issue_date" value="{{ old('issue_date') }}" />
+                                                                    @error('issue_date')
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
                                                             <td style="border: 1px solid black; padding: 12px;">
@@ -91,10 +94,14 @@
                                                                         style="width: 100%">
                                                                         <option value="">Select Shift</option>
                                                                         @foreach ($shifts as $shift)
-                                                                            <option value="{{ encryptId($shift->id) }}">
+                                                                            <option value="{{ encryptId($shift->id) }}"
+                                                                                {{ old('shift_id') == encryptId($shift->id) ? 'selected' : '' }}>
                                                                                 {{ $shift->shift }}</option>
                                                                         @endforeach
                                                                     </select>
+                                                                    @error('shift_id')
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
                                                             <td style="border: 1px solid black; padding: 12px;">
@@ -102,23 +109,34 @@
                                                                 <input type="hidden"
                                                                     value="{{ __('inspection.ohc_hygiene_cleaning_checklist') }}"
                                                                     name="inspection_question">
+
                                                             </td>
                                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"
                                                                 class="form-input">
                                                                 <input type="radio" name="inspection"
                                                                     class="validate-radio-required" value="1">
+                                                                @error('inspection')
+                                                                    <div class="error">{{ $message }}</div>
+                                                                @enderror
                                                             </td>
                                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"
                                                                 class="form-input">
                                                                 <input type="radio" name="inspection"
                                                                     class="validate-radio-required" value="0">
+                                                                @error('inspection')
+                                                                    <div class="error">{{ $message }}</div>
+                                                                @enderror
                                                             </td>
                                                             <td
                                                                 style="border: 1px solid black; text-align: center; padding: 12px;">
                                                                 <div class="col-md-12 mb-2 form-input" id="remarks">
                                                                     <label for="remarks" class="form-label">Remarks</label>
-                                                                    <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
+                                                                    <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks">{{ old('remarks') }}</textarea>
                                                                 </div>
+                                                                @error('remarks')
+                                                                    <div class="error">{{ $message }}</div>
+                                                                @enderror
+
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -155,6 +173,10 @@
                                                             </div>
                                                         @endif
                                                     </div>
+                                                    @error('signature_upload')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+
 
                                                 </div>
                                             </div>
@@ -200,7 +222,6 @@
                     $.validator.addMethod("noSpaces", function(value, element) {
                         return this.optional(element) || value.trim().length > 0;
                     }, "This field cannot contain only spaces");
-
                     $('#forklistassessmentAdd').validate({
                         rules: {
 
@@ -255,6 +276,7 @@
 
                         }
                     });
+
                 });
             });
         </script>

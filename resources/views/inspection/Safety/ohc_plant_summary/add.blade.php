@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation Add')
+@section('title', 'OHS Sumary Report')
 @section('pageurl', admin_url('ohc-plant-summary/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -35,7 +35,10 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number" value={{ old('doc_no') }}>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -43,7 +46,11 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value={{ old('issue_date') }}>
+                                                    @error('issue_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -60,7 +67,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="">
+                                                        class="form-control" value="{{ old('inspection_date') }}">
+                                                    @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -68,7 +78,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.updated_frequency') }}</label>
                                                     <input type="text" name="updated_frequency" id = "updated_frequency"
-                                                        class="form-control" value="">
+                                                        class="form-control" value="{{ old('updated_frequency') }}">
+                                                    @error('updated_frequency')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -82,20 +95,30 @@
                                                     style="border-collapse: collapse;">
                                                     <thead>
                                                         <tr>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Sr. No.</th>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Description
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Sr. No.</th>
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Description
                                                             </th>
                                                             <th colspan="{{ $rowcount }}"
                                                                 style="border: 1px solid #000; vertical-align:middle; text-align:center">
                                                                 Quantity (in Nos/m²)
                                                             </th>
 
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Total
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Total
                                                                 Quantity (in Nos/m²)</th>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Action</th>
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Action</th>
                                                         </tr>
                                                         @foreach ($units as $unit)
-                                                            <th style="border: 1px solid #000; vertical-align:middle; text-align:center">{{ $unit->unit_name }}</th>
+                                                            <th
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                {{ $unit->unit_name }}</th>
                                                         @endforeach
                                                     </thead>
                                                     <tbody>
@@ -103,7 +126,10 @@
                                                             <td style="border: 1px solid #000;">1</td>
                                                             <td style="border: 1px solid #000;">
                                                                 <div class="form-input">
-                                                                    <textarea type="text" class="form-control description" style="resize: none;" name="description[1]"></textarea>
+                                                                    <textarea type="text" class="form-control description" style="resize: none;" name="description[1]">{{ old('description.1') }}</textarea>
+                                                                    @error('description.1')
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
                                                             @foreach ($units as $index => $unit)
@@ -112,13 +138,21 @@
                                                                         <input type="number" class="form-control"
                                                                             name="unit_{{ $index + 1 }}[1]"
                                                                             data-row-id="1"
-                                                                            data-index="{{ $index + 1 }}">
+                                                                            data-index="{{ $index + 1 }}"
+                                                                            value="{{ old('unit_' . ($index + 1) . '.1') }}">
                                                                     </div>
+                                                                    @error('unit_' . ($index + 1) . '.1')
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </td>
                                                             @endforeach
                                                             <td style="border: 1px solid #000;">
                                                                 <input type="number" class="form-control" readonly
-                                                                    name="total_quantity[1]">
+                                                                    name="total_quantity[1]"
+                                                                    value="{{ old('total_quantity.1') }}">
+                                                                @error('total_quantity.1')
+                                                                    <div class="error">{{ $message }}</div>
+                                                                @enderror
                                                             </td>
                                                             <td style="border: 1px solid #000; margin:10px;">
                                                                 <i id="addRow" class="fas fa-plus-circle text-primary"
@@ -144,9 +178,13 @@
                                                     style="border-collapse: collapse;">
                                                     <thead>
                                                         <tr>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Sr. No.
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Sr. No.
                                                             </th>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Name of
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Name of
                                                                 Water
                                                                 Pump & Water Storage Tank
                                                             </th>
@@ -154,10 +192,14 @@
                                                                 style="border: 1px solid #000; text-align: center; vertical-align:middle; text-align:center">
                                                                 Capacity
                                                             </th>
-                                                            <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Action</th>
+                                                            <th rowspan="2"
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                Action</th>
                                                         </tr>
                                                         @foreach ($units as $unit)
-                                                            <th style="border: 1px solid #000; vertical-align:middle; text-align:center">{{ $unit->unit_name }}
+                                                            <th
+                                                                style="border: 1px solid #000; vertical-align:middle; text-align:center">
+                                                                {{ $unit->unit_name }}
                                                             </th>
                                                         @endforeach
                                                     </thead>
@@ -166,17 +208,25 @@
                                                             <td style="border: 1px solid #000;">1</td>
                                                             <td style="border: 1px solid #000;">
                                                                 <div class="form-input">
-                                                                    <textarea type="text" class="form-control" style="resize: none;" name="fire_pump_details[1]"></textarea>
+                                                                    <textarea type="text" class="form-control" style="resize: none;" name="fire_pump_details[1]">{{ old('fire_pump_details.1') }}</textarea>
                                                                 </div>
+                                                                @error('fire_pump_details.1')
+                                                                    <div class="error">{{ $message }}</div>
+                                                                @enderror
                                                             </td>
                                                             @foreach ($units as $index => $unit)
                                                                 <td style="border: 1px solid #000;">
                                                                     <div class="form-input">
                                                                         <input type="number" class="form-control"
-                                                                            name="fire_pump_details_unit_{{ $index + 1 }}[1]">
+                                                                            name="fire_pump_details_unit_{{ $index + 1 }}[1]"
+                                                                            value="{{ old('fire_pump_details_unit_' . ($index + 1) . '.1') }}">
                                                                     </div>
+                                                                    @error('fire_pump_details_unit_' . ($index + 1) . '.1')
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </td>
                                                             @endforeach
+
                                                             <td style="border: 1px solid #000; margin:10px;">
                                                                 <i id="firepump_addrow"
                                                                     class="fas fa-plus-circle text-primary"

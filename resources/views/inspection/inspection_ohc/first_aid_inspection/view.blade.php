@@ -80,7 +80,7 @@
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ admin_url($inspection_file->requestor_file_path) }}"
+                                            <img src="{{ admin_url($inspection_file) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                         </div>
                                     </div>
@@ -111,7 +111,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($verified_by->requestor_file_path) }}" alt="Signature Upload"
+                                                            <img src="{{ admin_url($verified_by) }}" alt="Signature Upload"
                                                                 style="width: 100px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
