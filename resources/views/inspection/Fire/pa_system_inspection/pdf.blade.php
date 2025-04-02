@@ -24,16 +24,23 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no }}
+                            {{ displaydateformat($value->date_of_inspection) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ displaydateformat($value->next_due) }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_data }}
+                            {{ $value->location_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->shift }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->unit_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->frequency_name }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
                             {{ getInspectionStatus($value->inspection_status); }}

@@ -27,7 +27,7 @@
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                <input type="text" name="date_of_inspection" id = "date_of_inspection"
                                                     class="form-control">
                                             </div>
                                         </div>
@@ -157,7 +157,10 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            flatpickr("#issue_date", {
+            flatpickr("#date_of_inspection", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#next_due", {
                 dateFormat: "d-m-Y",
             });
             $(function() {
@@ -193,12 +196,13 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.inspection_date = $('#inspection_date').val();
+                            d.date_of_inspection = $('#date_of_inspection').val();
                             d.next_due = $('#next_due').val();
                             d.location = $('#location').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
