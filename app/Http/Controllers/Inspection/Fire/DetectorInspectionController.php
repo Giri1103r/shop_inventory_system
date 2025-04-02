@@ -13,17 +13,18 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
-use App\Models\Inspection\Fire\DetectorInspection;
+use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Fire\DetectorInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\DetectorInspectionDetails;
-use App\Models\Inspection\Fire\DetectorType;
-use App\Models\Inspection\InspectionStaticDocno;
 
 class DetectorInspectionController extends Controller
 {
@@ -228,8 +229,51 @@ class DetectorInspectionController extends Controller
         try {
 
 
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'requried',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'department.*' => 'required',
+                'resource_code.*' => 'required',
+                'detector_type.*' => 'required',
+                'physical_condition.*' => 'required',
+                'cable_condition.*' => 'required',
+                'response_indicator.*' => 'required',
+                'working_status.*' => 'required',
+                'remarks.*' => 'required',
+            ];
 
-            
+            $messages = [
+                'issue_date.required' => 'Issue Date is required.',
+                'rev_date.required' => 'Revision Date is required.', // Fixed the message for rev_date
+                'inspection_date.required' => 'Inspection Date is required.',
+                'location_id.required' => 'Location is required.',
+                'shift_id.required' => 'Shift is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'unit_id.required' => 'Unit is required.',
+                'department.*.required' => 'Department is required for all entries.',
+                'resource_code.*.required' => 'Resource Code is required for all entries.',
+                'detector_type.*.required' => 'Detector Type is required for all entries.',
+                'physical_condition.*.required' => 'Physical Condition is required for all entries.',
+                'cable_condition.*.required' => 'Cable Condition is required for all entries.',
+                'response_indicator.*.required' => 'Response Indicator is required for all entries.',
+                'working_status.*.required' => 'Working Status is required for all entries.',
+                'remarks.*.required' => 'Remarks are required for all entries.',
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            dd(2);
+
 
             $inspection = $this->detector->store();
             $inspection_type = DETECTOR_INSPECTION;
