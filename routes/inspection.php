@@ -49,6 +49,7 @@ use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
 use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
 use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
+use App\Http\Controllers\Inspection\Ohc\CurrentNewExtCodeDialingController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -813,4 +814,11 @@ Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
     Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
     Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
     Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
+});
+
+
+Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
+    Route::get('list', [CurrentNewExtCodeDialingController::class, 'Index']);
+    Route::get('add', [CurrentNewExtCodeDialingController::class, 'add']);
+
 });
