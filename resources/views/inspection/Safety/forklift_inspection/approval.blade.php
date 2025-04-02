@@ -55,7 +55,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->date) }}
+                                                    {{ Displaydateformat($inspection_details->inspection_date) }}
                                                 </div>
                                             </div>
                                         </div>

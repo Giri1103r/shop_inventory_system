@@ -127,11 +127,11 @@
                                                         Name</label>
 
 
-                                                    <select name="hospital_name" id="hospital_name"
+                                                    <select name="hospital_id" id="hospital_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the Hospital Name</option>
                                                         @foreach ($hospital as $list)
-                                                            <option value="{{ $list->id }}">
+                                                            <option value="{{ encryptId($list->id) }}">
                                                                 {{ $list->hospital_name }}
                                                             </option>
                                                         @endforeach
@@ -160,11 +160,11 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 hospital_name " style="display: none ">
+                                            <div class="col-md-4 refered_to " style="display: none ">
                                                 <div class="form-group form-input">
                                                     <label for="follow" class="form-label require">Refered To</label>
-                                                    <input type="text" name="hospital_name" class="form-control"
-                                                        id="hospital_name">
+                                                    <input type="text" name="refered_to" class="form-control"
+                                                        id="refered_to">
                                                 </div>
 
                                             </div>
@@ -246,9 +246,9 @@
                 var selectedValue = $(this).val();
 
                 if (selectedValue == '1') {
-                    $('.hospital_name').show();
+                    $('.refered_to').show();
                 } else {
-                    $('.hospital_name').hide();
+                    $('.refered_to').hide();
                 }
             });
         });
@@ -350,6 +350,14 @@
                     emp_id: {
                         required: true,
                     },
+                    hospital_id: {
+                        required:true,
+                    },
+                    cheif_complaint: {
+                        required:true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
                     date_of_incident: {
                         required: true,
                     },
@@ -394,6 +402,14 @@
                     },
                     treatment_provided: {
                         required: "Please specify the treatment provided.",
+                    },
+                    hospital_id: {
+                        required: "Hospital Name is required.",
+                    },
+                    cheif_complaint: {
+                        required:"Cheif Complaint is required.",
+                        minlength: "Minimum 3 characters are required",
+                        maxlength:"Maximum 100 characters are required",
                     },
                     treatment_start_time: {
                         required: "Treatment start time is required.",

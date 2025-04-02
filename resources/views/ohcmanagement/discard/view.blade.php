@@ -37,21 +37,21 @@
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
                                         <div class="view_data">
-                                            {{ getUnitname(isset($user_discard->unit_id) ? $user_discard->unit_id : '') }}
+                                            {{ getMedicinename(isset($user_discard->medicine_id) ? $user_discard->medicine_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
                                         <div class="view_data">
-                                            {{ getDepartment(isset($user_discard->department_id) ? $user_discard->department_id : '') }}
+                                            {{ (isset($user_discard->quantity) ? $user_discard->quantity : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Discard Date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($user_discard->discard_date) ? $user_discard->discard_date : '' }}
+                                            {{ Displaydateformat(isset($user_discard->discard_date) ? $user_discard->discard_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -79,62 +79,42 @@
                                     </div>
 
                                 </div>
-
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine Details</h4>
+                                        <h4 class="text-white">Status Logs</h4>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
-                                        <div class="view_data">
-                                            {{ getmedicinename(isset($discard->medicine_id) ? $discard->medicine_id : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Available Quantity') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($discard->available_quantity) ? $discard->available_quantity : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($discard->quantity) ? $discard->quantity : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($discard->remarks) ? $discard->remarks: '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created By') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($discard->created_by) ? $discard->created_by : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                        <div class="view_data">
-                                            {{ displayDateformat($discard->created_at) }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.status') }}</label>
-                                        <div class="view_data">
-                                            @if ($user_discard->status == 1)
-                                                {{ __('common.active') }}
-                                            @else
-                                                {{ __('common.inactive') }}
-                                            @endif
 
-                                        </div>
-                                    </div>
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead class="bg-secondary" style="color: #ffff">
+                                                <tr>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Remarks</th>
+                                                    <th>Approver Name</th>
+                                                    <th>Approver Date</th>
+                                                </tr>
+                                            </thead>
 
+                                            <tbody>
+                                                @foreach ($logData as $log)
+                                                <tr>
+                                                    <td>{{getDiscardStatus( isset($log['from_status']) ? $log['from_status'] : '-') }}</td>
+                                                    <td>{{ getDiscardStatus(isset($log['to_status']) ? $log['to_status'] : '-' )}}</td>
+                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
+                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
+
+
+
 
 
                             </div>

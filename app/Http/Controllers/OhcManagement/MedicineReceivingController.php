@@ -7,7 +7,7 @@ use App\Mail\Ohc\MedicineReceivingRequestEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
-use App\Models\Ohcmanagement\ExpireMedicine;
+use App\Models\OhcManagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineReceiving;
@@ -828,7 +828,8 @@ class MedicineReceivingController extends Controller
                 $remarks = $request->remarks;
 
                 $data = $this->medicine_receiving->selectOne($id);
-                $this->expire_medicine->store($data);
+                $unitIds = $this->unit->getUnitcount();
+                $this->expire_medicine->store($data,$unitIds);
                 $ids = $data->medicine_id;
 
 
@@ -900,13 +901,13 @@ class MedicineReceivingController extends Controller
                 notificationSave($notificationData);
                 return response()->json(['msg' => 'Stock request closed successfully!']);
             } catch (\Exception $ex) {
-              dd($ex);
+              report($ex);
 
                 return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
             }
 
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
 
             return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
         }

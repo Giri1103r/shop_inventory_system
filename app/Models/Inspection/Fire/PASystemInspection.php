@@ -2,9 +2,9 @@
 
 namespace App\Models\Inspection\Fire;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class PASystemInspection extends Model
 {
@@ -13,7 +13,7 @@ class PASystemInspection extends Model
 
     protected $fillable = [
         'id',
-        'document_number',
+        'doc_no',
         'issue_date',
         'revision_data',
         'date_of_inspection',
@@ -34,8 +34,8 @@ class PASystemInspection extends Model
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
-        'l1_manager_verification',
-        'l2_manager_verification',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -60,22 +60,18 @@ class PASystemInspection extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
+                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
                 $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_pa_system.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->doc_no) && $request->doc_no) {
+            $query = $query->where('inspection_fire_pa_system.doc_no', 'LIKE', '%' . $request->doc_no . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->where('inspection_fire_pa_system.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
-        if (isset($request->revision_data) && $request->revision_data) {
-            $query = $query->where('inspection_fire_pa_system.revision_data', 'LIKE', '%' . $request->revision_data . '%');
-        }
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_pa_system.inspection_status', decryptId($request->inspection_status));
         }
@@ -84,14 +80,11 @@ class PASystemInspection extends Model
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "revision_data":
-                    $query->orderBy('inspection_fire_pa_system.revision_data', $columnorder);
-                    break;
                 case "issue_date":
                     $query = $query->orderBy('inspection_fire_pa_system.issue_date', $columnorder);
                     break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_fire_pa_system.document_number', $columnorder);
+                case "doc_no":
+                    $query = $query->orderBy('inspection_fire_pa_system.doc_no', $columnorder);
                     break;
                 case "inspection_status":
                     $query = $query->orderBy('inspection_fire_pa_system.inspection_status', $columnorder);
@@ -127,16 +120,17 @@ class PASystemInspection extends Model
 
     public function store()
     {
+
         $request = request();
 
         $data = array(
-            'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
-            'revision_data' => $request->revision_data,
-            'date_of_inspection' => $request->inspection_date,
+            'doc_no' => $request->doc_no,
+            'issue_date' => DBdateformat($request->issue_date),
+            'revision_data' => $request->rev_date,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' => DBdateformat($request->next_due),
             'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
@@ -156,22 +150,17 @@ class PASystemInspection extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
+                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
                 $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_pa_system.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->doc_no) && $request->doc_no) {
+            $query = $query->where('inspection_fire_pa_system.doc_no', 'LIKE', '%' . $request->doc_no . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->where('inspection_fire_pa_system.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
-        if (isset($request->revision_data) && $request->revision_data) {
-            $query = $query->where('inspection_fire_pa_system.revision_data', 'LIKE', '%' . $request->revision_data . '%');
-        }
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_pa_system.inspection_status', decryptId($request->inspection_status));
         }

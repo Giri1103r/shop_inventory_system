@@ -39,7 +39,10 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -47,7 +50,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date" value="{{ old('issue_date') }}">
+                                                        @error('issue_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -64,7 +70,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control">
+                                                        class="form-control" value="{{ old('inspection_date') }}">
+                                                        @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -72,7 +81,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                     <input type="text" name="resource_code" id = "resource_code"
-                                                        class="form-control">
+                                                        class="form-control"  value="{{ old('resource_code') }}">
+                                                        @error('resource_code')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -84,10 +96,13 @@
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}">
+                                                            <option value="{{ encryptId($location->id) }}"   {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('location_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -97,10 +112,13 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
+                                                            <option value="{{ encryptId($unit->id) }}"   {{ old('unit_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -209,115 +227,119 @@
     @stop
 
     @push('script')
-        <script type="text/javascript" nonce="projectcab">
+        <script>
             $(document).ready(function() {
+                // Reset form on button click
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
                     location.reload();
                 });
+
+                // Initialize Flatpickr for date fields
                 flatpickr("#issue_date", {
                     dateFormat: "d-m-Y",
                 });
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
-            });
-            $(function() {
-                $(function() {
-                    $.validator.addMethod("noSpaces", function(value, element) {
-                        return this.optional(element) || value.trim().length > 0;
-                    }, "This field cannot contain only spaces");
 
-                    $('#safetygalleryAdd').validate({
-                        rules: {
-                            doc_no: {
-                                required: true,
-                                minlength: 3,
-                                maxlength: 100,
-                                noSpaces: true,
-                            },
-                            issue_date: {
-                                required: true,
-                            },
-                            inspection_date: {
-                                required: true,
-                            },
-                            location_id: {
-                                required: true,
-                            },
-                            unit_id: {
-                                required: true,
-                            },
-                            signature_image: {
-                                required: true,
-                            },
-                            resource_code: {
-                                required: true,
-                                remote: {
-                                    url: '{{ admin_url('safety/safety-gallery-inspection/unique') }}',
-                                    type: 'post',
-                                    data: {
-                                        resource_code: function() {
-                                            return $('#resource_code').val();
-                                        }
+                // Custom validation method
+                $.validator.addMethod("noSpaces", function(value, element) {
+                    return this.optional(element) || value.trim().length > 0;
+                }, "This field cannot contain only spaces");
+
+                // Form validation
+                $('#safetygalleryAdd').validate({
+                    rules: {
+                        doc_no: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                        issue_date: {
+                            required: true,
+                        },
+                        inspection_date: {
+                            required: true,
+                        },
+                        location_id: {
+                            required: true,
+                        },
+                        unit_id: {
+                            required: true,
+                        },
+                        signature_image: {
+                            required: true,
+                        },
+                        resource_code: {
+                            required: true,
+                            remote: {
+                                url: '{{ admin_url('safety/safety-gallery-inspection/unique') }}',
+                                type: 'post',
+                                data: {
+                                    resource_code: function() {
+                                        return $('#resource_code').val();
                                     }
+                                },
+                                // Ensure proper error handling for remote validation
+                                dataFilter: function(response) {
+                                    // Assuming the server returns JSON with { valid: true/false }
+                                    var json = JSON.parse(response);
+                                    return json.valid ? "true" : '"Resource Code already exists"';
                                 }
-                            },
-
-                        },
-                        messages: {
-                            doc_no: {
-                                required: "{{ __('Document Number is Required') }}",
-                                minlength: "Minimum Characters should be 3",
-                                maxlength: "Maximum Characters should not exceed 100",
-                            },
-                            issue_date: {
-                                required: "{{ __('Date Of Audit is required') }}",
-                            },
-                            inspection_date: {
-                                required: "Inspeciton Date is required",
-                            },
-                            location_id: {
-                                required: "Location is required",
-                            },
-                            unit_id: {
-                                required: "Unit is required",
-                            },
-                            signature_image: {
-                                required: "Signature is Required",
-                            },
-                            resource_code: {
-                                required: 'Recource Code is requried',
-                                remote: 'Resource Code already exists',
                             }
-
-                        },
-                        errorElement: 'span',
-                        errorPlacement: function(error, element) {
-                            error.addClass('invalid-feedback');
-                            element.closest('.form-input').append(error);
-                        },
-                        highlight: function(element, errorClass, validClass) {
-                            $(element).addClass('is-invalid');
-                        },
-                        unhighlight: function(element, errorClass, validClass) {
-                            $(element).removeClass('is-invalid');
-                        },
-                        submitHandler: function(form) {
-                            console.log('test');
-                            form.submit();
-
-                        },
-                        invalidHandler: function(event, validator) {
-                            var errors = validator.numberOfInvalids();
-                            console.log(errors + " field(s) are invalid");
-                            validator.errorList.forEach(function(error) {
-                                console.log("Field: " + error.element.name + ", Error: " +
-                                    error
-                                    .message);
-                            });
                         }
-                    });
+                    },
+                    messages: {
+                        doc_no: {
+                            required: "{{ __('Document Number is Required') }}",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        issue_date: {
+                            required: "{{ __('Date Of Audit is required') }}",
+                        },
+                        inspection_date: {
+                            required: "Inspection Date is required",
+                        },
+                        location_id: {
+                            required: "Location is required",
+                        },
+                        unit_id: {
+                            required: "Unit is required",
+                        },
+                        signature_image: {
+                            required: "Signature is required",
+                        },
+                        resource_code: {
+                            required: 'Resource Code is required',
+                            remote: 'Resource Code already exists',
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        console.log('Form is valid, submitting...');
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        console.log(errors + " field(s) are invalid");
+                        validator.errorList.forEach(function(error) {
+                            console.log("Field: " + error.element.name + ", Error: " + error
+                                .message);
+                        });
+                    }
                 });
             });
         </script>

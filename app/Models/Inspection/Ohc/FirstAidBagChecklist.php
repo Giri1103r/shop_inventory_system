@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inspection\ohc;
+namespace App\Models\Inspection\Ohc;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -131,7 +132,7 @@ class HooterInspectionController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hooter-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/hooter-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -152,7 +153,7 @@ class HooterInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.hooter_inspection.list', $data);
+        return view('inspection.fire.hooter_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -172,7 +173,7 @@ class HooterInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.hooter_inspection.add', $data);
+            return view('inspection.fire.hooter_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -204,6 +205,44 @@ class HooterInspectionController extends Controller
     {
         try {
 
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'requried',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'resource_code.*' => 'required',
+                'check_items.*' => 'required',
+                'quantity.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'resource_code.*.required' => 'Resource code is required',
+                'check_items.*.required' => 'Condition of the hooter is required',
+                'quantity.*.required' => 'Quantity is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $inspection = $this->hooter->store();
             $inspection_type = HOOTER_INSPECTION;
             $id = $inspection->id;
@@ -213,7 +252,7 @@ class HooterInspectionController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -285,7 +324,7 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.view', $data);
+            return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -311,7 +350,7 @@ class HooterInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.hooter_inspection.approve', $data);
+            return view('inspection.fire.hooter_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -749,7 +788,7 @@ class HooterInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -769,7 +808,7 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,HOOTER_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
                 $forklift_details = $this->hooter->selectOne($id);
                 $inspection = $this->hooter_details->GetDetails($forklift_details->id);
 
@@ -793,7 +832,7 @@ class HooterInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.hooter_inspection.viewPdf',$data);
+            $html = view('inspection.fire.hooter_inspection.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

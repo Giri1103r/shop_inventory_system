@@ -24,9 +24,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
+                                            <label for="doc_no"
                                                 class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                            <input type="text" name="doc_no" id="doc_no"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
@@ -34,11 +34,6 @@
                                                 class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        {{-- <div class="col-md-3 mb-3 form-input">
-                                            <label for="revision_data"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="revision_data" id="revision_data" class="form-control">
-                                        </div> --}}
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
@@ -75,9 +70,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.document_number') }}</th>
+                                        <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.revision_data') }}</th>
+                                        <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -135,7 +130,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
+                            d.doc_no = $('#doc_no').val();
                             d.issue_date = $('#issue_date').val();
                             d.revision_data = $('#revision_data').val();
                             d.inspection_status = $('#inspection_status').val();
@@ -154,8 +149,8 @@
                         },
 
                         {
-                            data: 'document_number',
-                            name: 'document_number',
+                            data: 'doc_no',
+                            name: 'doc_no',
                         },
                         {
                             data: 'issue_date',
@@ -198,7 +193,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
                                         revision_data = $('#revision_data').val();
                                         inspection_status = $('#inspection_status').val();
@@ -208,7 +203,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/pa-system-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&doc_no=' + doc_no +
                                             '&issue_date=' + issue_date +
                                             '&revision_data=' + revision_data +
                                             '&inspection_status=' + inspection_status
@@ -219,7 +214,7 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        doc_no = $('#doc_no').val();
                                         issue_date = $('#issue_date').val();
                                         revision_data = $('#revision_data').val();
                                         inspection_status = $('#inspection_status').val();
@@ -228,7 +223,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/pa-system-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&doc_no=' + doc_no +
                                             '&issue_date=' + issue_date +
                                             '&revision_data=' + revision_data +
                                             '&inspection_status=' + inspection_status

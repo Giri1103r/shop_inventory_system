@@ -6,11 +6,12 @@ use Exception;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Inspection\Safety\OHSPlantSummaryReport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Safety\OHSPlantSummaryReport;
 
 class OHSPlantSummaryReportController extends Controller
 {
@@ -145,9 +146,62 @@ class OHSPlantSummaryReportController extends Controller
     public function store(Request $request)
     {
         try {
+
+
+            $rules = [
+                'doc_no' => 'required',
+                'issue_date' => 'required',
+                'inspection_date' => 'required',
+                'updated_frequency' => 'required',
+                'description.*' => 'required',
+                'unit_1.*' => 'required',
+                'unit_2.*' => 'required',
+                'unit_3.*' => 'required',
+                'unit_4.*' => 'required',
+                'total_quantity.*' => 'required',
+                'fire_pump_details.*' => 'required',
+                'fire_pump_details_unit_1.*' => 'required',
+                'fire_pump_details_unit_2.*' => 'required',
+                'fire_pump_details_unit_3.*' => 'required',
+                'fire_pump_details_unit_4.*' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (is_null($user->signature_upload)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is required.',
+                'inspection_date.required' => 'Inspection Date is required.',
+                'updated_frequency.required' => 'Updated Frequency is required.',
+                'description.*.required' => 'Description is required.',
+                'unit_1.*.required' => 'Unit 1 is required.',
+                'unit_2.*.required' => 'Unit 2 is required.',
+                'unit_3.*.required' => 'Unit 3 is required.',
+                'unit_4.*.required' => 'Unit 4 is required.',
+                'total_quantity.*.required' => 'Total Quantity is required.',
+                'fire_pump_details.*.required' => 'Fire Pump Details are required.',
+                'fire_pump_details_unit_1.*.required' => 'Unit 1 is required.',
+                'fire_pump_details_unit_2.*.required' => 'Unit 2 is required.',
+                'fire_pump_details_unit_3.*.required' => 'Unit 3 is required.',
+                'fire_pump_details_unit_4.*.required' => 'Unit 4 is required.',
+                'signature_upload' => 'Signature is required.',
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $ohc_plant_summary = $this->ohsreport->store();
-            $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+           
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('safety/ohc-plant-summary/list'));
         } catch (Exception $ex) {

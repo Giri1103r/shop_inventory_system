@@ -74,10 +74,6 @@ class MSDSDetails extends Model
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('status') && $request->status) {
-
-            $query = $query->where('status', decryptId($request->status));
-        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -111,40 +107,9 @@ class MSDSDetails extends Model
         return $this->create($insert_array);
     }
 
-    public function updates($id)
-    {
-        $request = request();
-
-        $update_data = array(
-            'document_number' => $request->document_number,
-            'issue_date' => $request->issue_date,
-            'updated_by' => Auth::id()
-        );
-
-        $result = $this->where('id', $id)->update($update_data);
-        return $result;
-    }
-
     public function selectOne($id)
     {
         return $this->where('id', $id)->first();
-    }
-
-    public function statuschange($id)
-    {
-        $request = request();
-
-        $type = $request->types;
-        if ($type == 1) {
-            $update_data = array(
-                'status' => 0,
-            );
-        } else {
-            $update_data = array(
-                'status' => 1,
-            );
-        }
-        return $this->where('id', $id)->update($update_data);
     }
 
     public function exportdata()
@@ -169,9 +134,6 @@ class MSDSDetails extends Model
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
         }
 
         $query->orderBy('id', 'DESC');

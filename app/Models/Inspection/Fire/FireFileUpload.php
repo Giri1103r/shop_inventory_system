@@ -64,7 +64,7 @@ class FireFileUpload extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
-                $this->create($insert_array);
+                return $this->create($insert_array);
             }
         } catch (Exception $ex) {
             report($ex);

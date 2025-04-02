@@ -159,6 +159,10 @@
             content: '*';
             color: red;
         }
+        .error{
+            color: red;
+            padding-top: 3px;
+        }
 
 
         /* Tooltip styling */

@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\ohc;
+namespace App\Http\Controllers\Inspection\Ohc;
 
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
-use Yajra\DataTables\Facades\DataTables;
 
 class FirstAidBagChecklistController extends Controller
 {
@@ -105,6 +106,39 @@ class FirstAidBagChecklistController extends Controller
     public function Store(Request $request)
     {
         try {
+
+            $rules = [
+                'inspection_date' => 'required',
+                'next_due' => 'required',
+                'available_quantity.*' => 'required',
+                'expired_date.*' => 'required',
+                'emp_id.*' => 'required',
+                'remarks.*' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (is_null($user->signature_upload)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'inspection_date.required' => 'Inspection Date is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'available_quantity.*.required' => 'Available Quantity is required',
+                'expired_date.*.required' => 'Expired Date is required',
+                'remarks.*' => 'Remarks is required',
+                'emp_id.*' => 'Employee is required',
+                'signature_upload' => 'Signature is required.',
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
             $store = $this->medicine_checklist->store();
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);

@@ -46,6 +46,9 @@ use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringCont
 use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
+use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
+use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
+use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -602,6 +605,47 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [SprinklarSystemController::class, 'ExportExcel']);
         Route::GET('export/pdf', [SprinklarSystemController::class, 'ExportPDF']);
     });
+
+    Route::group(['prefix' => 'certified-fire-fighter/'], function () {
+        Route::get('list', [CertifiedFireFighterController::class, 'index']);
+        Route::post('list', [CertifiedFireFighterController::class, 'index']);
+        Route::get('add', [CertifiedFireFighterController::class, 'add']);
+        Route::post('add/submit', [CertifiedFireFighterController::class, 'store']);
+        Route::get('view/{id}', [CertifiedFireFighterController::class, 'view']);
+        Route::post('delete', [CertifiedFireFighterController::class, 'delete']);
+        Route::get('export/excel', [CertifiedFireFighterController::class, 'exportExcel']);
+        Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
+        Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
+    });
+    Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
+        Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::get('add', [FireSafetyEquipmentsController::class, 'add']);
+        Route::post('add/submit', [FireSafetyEquipmentsController::class, 'store']);
+        Route::get('view/{id}', [FireSafetyEquipmentsController::class, 'view']);
+        Route::post('delete', [FireSafetyEquipmentsController::class, 'delete']);
+        Route::get('export/excel', [FireSafetyEquipmentsController::class, 'exportExcel']);
+        Route::get('export/pdf', [FireSafetyEquipmentsController::class, 'exportPdf']);
+        Route::post('status', [FireSafetyEquipmentsController::class, 'statusChange']);
+    });
+
+    Route::group(['prefix' => 'detector-inspection/'], function () {
+        Route::GET('list', [DetectorInspectionController::class, 'Index']);
+        Route::POST('list', [DetectorInspectionController::class, 'Index']);
+        Route::GET('add', [DetectorInspectionController::class, 'Add']);
+        Route::POST('add/submit', [DetectorInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [DetectorInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [DetectorInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [DetectorInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [DetectorInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [DetectorInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [DetectorInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [DetectorInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [DetectorInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [DetectorInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [DetectorInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [DetectorInspectionController::class, 'GetDepartment']);
+    });
 });
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
@@ -630,16 +674,7 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
 });
-Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
-    Route::GET('list', [MonthlyMedicineStoreController::class, 'Index']);
-    Route::POST('list', [MonthlyMedicineStoreController::class, 'Index']);
-    Route::GET('add', [MonthlyMedicineStoreController::class, 'Add']);
-    Route::POST('add/submit', [MonthlyMedicineStoreController::class, 'Store']);
-    Route::GET('view/{id}', [MonthlyMedicineStoreController::class, 'View']);
-    Route::GET('export/excel', [MonthlyMedicineStoreController::class, 'ExportExcel']);
-    Route::GET('export/pdf', [MonthlyMedicineStoreController::class, 'ExportPdf']);
-    Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
-});
+
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {
     Route::get('list', [HealthInstrumentCalibrationController::class, 'index']);
     Route::post('list', [HealthInstrumentCalibrationController::class, 'index']);
@@ -748,7 +783,6 @@ Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], funct
     Route::get('generalpdf/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'generalpdf']);
     Route::get('export/pdf', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportPDF']);
     Route::get('export/excel', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportExcel']);
-
 });
 
 
@@ -779,5 +813,4 @@ Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
     Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
     Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
     Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
-
 });

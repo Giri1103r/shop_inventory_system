@@ -11,12 +11,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Admin\AdminController;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
-use App\Models\Inspection\Safety\SafetyGalleryInspection;
 use App\Models\Inspection\Safety\SignatureUpload;
+use App\Models\Inspection\Safety\SafetyGalleryInspection;
 
 class SafetyGalleryInsepctionController extends Controller
 {
@@ -165,6 +166,41 @@ class SafetyGalleryInsepctionController extends Controller
     public function store(Request $request)
     {
         try {
+
+            $rules = [
+                'doc_no' => 'required',
+                'issue_date' => 'required',
+                'resource_code' => 'required',
+                'location_id' => 'required',
+                'unit_id' => 'required',
+                'inspection_date' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (!$user || !$user->signature_upload) {
+                            if (empty($value)) {
+                                $fail('Signature is required.');
+                            }
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is Required',
+                'resource_code.required' => 'Resource code is Required',
+                'location_id.required' => 'Location is Required',
+                'inspection_date.required' => 'Inspection Date is Required',
+                'unit_id.required' => 'Unit is Required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $safety_gallery_inspection = $this->safetygallery->store();
             $id = $safety_gallery_inspection->id;
             $ehsOfficer = GetEHSOfficer();

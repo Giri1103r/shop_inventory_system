@@ -19,7 +19,10 @@ class UserDiscard extends Model
         'discard_date',
         'approved_by',
         'approve_status',
+        'unit_id',
+        'remarks',
         'approver_remarks',
+        'expire_id',
         'status',
         'trash',
         'created_by',
@@ -71,20 +74,23 @@ class UserDiscard extends Model
         ];
     }
 
-    public function store($expire_medicine)
+    public function store($id, $remarks,$expire_medicine)
     {
         $request = request();
         $today = Carbon::today();
+
         $insert_array = [
             'medicine_id' => $expire_medicine->medicine_id,
-            'batch_no' => $expire_medicine->batch_no,
-            'discard_date' => $today,
+            'quantity' => $request->quantity,
+            'discard_date' =>  $today,
+            'unit_id' =>  decryptId($request->unit_id),
             'expire_medicine_id' => $expire_medicine->id,
-            'approved_by' => Auth::id(),
+            'expire_id'=> $id,
+            'remarks'=>$request->remarks,
             'approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
-
             'created_by' => Auth::id(),
         ];
+       return $this->create($insert_array);
     }
     public function selectOne($id)
     {
@@ -100,6 +106,13 @@ class UserDiscard extends Model
     public function ehsapproval($id, $approveStatus)
     {
         return $this->where('id', $id)->update(['approve_status' => $approveStatus]);
+    }
+    public function ehsheadapproval($id, $updateData)
+    {
+
+        $data  = $this->select('ohc_management_discard.*')->where('id', $id)
+            ->update(['approve_status'=>$updateData['approve_status'],'approver_remarks'=>$updateData['remarks'],'approved_by'=>Auth::id()]);
+        return $data;
     }
     public function statuschange($id)
     {

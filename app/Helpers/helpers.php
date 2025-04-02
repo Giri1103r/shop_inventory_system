@@ -41,6 +41,7 @@ use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\audit\Master\Task;
+use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\DailyVitalEquipment;
@@ -1808,6 +1809,19 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetEHSHead')) {
+        function GetEHSHead()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_EHS_HEAD . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
     if (!function_exists('GetLevelOneManager')) {
         function GetLevelOneManager()
         {
@@ -2108,7 +2122,7 @@ if (!function_exists('getMonth')) {
                     }
 
                 case OHC_TYPE_FLOOR_STRETCHER:
-                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', OHC_TYPE_FLOOR_STRETCHER)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {
@@ -2121,9 +2135,10 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+                    case FIRE_PA_SYSTEM_INSPECTION:
+                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
+                            ->where('status', 1)->where('trash', 'NO')->first();
 
-                    case GEMBA_WALK:
-                        $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
                         if ($name == null) {
                             $name = User::where('id', $userid)->first();
                             if ($name == null) {
@@ -2133,6 +2148,19 @@ if (!function_exists('getMonth')) {
                         } else {
                             return $name->file_path;
                         }
+
+
+                case GEMBA_WALK:
+                    $name = GembaWalkChecklistFile::where('emp_id', $userid)->where('gemba_walk_id', $id)->where('trash', 'NO')->first();
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -2185,6 +2213,21 @@ if (!function_exists('getMonth')) {
                 return 'Medical Assistant /Floor Manager rejected';
             } else if ($id == MEDICAL_ASSISTANT_APPROVED) {
                 return 'Medical Assistant /Floor Manager Approved';
+            }
+
+            return 'OHC Creation';
+        }
+    }
+
+    if (!function_exists('getDiscardStatus')) {
+        function getDiscardStatus($id)
+        {
+            if ($id == OHC_DISCARD_EHS_APPROVAL_PENDING) {
+                return 'EHS Head Approval Pending';
+            } else if ($id == OHC_DISCARD_EHS_APPROVED) {
+                return 'EHS Head Approved';
+            } else if ($id == OHC_DISCARD_EHS_REJECTED) {
+                return 'EHS Head rejected';
             }
 
             return 'OHC Creation';
@@ -2325,6 +2368,9 @@ if (!function_exists('getMonth')) {
                 case FIRE_ALARM_INSPECTION:
                     return 'FAI-000001';
                     break;
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    return 'PA-000001';
+                    break;
             }
         }
     }
@@ -2336,6 +2382,9 @@ if (!function_exists('getMonth')) {
             switch ($id) {
                 case HOOTER_INSPECTION:
                     return 'Hooter-Inspection';
+                    break;
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    return 'PA-System-Inspection';
                     break;
 
                 default:
@@ -2389,6 +2438,16 @@ if (!function_exists('getMonth')) {
             }
 
             return $audit_task_name->task_name;
+        }
+    }
+    if (!function_exists('getDetectorName')) {
+        function getDetectorName($id)
+        {
+            $data = DetectorType::where('id', $id)->first();
+
+            if ($data) {
+                return $data->detector_type;
+            }
         }
     }
 }

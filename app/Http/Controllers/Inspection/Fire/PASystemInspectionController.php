@@ -54,7 +54,7 @@ class PASystemInspectionController extends Controller
     }
 
     public function Index(Request $request)
-    { 
+    {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -153,7 +153,7 @@ class PASystemInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.pa_system_inspection.list', $data);
+        return view('inspection.fire.pa_system_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -173,7 +173,7 @@ class PASystemInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.pa_system_inspection.add', $data);
+            return view('inspection.fire.pa_system_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -199,35 +199,17 @@ class PASystemInspectionController extends Controller
         }
     }
 
-    public function GetDepartment(Request $request)
-    {
-        try {
-            $department = $this->department->getdepartment();
-            $departments = [];
-
-            foreach ($department as $department) {
-                $departments[] = [
-                    'id' => encryptId($department->id),
-                    'department_name' => $department->department_name,
-                ];
-            }
-
-            return response()->json($departments);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Something went wrong !'], 406);
-        }
-    }
-
     public function Store(Request $request)
     {
         try {
 
             $inspection = $this->pa_system->store();
+
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->pa_system_checklist->store($id);
+
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
@@ -243,7 +225,7 @@ class PASystemInspectionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Fire Extinguisher Inspection",
+                    'message' => "Fire Associate create the Fire PA System Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -254,12 +236,12 @@ class PASystemInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Fire Extinguisher Inspection';
+            $title = 'Fire Associate create the Fire PA System Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -280,7 +262,6 @@ class PASystemInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/pa-system-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -297,6 +278,7 @@ class PASystemInspectionController extends Controller
             $inspection = $this->pa_system->selectOne($id);
             $inspection_details = $this->pa_system_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
+
             $status_log = $this->statusLog->selectOne($id, FIRE_PA_SYSTEM_INSPECTION);
 
             $data = array(
@@ -305,7 +287,7 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.view', $data);
+            return view('inspection.fire.pa_system_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -321,6 +303,7 @@ class PASystemInspectionController extends Controller
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
 
             $inspection = $this->pa_system->selectOne($id);
+
             $inspection_details = $this->pa_system_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_PA_SYSTEM_INSPECTION);
@@ -331,7 +314,7 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.approve', $data);
+            return view('inspection.fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -348,7 +331,7 @@ class PASystemInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully';
+                $message = 'Fire PA System Inspection Approved Successfully';
                 $web_link =   admin_url('fire/pa-system-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -382,7 +365,7 @@ class PASystemInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Fire Extinguisher Inspection',
+                'fire_type' => 'Fire PA System Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -403,7 +386,6 @@ class PASystemInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/pa-system-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -443,7 +425,7 @@ class PASystemInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Fire Extinguisher Inspection',
+                'fire_type' => 'Fire PA System Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -516,7 +498,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -590,7 +572,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -628,7 +610,7 @@ class PASystemInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($status == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully!';
+                $message = 'Fire PA System Inspection Approved Successfully!';
                 $web_link =   admin_url('fire/pa-system-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
@@ -660,7 +642,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -692,6 +674,7 @@ class PASystemInspectionController extends Controller
     {
         try {
             $allData = $this->pa_system->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -721,7 +704,7 @@ class PASystemInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Fire Extinguisher Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire PA System Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -754,7 +737,7 @@ class PASystemInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Fire Extinguisher Inspection",
+                'pagetitle' => "Fire PA System Inspection",
             );
 
             $property = [
@@ -769,12 +752,12 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.Fire.pa_system_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire PA System.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -796,7 +779,7 @@ class PASystemInspectionController extends Controller
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Fire Extinguisher Inspection",
+                    'pagetitle' => "Fire PA System Inspection",
                     'inspection' => $inspection,
                 ];
             }
@@ -807,17 +790,16 @@ class PASystemInspectionController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.pa_system_inspection.viewPdf',$data);
+            $html = view('inspection.fire.pa_system_inspection.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire PA System.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

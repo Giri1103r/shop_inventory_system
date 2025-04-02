@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Inspection\Safety;
 
-use App\Http\Controllers\Admin\AdminController;
 use Exception;
 use App\Models\UploadLog;
 use App\Models\Master\Unit;
@@ -10,18 +9,20 @@ use Illuminate\Http\Request;
 use App\Models\Master\Location;
 use App\Models\Master\ForkLiftType;
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Safety\SafetyInspection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
+use App\Http\Controllers\Admin\AdminController;
+use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
+use App\Models\Inspection\Safety\SignatureUpload;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
 use App\Models\Inspection\Safety\MonthlyForkLiftInspection;
-use App\Models\Inspection\Safety\SignatureUpload;
 
 class MonthlyForkLiftInspectionController extends Controller
 {
@@ -182,6 +183,51 @@ class MonthlyForkLiftInspectionController extends Controller
     public function store(Request $request)
     {
         try {
+
+            $rules = [
+                'doc_no' => 'required',
+                'issue_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'identification_no' => 'required',
+                'forklift_type' => 'required',
+                'capacity' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (!$user || !$user->signature_upload) {
+                            if (empty($value)) {
+                                $fail('Signature is required.');
+                            }
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is Required',
+                'inspection_date.required' => 'Inspection  Date is Required',
+                'location_id.required' => 'Location is Required',
+                'shift_id.required' => 'Shift is Required',
+                'next_due.required' => 'Next due date is Required',
+                'unit_id.required' => 'Unit is Required',
+                'frequency_id.required' => 'Frequency is Required',
+                'forklift_type.required' => 'Forklift Type is Required',
+                'capacity.required' => 'Capacity is Required',
+                'identification_no.required' => 'Identification Number is Required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            
             $forklift_inspection = $this->forklift->store();
             $id = $forklift_inspection->id;
             $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);

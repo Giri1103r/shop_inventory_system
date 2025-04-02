@@ -9,7 +9,16 @@
                 width: 100%
             }
 
+            .red_class td {
+                background-color: rgb(255, 30, 0) !important;
+                color: rgb(255, 251, 251) !important;
+                border-bottom: 0.75px solid rgb(255, 255, 255) !important;
+            }
 
+            .pink_class td {
+                background-color: rgb(248, 163, 5) !important;
+                color: rgb(12, 3, 3) !important;
+            }
         </style>
     @endpush
     <div class="container-fluid">
@@ -173,8 +182,8 @@
                     searchable: false
                 },
                 {
-                    data: 'medicine_id',
-                    name: 'medicine_id'
+                    data: 'medicine',
+                    name: 'medicine'
                 },
 
 
@@ -197,18 +206,21 @@
                     visible: false
                 }
             ],
-            createdRow: function(row, data, dataIndex) {
-                $(row).removeClass('odd even');
-
+            rowCallback: function(row, data, dataIndex) {
+                if (dataIndex % 2 === 0) {
+                    $(row).addClass('even');
+                } else {
+                    $(row).addClass('even');
+                }
                 if (data.row_class) {
                     $(row).css('background-color', data.row_class);
 
                     if (data.row_class === '#FF0000') {
-                        $(row).css('color', '#FFFFFF');
+                        $(row).addClass('red_class');
                     } else if (data.row_class === '#FFA500') {
-                        $(row).css('color', '#000000');
+                        $(row).addClass('pink_class  ');
                     } else {
-                        $(row).css('color', ''); 
+                        $(row).css('color', '');
                     }
                 }
             },
@@ -237,7 +249,7 @@
         $(document).on('click', '.discard', function() {
             var id = $(this).data('id');
             var login_id = $(this).data('login_id');
-
+            var medicine = $(this).data('medicine');
             var title = '{{ __('Do You want to Discard the Medicine Details') }}';
             var text = '{{ __('Submit') }}';
             var btncolor = '#28a745';
@@ -246,84 +258,130 @@
                 title: title,
                 icon: 'warning',
                 html: `
-        <div style="text-align: left;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Enter Quantity:') }}</label>
-            <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%;">
+                        <div style="text-align: left;">
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Select the Unit:') }}</label>
+                            <select name="unit_id" id="unit_id" class="form-control select2" style="width: 100%">
+                                <option value="">Select Unit</option>
+                                @foreach ($unit as $unit)
+                                    <option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>
+                                @endforeach
+                            </select>
 
-            <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>
-            <textarea id="remarks" class="swal2-textarea" placeholder="{{ __('Enter your remarks here...') }}" style="width: 80%; height: 80px;"></textarea>
-        </div>
-    `,
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Available Balance:') }}</label>
+                            <input type="text" id="available_balance" class="swal2-input" readonly placeholder="Balance" style="width: 80%;">
+
+                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Enter Quantity:') }}</label>
+                            <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%;" required>
+
+                            <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>
+                            <textarea id="remarks" class="swal2-textarea" placeholder="{{ __('Enter your remarks here...') }}" style="width: 80%; height: 80px;"></textarea>
+                        </div>
+                        `,
                 showCloseButton: true,
                 confirmButtonText: text,
                 confirmButtonColor: btncolor,
                 customClass: {
                     confirmButton: 'btn-skew'
                 },
+                didOpen: () => {
+                    $('#unit_id').select2({
+                        dropdownParent: $('.swal2-popup'),
+                        width: '100%'
+                    });
+
+
+                    $('#unit_id').on('change', function() {
+                        let unitId = $(this).val();
+
+                        if (unitId) {
+                            $.ajax({
+                                url: "{{ admin_url('ohc/medicine-expire-report/balance') }}",
+                                type: "POST",
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                        'content')
+                                },
+                                data: {
+                                    medicine_id: medicine,
+                                    unit_id: unitId
+                                },
+                                success: function(response) {
+                                    if (response.balance !== undefined) {
+                                        $('#available_balance').val(response
+                                            .balance);
+                                        $('#quantity').attr('max', response
+                                        .balance);
+                                    } else {
+                                        $('#available_balance').val(0);
+                                        $('#quantity').attr('max', 0);
+                                    }
+                                },
+                                error: function(xhr) {
+                                    console.log("Error fetching balance", xhr);
+                                }
+                            });
+                        } else {
+                            $('#available_balance').val('');
+                            $('#quantity').attr('max', '');
+                        }
+                    });
+                },
                 preConfirm: () => {
                     var quantity = document.getElementById('quantity').value;
                     var remarks = document.getElementById('remarks').value;
+                    var unit_id = document.getElementById('unit_id')
+                    .value;
+                    var available_balance = document.getElementById('available_balance').value;
 
-
-                    if (!remarks) {
+                    if (!unit_id) {
+                        Swal.showValidationMessage('{{ __('Unit selection is required!') }}');
+                    } else if (!remarks) {
                         Swal.showValidationMessage('{{ __('Remarks are required!') }}');
                     } else if (!quantity || quantity <= 0) {
                         Swal.showValidationMessage('{{ __('Quantity must be greater than 0!') }}');
+                    } else if (parseInt(quantity) > parseInt(available_balance)) {
+                        Swal.showValidationMessage(
+                            '{{ __('Quantity cannot exceed available balance!') }}');
                     }
 
                     return {
                         remarks,
-                        quantity
+                        quantity,
+                        unit_id
                     };
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
                     var remarks = result.value.remarks;
                     var quantity = result.value.quantity;
+                    var unit_id = result.value.unit_id;
 
                     $.ajax({
                         url: "{{ admin_url('ohc/medicine-expire-report/discard') }}",
-                        type: 'post',
+                        type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         data: {
                             id: id,
                             login_id: login_id,
+                            unit_id: unit_id, // ✅ Ensure unit_id is sent in request
                             remarks: remarks,
                             quantity: quantity
                         },
                         success: function(response) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-right',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener('mouseenter', Swal
-                                        .stopTimer);
-                                    toast.addEventListener('mouseleave', Swal
-                                        .resumeTimer);
-                                }
-                            });
-                            Toast.fire({
+                            Swal.fire({
                                 icon: 'success',
                                 title: response.msg
                             });
                             table.draw();
                         },
-                        error: function(data) {
-                            if (data.status === 406 && data.responseJSON.msg ===
-                                'module_exits') {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Location Deletion Failed: Module Dependencies Exist.',
-                                });
-                            } else {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: xhr.responseJSON?.msg || 'Something went wrong!',
+                            });
                         }
                     });
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -334,5 +392,83 @@
 
 
 
+        $(document).on('click', '.close', function() {
+            var id = $(this).data('id');
+            var login_id = $(this).data('login_id');
+
+            var title = "Do you want to close the discard medicine for all the unit?";
+            var text = "Close";
+            var btncolor = "#28a745";
+
+            Swal.fire({
+                title: title,
+                icon: "warning",
+                input: "textarea",
+                inputPlaceholder: "Enter your remarks here...",
+                showCloseButton: true,
+                confirmButtonText: text,
+                confirmButtonColor: btncolor,
+                customClass: {
+                    confirmButton: "btn-skew"
+                },
+                preConfirm: (remarks) => {
+                    if (!remarks || remarks.trim() === "") {
+                        Swal.showValidationMessage("Remarks are required!");
+                        return false;
+                    }
+                    return remarks.trim();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var remarks = result.value;
+
+                    // Proceed with AJAX request
+                    $.ajax({
+                        url: "{{ url('ohc/medicine-expire-report/close') }}",
+                        type: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                        },
+                        data: {
+                            id: id,
+                            login_id: login_id,
+                            remarks: remarks
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: response.msg ||
+                                    "Medicine Discard closed successfully!",
+                                toast: true,
+                                position: "top-right",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                            table.draw();
+                        },
+                        error: function(xhr) {
+                            let errorMessage = "Something went wrong!";
+
+                            // Check if responseJSON exists and contains a 'msg'
+                            if (xhr.responseJSON && xhr.responseJSON.msg) {
+                                errorMessage = xhr.responseJSON.msg;
+                            } else if (xhr.status === 419) {
+                                errorMessage = "Session expired. Please refresh and try again.";
+                            } else if (xhr.status === 500) {
+                                errorMessage =
+                                    "Internal Server Error. Please check the server logs.";
+                            }
+
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error",
+                                text: errorMessage
+                            });
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endpush

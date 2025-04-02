@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Ohcmanagement\Master;
+namespace App\Http\Controllers\OhcManagement\Master;
 
 
 use App\Http\Controllers\Controller;
@@ -17,7 +17,7 @@ use App\Jobs\ImportmedicineJob;
 use App\Mail\Ohc\MedicineApprovalEmail;
 use App\Mail\Ohc\MedicineRequestEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
-use App\Models\Ohcmanagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\OhcStatuslog;
 use Illuminate\Support\Facades\Auth;

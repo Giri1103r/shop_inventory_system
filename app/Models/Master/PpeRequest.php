@@ -148,12 +148,30 @@ class PpeRequest extends Model
             $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
         }
 
-        $department = Department::where('department_name', $request->department)->first();
+        if ($request->request_for == 1) {
+
+            $employee = Employee::where('emp_id', $request->emp_id)
+                ->select('unit', 'department', 'company')
+                ->first();
+
+            $unit = $employee->unit;
+            $department = $employee->department;
+        } elseif ($request->request_for == 2) {
+            $work = Work::where('emp_id', $request->emp_id)
+                ->select('unit', 'department', 'company')
+                ->first();
+
+            $unit = $work->unit;
+            $department = $work->department;
+        } else {
+            $unit = Auth::user()->unit_id;
+            $department = Auth::user()->department_id;
+        }
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' =>   $department->id ?? null,
-            'unit_id' => Auth::user()->unit_id,
+            'department' => $department,
+            'unit_id' => $unit,
             'request_for' => $request->request_for,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,

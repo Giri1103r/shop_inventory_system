@@ -4,11 +4,13 @@
 namespace App\Http\Controllers\OhcManagement;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Ohc\MedicineExpireEmail;
 use App\Mail\Ohc\MedicineRequisitionEmail;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
 use App\Models\OhcManagement\Discard;
+use App\Models\OhcManagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\Master\Vendor;
 use App\Models\OhcManagement\MedicineRequisition;
@@ -42,6 +44,7 @@ class DiscardController extends Controller
     private $department;
     private $discard;
     private $medicine_stock;
+    private $expire_medicine;
     private $ohcStatus;
     private $user;
     private $inventory;
@@ -51,7 +54,7 @@ class DiscardController extends Controller
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
         $this->user_discard = new UserDiscard();
-
+        $this->expire_medicine = new ExpireMedicine();
         $this->medicine_stock = new MedicineStock();
         $this->unit = new Unit();
         $this->department = new Department();
@@ -69,8 +72,7 @@ class DiscardController extends Controller
                         ->addIndexColumn()
 
                         ->addColumn('medicine_status', function ($row) {
-                            $user = Auth::user(); // Get the authenticated user
-
+                            $user = Auth::user();
 
                             $text = "<span style='color:red'>In-Active</span>";
 
@@ -86,7 +88,20 @@ class DiscardController extends Controller
                         })
 
 
-
+                        ->addColumn('approve_status', function ($row) {
+                            $text = '';
+                            switch ($row->approve_status) {
+                                case OHC_DISCARD_EHS_APPROVED:
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>EHS Head Approved</span>";
+                                    break;
+                                case OHC_DISCARD_EHS_APPROVAL_PENDING:
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
+                                    break;
+                                default:
+                                    $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
+                            }
+                            return $text;
+                        })
 
                         ->editColumn('discard_date', function ($row) {
                             return displaydateformat($row->discard_date);
@@ -97,19 +112,25 @@ class DiscardController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
-                        ->editColumn('department_id', function ($row) {
-                            return getDepartment($row->department_id);
+
+                        ->editColumn('approved_by', function ($row) {
+                            return getUsername($row->approved_by);
+                        })
+                        ->editColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
                         })
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->discard_id) . '/' . encryptId($row->med_id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
+                                $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id) ) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
                             }
-
+                            // if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
+                                $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            // }
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'discard_date', 'medicine_status', 'unit_id', 'department_id', 'medicine_id'])
+                        ->rawColumns(['action', 'discard_date', 'approve_status', 'unit_id', 'approved_by', 'medicine_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -117,7 +138,7 @@ class DiscardController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -152,153 +173,168 @@ class DiscardController extends Controller
         }
     }
 
-  
+
 
 
     public function view(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $medicine_id = decryptId($request->medicineId);
+
             if (Auth::check()) {
                 $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->firstdata($medicine_id, $id);
+
             }
             $unit = $this->unit->getunit();
-            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
+            $logData = $this->ohcStatus->where('reference_id', $user_discard->expire_id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
             $data = array(
                 'user_discard' => $user_discard,
-                'discard' => $discard,
-                'logdata' => $logData,
+                'logData' => $logData,
+
 
             );
             return view('ohcmanagement.discard.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
 
-    // edit
-
-    public function edit(Request $request)
+    public function approval(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $medicine_id = decryptId($request->medicineId);
-// dd( $id, $medicine_id);
             if (Auth::check()) {
-                $user_discard = $this->user_discard->selectOne($id);
-                $discard = $this->discard->firstdata($medicine_id,$id);
-            }
-            $departmentList = $this->department->getdepartment();
-            $unit = $this->unit->getuserunit();
-            $logData = $this->ohcStatus->getMedicineRequisitionLog($id);
-            $medicine = $this->inventory->dicardmedicine($user_discard->unit_id);
-            $data = array(
-                'user_discard' => $user_discard,
-                'discard' => $discard,
-                'logdata' => $logData,
-                'unit' => $unit,
-                'departmentList' => $departmentList,
-                'medicine' =>  $medicine
 
-            );
-            return view('ohcmanagement.discard.edit', $data);
+                $user_discard = $this->user_discard->selectOne($id);
+                $unit = $this->unit->getunit();
+                $data = array(
+
+                    'user_discard' => $user_discard,
+                );
+            }
+
+            return view('ohcmanagement.discard.approve', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
-    // update
-    public function update(Request $request)
+    public function approvalsubmit(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $ids = decryptId($request->medicineid);
-            $validator = Validator::make($request->all(), [
-                'unit_id' => 'required',
-                'department_id' => 'required',
-                'discard_date' => 'required',
-            ], [
-                'department_id.required' => 'Please select a Department.',
-                'unit_id.required' => 'Please select a unit.',
-                'discard_date.required' => 'Please select the discard date.',
-            ]);
 
+            $rules = [
+                'approver_name' => 'required',
+                'remarks' => 'required',
+            ];
+            $messages = [
+                'approver_name.required' => 'Approver name is required.',
+                'remarks.required' => 'Remarks are required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            $user_discard = $this->user_discard->selectOne($id);
-             $discard = $this->discard->medicinedetails($id,$ids);
-             $newQuantity = $request->quantity;
-             $oldquantity = $discard->quantity;
-             if ($oldquantity > $newQuantity) {
-                $difference = $oldquantity - $newQuantity;
+            try {
+                $action = $request->input('action');
+                $approveStatus = $action == 'approve' ? OHC_DISCARD_EHS_APPROVED : OHC_DISCARD_EHS_REJECTED;
+                $remarks = $request->input('remarks');
+                $updateData = [
+                    'remarks' => $remarks,
+                    'approved_by' => Auth::id(),
+                    'approve_status' =>  $approveStatus,
+                ];
+                $discard = $this->user_discard->selectOne($id);
 
-
-
-                $this->inventory
-                    ->where('medicine_id',   $discard->medicine_id)
-                    ->where('unit_id', $user_discard->unit_id)
-                    ->increment('balance', $difference);
-            } elseif ($oldquantity < $newQuantity) {
-                $difference = $newQuantity - $oldquantity;
-
-                $this->inventory
+                $inventory = $this->inventory
                     ->where('medicine_id', $discard->medicine_id)
-                    ->where('unit_id', $user_discard->unit_id)
-                    ->decrement('balance', $difference);
-            }
-            $this->user_discard->updates($id, $user_discard);
-            $this->discard->updates($ids, $id);
+                    ->where('unit_id', $discard->unit_id)
+                    ->first();
 
-            Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('ohc/discard/list'));
+                if ($inventory) {
+                    $inventory->decrement('balance',   $discard->quantity);
+                }
+
+                $ehsheaddiscard =  $this->user_discard->ehsheadapproval($id, $updateData);
+
+                $details =$this->user_discard->selectOne($id);
+                $ohcStatus = $this->ohcStatus->medicineexpireapproval($id, $updateData);
+
+                $createdby = $this->user_discard->where('id', $id)->value('created_by');
+                $email = $this->user->where('id', $createdby)->value('email');
+
+
+                // if (!$email) {
+
+                //     return redirect()->back()->with('error', 'User email not found.');
+                // }
+
+                $action = $request->action;
+                if ($action == 'approve') {
+                    $mailsubject =  'Medicine  Has Been Approved for the discard';
+
+                    Mail::to($email)->queue(new MedicineExpireEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => getMedicinename($details->medicine_id) . 'has been approved by the' . Auth::user()->name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/discard/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
+                    ];
+                    notificationSave($notificationData);
+                    $count = $this->unit->getUnitcount();
+                    $this->inventory->store($details, $count);
+                } else {
+                    $mailsubject =  'Medicine Name Has Been Rejected';
+                    $details['mail_subject'] =   $mailsubject;
+                    Mail::to($email)->queue(new MedicineExpireEmail($details));
+                    $notificationData = [
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode([
+                            'title' => $mailsubject,
+                            'message' => getMedicinename($details->medicine_id) . 'has been rejected by the' . $details->approver_name,
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        ]),
+                        'web_link' => admin_url('ohc/discard/list'),
+                        'assigned_user' => $createdby,
+                        'created_by' => Auth::id(),
+                    ];
+                    notificationSave($notificationData);
+                }
+
+
+
+                return redirect(admin_url('ohc/discard/list'))
+                    ->with('success', 'Request has been processed successfully.');
+            } catch (Exception $ex) {
+                report($ex);
+                return redirect(admin_url('ohc/discard/list'))
+                    ->with('error', 'Something went wrong, Please try again later.');
+            }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try again later!');
-            return redirect(admin_url('ohc/discard/list'));
+            return redirect(admin_url('ohc/discard/list'))
+                ->with('error', 'Something went wrong, Please try again later.');
         }
     }
-    // General PDF
-
-
-    public function StatusChange(Request $request)
-    {
-
-        try {
-            // $id = decryptId($request->discard_id);
-            $ids = decryptId($request->medicine_id);
-            // $this->user_discard->statuschange($id);
-            $this->discard->statuschange($ids);
-            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
-    // unique
-
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $medicine_id = decryptId($request->medicine_id);
-            $id = decryptId($request->id);
-            $medicineid = decryptId($request->medicineid);
-// dd($medicine_id,$id, $medicineid);
-            if (empty($id)) {
-                $isUnique = $this->discard->uniqueCheck($medicine_id);
-            } else {
-
-                // dd( $unit_id );
-                $isUnique = $this->discard->existUniqueCheck($medicine_id, $id,$medicineid);
-            }
-
-            if ($isUnique->count()) {
-                return Response::json(false);
-            }
-            return Response::json(true);
-        }
-    }
-
     public function ExportExcel(Request $request)
     {
 
