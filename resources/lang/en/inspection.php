@@ -204,4 +204,11 @@ return [
     'cable_condition' => 'Cable Condition',
     'response_indicator' => 'Response Indicator',
     'working_status' => 'Working Status',
+
+    //Fire Sand Bucket Inspection
+    'fire_sand_bucket_stand_no' => 'Fire Sand Bucket Stand No.',
+    'fire_sand_bucket_no' => 'Fire Sand Bucket No.',
+    'qualtiy_quantity_sand' => 'Select Quality and Quantity of Sand',
+    'paint_condition' => 'Select the Paint Condition',
+    'fire_bucket_condition' => 'Select the Fire Bucket Condition',
 ];

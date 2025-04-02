@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Detector Inspection | KARAM</title>
+    <title>Sand Bucket Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Detector Inspection </td>
+                    Sand Bucket Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Detector Inspection
+                    Sand Bucket Inspection
                 </td>
             </tr>
         </table>
@@ -195,7 +195,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Detector Inspection Details
+                    Sand Bucket Inspection Details
                 </td>
             </tr>
         </table>
@@ -204,7 +204,7 @@
         style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                colspan="3">
+                colspan="4">
                 DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
@@ -218,7 +218,7 @@
         </tr>
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                colspan="3">
+                colspan="4">
                 NEXT DUE: {{ Displaydateformat($forklift_details->next_due) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
@@ -232,35 +232,37 @@
         </tr>
 
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">DEPARTMENT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">RESOURCE CODE
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+            <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
             </th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">TYPE OF
-                DETECTOR</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
-            </th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">REMARK</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
         </tr>
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PHYSICAL CONDITION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CABLE CONDITION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">RESPONSE INDICATOR</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">WORKING STATUS</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND STAND BUCKET NO.</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND BUCKET NO.</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">QUALITY AND QUANTITY OF SAND</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">APPROACH</th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >FIRE BUCKET</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >FIRE BUCKET STAND</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >PAINT</th>
         </tr>
 
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ getDetectorName($details->detector_type) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ ($details->fire_bucket_no) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->physical_condition == 1)
+                    @if ($details->condition == 1)
                         <span style="color: green; font-weight: bold;">&#10004; Good</span>
-                    @elseif ($details->physical_condition == 2)
+                    @elseif ($details->condition == 2)
                         <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
-                    @elseif ($details->physical_condition == 3)
+                    @elseif ($details->condition == 3)
                         <span style="color: red; font-weight: bold;">&#10060; Poor</span>
                     @else
                         <span style="color: gray; font-weight: bold;">N/A</span>
@@ -268,34 +270,29 @@
                 </td>
 
                 <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->cable_condition == 1)
+                    @if ($details->fire_bucket_condition == 1)
                         <span style="color: green; font-weight: bold;">&#10004; Good</span>
-                    @elseif ($details->cable_condition == 2)
+                    @elseif ($details->fire_bucket_condition == 2)
                         <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
-                    @elseif ($details->cable_condition == 3)
+                    @elseif ($details->fire_bucket_condition == 3)
                         <span style="color: red; font-weight: bold;">&#10060; Poor</span>
                     @else
                         <span style="color: gray; font-weight: bold;">N/A</span>
                     @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->response_indicator == 1)
-                        <span style="color: green; font-weight: bold;">&#10004; Working</span>
-                    @elseif ($details->response_indicator == 0)
-                        <span style="color: red; font-weight: bold;">&#10060; Not Working</span>
+                    @if ($details->paint_condition == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                    @elseif ($details->paint_condition == 2)
+                        <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                    @elseif ($details->paint_condition == 3)
+                        <span style="color: red; font-weight: bold;">&#10060; Poor</span>
                     @else
                         <span style="color: gray; font-weight: bold;">N/A</span>
                     @endif
                 </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->working_status == 1)
-                        <span style="color: green; font-weight: bold;">Operational</span>
-                    @elseif ($details->working_status == 0)
-                        <span style="color: red; font-weight: bold;">Non Operational</span>
-                    @else
-                        <span style="color: gray; font-weight: bold;">N/A</span>
-                    @endif
-                </td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->sand_quantity }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
 
 
