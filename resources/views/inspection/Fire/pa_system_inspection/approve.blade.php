@@ -108,7 +108,7 @@
                                                     class="form-label require">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
-                                                        style="width:50px; height:50px;" alt="" srcset="">
+                                                        style="width:100px; height:50px;" alt="" srcset="">
                                                 </div>
                                             </div>
                                         </div>
@@ -190,10 +190,16 @@
                                                         <label
                                                             class="form-label require">Audio Quality</label>
                                                         <div class="view_data">
-                                                            {{ $details->audio_quality }}
+                                                            @if ($details->audio_quality == 1)
+                                                                Good
+                                                            @elseif ($details->audio_quality == 2)
+                                                                Fair
+                                                            @elseif ($details->audio_quality == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
-
-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -201,7 +207,15 @@
                                                         <label
                                                             class="form-label require">Mic Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->mic_condition }}
+                                                            @if ($details->mic_condition == 1)
+                                                                Good
+                                                            @elseif ($details->mic_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->mic_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -219,7 +233,15 @@
                                                         <label
                                                             class="form-label require">Physical Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->physical_condition }}
+                                                            @if ($details->physical_condition == 1)
+                                                                Good
+                                                            @elseif ($details->physical_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->physical_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -228,7 +250,15 @@
                                                         <label
                                                             class="form-label require">Cable Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->cable_condition }}
+                                                            @if ($details->cable_condition == 1)
+                                                                Good
+                                                            @elseif ($details->cable_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->cable_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -238,11 +268,17 @@
                                                         <label
                                                             class="form-label require">Operation</label>
                                                         <div class="view_data">
-                                                            {{ $details->operation  }}
+                                                            @if ($details->operation == 1)
+                                                                Functional
+                                                            @elseif ($details->operation == 2)
+                                                                Non-functional
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
-                                               
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -258,8 +294,73 @@
                                     <hr>
                                 </div>
 
-                                <div class="row mt-3">
-                                    @if ($inspection->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                        </div>
+                                    </div>
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('fire/pa-system-inspection/ehsofficer/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
+                                            name="id">
+                                        <div class="row">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-12 form-input">
+                                                <label class="form-label required">Whether the Inspection has been
+                                                    passed Without the CAPA
+                                                    ?</label>
+                                                <div class="mb-3 form-input">
+                                                    <input type="radio" id="yes" name="is_passed"
+                                                        class="validate-radio-required" value="{{ 1 }}">
+                                                    <label for="yes">YES</label>
+
+                                                    <input type="radio" id="no" name="is_passed"
+                                                        class="validate-radio-required" value="{{ 0 }}">
+                                                    <label for="no">NO</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="remarks">
+                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
+                                            </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <button class="btn btn-success">Verify</button>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-cancel>
+                                            </div>
+                                        </div>
+                                    </form>
+                                @else
+                                    <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
@@ -302,33 +403,14 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($inspection->approved_by))
-                                                @if ($inspection->verified_by == $inspection->approved_by)
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.approved_by') }}</label>
-                                                            <div class="view_data">
-                                                                {{ getUsername($inspection->approved_by) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    @php
-                                                        $signature = GetSignature(
-                                                            $inspection->approved_by,
-                                                            $inspection->id,
-                                                            FIRE_PA_SYSTEM_INSPECTION,
-                                                        );
-                                                    @endphp
-                                                @endif
-                                            @endif
-                                            @if (isset($signature))
+                                            @if ($inspection->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUsername($inspection->approved_by) }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endif
@@ -353,18 +435,122 @@
                                                 </div>
                                             @endif
                                         </div>
-                                    @endif
-                                    @if (isset($inspection->capa_remarks))
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
-                                        </div>
+                                        @if (isset($inspection->capa_remarks))
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
+                                            </div>
 
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($inspection->created_by) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @php
+                                                    $signature = GetSignature(
+                                                        $inspection->created_by,
+                                                        $inspection->id,
+                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                    );
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection->capa_remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if ($inspection->capa_ehs_remarks)
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+                                                </h4>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($inspection->verified_by) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @php
+                                                    $signature = GetSignature(
+                                                        $inspection->verified_by,
+                                                        $inspection->id,
+                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                    );
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection->capa_ehs_remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    @if (isset($inspection->level_one_manager_remarks))
                                         <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}
+                                                </h4>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection->created_by) }}
+                                                        {{ getUserName($inspection->l1_manager_verified_by) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -378,7 +564,7 @@
                                             </div>
                                             @php
                                                 $signature = GetSignature(
-                                                    $inspection->created_by,
+                                                    $inspection->l1_manager_verified_by,
                                                     $inspection->id,
                                                     FIRE_PA_SYSTEM_INSPECTION,
                                                 );
@@ -396,241 +582,280 @@
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                        class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->capa_remarks }}
+                                                        {{ $inspection->level_one_manager_remarks }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endif
-                                </div>
-
-                                @if ($inspection->capa_ehs_remarks)
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
-                                        </h4>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUserName($inspection->verified_by) }}
-                                                </div>
+                                    @if (isset($inspection->level_two_manager_remarks))
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
+                                                </h4>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @php
-                                            $signature = GetSignature(
-                                                $inspection->verified_by,
-                                                $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection->capa_ehs_remarks }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                @if (isset($inspection->level_one_manager_remarks))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}
-                                            </h4>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUserName($inspection->l1_manager_verified_by) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @php
-                                            $signature = GetSignature(
-                                                $inspection->l1_manager_verified_by,
-                                                $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection->level_one_manager_remarks }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                                @if (isset($inspection->level_two_manager_remarks))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
-                                            </h4>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUserName($inspection->l2_manager_verified_by) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @php
-                                            $signature = GetSignature(
-                                                $inspection->l2_manager_verified_by,
-                                                $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
-                                        @if ($inspection->approved_by)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUsername($inspection->approved_by) }}
+                                                        {{ getUserName($inspection->l2_manager_verified_by) }}
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
-                                        @php
-                                            $signature = GetSignature(
-                                                $inspection->approved_by,
-                                                $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection->created_at) }}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection->level_two_manager_remarks }}
+                                            @php
+                                                $signature = GetSignature(
+                                                    $inspection->l2_manager_verified_by,
+                                                    $inspection->id,
+                                                    FIRE_PA_SYSTEM_INSPECTION,
+                                                );
+                                            @endphp
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->level_two_manager_remarks }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 @endif
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
 
+                                @if (
+                                    $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                        $inspection->inspection_status == L2_MANAGER_REJECTED ||
+                                        $inspection->inspection_status == EHS_OFFICER_REJECTED ||
+                                        $inspection->inspection_status == L1_MANAGER_REJECTED)
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
+                                        </div>
                                     </div>
-                                    <div class="card">
-                                        @if (isset($status_log) && $status_log->isNotEmpty())
-                                            <div class="card-body">
-                                                <table class="table table-bordered">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>S.NO</th>
-                                                            <th>From Status</th>
-                                                            <th>To Status</th>
-                                                            <th>Remarks</th>
-                                                            <th>Approved By</th>
-                                                            <th>Created By</th>
-                                                            <th>Created At</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach ($status_log as $log)
-                                                            <tr>
-                                                                <td>{{ $loop->iteration }}</td>
-                                                                <td>{{ getInspectionStatus($log->from_status) }}</td>
-                                                                <td>{{ getInspectionStatus($log->to_status) }}</td>
-                                                                <td>{{ $log->remarks ?? 'N/A' }}</td>
-                                                                <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
-                                                                </td>
-                                                                <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
-                                                                </td>
-                                                                <td>{{ displaydateformat($log->created_at) }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
+                                    <form method="POST" id="capaAction"
+                                        action="{{ admin_url('fire/pa-system-inspection/capa/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
+                                            name="id">
+                                        <div class="row">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
-                                        @else
-                                            <div class="card-body">
-                                                <p class="text-white">{{ __('No status logs available.') }}</p>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
                                             </div>
-                                        @endif
-                                    </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="capa_remarks">
+                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                    name="capa_remarks"></textarea>
+                                            </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-cancel>
+                                            </div>
+                                        </div>
+                                    </form>
+                                @endif
 
-                                </div>
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('fire/pa-system-inspection/capa/reverify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                            </div>
+
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
+                                        </div>
+                                    </form>
+                                @endif
+
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                    <form method="POST" id="levelOneManager"
+                                        action="{{ admin_url('fire/pa-system-inspection/level-one/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
+                                                name="level_one_manager"></textarea>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
+                                        </div>
+                                    </form>
+                                @endif
+
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                    <form method="POST" id="levelTwoManager"
+                                        action="{{ admin_url('fire/pa-system-inspection/level-two/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
+                                            name="id">
+                                        <div class="row mt-3">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
+                                                name="level_two_manager"></textarea>
+                                        </div>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-approve></x-button-approve>
+                                            <x-button-reject></x-button-reject>
+                                        </div>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -640,3 +865,182 @@
         </div>
 
     @stop
+    @push('script')
+    <script>
+        $('#forklistassessmentAdd').validate({
+            rules: {
+                remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $.validator.addMethod("noSpaces", function(value) {
+            return value.trim().length > 0;
+        }, "Spaces are not allowed");
+
+        $('#capaAction').validate({
+            rules: {
+                capa_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                capa_remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelOneManager').validate({
+            rules: {
+                level_one_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_one_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelTwoManager').validate({
+            rules: {
+                level_two_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_two_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+    </script>
+@endpush

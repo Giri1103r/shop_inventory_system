@@ -48,7 +48,7 @@ class PASystemChecklist extends Model
 
         $sr_no = $request->sr_no ?? [];
         $location = $request->location ?? [];
-        $unit_id = $request->unit_id ?? [];
+        $unit = $request->unit ?? [];
         $audio_quality = $request->audio_quality ?? [];
         $mic_condition = $request->mic_condition ?? [];
         $mic_quantity = $request->mic_quantity ?? [];
@@ -57,13 +57,11 @@ class PASystemChecklist extends Model
         $operation = $request->operation ?? [];
         $remark = $request->remark ?? [];
 
-        // dd($unit_id, $location, $audio_quality, $mic_condition);
-
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'fire_pa_system_id' => $id,
                 'sr_no' => $sr_no_value,
-                'unit' => decryptId($unit_id[$index]),
+                'unit' => decryptId($unit[$index]),
                 'location' => decryptId($location[$index]),
                 'audio_quality' => decryptId($audio_quality[$index]),
                 'mic_condition' => decryptId($mic_condition[$index]),
@@ -74,6 +72,7 @@ class PASystemChecklist extends Model
                 'remark' => $remark[$index],
                 'created_by' => Auth::id(),
             );
+
             $this->create($data);
         }
 

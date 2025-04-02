@@ -2120,7 +2120,7 @@ if (!function_exists('getMonth')) {
                     }
 
                 case OHC_TYPE_FLOOR_STRETCHER:
-                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', OHC_TYPE_FLOOR_STRETCHER)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {
@@ -2132,6 +2132,20 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
+                    case FIRE_PA_SYSTEM_INSPECTION:
+                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
+                            ->where('status', 1)->where('trash', 'NO')->first();
+
+                        if ($name == null) {
+                            $name = User::where('id', $userid)->first();
+                            if ($name == null) {
+                                return null;
+                            }
+                            return $name->signature_upload;
+                        } else {
+                            return $name->file_path;
+                        }
 
 
                 case GEMBA_WALK:
@@ -2366,6 +2380,9 @@ if (!function_exists('getMonth')) {
             switch ($id) {
                 case HOOTER_INSPECTION:
                     return 'Hooter-Inspection';
+                    break;
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    return 'PA-System-Inspection';
                     break;
 
                 default:

@@ -52,7 +52,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="revision_data" id = "revision_data"
+                                                    <input type="text" name="rev_date" id = "rev_date"
                                                         class="form-control" value="{{ getDocumentReviewDate('PA-0') }}"
                                                         readonly>
                                                 </div>
@@ -104,7 +104,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit" id="unit_id"
+                                                    <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
@@ -201,7 +201,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit_id[1]" id="unit_id_1"
+                                                        <select name="unit[1]" id="unit_id_1"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -372,7 +372,7 @@
                         next_due: {
                             required: true,
                         },
-                        unit: {
+                        unit_id: {
                             required: true,
                         },
                         frequency_id: {
@@ -404,7 +404,7 @@
                         "location[1]": {
                             required: true,
                         },
-                        "unit_id[1]": {
+                        "unit[1]": {
                             required: true,
                         },
                         device_image: {
@@ -431,7 +431,7 @@
                         issue_date: {
                             required: "Date Of Audit is required",
                         },
-                        revision_data: {
+                        rev_date: {
                             required: "Revision Date required",
                         },
                         inspection_date: {
@@ -446,7 +446,7 @@
                         next_due: {
                             required: "Next due is required",
                         },
-                        unit: {
+                        unit_id: {
                             required: "Unit is required",
                         },
                         frequency_id: {
@@ -478,7 +478,7 @@
                         "operation[1]": {
                             required: "Please select the Operation",
                         },
-                        "unit_id[1]": {
+                        "unit[1]": {
                             required: "Please select the Unit",
                         },
                         device_image: {
@@ -575,7 +575,7 @@
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                    <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}"
+                                    <select name="unit[${form_set_count}]" id="unit_id-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Unit</option>
                                         @foreach ($units as $unit)
@@ -673,7 +673,7 @@
 
                     $('.form-wrapper').append(newFormSetElement);
 
-                    $('select[name^="unit_id["]').each(function() {
+                    $('select[name^="unit["]').each(function() {
                         $(this).select2({
                             placeholder: "Select Unit",
                             width: '100%'
@@ -729,7 +729,7 @@
                         }
                     });
 
-                    $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
+                    $("select[name='unit[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Unit',
@@ -871,7 +871,7 @@
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
                     $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
-                    $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
+                    $(this).find('select[name^="unit"]').attr('name', 'unit[' + idx + ']');
                     $(this).find('select[name^="audio_quality"]').attr('name', 'audio_quality[' + idx + ']');
                     $(this).find('select[name^="mic_condition"]').attr('name', 'mic_condition[' + idx + ']');
                     $(this).find('input[name^="mic_quantity"]').attr('name', 'mic_quantity[' + idx + ']');
