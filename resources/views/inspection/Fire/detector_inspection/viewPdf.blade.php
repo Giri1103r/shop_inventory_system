@@ -160,19 +160,19 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->doc_no) ? $forklift_details->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($forklift_details->issue_date) ? $forklift_details->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->revision_data) ? $forklift_details->revision_data : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -195,62 +195,134 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly EyeWash Inspection Details
+                    Detector Inspection Details
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
-        <!-- Column Headers -->
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">QUANTITY</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ddd;">CHECK ITEMS</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                DATE OF INSPECTION: {{ DBdateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                LOCATION: {{ getLocationname($forklift_details->location) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                SHIFT: {{ getShift($forklift_details->shift) ?? 'N/A' }}
+            </th>
         </tr>
         <tr>
-            <th colspan="4" style="border: 1px solid black;"></th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">BLINKING LIGHT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONNECTION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">AUDIBILITY</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONDITION OF HOOTER</th>
-            <th style="border: 1px solid black;"></th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                NEXT DUE: {{ DBdateformat($forklift_details->next_due) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                UNIT: {{ getUnitname($forklift_details->unit) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                FREQUENCY: {{ getFrequencyname($forklift_details->frequency) ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">DEPARTMENT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">RESOURCE CODE
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">TYPE OF
+                DETECTOR</th>
+            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">REMARK</th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PHYSICAL CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CABLE CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">RESPONSE INDICATOR</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">WORKING STATUS</th>
         </tr>
 
         @foreach ($inspection as $details)
             <tr>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ getDetectorName($details->detector_type) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->physical_condition == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                    @elseif ($details->physical_condition == 2)
+                        <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                    @elseif ($details->physical_condition == 3)
+                        <span style="color: red; font-weight: bold;">&#10060; Poor</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->cable_condition == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                    @elseif ($details->cable_condition == 2)
+                        <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                    @elseif ($details->cable_condition == 3)
+                        <span style="color: red; font-weight: bold;">&#10060; Poor</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->response_indicator == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Working</span>
+                    @elseif ($details->response_indicator == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Not Working</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->working_status == 1)
+                        <span style="color: green; font-weight: bold;">Operational</span>
+                    @elseif ($details->working_status == 0)
+                        <span style="color: red; font-weight: bold;">Non Operational</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->blinking_light == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->connection == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->audiobility == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->condition_of_hooter }}</td>
+
+
             </tr>
         @endforeach
     </table>
+
+
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    {{ __('inspection.observation') }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table width="100%" style="width:100%;">
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $forklift_details->observation }}</td>
+        </tr>
+    </table>
+    <br>
 
 
 
@@ -458,6 +530,10 @@
         </table>
         <br>
     @endif
+
+
+
+
 
 
     <div>
