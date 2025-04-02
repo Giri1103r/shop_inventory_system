@@ -62,7 +62,8 @@ class ExpireMedicine extends Model
             $query->offset($request->start)->limit($request->length);
         }
 
-        $query->orderBy('ohc_management_expire_medicine.id', 'desc');
+        $query
+      ->orderBy('ohc_management_expire_medicine.id', 'desc');
         $data = $query->get();
         $total_records = $data->count();
 
@@ -74,19 +75,19 @@ class ExpireMedicine extends Model
     }
 
 
-    public function store($data,$unitIds)
+    public function store($data, $unitIds)
     {
         $request = request();
 
         $insert_array = [
-            'unit_id'=>$unitId,
+
             'medicine_id' => $data->medicine_id,
             'expire_date' => ($data->expire_date),
             'batch_no' => $data->batch_number,
             'created_by' => Auth::id(),
         ];
 
-    
+
         return $this->create($insert_array);
     }
 
@@ -113,6 +114,14 @@ class ExpireMedicine extends Model
 
         $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
             ->first();
+        return $data;
+    }
+
+    public function closediscard($id)
+    {
+        $request = request();
+        $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
+            ->update(['approve_status' => OHC_DISCARD_EHS_APPROVED,   'remarks' => $request->remarks,'status' => 0]);
         return $data;
     }
     public function medicinediscard($id,  $quantity,  $remarks)
