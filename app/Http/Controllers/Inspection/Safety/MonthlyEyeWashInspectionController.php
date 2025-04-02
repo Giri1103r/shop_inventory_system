@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
-use App\Models\Inspection\Master\ChecklistType;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
@@ -180,6 +180,60 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
 
+            // dd($request->all());
+
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'requried',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'location.*' => 'required',
+                'resource_code.*' => 'required',
+                'condition.*' => 'required',
+                'value.*' => 'required',
+                'hfsov.*' => 'required',
+                'foot_pedal.*' => 'required',
+                'eyewash_heads.*' => 'required',
+                'receptacle.*' => 'required',
+                'water.*' => 'required',
+                'quality.*' => 'required',
+                'pressure.*' => 'required',
+                'temperature.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'location.*.required' => 'Location is required',
+                'resource_code.*.required' => 'Resource code is required',
+                'condition.*.required' => 'Condition is required',
+                'value.*.required' => 'Valve is required',
+                'hfsov.*.required' => 'Hand free stay open value is required',
+                'foot_pedal.*.required' => 'Foot Pedal Value is required',
+                'eyewash_heads.*.required' => 'Eye wash heads is required',
+                'receptacle.*.required' => 'Receptable name is requried',
+                'water.*.required' => 'Water quality is required',
+                'quality.*.required' => 'Quality is required',
+                'pressure.*.required' => 'Pressure is required',
+                'temperature.*.required' => 'Temperature is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $store_eyewash_inspection = $this->eye_wash->store();
             $inspection_id = $store_eyewash_inspection->id;
             $inspection_details = $this->eye_wash->selectOne($inspection_id);
@@ -233,6 +287,7 @@ class MonthlyEyeWashInspectionController extends Controller
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));

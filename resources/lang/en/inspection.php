@@ -93,6 +93,7 @@ return [
     'upload_image' => 'Device Image',
     'observation_required' => 'Is Observation Required ?',
     'checked_obs' => 'Required Inspections',
+    'condition_of_hooter' => 'Condition Of The Hooter',
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
