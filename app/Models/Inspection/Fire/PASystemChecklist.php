@@ -57,6 +57,8 @@ class PASystemChecklist extends Model
         $operation = $request->operation ?? [];
         $remark = $request->remark ?? [];
 
+        // dd($unit_id, $location, $audio_quality, $mic_condition);
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'fire_pa_system_id' => $id,
@@ -72,9 +74,9 @@ class PASystemChecklist extends Model
                 'remark' => $remark[$index],
                 'created_by' => Auth::id(),
             );
-
             $this->create($data);
         }
+
     }
 
     public function GetDetails($id)

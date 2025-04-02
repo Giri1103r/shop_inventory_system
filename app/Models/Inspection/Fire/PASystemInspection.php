@@ -138,6 +138,7 @@ class PASystemInspection extends Model
     {
 
         $request = request();
+        // dd($request->all());
 
         $data = array(
             'doc_no' => $request->doc_no,
