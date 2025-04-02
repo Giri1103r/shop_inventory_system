@@ -27,19 +27,27 @@
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-3 mb-3 form-input">
-                                        <label for="document_number" class="form-label ">Document Number</label>
-                                        <input type="text" name="document_number" id="document_number"
+                                        <label for="gemba_walk_auto_id" class="form-label ">Gemba Walk ID</label>
+                                        <input type="text" name="gemba_walk_auto_id" id="gemba_walk_auto_id"
                                             class="form-control">
                                     </div>
                                      <div class="col-md-3 mb-3 form-input">
-                                        <label for="issue_date" class="form-label ">Issue Date</label>
-                                        <input type="text" name="issue_date" id="issue_date"
+                                        <label for="date" class="form-label ">Date</label>
+                                        <input type="text" name="date" id="date"
                                             class="form-control">
                                     </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="revision_date" class="form-label ">Revision Date</label>
-                                        <input type="text" name="revision_date" id="revision_date"
-                                            class="form-control">
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label require">Shift</label>
+                                            <select name="shift" id="shift" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select the option</option>
+                                                @foreach ($shift as $list)
+                                                    <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
 
                                    <div class="col-md-3 mb-3 form-input">
@@ -77,9 +85,9 @@
                             <thead class="thead-primary">
                                 <tr>
                                     <th>{{ __('common.sno') }}</th>
-                                    <th>Doc.No</th>
-                                    <th>Issue Date</th>
-                                    <th>Rev. Date</th>
+                                    <th>Gemba Walk ID</th>
+                                    <th>Date</th>
+                                    <th>Shift</th>
                                     <th>{{ __('common.status') }}</th>
                                     <th>{{ __('common.created_by') }}</th>
                                     <th>{{ __('common.created_date') }}</th>
@@ -105,7 +113,7 @@
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
 
-            var fromDatepicker = flatpickr("#issue_date", {
+            var fromDatepicker = flatpickr("#date", {
             dateFormat: "d-m-Y",
         });
 
@@ -164,10 +172,11 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.doc_no = $('#document_number').val();
-                        d.issue_date = $('#issue_date').val();
-                        d.revision_date = $('#revision_date').val();
-                       d.inspection_status = $('#inspection_status').val();
+                        d.doc_no = $('#gemba_walk_auto_id').val();
+                        d.date = $('#date').val();
+                        d.inspection_status = $('#inspection_status').val();
+                        d.shift = $('#shift').val();
+
 
 
                     },
@@ -184,16 +193,16 @@
                         searchable: true,
                     },
                     {
-                        data: 'document_no',
-                        name: 'document_no'
+                        data: 'gemba_walk_auto_id',
+                        name: 'gemba_walk_auto_id'
                     },
                     {
-                        data: 'issue_date',
-                        name: 'issue_date'
+                        data: 'date',
+                        name: 'date'
                     },
                     {
-                        data: 'revision_date',
-                        name: 'revision_date'
+                        data: 'shift',
+                        name: 'shift'
                     },
                    
                     {
@@ -237,22 +246,22 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#revision_date').val();
+                                    var doc_no = $('#gemba_walk_auto_id').val();
+                                    var date = $('#date').val();
                                     var inspection_status = $('#inspection_status').val();
+                                    var shift = $('#shift').val();
 
-                                   
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('inspection/gemba-walk/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + document_number +
-                                        '&issue_date=' + issue_date +
-                                        '&revision_date=' + revision_date +
-                                        '&inspection_status=' + inspection_status 
+                                       '&gemba_walk_auto_id=' + gemba_walk_auto_id +
+                                        '&date=' + date +
+                                        '&inspection_status=' + inspection_status +
+                                        '&shift=' + shift 
+
 
                                 }
                             },
@@ -262,10 +271,10 @@
                                 action: function(e, dt, button, config) {
 
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#document_number').val();
-                                    var issue_date = $('#issue_date').val();
-                                    var revision_date = $('#revision_date').val();
+                                    var doc_no = $('#gemba_walk_auto_id').val();
+                                    var date = $('#date').val();
                                     var inspection_status = $('#inspection_status').val();
+                                    var shift = $('#shift').val();
 
 
                                     $(".dt-button").removeClass('processing');
@@ -273,10 +282,10 @@
                                     window.location.href =
                                         "{{ admin_url('inspection/gemba-walk/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&document_number=' + document_number +
-                                        '&issue_date=' + issue_date +
-                                        '&revision_date=' + revision_date +
-                                        '&revision_date=' + revision_date 
+                                       '&gemba_walk_auto_id=' + gemba_walk_auto_id +
+                                        '&date=' + date +
+                                        '&inspection_status=' + inspection_status +
+                                        '&shift=' + shift 
 
                                 }
                             },

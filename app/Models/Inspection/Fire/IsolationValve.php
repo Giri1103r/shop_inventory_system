@@ -130,12 +130,12 @@ class IsolationValve extends Model
 
         $data = array(
             'doc_no' => $request->doc_no,
-            'issue_date' => $request->issue_date,
+            'issue_date' => DBdateformat($request->issue_date),
             'revision_data' => $request->rev_date,
-            'date_of_inspection' => $request->inspection_date,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' => DBdateformat($request->next_due),
             'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),

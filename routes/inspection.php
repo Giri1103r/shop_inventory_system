@@ -50,6 +50,7 @@ use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
 use App\Http\Controllers\Inspection\Fire\CoTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
 use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
+use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -169,7 +170,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
         Route::post('delete', [TaskMasterController::class, 'Delete']);
         Route::post('status', [TaskMasterController::class, 'StatusChange']);
-
     });
 
     Route::group(['prefix' => 'monthly-audit/audit-plan/'], function () {
@@ -181,9 +181,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('export/excel', [MonthlyAuditPlanController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
         Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
-
     });
-
 });
 
 
@@ -683,6 +681,24 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
     });
+
+    Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
+        Route::GET('list', [SandBucketInspectionController::class, 'Index']);
+        Route::POST('list', [SandBucketInspectionController::class, 'Index']);
+        Route::GET('add', [SandBucketInspectionController::class, 'Add']);
+        Route::POST('add/submit', [SandBucketInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [SandBucketInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [SandBucketInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [SandBucketInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [SandBucketInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [SandBucketInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [SandBucketInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [SandBucketInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [SandBucketInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
+    });
 });
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
@@ -833,5 +849,3 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
 });
-
-

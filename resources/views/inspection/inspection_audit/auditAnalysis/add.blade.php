@@ -129,21 +129,32 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    </div>
-
-                                                    <div class="row mt-3">
-                                                        @foreach ($months as $month)
-                                                            <div class="col-md-6 mt-2">
-                                                                <div
-                                                                    class="form-group form-input d-flex align-items-center">
-                                                                    <label class="form-label require me-2"
-                                                                        style="min-width: 100px;">{{ $month }}</label>
-                                                                    <input type="number"
-                                                                        name="marks_{{ strtolower($month) }}[1]"
-                                                                        class="form-control" placeholder="Enter Marks">
-                                                                </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Year</label>
+                                                                <input type="text" name ="year" id="year"
+                                                                    class="form-control" placeholder="Year"
+                                                                    value="">
                                                             </div>
-                                                        @endforeach
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Month</label>
+                                                                <input type="text" name ="month" id="month"
+                                                                    class="form-control" placeholder="month"
+                                                                    value="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Mark</label>
+                                                                <input type="text" name ="mark" id="mark"
+                                                                    class="form-control" placeholder="mark"
+                                                                    value="">
+                                                            </div>
+                                                        </div>
                                                     </div>
 
                                                     <div class="row mt-3">
@@ -166,7 +177,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total Marks
                                                                     Obtained</label>
-                                                                <input type="text" name="total_marks[1]"
+                                                                <input type="text" name="marks_obtained[1]"
                                                                     class="form-control">
                                                             </div>
                                                         </div>
@@ -218,6 +229,20 @@
                 dateFormat: "d-m-Y",
                 minDate: new Date(),
             });
+            $('#year').datepicker({
+                format: 'yyyy',
+                minViewMode: 'years',
+                viewMode: 'years',
+                autoclose: true
+            });
+
+            $('#month').datepicker({
+                format: 'M',
+                minViewMode: 'months',
+                viewMode: 'months',
+                autoclose: true
+            });
+
 
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;
@@ -236,6 +261,15 @@
                         required: true,
                     },
                     revision_date: {
+                        required: true,
+                    },
+                    year: {
+                        required: true,
+                    },
+                    month: {
+                        required: true,
+                    },
+                    mark: {
                         required: true,
                     },
                     'department_id[1]': {
@@ -269,6 +303,15 @@
                     },
                     revision_date: {
                         required: "Revision Date is Required",
+                    },
+                    year: {
+                        required: "Year is Required",
+                    },
+                    month: {
+                        required: "Month is Required",
+                    },
+                    mark: {
+                        required: "Mark is Required",
                     },
                     'department_id[1]': {
                         required: "Department Name is Required",
@@ -314,15 +357,9 @@
             let form_set_count = 2;
             const maxFormSets = 200;
             const minFormSets = 1;
-
-            // $(".add-row").click(function() {
-            const months = [
-                'April', 'May', 'June', 'July', 'August', 'September',
-                'October', 'November', 'December', 'January', 'February', 'March'
-            ];
-
             $(document).on('click', ".add-row", function() {
                 let currentFormSets = $('#form-wrapper .form-set').length;
+                let maxFormSets = 200;
 
                 if (currentFormSets >= maxFormSets) {
                     Swal.fire({
@@ -334,9 +371,8 @@
                     return;
                 }
 
-                // Ensure it starts from 00002 format
+                let form_set_count = currentFormSets + 1;
                 let newSerialNumber = ('00000' + form_set_count).slice(-5);
-
 
                 let newFormSet = `
                     <div class="form-set mb-3">
@@ -349,7 +385,7 @@
                                 <i class="fa-solid fa-trash"></i> Remove
                             </button>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group form-input">
@@ -361,11 +397,10 @@
                                 <div class="form-group form-input">
                                     <label class="form-label require">Department Name</label>
                                     <select name="department_id[${form_set_count}]" class="form-control single-select" style="width: 100%">
-                                         <option value="">Select Department</option>
-                                            @foreach ($departmentList as $department)
-                                              <option value="{{ $department->id }}">
-                                                 {{ $department->department_name }}</option>
-                                             @endforeach
+                                        <option value="">Select Department</option>
+                                        @foreach ($departmentList as $department)
+                                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -375,23 +410,29 @@
                                     <select name="unit_id[${form_set_count}]" class="form-control single-select">
                                         <option value="">Select Unit</option>
                                         @foreach ($unitList as $unit)
-                                                <option value="{{ $unit->id }}">
-                                                {{ $unit->unit_name }}</option>
+                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            @foreach ($months as $month)
-                                <div class="col-md-6 mt-2">
-                                    <div class="form-group form-input d-flex align-items-center">
-                                        <label class="form-label require me-2" style="min-width: 100px;">{{ $month }}</label>
-                                        <input type="number" name="marks_{{ strtolower($month) }}[${form_set_count}]" class="form-control" placeholder="Enter Marks">
-                                    </div>
-                                 </div>
-                             @endforeach
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Year</label>
+                                    <input type="text" name="year[${form_set_count}]" class="form-control year-picker" placeholder="Year">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Month</label>
+                                    <input type="text" name="month[${form_set_count}]" class="form-control month-picker" placeholder="Month">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Mark</label>
+                                    <input type="text" name="mark[${form_set_count}]" class="form-control" placeholder="Mark">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row mt-3">
@@ -422,39 +463,29 @@
                         </div>
                     </div>`;
 
-                // Append New Form Set
+
                 $('#form-wrapper').append(newFormSet);
-                serial_number++;
-                $(`input[name="no_of_audit[${form_set_count}]"]`).rules("add", {
-                    required: true,
-                    number: true,
-                    min: 1
-                });
-                $(`input[name="total_marks[${form_set_count}]"]`).rules("add", {
-                    required: true,
-                    number: true,
-                    min: 0
-                });
-                $(`input[name="marks_obtained[${form_set_count}]"]`).rules("add", {
-                    required: true,
-                    number: true,
-                    min: 0
-                });
-                $(`input[name="percentage[${form_set_count}]"]`).rules("add", {
-                    required: true,
-                    number: true,
-                    min: 0,
-                    max: 100
-                });
-                // Apply Select2 ONLY to Newly Added Select Elements
+
                 $('#form-wrapper .form-set:last .single-select').select2({
                     width: '100%'
                 });
 
-                updatePageIndices();
+                $('.year-picker').datepicker({
+                    format: 'yyyy',
+                    minViewMode: 'years',
+                    viewMode: 'years',
+                    autoclose: true
+                });
+
+                $('.month-picker').datepicker({
+                    format: 'M',
+                    minViewMode: 'months',
+                    viewMode: 'months',
+                    autoclose: true
+                });
+
             });
 
-            // Remove Row Functionality
             $(document).on('click', '.remove-row', function() {
                 if ($('#form-wrapper .form-set').length > 1) {
                     $(this).closest('.form-set').remove();

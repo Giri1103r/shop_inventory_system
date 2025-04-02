@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection View')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
+@section('title', 'Sand Bucket Inspection View')
+@section('pageurl', admin_url('fire/fire-sand-bucket-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/fire-sand-bucket-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -134,7 +134,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Detector Inspection Observation</h4>
+                                                <h4 class="text-white">Sand Bucket Inspection Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -154,7 +154,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2 col-12">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                    <h4 class="text-white">Sand Bucket Inspection Checklist</h4>
                                                 </div>
 
                                                 <!-- SR No -->
@@ -172,9 +172,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->resource_code }}
+                                                            {{ getLocationname($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -183,9 +183,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_sand_bucket_stand_no') }}</label>
                                                         <div class="view_data">
-                                                            {{ GetDeptName($details->department) }}
+                                                            {{ ($details->fire_bucket_stand_no) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -194,9 +194,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_sand_bucket_no') }}</label>
                                                         <div class="view_data">
-                                                            {{ getDetectorName($details->detector_type) }}
+                                                            {{ ($details->fire_bucket_no) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -205,11 +205,41 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
+                                                            class="form-label require">{{ __('inspection.condition') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->physical_condition == GOOD)
+                                                            @if ($details->condition == GOOD)
                                                                 <p>Good</p>
-                                                            @elseif ($details->physical_condition == FAIR)
+                                                            @elseif ($details->condition == FAIR)
+                                                                <p>Fair</p>
+                                                            @else
+                                                                <p>Poor</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.fire_bucket_condition') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->fire_bucket_condition == GOOD)
+                                                                <p>Good</p>
+                                                            @elseif ($details->fire_bucket_condition == FAIR)
+                                                                <p>Fair</p>
+                                                            @else
+                                                                <p>Poor</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.paint_condition') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->paint_condition == GOOD)
+                                                                <p>Good</p>
+                                                            @elseif ($details->paint_condition == FAIR)
                                                                 <p>Fair</p>
                                                             @else
                                                                 <p>Poor</p>
@@ -219,45 +249,28 @@
                                                 </div>
 
                                                 <!-- Cable Condition -->
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <div class="view_data">
-                                                            @if ($details->cable_condition == GOOD)
-                                                                <p>Good</p>
-                                                            @elseif ($details->cable_condition == FAIR)
-                                                                <p>Fair</p>
-                                                            @else
-                                                                <p>Poor</p>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Response Indicator -->
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->response_indicator == '1' ? 'WORKING' : 'NOT WORKING' }}
-                                                        </div>
-                                                    </div>
-                                                </div>
 
                                                 <!-- Working Status -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
+                                                            class="form-label require">{{ __('inspection.qualtiy_quantity_sand') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->working_status == '1' ? 'OPERATIONAL' : 'NON OPERATIONAL' }}
+                                                            {{ $details->qualtiy_quantity_sand == '1' ? 'ADEQUATE' : 'IN ADEQUATE' }}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <!-- Remarks -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.approach') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->approach }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label

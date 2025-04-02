@@ -342,6 +342,12 @@ class AppServiceProvider extends ServiceProvider
         defined('FAIR') or define('FAIR', 2);
         defined('POOR') or define('POOR', 3);
 
+
+        //Quantiy
+        defined('INADEQUATE') or define('INADEQUATE', 0);
+        defined('ADEQUATE') or define('ADEQUATE', 1);
+
+
         //Response Indicator
         defined('NOTWORKING') or define('NOTWORKING', 0);
         defined('WORKING') or define('WORKING', 1);
@@ -360,6 +366,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_FLOOR_STRECTHER_CHECKLIST') or define('OHC_FLOOR_STRECTHER_CHECKLIST', 4);
         defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', 5);
         defined('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
+        defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT', 7);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);
@@ -370,6 +377,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION', 5);
         defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION', 6);
         defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION', 7);
+        defined('SAND_BUCKET_INSPECTION') or define('SAND_BUCKET_INSPECTION', 8);
         defined('DETECTOR_INSPECTION') or define('DETECTOR_INSPECTION', 11);
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
         defined('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION', 13);

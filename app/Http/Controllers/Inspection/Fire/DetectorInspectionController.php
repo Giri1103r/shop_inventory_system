@@ -228,7 +228,6 @@ class DetectorInspectionController extends Controller
     {
         try {
 
-            dd($request->all());
 
             $rules = [
                 'issue_date' => 'required',
@@ -331,7 +330,7 @@ class DetectorInspectionController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
@@ -878,7 +877,7 @@ class DetectorInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

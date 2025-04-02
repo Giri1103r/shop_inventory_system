@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -131,7 +132,7 @@ class IsolationValveController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspectiony/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -202,7 +203,59 @@ class IsolationValveController extends Controller
 
     public function Store(Request $request)
     {
-        try {
+        try {   
+
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'location_isv.*' => 'required',
+                'resource_code.*' => 'required',
+                'isv_status.*' => 'required',
+                'size_isv.*' => 'required',
+                'wheel_operation.*' => 'required',
+                'leakage.*' => 'required',
+                'type.*' => 'required',
+                'open.*' => 'required',
+                'close.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'location_isv.*.required' => 'Location ISV is required',
+                'resource_code.*.required' => 'Resource Code is required',
+                'size_isv.*.required' => 'Size of ISV is required',
+                'isv_status.*.required' => 'Status Of ISV is required',
+                'wheel_operation.*.required' => 'Wheel Operation Status is required',
+                'leakage.*.required' => 'Leakage Status is required',
+                'type.*.required' => 'Valve Type is required',
+                'open.*.required' => 'Valve Open Status is required',
+                'close.*.required' => 'Valve Close Status is required',
+                'observation.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $inspection = $this->isolation_valve->store();
             $inspection_type = ISOLATION_VALVE_INSPECTION;

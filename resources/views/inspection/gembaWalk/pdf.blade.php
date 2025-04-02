@@ -29,11 +29,11 @@
                             {{ $value->gemba_walk_auto_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ displaydateformat($value->date) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->revision_date) }}
+                            {{ getShift($value->shift_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{-- @php

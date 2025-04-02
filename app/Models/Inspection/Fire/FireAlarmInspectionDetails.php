@@ -83,6 +83,6 @@ class FireAlarmInspectionDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_fire_valve_details'));
+        static::addGlobalScope(new TrashScope('inspection_fire_fire_alarm_details'));
     }
 }

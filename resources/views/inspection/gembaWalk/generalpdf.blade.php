@@ -167,17 +167,24 @@
                 <td width="48%" style="padding:5px;">{{ $gembaWalk->gemba_walk_auto_id ?? 'N/A' }}</td>
             </tr>
             <tr>
+                <td width="50%" style="padding:5px;"><b>Document No</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ ($document_no->doc_no ?? '') }}
+                </td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaydateformat($gembaWalk->issue_date ?? '') }}
+                    {{ displaydateformat($document_no->issue_date ?? '') }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaydateformat($gembaWalk->revision_date ?? '') }}
+                    {{ ($document_no->rev_dt ?? '') }}
                 </td>
             </tr>
             <tr>
