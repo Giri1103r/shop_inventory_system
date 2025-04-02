@@ -201,7 +201,7 @@ class PASystemInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_pa_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_pa_system.id', 'DESC');
 
         return  $query->get();
     }
