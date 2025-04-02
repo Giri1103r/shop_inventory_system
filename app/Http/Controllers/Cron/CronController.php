@@ -338,6 +338,8 @@ class CronController extends Controller
 
             $fromDate = todayDbdate();
             $toDate = todayDbdate();
+            $apiKeyTokens = $this->company->getApiKeyToken();
+
             $responses = [];
 
             foreach ($apiKeyTokens as $token) {
@@ -371,6 +373,9 @@ class CronController extends Controller
 
 
             return response()->json($responses);
+
+
+    
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);

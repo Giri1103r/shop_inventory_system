@@ -230,24 +230,10 @@ class PrescribetoPatientController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $unit = null;
-            $department = null;
 
 
-            if (!empty($request->unit_id)) {
-                $unit = $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
 
-                if ($unit) {
-                    $department = $this->department
-                        ->where('unit_id', $unit->id)
-                        ->where('department_name', $request->department)
-                        ->where('status', 1)
-                        ->first();
-                }
-            }
-
-
-          $opd_patient = $this->opd_patient->store( $department,$unit);
+          $opd_patient = $this->opd_patient->store();
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
 
@@ -424,21 +410,7 @@ class PrescribetoPatientController extends Controller
             }
 
 
-            $unit = null;
-            $department = null;
 
-
-            if (!empty($request->unit_id)) {
-                $unit = $this->unit->where('unit_name', $request->unit_id)->where('status', 1)->first();
-
-                if ($unit) {
-                    $department = $this->department
-                        ->where('unit_id', $unit->id)
-                        ->where('department_name', $request->department)
-                        ->where('status', 1)
-                        ->first();
-                }
-            }
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
             if ($user_opd_patient->first_aid_treatment === 1) {
@@ -481,7 +453,7 @@ class PrescribetoPatientController extends Controller
                 }
             }
 
-            $opd_patient = $this->opd_patient->updates($id, $department,$unit);
+            $opd_patient = $this->opd_patient->updates($id);
             if ($user_opd_patient->first_aid_treatment === 1) {
                 $firstaid = $this->opd_firstaid->updates($id);
             }

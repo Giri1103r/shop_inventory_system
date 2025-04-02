@@ -26,8 +26,8 @@ class MonthlyFirstAidbox extends Model
         'verified_by',
         'approved_by',
         'approve_status',
-        'l1_manager_verification',
-        'l2_manager_verification',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'level_two_manager_remarks',
         'level_one_manager_remarks',
         'level_two_manager_remarks',
@@ -163,7 +163,7 @@ class MonthlyFirstAidbox extends Model
         $search = '';
         $request = Request();
         $query = $this->select('inspection_ohc_monthly_first_aid_audit.*');
-       
+
 
 
         if (isset($request->document_number) && $request->document_number) {

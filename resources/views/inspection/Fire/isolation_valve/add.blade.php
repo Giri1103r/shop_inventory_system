@@ -347,7 +347,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/isolating-valve-inspection') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -546,7 +546,7 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
-                        }
+                        },
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",

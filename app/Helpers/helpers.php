@@ -26,28 +26,29 @@ use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\Ohc\OhcSignature;
 use Kreait\Firebase\Messaging\CloudMessage;
+use App\Models\Inspection\audit\Master\Task;
+use App\Models\Inspection\Fire\DetectorType;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
 use App\Models\Inspection\MSDS\MSDSCheckList;
 use App\Models\Inspection\RRAA\RRAACheckList;
+use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\FloorStretcherFiles;
 use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\RRAA\RRAASignatureUpload;
+use App\Models\Inspection\Fire\FireExtinguisherType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\Inspection\audit\AuditAnalysis;
-use App\Models\Inspection\audit\Master\Task;
-use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
-use App\Models\Inspection\MSDS\MSDSSignatureUpload;
-use App\Models\Inspection\Ohc\DailyVitalEquipment;
-use App\Models\Inspection\Ohc\OhcSignature;
-use App\Models\Inspection\RRAA\RRAASignatureUpload;
-use App\Models\Inspection\Safety\SignatureUpload;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2135,19 +2136,19 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
-                    case FIRE_PA_SYSTEM_INSPECTION:
-                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
-                            ->where('status', 1)->where('trash', 'NO')->first();
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
 
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            $name = User::where('id', $userid)->first();
-                            if ($name == null) {
-                                return null;
-                            }
-                            return $name->signature_upload;
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
 
 
                 case GEMBA_WALK:
@@ -2368,6 +2369,11 @@ if (!function_exists('getMonth')) {
                 case FIRE_ALARM_INSPECTION:
                     return 'FAI-000001';
                     break;
+
+                case SPRINKLAR_SYSTEM_INSPECTION:
+                    return 'SSI-000001';
+                    break;
+
                 case FIRE_PA_SYSTEM_INSPECTION:
                     return 'PA-000001';
                     break;
@@ -2404,7 +2410,7 @@ if (!function_exists('getMonth')) {
             }
         }
     }
-    
+
 
     // Get Audit Category Type
 
@@ -2415,13 +2421,11 @@ if (!function_exists('getMonth')) {
                 return 'FIRE';
             } elseif ($type_id == 2) {
                 return 'HEALTH';
-            } 
-            elseif ($type_id == 3) {
+            } elseif ($type_id == 3) {
                 return 'SAFETY';
-            }
-            elseif ($type_id == 4) {
+            } elseif ($type_id == 4) {
                 return 'MIS';
-            }else {
+            } else {
                 return 'Unknown';
             }
         }
@@ -2448,6 +2452,18 @@ if (!function_exists('getMonth')) {
             if ($data) {
                 return $data->detector_type;
             }
+        }
+    }
+
+    // Get Fire Extinguisher Type Name
+    if (!function_exists('getExtinguisherTypeName')) {
+        function getExtinguisherTypeName($id)
+        {
+            $data = FireExtinguisherType::where('id', $id)->first();
+            if ($data) {
+                return $data;
+            }
+            return null;
         }
     }
 }

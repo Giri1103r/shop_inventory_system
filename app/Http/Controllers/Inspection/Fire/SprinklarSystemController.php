@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -131,7 +132,7 @@ class SprinklarSystemController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -204,6 +205,56 @@ class SprinklarSystemController extends Controller
     {
         try {
 
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'quantity.*' => 'required',
+                'resource_code.*' => 'required',
+                'water_leakage.*' => 'required',
+                'painting.*' => 'required',
+                'qbd.*' => 'required',
+                'condition_of_flow_meter.*' => 'required',
+                'main_isolation.*' => 'required',
+                'drain_condition.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'quantity.*.required' => 'Quantity is required',
+                'resource_code.*.required' => 'Resource Code is required',
+                'water_leakage.*.required' => 'Status of Water Leakage is required',
+                'painting.*.required' => 'Status Of Painting is required',
+                'qbd.*.required' => 'Quality By Design Condition is required',
+                'condition_of_flow_meter.*.required' => 'Condition of flow meter Status is required',
+                'main_isolation.*.required' => 'Main Isolation Valve Status is required',
+                'drain_condition.*.required' => 'Drain Isolation Valve Status is required',
+                'observation.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $inspection = $this->sprinklar_system->store();
             $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
             $id = $inspection->id;
@@ -261,6 +312,7 @@ class SprinklarSystemController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
