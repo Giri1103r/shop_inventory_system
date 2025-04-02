@@ -828,7 +828,8 @@ class MedicineReceivingController extends Controller
                 $remarks = $request->remarks;
 
                 $data = $this->medicine_receiving->selectOne($id);
-                $this->expire_medicine->store($data);
+                $unitIds = $this->unit->getUnitcount();
+                $this->expire_medicine->store($data,$unitIds);
                 $ids = $data->medicine_id;
 
 
