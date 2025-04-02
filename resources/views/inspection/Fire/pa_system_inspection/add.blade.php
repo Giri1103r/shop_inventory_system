@@ -227,9 +227,9 @@
                                                         <select name="audio_quality[1]" id="audio_quality"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Audio Quality</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -240,9 +240,9 @@
                                                         <select name="mic_condition[1]" id="mic_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Mic Condition</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -260,9 +260,9 @@
                                                         <select name="physical_condition[1]" id="Physical Condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Physical Condition</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -273,9 +273,9 @@
                                                         <select name="cable_condition[1]" id="cable_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Cable Condition</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -285,8 +285,8 @@
                                                         <select name="operation[1]" id="operation"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Operation</option>
-                                                            <option value="{{ encryptId(1) }}">Functional</option>
-                                                            <option value="{{ encryptId(2) }}">Non-functional</option>
+                                                            <option value="{{ encryptId(FUNCTIONAL) }}">Functional</option>
+                                                            <option value="{{ encryptId(NON_FUNCTIONAL) }}">Non-functional</option>
                                                         </select>
                                                     </div>
                                                 </div>

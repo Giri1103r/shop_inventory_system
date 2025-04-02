@@ -372,6 +372,7 @@ class AppServiceProvider extends ServiceProvider
         defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION', 7);
         defined('DETECTOR_INSPECTION') or define('DETECTOR_INSPECTION', 11);
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
+        defined('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION', 13);
 
         // OPTIONS
         defined('YES') or define('YES', 1);
