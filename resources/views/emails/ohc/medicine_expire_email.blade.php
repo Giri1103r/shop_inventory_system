@@ -32,19 +32,25 @@
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Batch Number</b>
+                            <b>Quantity</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{ ($details['batch_no']) }}</td>
+                            valign="top"> {{ ($details['qunatity']) }}</td>
                     </tr>
-
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                            <b>Unit</b>
+                        </td>
+                        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                            valign="top"> {{getUnitname( $details['unit_id']) }}</td>
+                    </tr>
 
                     <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                            <b>Expire Date</b>
+                            <b>Discard Date</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{displaydateformat( $details['expire_date']) }}</td>
+                            valign="top"> {{displaydateformat( $details['discard_date']) }}</td>
                     </tr>
 
                     <tr>

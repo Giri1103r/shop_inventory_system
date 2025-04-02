@@ -19,6 +19,8 @@ class UserDiscard extends Model
         'discard_date',
         'approved_by',
         'approve_status',
+        'unit_id',
+        'remarks',
         'approver_remarks',
         'expire_id',
         'status',
@@ -39,7 +41,7 @@ class UserDiscard extends Model
         $query = $this->select(
             'ohc_management_discard.*'
 
-        )->where('approve_status',OHC_DISCARD_EHS_APPROVED);
+        );
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
@@ -76,12 +78,15 @@ class UserDiscard extends Model
     {
         $request = request();
         $today = Carbon::today();
+
         $insert_array = [
             'medicine_id' => $expire_medicine->medicine_id,
             'quantity' => $request->quantity,
-            'discard_date' => $today,
+            'discard_date' =>  $today,
+            'unit_id' =>  decryptId($request->unit_id),
             'expire_medicine_id' => $expire_medicine->id,
             'expire_id'=> $id,
+            'remarks'=>$request->remarks,
             'approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
             'created_by' => Auth::id(),
         ];
@@ -105,7 +110,7 @@ class UserDiscard extends Model
     public function ehsheadapproval($id, $updateData)
     {
 
-        $data  = $this->select('ohc_management_discard.*')->where('expire_id', $id)
+        $data  = $this->select('ohc_management_discard.*')->where('id', $id)
             ->update(['approve_status'=>$updateData['approve_status'],'approver_remarks'=>$updateData['remarks'],'approved_by'=>Auth::id()]);
         return $data;
     }
