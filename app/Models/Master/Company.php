@@ -23,6 +23,7 @@ class Company extends Model
         'company_name',
         'short_name',
         'address',
+        'api_token_key',
         'status',
         'trash',
         'created_by',
@@ -196,9 +197,20 @@ class Company extends Model
 
         return $data;
     }
-public function getcompany(){
-    return Company::where('trash','NO')->where('status',1)->get();
-}
+    public function getcompany()
+    {
+        return Company::where('trash', 'NO')->where('status', 1)->get();
+    }
+
+    public function getApiKeyToken()
+    {
+        return Company::where('trash', 'NO')
+            ->where('status', 1)
+            ->select('api_token_key')
+            ->distinct()
+            ->get();
+    }
+
 
     protected static function booted()
     {

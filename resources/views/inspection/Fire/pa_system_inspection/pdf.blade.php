@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'MSDS Pdf')
+@section('title', 'Fire PA System Inspection Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -26,14 +26,17 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->document_number }}
+                            {{ $value->doc_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->issue_date) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_date }}
+                            {{ $value->revision_data }}
+                        </td>
+                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
+                            {{ getInspectionStatus($value->inspection_status); }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

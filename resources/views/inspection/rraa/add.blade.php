@@ -13,7 +13,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('RRAA Add') }}</h4> --}}
+
         </div>
 
     </div>
@@ -236,7 +236,6 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
         $.validator.addMethod("noSpaces", function(value, element) {

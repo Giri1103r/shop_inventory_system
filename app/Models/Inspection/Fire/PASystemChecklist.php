@@ -46,19 +46,9 @@ class PASystemChecklist extends Model
     {
         $request = request();
 
-        // $sr_no = $request->sr_no;
-        // $location = $request->location;
-        // $unit_id = $request->unit_id;
-        // $audio_quality = $request->audio_quality;
-        // $mic_condition = $request->mic_condition;
-        // $mic_quantity = $request->mic_quantity;
-        // $physical_condition = $request->physical_condition;
-        // $cable_condition = $request->cable_condition;
-        // $operation = $request->operation;
-        // $remark = $request->remark;
         $sr_no = $request->sr_no ?? [];
         $location = $request->location ?? [];
-        $unit_id = $request->unit_id ?? [];
+        $unit = $request->unit ?? [];
         $audio_quality = $request->audio_quality ?? [];
         $mic_condition = $request->mic_condition ?? [];
         $mic_quantity = $request->mic_quantity ?? [];
@@ -71,7 +61,7 @@ class PASystemChecklist extends Model
             $data = array(
                 'fire_pa_system_id' => $id,
                 'sr_no' => $sr_no_value,
-                'unit' => decryptId($unit_id[$index]),
+                'unit' => decryptId($unit[$index]),
                 'location' => decryptId($location[$index]),
                 'audio_quality' => decryptId($audio_quality[$index]),
                 'mic_condition' => decryptId($mic_condition[$index]),
@@ -85,6 +75,7 @@ class PASystemChecklist extends Model
 
             $this->create($data);
         }
+
     }
 
     public function GetDetails($id)

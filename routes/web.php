@@ -63,7 +63,7 @@ use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
-use App\Http\Controllers\Ohcmanagement\Master\HospitalDetailsController;
+use App\Http\Controllers\OhcManagement\Master\HospitalDetailsController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
@@ -1147,6 +1147,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('add/{id}', [DiscardController::class, 'issue']);
                 Route::post('/issue/submit', [DiscardController::class, 'issuestore']);
                 Route::post('/unique', [DiscardController::class, 'Uniquecheck']);
+                Route::get('/approval/view/{id}', [DiscardController::class, 'approval']);
+                Route::post('/approval/submit', [DiscardController::class, 'approvalsubmit']);
                 Route::get('/medicine-details/{unit_id}/{id}', [DiscardController::class, 'medicineDetails']);
             });
 
@@ -1167,6 +1169,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/discard', [MedicineExpireController::class, 'discard']);
                 Route::get('/approval/view/{id}', [MedicineExpireController::class, 'approval']);
                 Route::post('/approval/submit', [MedicineExpireController::class, 'approvalsubmit']);
+                Route::post('/balance', [MedicineExpireController::class, 'balance']);
             });
             Route::group(['prefix' => 'ohc/monthly-inventory'], function () {
                 Route::get('/list', [MonthlyInventoryController::class, 'index']);
