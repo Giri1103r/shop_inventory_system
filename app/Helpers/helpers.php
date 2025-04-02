@@ -2136,19 +2136,19 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
-                    case FIRE_PA_SYSTEM_INSPECTION:
-                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
-                            ->where('status', 1)->where('trash', 'NO')->first();
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
 
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            $name = User::where('id', $userid)->first();
-                            if ($name == null) {
-                                return null;
-                            }
-                            return $name->signature_upload;
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
 
 
                 case GEMBA_WALK:
@@ -2369,6 +2369,11 @@ if (!function_exists('getMonth')) {
                 case FIRE_ALARM_INSPECTION:
                     return 'FAI-000001';
                     break;
+
+                case SPRINKLAR_SYSTEM_INSPECTION:
+                    return 'SSI-000001';
+                    break;
+
                 case FIRE_PA_SYSTEM_INSPECTION:
                     return 'PA-000001';
                     break;
@@ -2405,7 +2410,7 @@ if (!function_exists('getMonth')) {
             }
         }
     }
-    
+
 
     // Get Audit Category Type
 
@@ -2416,13 +2421,11 @@ if (!function_exists('getMonth')) {
                 return 'FIRE';
             } elseif ($type_id == 2) {
                 return 'HEALTH';
-            } 
-            elseif ($type_id == 3) {
+            } elseif ($type_id == 3) {
                 return 'SAFETY';
-            }
-            elseif ($type_id == 4) {
+            } elseif ($type_id == 4) {
                 return 'MIS';
-            }else {
+            } else {
                 return 'Unknown';
             }
         }
@@ -2453,13 +2456,11 @@ if (!function_exists('getMonth')) {
     }
 
     // Get Fire Extinguisher Type Name
-    if(!function_exists('getExtinguisherTypeName'))
-    {
+    if (!function_exists('getExtinguisherTypeName')) {
         function getExtinguisherTypeName($id)
         {
-            $data = FireExtinguisherType::where('id',$id)->first();
-            if($data)
-            {
+            $data = FireExtinguisherType::where('id', $id)->first();
+            if ($data) {
                 return $data;
             }
             return null;

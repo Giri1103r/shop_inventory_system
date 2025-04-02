@@ -592,13 +592,7 @@
                             return $('#first_aid_treatment').is(':checked');
                         }
                     },
-                    // 'remarks[0]': {
-                    //     required: function() {
-                    //         return $('#first_aid_treatment').is(':checked');
-                    //     },
-                    //     minlength: 3,
-                    //     maxlength: 600
-                    // },
+
                     details: {
                         required: function() {
                             return $('#suggested_by').val() == '3';
@@ -610,8 +604,7 @@
                         required: function() {
                             return $('#is_reffered').is(':checked');
                         },
-                        minlength: 3,
-                        maxlength: 100
+
                     },
                     first_aider: {
                         required: function() {
@@ -745,8 +738,7 @@
                     },
                     hospital_name: {
                         required: "Hospital name is required .",
-                        minlength: "Hospital name must be at least 3 characters.",
-                        maxlength: "Hospital name must not exceed 100 characters.",
+                   
 
                     },
                     first_aider: {

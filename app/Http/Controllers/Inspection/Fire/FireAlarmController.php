@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -131,7 +132,7 @@ class FireAlarmController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -203,6 +204,52 @@ class FireAlarmController extends Controller
     public function Store(Request $request)
     {
         try {
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'quantity.*' => 'required',
+                'resource_code.*' => 'required',
+                'glass.*' => 'required',
+                'hammer.*' => 'required',
+                'mannual_call_point.*' => 'required',
+                'approach.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'quantity.*.required' => 'Quantity is required',
+                'resource_code.*.required' => 'Resource Code is required',
+                'glass.*.required' => 'Status of Glass is required',
+                'hammer.*.required' => 'Status Of Hammer is required',
+                'mannual_call_point.*.required' => 'Mannual Call Point is required',
+                'leakage.*.required' => 'Leakage Status is required',
+                'approach.*.required' => 'Approach is required',
+                'observation.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $inspection = $this->fire_alarm->store();
             $inspection_type = FIRE_ALARM_INSPECTION;
@@ -314,6 +361,7 @@ class FireAlarmController extends Controller
             );
             return view('inspection.fire.fire_alarm.approve', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));

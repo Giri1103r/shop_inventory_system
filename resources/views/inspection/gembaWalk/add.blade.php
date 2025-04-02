@@ -50,7 +50,27 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Document No </label>
                                                         <input type="text" name="document_no" id="document_no"
-                                                            class="form-control" placeholder=" Enter Document Number ">
+                                                            class="form-control" placeholder=" Enter Document Number " value="{{ $document_no->doc_no }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                        <input type="text" name="issue_date" id = ""
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Document Revision Date</label>
+                                                        <input type="text" name="document_revision_date"
+                                                            id="document_revision_date" value="{{ $document_no->rev_dt }}" readonly class="form-control">
                                                     </div>
                                                 </div>
 
@@ -62,11 +82,17 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Document Revision Date</label>
-                                                        <input type="text" name="document_revision_date"
-                                                            id="document_revision_date" class="form-control">
+                                                        <label class="form-label require">Shift</label>
+                                                        <select name="shift" id="shift" style="width: 100%"
+                                                            class="form-control single-select">
+                                                            <option value="">Select the option</option>
+                                                            @foreach ($shift as $list)
+                                                                <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
 
@@ -89,6 +115,9 @@
                                                         </div>
                                                     @endif
                                                 </div>
+
+                                                <input type="hidden" name="document_reference_id"
+                                                value="{{ $document_no->id }}">
                                             </div>
 
                                             <div class="mt-4 row">
@@ -304,9 +333,7 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            flatpickr("#document_revision_date", {
-                dateFormat: "d-m-Y"
-            });
+           
             flatpickr("#document_upload_date", {
                 dateFormat: "d-m-Y"
             });
@@ -563,11 +590,7 @@
 
                 $('#gembaWalkReportAdd').validate({
                     rules: {
-                        document_no: {
-                            minlength: 3,
-                            maxlength: 200,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                        },
+                       
                         'gemba_walk[0][checklist_description]': {
                             minlength: 3,
                             maxlength: 2000,
@@ -603,11 +626,7 @@
                         }
                     },
                     messages: {
-                        document_no: {
-                            minlength: "Document Number must be at least 2 characters.",
-                            maxlength: "Document Number cannot exceed 200 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                        },
+                       
                         'gemba_walk[0][checklist_description]': {
                             minlength: "Checklist Description must be at least 3 characters.",
                             maxlength: "Checklist Description cannot exceed 2000 characters.",

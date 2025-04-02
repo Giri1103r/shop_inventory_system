@@ -22,7 +22,8 @@ use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsFile;
 use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsApproval;
-
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Master\Shift;
 
 class GembaWalkController extends Controller
 {
@@ -36,6 +37,10 @@ class GembaWalkController extends Controller
     private $gembaWalkInspectionEhsFile;
     private $user;
     private $statusLog;
+    private $document_reference;
+    private $shift;
+
+
 
 
 
@@ -51,6 +56,10 @@ class GembaWalkController extends Controller
         $this->gembaWalkInspectionEhsFile = new GembaWalkInspectionEhsFile();
         $this->user = new User();
         $this->statusLog = new GembaWalkStatusLog();
+        $this->document_reference = new InspectionStaticDocno();
+        $this->shift = new Shift();
+
+
     }
 
 
@@ -73,11 +82,11 @@ class GembaWalkController extends Controller
                                 }
                                 return $text;
                             })
-                            ->addColumn('issue_date', function ($row) {
-                                return Displaydateformat($row->issue_date);
+                            ->addColumn('date', function ($row) {
+                                return Displaydateformat($row->date);
                             })
-                            ->addColumn('revision_date', function ($row) {
-                                return Displaydateformat($row->revision_date);
+                            ->addColumn('shift', function ($row) {
+                                return getShift($row->shift_id);
                             })
                             ->addColumn('created_at', function ($row) {
                                 return Displaydateformat($row->created_at);
@@ -107,7 +116,7 @@ class GembaWalkController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
                                 return $btn;
                             })
-                            ->rawColumns(['action', 'created_date', 'created_by', 'status', 'gemba_walk_status'])
+                            ->rawColumns(['action', 'created_date', 'created_by','date', 'shift', 'gemba_walk_status'])
                             ->setFilteredRecords($data['filter_records'])
                             ->setTotalRecords($data['total_records'])
                             ->skipPaging()
@@ -120,10 +129,14 @@ class GembaWalkController extends Controller
                     }
                 }
             }
+            $shift = $this->shift->getShiftname();
+            $data = array(
+                'shift' => $shift,
+                
+            );
 
-            return view('inspection.gembaWalk.list');
+            return view('inspection.gembaWalk.list',$data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'An error occurred while processing your request. Please try again later.'], 500);
         }
@@ -137,10 +150,17 @@ class GembaWalkController extends Controller
             $locationList = $this->location->getLocationName();
             $unitList = $this->unit->getUnitList();
             $employeeList = $this->employee->getEmployeeList();
+            $document_no = $this->document_reference->selectUsingName('GembaWalk');
+            $shift = $this->shift->getShiftname();
+
+
             $data = array(
                 'locationList' => $locationList,
                 'unitList' => $unitList,
-                'employeeList' => $employeeList
+                'employeeList' => $employeeList,
+                'document_no' => $document_no,
+                'shift' => $shift,
+                
             );
             return view('inspection.gembaWalk.add', $data);
         } catch (Exception $ex) {
@@ -277,8 +297,10 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
-
-
+                $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+                
+                
+                
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
@@ -286,8 +308,10 @@ class GembaWalkController extends Controller
                     'status_log' => $status_log,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
-                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details
-
+                    'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details,
+                    'document_no' => $document_no,
+                    
+                    
                 );
             }
             return view('inspection.gembaWalk.view', $data);
@@ -306,11 +330,15 @@ class GembaWalkController extends Controller
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
+                $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+
 
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
-                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
+                    'document_no' => $document_no,
+
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
@@ -513,17 +541,20 @@ class GembaWalkController extends Controller
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $floorID = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 2)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
+                $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
                     'floorID' => $floorID,
-                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature
+                    'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
+                    'document_no' => $document_no,
+
 
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -622,7 +653,6 @@ class GembaWalkController extends Controller
             Session::flash('success', 'Floor Manager Verification successfully');
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -640,8 +670,7 @@ class GembaWalkController extends Controller
                 $type = GEMBA_WALK;
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
                 $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
-
-
+                $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
@@ -649,12 +678,11 @@ class GembaWalkController extends Controller
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
                     'ehsId' => $ehsId,
-
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -831,7 +859,7 @@ class GembaWalkController extends Controller
             Session::flash('success', '  EHS Officer Verication successfully');
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -852,6 +880,8 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
+                $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+
 
                 $data = [
                     'gembaWalk_details' => $gembaWalk_details,
@@ -860,7 +890,9 @@ class GembaWalkController extends Controller
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
                     'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
-                    'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature
+                    'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature,
+                    'document_no' => $document_no,
+
 
                 ];
             }
@@ -883,7 +915,6 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
@@ -895,7 +926,6 @@ class GembaWalkController extends Controller
         try {
 
             $allData = $this->gembaWalk->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -903,8 +933,8 @@ class GembaWalkController extends Controller
             $header = [
                 __("common.sno"),
                 'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Date',
+                'Shift',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -955,9 +985,9 @@ class GembaWalkController extends Controller
             $header = [
                 __("common.sno"),
                 'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
+                'Date',
+                'Shift',
+                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -968,9 +998,9 @@ class GembaWalkController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->gemba_walk_auto_id;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  getGMInspectionStatus($data->gemba_walk_status);;
+                $export[] =  Displaydateformat($data->date);
+                $export[] = getShift($data->shift_id);
+                $export[] =  getGMInspectionStatus($data->gemba_walk_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
