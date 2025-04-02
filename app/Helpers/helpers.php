@@ -40,6 +40,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\DailyVitalEquipment;
@@ -2399,6 +2400,16 @@ if (!function_exists('getMonth')) {
 
             if ($data) {
                 return $data->department_name;
+            }
+        }
+    }
+    if (!function_exists('getDetectorName')) {
+        function getDetectorName($id)
+        {
+            $data = DetectorType::where('id', $id)->first();
+
+            if ($data) {
+                return $data->detector_type;
             }
         }
     }

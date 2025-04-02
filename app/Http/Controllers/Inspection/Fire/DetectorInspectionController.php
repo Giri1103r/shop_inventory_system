@@ -1,53 +1,61 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Safety;
+namespace App\Http\Controllers\Inspection\Fire;
 
 use Exception;
-use App\Models\UploadLog;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
-use App\Models\Inspection\Master\ChecklistFile;
-use App\Mail\Inspection\Safety\SafetyInspection;
-use App\Models\Inspection\Safety\SafetyStatusLog;
-use App\Models\Inspection\Safety\SignatureUpload;
-use App\Models\Inspection\Safety\EyeWashInspectionDetails;
-use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
+use App\Mail\Inspection\Fire\FireInspection;
+use App\Models\Inspection\Fire\DetectorInspection;
+use App\Models\Inspection\Fire\FireStatusLog;
+use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\Fire\DetectorInspectionDetails;
+use App\Models\Inspection\Fire\DetectorType;
+use App\Models\Inspection\InspectionStaticDocno;
 
-class MonthlyEyeWashInspectionController extends Controller
+class DetectorInspectionController extends Controller
 {
-    private $eye_wash;
-    private $checklist_file;
-    private $upload_log;
+    private $detector;
+    private $detector_details;
     private $shift;
     private $location;
     private $unit;
     private $frequency;
-    private $statusLog;
-    private $eye_wash_details;
+    private $department;
+    private $files;
     private $signature;
+    private $statusLog;
+    private $checklist_follow;
+    private $document_reference;
+    private $detector_type;
 
     public function __construct()
     {
-        $this->eye_wash = new MonthlyEyeWashInspection();
-        $this->checklist_file = new ChecklistFile();
-        $this->upload_log = new UploadLog();
+        $this->detector = new DetectorInspection();
+        $this->detector_details = new DetectorInspectionDetails();
+        $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
         $this->unit = new Unit();
         $this->frequency = new Frequency();
-        $this->statusLog = new SafetyStatusLog();
-        $this->eye_wash_details = new EyeWashInspectionDetails();
-        $this->signature = new SignatureUpload();
+        $this->files = new FireFileUpload();
+        $this->signature = new FireSignatureUpload();
+        $this->statusLog = new FireStatusLog();
+        $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
+        $this->detector_type = new DetectorType();
     }
 
     public function Index(Request $request)
@@ -55,16 +63,16 @@ class MonthlyEyeWashInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->eye_wash->list();
+                    $data =  $this->detector->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_detector_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_detector_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -72,8 +80,11 @@ class MonthlyEyeWashInspectionController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -115,64 +126,100 @@ class MonthlyEyeWashInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/detector-inspection/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/detector-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due', 'location', 'shift', 'frequency'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
 
-        $data = array();
-        return view('inspection.Safety.eye_wash_inspection.list', $data);
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
+        return view('inspection.fire.detector_inspection.list', $data);
     }
 
     public function Add(Request $request)
     {
         try {
-
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
+            $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('DetectorInspection');
+            $detector_type = $this->detector_type->getDetectorType();
 
             $data = array(
                 'locations' => $location,
                 'units' => $unit,
                 'frequency' => $frequency,
                 'shifts' => $shifts,
+                'department' => $department,
+                'document_no' => $document_no,
+                'detector_types' => $detector_type,
             );
-            return view('inspection.Safety.eye_wash_inspection.add', $data);
+
+            return view('inspection.fire.detector_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return admin_url('safety/eye-wash-inspection/monthly/list');
+            return redirect(admin_url('fire/detector-inspection/list'));
+        }
+    }
+
+    public function GetDepartment(Request $request)
+    {
+        try {
+            $department = $this->department->getdepartment();
+            $departments = [];
+
+            foreach ($department as $department) {
+                $departments[] = [
+                    'id' => encryptId($department->id),
+                    'department_name' => $department->department_name,
+                ];
+            }
+
+            return response()->json($departments);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['error' => 'Something went wrong !'], 406);
         }
     }
 
@@ -180,202 +227,151 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
 
-            // dd($request->all());
 
-            $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'requried',
-                'inspection_date' => 'required',
-                'location_id' => 'required',
-                'shift_id' => 'required',
-                'next_due' => 'required',
-                'unit_id' => 'required',
-                'frequency_id' => 'required',
-                'sr_no.*' => 'required',
-                'location.*' => 'required',
-                'resource_code.*' => 'required',
-                'condition.*' => 'required',
-                'value.*' => 'required',
-                'hfsov.*' => 'required',
-                'foot_pedal.*' => 'required',
-                'eyewash_heads.*' => 'required',
-                'receptacle.*' => 'required',
-                'water.*' => 'required',
-                'quality.*' => 'required',
-                'pressure.*' => 'required',
-                'temperature.*' => 'required',
-            ];
 
-            $messages = [
-                'issue_date.required' => 'Issue Date is required',
-                'rev_date.required' => 'Revision Data is required',
-                'inspection_date.required' => 'Inspection Date is required',
-                'location_id.required' => 'Location is required',
-                'shift_id.required' => 'Shift is required',
-                'next_due.required' => 'Next due date is required',
-                'unit_id.required' => 'Unit is required',
-                'location.*.required' => 'Location is required',
-                'resource_code.*.required' => 'Resource code is required',
-                'condition.*.required' => 'Condition is required',
-                'value.*.required' => 'Valve is required',
-                'hfsov.*.required' => 'Hand free stay open value is required',
-                'foot_pedal.*.required' => 'Foot Pedal Value is required',
-                'eyewash_heads.*.required' => 'Eye wash heads is required',
-                'receptacle.*.required' => 'Receptable name is requried',
-                'water.*.required' => 'Water quality is required',
-                'quality.*.required' => 'Quality is required',
-                'pressure.*.required' => 'Pressure is required',
-                'temperature.*.required' => 'Temperature is required',
-            ];
+            
 
-            $validator = Validator::make($request->all(), $rules, $messages);
+            $inspection = $this->detector->store();
+            $inspection_type = DETECTOR_INSPECTION;
+            $id = $inspection->id;
 
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $store_eyewash_inspection = $this->eye_wash->store();
-            $inspection_id = $store_eyewash_inspection->id;
-            $inspection_details = $this->eye_wash->selectOne($inspection_id);
-            $store_inspection_details = $this->eye_wash_details->store($inspection_id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $store_eyewash_inspection->id);
+            $inspection_details = $this->detector_details->store($id);
+            $inspection_file = $this->files->file_upload($inspection_type, $id);
+            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Monthly EyeWash Inspection",
+                    'message' => "Fire Associate create the Detector Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_id,
+                    'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/eyewash/monthly/verification/view/' . encryptId($inspection_id)),
+                'web_link' =>  admin_url('fire/detector-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Monthly Eyewash Inspection';
+            $title = 'Fire Associate create the Detector Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
+                $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'safety_type' => 'Monthly Eyewash Inspection',
+                    'fire_type' => 'Detector Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
-                    'data' => $inspection_details
+                    'data' => $inspection
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
 
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
-                'inspection_id' => $$inspection_id,
+                'type' => DETECTOR_INSPECTION,
+                'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-
-            Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            Session::flash('flash', 'Your data added successfully');
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
-        }
-    }
-
-    public function GetLocations(Request $request)
-    {
-        try {
-            $data = $this->location->getLocationName();
-            $decryptedArray = [];
-            foreach ($data as $data) {
-                $decryptedArray[] = [
-                    'id' => encryptId($data->id),
-                    'location_name' => $data->location_name,
-                ];
-            }
-            return response()->json($decryptedArray);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Please try again after sometimes'], 406);
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
     public function View(Request $request)
     {
         try {
+
             $id = decryptId($request->id);
-            $inspection_details = $this->eye_wash->selectOne($id);
-            $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
-            $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
+            $inspection_type = DETECTOR_INSPECTION;
+            $inspection = $this->detector->selectOne($id);
+            $inspection_details = $this->detector_details->GetDetails($inspection->id);
+            $inspection_image = $this->files->GetFile($inspection_type, $id);
+            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
-
-            return view('inspection.Safety.eye_wash_inspection.view', $data);
+            return view('inspection.fire.detector_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
     public function Approvals(Request $request)
     {
         try {
+
             $id = decryptId($request->id);
-            $inspection_details = $this->eye_wash->selectOne($id);
-            $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+            $inspection_type = DETECTOR_INSPECTION;
+
+            $inspection = $this->detector->selectOne($id);
+            $inspection_details = $this->detector_details->GetDetails($inspection->id);
+            $inspection_image = $this->files->GetFile($inspection_type, $id);
+            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'inspection_image' => $inspection_image,
+                'status_log' => $status_log,
+                'document_no' => $document_no,
             );
-
-            return view('inspection.Safety.eye_wash_inspection.approve', $data);
+            return view('inspection.fire.detector_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
     public function EHSOfficerSubmit(Request $request)
     {
+
         try {
-            $request = Request();
             $id = decryptId($request->id);
-            $inspection_updates = $this->eye_wash->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
-            $inspection_details = $this->eye_wash->selectOne($id);
+            $inspection_updates = $this->detector->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $inspection_details = $this->detector->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'eye_wash Inspeciton Approved Successfully';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($inspection_details->id));
+                $message = 'Detector Inspeciton Approved Successfully';
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 2,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -394,19 +390,19 @@ class MonthlyEyeWashInspectionController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'safety_type' => 'Monthly eye_wash Inspection',
+                'fire_type' => 'Detector Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
                 'url' => $url,
                 'data' => $inspection_details
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
+                'type' => DETECTOR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -415,11 +411,12 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
-            Session::flash('error', 'Something Went Wrong !');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            Session::flash('error', 'Something Went Wrong!');
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
@@ -427,16 +424,16 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $eye_wash_inspection = $this->eye_wash->capaSubmit($id);
-            $inspection_details = $this->eye_wash->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            $safety_gallery_inspection = $this->detector->capaSubmit($id);
+            $inspection_details = $this->detector->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Safety Inspection';
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -446,7 +443,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -454,19 +451,19 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($id) . '/ehsVerify');
+            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'safety_type' => 'Monthly eye_wash Inspection',
+                'fire_type' => 'Safety Gallery Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
                 'url' => $url,
                 'data' => $inspection_details
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
+                'type' => DETECTOR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -475,11 +472,11 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/eye_wash-inspecttion/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
@@ -489,25 +486,26 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $eye_wash_inspection = $this->eye_wash->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
-            $inspection_details = $this->eye_wash->selectOne($id);
+            $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -521,26 +519,25 @@ class MonthlyEyeWashInspectionController extends Controller
                 'assigned_user' => array_to_string($users),
                 'created_by' => Auth::id(),
             );
+            notificationSave($notificationData);
 
             foreach ($users as $user) {
                 $title = $message;
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Monthly eye_wash Inspection',
+                    'fire_type' => 'Detector Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $inspection_details
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
 
-
-            notificationSave($notificationData);
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
+                'type' => DETECTOR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -549,11 +546,11 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
@@ -563,25 +560,26 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $eye_wash_inspection = $this->eye_wash->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
-            $inspection_details = $this->eye_wash->selectOne($id);
+            $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
-                $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
+                $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -602,18 +600,18 @@ class MonthlyEyeWashInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Monthly eye_wash Inspection',
+                    'fire_type' => 'Detector Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $inspection_details
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
 
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
+                'type' => DETECTOR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -622,11 +620,11 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
@@ -636,23 +634,23 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $eye_wash_inspection = $this->eye_wash->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
-            $inspection_details = $this->eye_wash->selectOne($id);
+            $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
-                $message = 'eye_wash Inspeciton Approved Successfully!';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($inspection_details->id));
+                $message = 'detector Inspeciton Approved Successfully!';
+                $web_link =   admin_url('fire/detector-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -667,24 +665,23 @@ class MonthlyEyeWashInspectionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             foreach ($users as $user) {
                 $title = $message;
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Monthly eye_wash Inspection',
+                    'fire_type' => 'Detector Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $inspection_details
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
 
             $insert_array = [
-                'type' => EYE_WASH_INSPECTION,
+                'type' => DETECTOR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -693,20 +690,18 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
-
     public function ExportExcel(Request $request)
     {
-
         try {
-            $allData = $this->eye_wash->exportdata();
+            $allData = $this->detector->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -736,24 +731,23 @@ class MonthlyEyeWashInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Detector Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
                 );
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
     public function ExportPdf(Request $request)
     {
-
         try {
 
-            $allData = $this->eye_wash->exportdata();
+            $allData = $this->detector->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -770,7 +764,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Monthly Eye Wash Inspection",
+                'pagetitle' => "Detector Inspection",
             );
 
             $property = [
@@ -785,35 +779,35 @@ class MonthlyEyeWashInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.pdf.pdf', $data);
+            $view = view('inspection.fire.pdf.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Monthly Eye Wash Inspection.pdf";
+            $filename = "Detector Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
-
-    public function exportViewPdf(Request $request)
+    public function ExportViewPDF(Request $request)
     {
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
-                $inspection_details = $this->eye_wash->selectOne($id);
-                $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+                $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+                $forklift_details = $this->detector->selectOne($id);
+                $inspection = $this->detector_details->GetDetails($forklift_details->id);
 
                 $data = [
                     'status_log' => $status_log,
-                    'inspection_details' => $inspection_details,
+                    'forklift_details' => $forklift_details,
+                    'pagetitle' => "Detector Inspection",
                     'inspection' => $inspection,
-                    'pagetitle' => "Monthly EyeWash Inspection",
                 ];
             }
 
@@ -829,16 +823,17 @@ class MonthlyEyeWashInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Safety.eye_wash_inspection.viewPdf', $data);
+            $html = view('inspection.fire.detector_inspection.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Monthly Eyewash Inspection.pdf";
+            $filename = "Detector Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
-            Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 }

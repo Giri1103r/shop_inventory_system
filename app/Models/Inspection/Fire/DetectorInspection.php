@@ -6,15 +6,14 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class HooterInspection extends Model
+class DetectorInspection extends Model
 {
-    protected $table = 'inspection_fire_hooter';
+
+    protected $table = 'inspection_fire_detector';
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -52,57 +51,74 @@ class HooterInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hooter.*');
+        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_detector.id as fire_detector_id')
+            ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id');
+
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
+
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
+
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_hooter.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_hooter.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_detector.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_hooter.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_detector.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_detector.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
 
+
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_detector.inspection_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "revision_data":
-                    $query->orderBy('inspection_fire_hooter.revision_data', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_fire_hooter.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_fire_hooter.document_number', $columnorder);
-                    break;
                 case "inspection_status":
-                    $query = $query->orderBy('inspection_fire_hooter.inspection_status', $columnorder);
+                    $query = $query->orderBy('inspection_fire_detector.inspection_status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_fire_hooter.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_fire_detector.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_fire_hooter.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_fire_detector.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_fire_hooter.id', 'DESC');
+                    $query = $query->orderBy('inspection_fire_detector.id', 'DESC');
                     break;
             }
         }
@@ -130,12 +146,11 @@ class HooterInspection extends Model
 
         $data = array(
             'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
-            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' => $request->inspection_date,
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => DBdateformat($request->next_due),
+            'next_due' => $request->next_due,
             'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
@@ -151,28 +166,43 @@ class HooterInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hooter.*');
+        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+            ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_hooter.document_number', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_hooter.issue_date', 'LIKE', '%' . $request->issue_date . '%');
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_hooter.revision_data', 'LIKE', '%' . $request->rev_date . '%');
-        }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_detector.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_detector.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
         $query->orderBy('id', 'DESC');
 
@@ -289,6 +319,6 @@ class HooterInspection extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_hooter'));
+        static::addGlobalScope(new TrashScope('inspection_fire_detector'));
     }
 }

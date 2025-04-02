@@ -342,6 +342,14 @@ class AppServiceProvider extends ServiceProvider
         defined('FAIR') or define('FAIR', 2);
         defined('POOR') or define('POOR', 3);
 
+        //Response Indicator
+        defined('NOTWORKING') or define('NOTWORKING', 0);
+        defined('WORKING') or define('WORKING', 1);
+
+        //Working Status
+        defined('OPERATIONAL') or define('OPERATIONAL', 0);
+        defined('NONOPERATIONAL') or define('NONOPERATIONAL', 1);
+
         //Standard/Norms
         defined('STANDARD') or define('STANDARD', 1);
         defined('NORMS') or define('NORMS', 2);
@@ -362,6 +370,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ISOLATION_VALVE_INSPECTION') or define('ISOLATION_VALVE_INSPECTION', 5);
         defined('FIRE_ALARM_INSPECTION') or define('FIRE_ALARM_INSPECTION', 6);
         defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION', 7);
+        defined('DETECTOR_INSPECTION') or define('DETECTOR_INSPECTION', 11);
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
 
         // OPTIONS

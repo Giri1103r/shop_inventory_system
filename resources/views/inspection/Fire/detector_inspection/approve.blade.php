@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hooter Inspection Approve')
-@section('pageurl', admin_url('fire/hooter-inspection/list'))
+@section('title', 'Detector Inspection Approve')
+@section('pageurl', admin_url('fire/detector-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -33,7 +33,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->doc_no }}
+                                                    {{ $document_no->doc_no }}
                                                 </div>
                                             </div>
                                         </div>
@@ -41,7 +41,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->issue_date) }}
+                                                    {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -49,7 +49,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->revision_data }}
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
@@ -116,7 +116,7 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -134,7 +134,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Hooter Inspection Observation</h4>
+                                                <h4 class="text-white">Detector Inspection Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -152,19 +152,22 @@
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hooter Inspection Checklist</h4>
+                                                <div class="card-header-inner p-2 col-12">
+                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
                                                 </div>
+
+                                                <!-- SR No -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->sr_no }}
+                                                            {{ $loop->iteration }}
                                                         </div>
                                                     </div>
                                                 </div>
 
+                                                <!-- Resource Code -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -174,6 +177,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Department -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -181,27 +186,77 @@
                                                         <div class="view_data">
                                                             {{ GetDeptName($details->department) }}
                                                         </div>
+                                                    </div>
+                                                </div>
 
-                                                    </div>
-                                                </div>
+                                                <!-- Detector Type -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.check_items') }}</label>
+                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->condition_of_hooter }}
+                                                            {{ getDetectorName($details->detector_type) }}
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Physical Condition -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
+                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->quantity }}
+                                                            @if ($details->physical_condition == 'GOOD')
+                                                                <p>Good</p>
+                                                            @elseif ($details->physical_condition == 'FAIR')
+                                                                <p>Fair</p>
+                                                            @else
+                                                                <p>Poor</p>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Cable Condition -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->cable_condition == 'GOOD')
+                                                                <p>Good</p>
+                                                            @elseif ($details->cable_condition == 'FAIR')
+                                                                <p>Fair</p>
+                                                            @else
+                                                                <p>Poor</p>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Response Indicator -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->response_indicator == '1' ? 'WORKING' : 'NOT WORKING' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Working Status -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->working_status == '1' ? 'OPERATIONAL' : 'NON OPERATIONAL' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -209,51 +264,11 @@
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
+                                                    </div>
+                                                </div>
 
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.checked_obs') }}</label>
-                                                        <div class="mt-1">
-                                                            <div class="form-check form-check-inline">
-                                                                <div class="view_data">
-                                                                    @if ($details->blinking_light == 1)
-                                                                        <span style="color: green;">&#10004;</span>
-                                                                    @else
-                                                                        <span style="color: red;">&#10060;</span>
-                                                                    @endif
-                                                                </div>
-                                                                <label class="form-check-label"
-                                                                    for="blinking_light">Blinking
-                                                                    Light</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <div class="view_data">
-                                                                    @if ($details->connection == 1)
-                                                                        <span style="color: green;">&#10004;</span>
-                                                                    @else
-                                                                        <span style="color: red;">&#10060;</span>
-                                                                    @endif
-                                                                </div>
-                                                                <label class="form-check-label"
-                                                                    for="connection">Connection</label>
-                                                            </div>
-                                                            <div class="form-check form-check-inline">
-                                                                <div class="view_data">
-                                                                    @if ($details->audiobility == 1)
-                                                                        <span style="color: green;">&#10004;</span>
-                                                                    @else
-                                                                        <span style="color: red;">&#10060;</span>
-                                                                    @endif
-                                                                </div>
-                                                                <label class="form-check-label"
-                                                                    for="auditbility">Audibility</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <!-- Checked Observations -->
+
                                             </div>
                                         </div>
                                     @endforeach
@@ -267,7 +282,7 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/hooter-inspection/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('fire/detector-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
@@ -320,7 +335,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -330,30 +345,30 @@
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
                                         <div class="row mb-2">
-                                            @if (isset($inspection->verified_by))
+                                            @if (isset($inspection_details->verified_by))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($inspection->verified_by) }}
+                                                            {{ getUserName($inspection_details->verified_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetSignature(
-                                                        $inspection->verified_by,
+                                                        $inspection_details->verified_by,
                                                         $inspection->id,
                                                         HOOTER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
-                                            @if (isset($inspection->created_at))
+                                            @if (isset($inspection_details->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -368,6 +383,7 @@
                                                     </div>
                                                 </div>
                                             @endif
+
                                             @if ($inspection->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -619,8 +635,8 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/hooter-inspection/capa/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/detector-inspection/capa/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
@@ -659,7 +675,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -667,7 +683,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/hooter-inspection/capa/reverify/submit') }}"
+                                        action="{{ admin_url('fire/detector-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
@@ -717,7 +733,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('fire/hooter-inspection/level-one/verify/submit') }}"
+                                        action="{{ admin_url('fire/detector-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
@@ -769,7 +785,7 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('fire/hooter-inspection/level-two/verify/submit') }}"
+                                        action="{{ admin_url('fire/detector-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
@@ -826,6 +842,7 @@
         </div>
 
     @stop
+
     @push('script')
         <script>
             $('#forklistassessmentAdd').validate({
