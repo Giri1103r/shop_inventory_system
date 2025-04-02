@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -22,6 +23,7 @@ use App\Models\Inspection\Fire\FireExtinguisher;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\FireExtinguisherDetails;
+use App\Models\Inspection\Fire\FireExtinguisherType;
 
 class FireExtinguisherController extends Controller
 {
@@ -36,6 +38,7 @@ class FireExtinguisherController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $fire_type;
 
     public function __construct()
     {
@@ -50,6 +53,8 @@ class FireExtinguisherController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->fire_type = new FireExtinguisherType();
+
     }
 
     public function Index(Request $request)
@@ -131,7 +136,7 @@ class FireExtinguisherController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -163,6 +168,7 @@ class FireExtinguisherController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $types = $this->fire_type->getTypes();
 
             $data = array(
                 'locations' => $location,
@@ -170,6 +176,7 @@ class FireExtinguisherController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'types' => $types,
             );
 
             return view('inspection.fire.fire_extinguisher.add', $data);
@@ -204,6 +211,58 @@ class FireExtinguisherController extends Controller
     {
         try {
 
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'location.*' => 'required',
+                'description.*' => 'required',
+                'type.*' => 'required',
+                'capacity.*' => 'required',
+                'quantity.*' => 'required',
+                'cylinder_pressure.*' => 'required',
+                'discharge_tube.*' => 'required',
+                'approach.*' => 'required',
+                'safety_pin.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'location.*.required' => 'Location is required',
+                'description.*.required' => 'Description is required',
+                'type.*.required' => 'Fire Extinguisher Type is required',
+                'capacity.*.required' => 'Capacity is required',
+                'quantity.*.required' => 'Quantity is required',
+                'cylinder_pressure.*.required' => 'Cylinder Pressure is required',
+                'discharge_tube.*.required' => 'Discharge Tube is required',
+                'approach.*.required' => 'Approach is required',
+                'observation.required' => 'Observation is required',
+                'quantity.*.required' => 'Quantity is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $inspection = $this->fire_extinguisher->store();
             $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
             $id = $inspection->id;
@@ -213,7 +272,7 @@ class FireExtinguisherController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -770,7 +829,7 @@ class FireExtinguisherController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,FIRE_EXTINGUISHER_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
                 $forklift_details = $this->fire_extinguisher->selectOne($id);
                 $inspection = $this->fire_extinguisher_details->GetDetails($forklift_details->id);
 
@@ -794,7 +853,7 @@ class FireExtinguisherController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.fire_extinguisher.viewPdf',$data);
+            $html = view('inspection.fire.fire_extinguisher.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
