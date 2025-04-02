@@ -73,9 +73,6 @@ class RRAADetails extends Model
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_rraa_details.status', decryptId($request->status));
-        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -114,23 +111,6 @@ class RRAADetails extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function statuschange($id)
-    {
-        $request = request();
-
-        $type = $request->types;
-        if ($type == 1) {
-            $update_data = array(
-                'status' => 0,
-            );
-        } else {
-            $update_data = array(
-                'status' => 1,
-            );
-        }
-        return $this->where('id', $id)->update($update_data);
-    }
-
     public function exportdata()
     {
         $request = request();
@@ -153,9 +133,6 @@ class RRAADetails extends Model
         }
         if ($request->has('revision_date') && $request->revision_date) {
             $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('inspection_rraa_details.status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

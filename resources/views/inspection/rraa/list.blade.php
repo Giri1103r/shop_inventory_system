@@ -33,19 +33,9 @@
                                         <input type="text" name="issue_date" id="issue_date"
                                             class="form-control">
                                     </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                        <select name="status" id="status" style="width: 100%"
-                                            class="form-control single-select">
-                                            <option value="">Select Status</option>
-                                            <option value="{{ encryptId(1) }}">Active</option>
-                                            <option value="{{ encryptId(0) }}">In-Active</option>
-                                        </select>
-                                    </div>
                                     <div class="col-md-3 mt-3">
                                         <x-button-search></x-button-search>
                                         <x-button-reset></x-button-reset>
-
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +55,6 @@
                                     <th>Document Number</th>
                                     <th>Issue Date</th>
                                     <th>Revision & Data</th>
-                                    <th>{{ __('common.status') }}</th>
                                     <th>{{ __('common.created_date') }}</th>
                                     <th>{{ __('common.action') }}</th>
                                 </tr>
@@ -91,18 +80,15 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
         var fromDatepicker = flatpickr("#revision_date", {
             dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
     });
 
     $(function() {
-        /* Datatable */
         var table = $('.datatable-list').DataTable({
             autoWidth: false,
             responsive: true,
@@ -137,7 +123,6 @@
                     d.document_number = $('#document_number').val();
                     d.issue_date = $('#issue_date').val();
                     d.revision_date = $('#revision_date').val();
-                    d.status = $('#status').val();
 
                 },
                 error: function(xhr, error, code) {
@@ -164,10 +149,6 @@
                 {
                     data: 'revision_date',
                     name: 'revision_date'
-                },
-                {
-                    data: 'status',
-                    name: 'status'
                 },
                 {
                     data: 'created_date',
@@ -204,7 +185,6 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                status = $('#status').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
@@ -212,8 +192,7 @@
                                     "{{ admin_url('rraa/ohc_fire_environment_compliance/export/pdf') }}" +
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date +
-                                    '&status=' + status
+                                    '&issue_date=' + issue_date
                             }
                         },
                         {
@@ -223,15 +202,14 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 document_number = $('#document_number').val();
                                 issue_date = $('#issue_date').val();
-                                status = $('#status').val();
+
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('rraa/ohc_fire_environment_compliance/export/excel') }}" +
                                     '?search=' + searchValue +
                                     '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date +
-                                    '&status=' + status
+                                    '&issue_date=' + issue_date
                             }
                         },
                     ]
@@ -260,158 +238,6 @@
             setTimeout(function() {
                 table.draw();
             }, 150);
-        });
-
-        /* Status Change */
-        $(document).on('click', '.statusChange', function() {
-            var id = $(this).data('id');
-            var types = $(this).data('type');
-            if (types == 1) {
-                var title = '{{ __('Do You want to In-Activate RRAA Detail') }}';
-                var text = '{{ __('common.inactive') }}';
-                var btncolor = '#dc3545'
-
-            } else {
-                var title = '{{ __('Do You want to Activate RRAA Detail') }}';
-                var text = '{{ __('common.active') }}';
-                var btncolor = '#7ddc35'
-            }
-
-            Swal.fire({
-                title: title,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: text,
-                confirmButtonColor: btncolor,
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                },
-            }).then((result) => {
-
-
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('rraa/ohc_fire_environment_compliance/status') }}",
-                        type: 'post',
-
-                        data: {
-                            id: id,
-                            types: types
-                        },
-                        success: function(response) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-right',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener(
-                                        'mouseenter',
-                                        Swal.stopTimer)
-                                    toast.addEventListener(
-                                        'mouseleave',
-                                        Swal.resumeTimer
-                                    )
-                                }
-                            });
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.msg
-                            });
-                            table.draw();
-                        },
-                        error: function(data) {
-                            $.notify(data.responseJSON.msg, "error");
-                        }
-                    });
-                } else if (result.isDenied) {
-                    Swal.fire('Something went wrong', '', 'info');
-                }
-            })
-
-        });
-
-
-        /* Delete Record */
-        $(document).on('click', '.recordDelete', function() {
-
-            var id = $(this).data('id');
-            var login_id = $(this).data('login_id');
-
-            var title = '{{ __('Do You want to Delete RRAA Detail') }}';
-            var text = '{{ __('common.delete') }}';
-            var btncolor = '#dc3545'
-
-            Swal.fire({
-                title: title,
-                icon: 'warning',
-                showDenyButton: false,
-                showCancelButton: true,
-                confirmButtonText: text,
-                confirmButtonColor: btncolor,
-                denyButtonColor: '#28a745',
-                customClass: {
-                    confirmButton: 'btn-skew',
-                    cancelButton: 'btn-skew'
-                },
-            }).then((result) => {
-
-                if (result.value) {
-                    $.ajax({
-                        url: "{{ admin_url('rraa/ohc_fire_environment_compliance/delete') }}",
-                        type: 'post',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                .attr('content')
-                        },
-                        data: {
-                            id: id,
-                            login_id: login_id
-                        },
-                        success: function(response) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-right',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.addEventListener(
-                                        'mouseenter',
-                                        Swal.stopTimer)
-                                    toast.addEventListener(
-                                        'mouseleave',
-                                        Swal.resumeTimer
-                                    )
-                                }
-                            });
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.msg
-                            });
-                            table.draw();
-                        },
-                        error: function(data) {
-                            if (data.status === 406 && data.responseJSON.msg ===
-                                'module_exits') {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Company Deletion Failed: Module Dependencies Exist.',
-                                });
-                            } else {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
-                        }
-                    });
-                } else if (result.isDenied) {
-                    Swal.fire('Something went wrong', '', 'info');
-                }
-            })
-
-
         });
 
     });
