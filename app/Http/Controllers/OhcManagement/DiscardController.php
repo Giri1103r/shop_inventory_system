@@ -186,7 +186,7 @@ class DiscardController extends Controller
 
             }
             $unit = $this->unit->getunit();
-            $logData = $this->ohcStatus->where('reference_id', $user_discard->expire_id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
+            $logData = $this->ohcStatus->where('reference_id', $user_discard->id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
             $data = array(
                 'user_discard' => $user_discard,
                 'logData' => $logData,
