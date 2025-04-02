@@ -13,9 +13,7 @@ class PASystemInspection extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -53,25 +51,52 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*');
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_pa_system.id as fire_pa_system_id')
+            ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_pa_system.frequency', '=', 'inspection_frequency_option.id');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
+
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->doc_no) && $request->doc_no) {
-            $query = $query->where('inspection_fire_pa_system.doc_no', 'LIKE', '%' . $request->doc_no . '%');
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_pa_system.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_pa_system.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_pa_system.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_pa_system.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_pa_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+
+
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_pa_system.inspection_status', decryptId($request->inspection_status));
         }
@@ -80,12 +105,6 @@ class PASystemInspection extends Model
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "issue_date":
-                    $query = $query->orderBy('inspection_fire_pa_system.issue_date', $columnorder);
-                    break;
-                case "doc_no":
-                    $query = $query->orderBy('inspection_fire_pa_system.doc_no', $columnorder);
-                    break;
                 case "inspection_status":
                     $query = $query->orderBy('inspection_fire_pa_system.inspection_status', $columnorder);
                     break;
@@ -124,9 +143,7 @@ class PASystemInspection extends Model
         $request = request();
 
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
+            'document_reference_id' => $request->document_reference_id,
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
@@ -146,23 +163,43 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*');
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+            ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_pa_system.frequency', '=', 'inspection_frequency_option.id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->doc_no) && $request->doc_no) {
-            $query = $query->where('inspection_fire_pa_system.doc_no', 'LIKE', '%' . $request->doc_no . '%');
+
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_pa_system.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_pa_system.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_pa_system.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_pa_system.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_pa_system.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_pa_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
         $query->orderBy('id', 'DESC');
 
