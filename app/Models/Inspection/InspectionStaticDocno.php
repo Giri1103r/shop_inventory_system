@@ -48,7 +48,7 @@ class InspectionStaticDocno extends Model
             });
         }
 
-      
+
         if ($request->has('status') && $request->status) {
             $query = $query->where('inspection_static_docno.status', decryptId($request->status));
         }
@@ -73,11 +73,16 @@ class InspectionStaticDocno extends Model
     }
 
 
-    public function selectOne($id)
+    public function selectUsingName($type)
     {
-        $data = $this->select('inspection_static_docno.*')
+        $data = $this->select('inspection_static_docno.*')->where('type', $type)
             ->first();
         return $data;
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->first();
     }
 
     public function statuschange($id)
@@ -99,11 +104,10 @@ class InspectionStaticDocno extends Model
     }
 
 
-   
+
 
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_static_docno'));
-
     }
 }

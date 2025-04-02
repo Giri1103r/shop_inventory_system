@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire PA System Inspection View')
-@section('pageurl', admin_url('fire/pa-system-inspection/list'))
+@section('title', 'Detector Inspection View')
+@section('pageurl', admin_url('fire/detector-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,8 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -34,7 +33,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->doc_no }}
+                                                    {{ $document_no->doc_no }}
                                                 </div>
                                             </div>
                                         </div>
@@ -42,7 +41,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->issue_date) }}
+                                                    {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -50,7 +49,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->revision_data }}
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
@@ -109,7 +108,7 @@
                                                     class="form-label require">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
-                                                        style="width:100px; height:50px;" alt="" srcset="">
+                                                        style="width:50px; height:50px;" alt="" srcset="">
                                                 </div>
                                             </div>
                                         </div>
@@ -117,10 +116,9 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
-
                                         @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -136,7 +134,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Fire PA System Observation</h4>
+                                                <h4 class="text-white">Detector Inspection Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -151,148 +149,131 @@
                                     </div>
                                     <hr>
 
+
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire PA System Checklist</h4>
+                                                <div class="card-header-inner p-2 col-12">
+                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
                                                 </div>
 
+                                                <!-- SR No -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->sr_no }}
+                                                            {{ $loop->iteration }}
                                                         </div>
                                                     </div>
                                                 </div>
 
+                                                <!-- Resource Code -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <div class="view_data">
-                                                            {{ getLocationname($details->location) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUnitname($details->unit) }}
+                                                            {{ $details->resource_code }}
                                                         </div>
                                                     </div>
                                                 </div>
 
+                                                <!-- Department -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <div class="view_data">
+                                                            {{ GetDeptName($details->department) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
+                                                <!-- Detector Type -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Audio Quality</label>
+                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->audio_quality == 1)
-                                                                Good
-                                                            @elseif ($details->audio_quality == 2)
-                                                                Fair
-                                                            @elseif ($details->audio_quality == 3)
-                                                                Poor
+                                                            {{ getDetectorName($details->detector_type) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Physical Condition -->
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->physical_condition == 'GOOD')
+                                                                <p>Good</p>
+                                                            @elseif ($details->physical_condition == 'FAIR')
+                                                                <p>Fair</p>
                                                             @else
-                                                                Not Selected
+                                                                <p>Poor</p>
                                                             @endif
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Cable Condition -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Mic Condition</label>
+                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->mic_condition == 1)
-                                                                Good
-                                                            @elseif ($details->mic_condition == 2)
-                                                                Fair
-                                                            @elseif ($details->mic_condition == 3)
-                                                                Poor
+                                                            @if ($details->cable_condition == 'GOOD')
+                                                                <p>Good</p>
+                                                            @elseif ($details->cable_condition == 'FAIR')
+                                                                <p>Fair</p>
                                                             @else
-                                                                Not Selected
+                                                                <p>Poor</p>
                                                             @endif
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Response Indicator -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Mic Quantity</label>
+                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->mic_quantity }}
+                                                            {{ $details->response_indicator == '1' ? 'WORKING' : 'NOT WORKING' }}
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Working Status -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Physical Condition</label>
+                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->physical_condition == 1)
-                                                                Good
-                                                            @elseif ($details->physical_condition == 2)
-                                                                Fair
-                                                            @elseif ($details->physical_condition == 3)
-                                                                Poor
-                                                            @else
-                                                                Not Selected
-                                                            @endif
+                                                            {{ $details->working_status == '1' ? 'OPERATIONAL' : 'NON OPERATIONAL' }}
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Cable Condition</label>
+                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->cable_condition == 1)
-                                                                Good
-                                                            @elseif ($details->cable_condition == 2)
-                                                                Fair
-                                                            @elseif ($details->cable_condition == 3)
-                                                                Poor
-                                                            @else
-                                                                Not Selected
-                                                            @endif
+                                                            {{ $details->remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Operation</label>
-                                                        <div class="view_data">
-                                                            @if ($details->operation == 1)
-                                                                Functional
-                                                            @elseif ($details->operation == 2)
-                                                                Non-functional
-                                                            @else
-                                                                Not Selected
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}
-                                                        </label>
-                                                        <div class="view_data">
-                                                            {{ $details->remark }}
-                                                        </div>
-                                                    </div>
-                                                </div>
+
+                                                <!-- Checked Observations -->
+
                                             </div>
                                         </div>
                                     @endforeach
+
                                     <hr>
                                 </div>
 
@@ -316,7 +297,7 @@
                                                     $signature = GetSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                        DETECTOR_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -355,7 +336,7 @@
                                                         $signature = GetSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            FIRE_PA_SYSTEM_INSPECTION,
+                                                            DETECTOR_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -418,7 +399,7 @@
                                                 $signature = GetSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    FIRE_PA_SYSTEM_INSPECTION,
+                                                    DETECTOR_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -471,7 +452,7 @@
                                             $signature = GetSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -523,7 +504,7 @@
                                             $signature = GetSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -574,7 +555,7 @@
                                             $signature = GetSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -601,7 +582,7 @@
                                             $signature = GetSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                DETECTOR_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

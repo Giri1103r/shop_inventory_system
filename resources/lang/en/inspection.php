@@ -197,5 +197,11 @@ return [
     'drain_condition' => 'Drain Valve Condition',
     'ok' => 'Ok',
     'not_ok' => 'Not Ok',
- 
+
+    //Detector Inspection
+    'detector_type' => 'Detector Type',
+    'physical_condition' => 'Physical Condition',
+    'cable_condition' => 'Cable Condition',
+    'response_indicator' => 'Response Indicator',
+    'working_status' => 'Working Status',
 ];

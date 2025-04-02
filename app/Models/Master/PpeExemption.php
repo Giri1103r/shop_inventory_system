@@ -133,16 +133,36 @@ class PpeExemption extends Model
     public function store()
     {
         $request = request();
-     
-        $unit = Unit::where('unit_name', $request->unit)->first();
-        $department = Department::where('department_name', $request->department)->first();
-        $company = Company::where('company_name', $request->company)->first();
+
+        if ($request->request_for == 1) {
+
+            $employee = Employee::where('emp_id', $request->emp_id)
+                ->select('unit', 'department', 'company')
+                ->first();
+
+            $unit = $employee->unit ?? null;
+            $department = $employee->department ;
+            $company = $employee->company ?? null;
+        } elseif ($request->request_for == 2) {
+            $work = Work::where('emp_id', $request->emp_id)
+                ->select('unit', 'department', 'company')
+                ->first();
+
+            $unit = $work->unit ?? null;
+            $department = $work->department ;
+            $company = $work->company ?? null;
+        } else {
+            $unit = Auth::user()->unit_id;
+            $department = Auth::user()->department_id;
+            $company = Auth::user()->company_id;
+        }
+
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
-            'department' =>  $department->id ?? null,
-            'unit' => $unit->id ?? NULL,
-            'company' => $company->id ?? null,
+            'department' => $department,
+            'unit' => $unit,
+            'company' => $company,
             'request_for' => $request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,

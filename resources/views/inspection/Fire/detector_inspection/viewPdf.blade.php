@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fire PA System Inspection | KARAM</title>
+    <title>Detector Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Fire PA System Inspection </td>
+                    Detector Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire PA System Inspection
+                    Detector Inspection
                 </td>
             </tr>
         </table>
@@ -195,121 +195,64 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire PA System Inspection Details
+                    Monthly EyeWash Inspection Details
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
-        <thead>
-            <tr>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
-                <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
-            </tr>
-            <tr>
-                <th style="border: 1px solid black; padding: 8px;">UNIT</th>
-                <th style="border: 1px solid black; padding: 8px;">AUDIO QUALITY</th>
-                <th style="border: 1px solid black; padding: 8px;">MIC CONDITION</th>
-                <th style="border: 1px solid black; padding: 8px;">MIC QUANTITY</th>
-                <th style="border: 1px solid black; padding: 8px;">PHYSICAL CONDITION</th>
-                <th style="border: 1px solid black; padding: 8px;">CABLE CONDITION</th>
-                <th style="border: 1px solid black; padding: 8px;">OPERATION</th>
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
+        <!-- Column Headers -->
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">QUANTITY</th>
+            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ddd;">CHECK ITEMS</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
+        </tr>
+        <tr>
+            <th colspan="4" style="border: 1px solid black;"></th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">BLINKING LIGHT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONNECTION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">AUDIBILITY</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONDITION OF HOOTER</th>
+            <th style="border: 1px solid black;"></th>
+        </tr>
 
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach ($inspection as $details)
+        @foreach ($inspection as $details)
             <tr>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ getLocationname($details->location) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->mic_condition == 1 ? 'Good' : ($details->mic_condition == 2 ? 'Fair' : ($details->mic_condition == 3 ? 'Poor' : 'Not Selected')) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->mic_quantity }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->physical_condition == 1 ? 'Good' : ($details->physical_condition == 2 ? 'Fair' : ($details->physical_condition == 3 ? 'Poor' : 'Not Selected')) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->cable_condition == 1 ? 'Good' : ($details->cable_condition == 2 ? 'Fair' : ($details->cable_condition == 3 ? 'Poor' : 'Not Selected')) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->operation == 1 ? 'Functional' : ($details->operation == 2 ? 'Non-functional' : 'Not Selected') }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->remark }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ getUnitname($details->unit) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->audio_quality == 1)
-                        Good
-                    @elseif ($details->audio_quality == 2)
-                        Fair
-                    @elseif ($details->audio_quality == 3)
-                        Poor
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->blinking_light == 1)
+                        <span style="color: green;">&#10004;</span>
                     @else
-                        Not Selected
+                        <span style="color: red;">&#10060;</span>
                     @endif
                 </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->connection == 1)
+                        <span style="color: green;">&#10004;</span>
+                    @else
+                        <span style="color: red;">&#10060;</span>
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->audiobility == 1)
+                        <span style="color: green;">&#10004;</span>
+                    @else
+                        <span style="color: red;">&#10060;</span>
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->condition_of_hooter }}</td>
             </tr>
-            @endforeach
-            @php
-                $prepared_by_signature = GetSignature(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    FIRE_PA_SYSTEM_INSPECTION,
-                );
-                $verified_by_signature = GetSignature(
-                    $forklift_details->updated_by,
-                    $forklift_details->id,
-                    FIRE_PA_SYSTEM_INSPECTION,
-                );
-                $verified_by_signature = GetSignature(
-                    $forklift_details->approved_by,
-                    $forklift_details->id,
-                    FIRE_PA_SYSTEM_INSPECTION,
-                );
-            @endphp
-            <tr>
-                <td colspan="4"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                        style="height: 50px;">
-                    <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
-                </td>
-                <td colspan="4"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($forklift_details->updated_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
-                        <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-                <td colspan="4"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($forklift_details->approved_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
-                        <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-            </tr>
-        </tbody>
+        @endforeach
     </table>
+
+
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
