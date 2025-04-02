@@ -243,12 +243,10 @@ class CronController extends Controller
                     'results' => $responses,
                     'errors' => $errors
                 ]);
-
             } catch (Exception $ex) {
                 report($ex);
                 return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
             }
-
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -340,22 +338,25 @@ class CronController extends Controller
 
             $fromDate = todayDbdate();
             $toDate = todayDbdate();
+            $apiKeyToken = $this->company->getApiKeyToken();
+            dd($apiKeyToken);
+            foreach ($apiKeyToken  as $token) {
+                $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$token->api_key_token}&fromDate={$fromDate}&toDate={$toDate}";
 
-            $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate={$fromDate}&toDate={$toDate}";
-
-            $response = Http::get($apiUrl);
+                $response = Http::get($apiUrl);
 
 
-            if ($response->successful()) {
-                $data = $response->json();
-                if (!empty($data['Result'])) {
-                    $emp_temp = $this->emp_temp->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (!empty($data['Result'])) {
+                        $emp_temp = $this->emp_temp->store($data);
+                        return response()->json(['message' => 'Data saved successfully.']);
+                    } else {
+                        return response()->json(['message' => 'No data found in API response.']);
+                    }
                 } else {
-                    return response()->json(['message' => 'No data found in API response.']);
+                    return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
                 }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
             report($ex);
@@ -367,21 +368,25 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
-            $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token=KARAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*&fromDate={$fromDate}&toDate={$toDate}";
+            $apiKeyToken = $this->company->getApiKeyToken();
 
-            $response = Http::get($apiUrl);
+            foreach ($apiKeyToken  as $token) {
+                $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$token->api_key_token}&fromDate={$fromDate}&toDate={$toDate}";
 
-            if ($response->successful()) {
-                $data = $response->json();
+                $response = Http::get($apiUrl);
 
-                if (!empty($data['Result'])) {
-                    $emp_temp = $this->emp_temp->store($data);
-                    return response()->json(['message' => 'Data saved successfully.']);
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (!empty($data['Result'])) {
+                        $emp_temp = $this->emp_temp->store($data);
+                        return response()->json(['message' => 'Data saved successfully.']);
+                    } else {
+                        return response()->json(['message' => 'No data found in API response.']);
+                    }
                 } else {
-                    return response()->json(['message' => 'No data found in API response.']);
+                    return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
                 }
-            } else {
-                return response()->json(['message' => 'Failed to fetch data from API.', 'status' => $response->status()]);
             }
         } catch (Exception $ex) {
             report($ex);

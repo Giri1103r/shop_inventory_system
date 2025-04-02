@@ -133,16 +133,17 @@ class PpeExemption extends Model
     public function store()
     {
         $request = request();
-     
+
         $unit = Unit::where('unit_name', $request->unit)->first();
         $department = Department::where('department_name', $request->department)->first();
         $company = Company::where('company_name', $request->company)->first();
+
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' =>  $department->id ?? null,
-            'unit' => $unit->id ?? NULL,
-            'company' => $company->id ?? null,
+            'unit' => $unit->id ?? Auth::user()->unit_id,
+            'company' =>$unit->id ?? Auth::user()->company_id,
             'request_for' => $request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
