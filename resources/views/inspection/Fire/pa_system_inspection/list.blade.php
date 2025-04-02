@@ -23,31 +23,91 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="doc_no"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="doc_no" id="doc_no"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="date_of_inspection" id = "date_of_inspection"
+                                                    class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due" class="form-control">
+                                            </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <select name="frequency" id="frequency"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Frequency</option>
+                                                    @foreach ($frequency as $frequency)
+                                                        <option value="{{ encryptId($frequency->id) }}">
+                                                            {{ $frequency->frequency_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{encryptId('6')}}">CLOSED</option>
-                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -70,9 +130,12 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.revision_data') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -94,7 +157,10 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            flatpickr("#issue_date", {
+            flatpickr("#date_of_inspection", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#next_due", {
                 dateFormat: "d-m-Y",
             });
             $(function() {
@@ -130,9 +196,12 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.doc_no = $('#doc_no').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.revision_data = $('#revision_data').val();
+                            d.date_of_inspection = $('#date_of_inspection').val();
+                            d.next_due = $('#next_due').val();
+                            d.location = $('#location').val();
+                            d.shift = $('#shift').val();
+                            d.unit = $('#unit').val();
+                            d.frequency = $('#frequency').val();
                             d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
@@ -149,16 +218,28 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'next_due',
+                            name: 'next_due',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'location_name',
+                            name: 'location_name',
+                        },
+                        {
+                            data: 'shift',
+                            name: 'shift',
+                        },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'frequency_name',
+                            name: 'frequency_name',
                         },
                         {
                             data: 'inspection_status',
@@ -193,9 +274,12 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        doc_no = $('#doc_no').val();
-                                        issue_date = $('#issue_date').val();
-                                        revision_data = $('#revision_data').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -203,9 +287,12 @@
                                         window.location.href =
                                             "{{ admin_url('fire/pa-system-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&doc_no=' + doc_no +
-                                            '&issue_date=' + issue_date +
-                                            '&revision_data=' + revision_data +
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -214,18 +301,24 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        doc_no = $('#doc_no').val();
-                                        issue_date = $('#issue_date').val();
-                                        revision_data = $('#revision_data').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/pa-system-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&doc_no=' + doc_no +
-                                            '&issue_date=' + issue_date +
-                                            '&revision_data=' + revision_data +
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },

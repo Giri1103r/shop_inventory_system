@@ -15,6 +15,7 @@ use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\PASystemChecklist;
 use App\Models\Inspection\Fire\PASystemInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\Shift;
 use App\Models\Master\Department;
@@ -37,6 +38,7 @@ class PASystemInspectionController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -51,6 +53,7 @@ class PASystemInspectionController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -65,9 +68,9 @@ class PASystemInspectionController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_system_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_system_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -118,23 +121,23 @@ class PASystemInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/pa-system-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/pa-system-inspection/view/' . encryptId($row->fire_pa_system_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/pa-system-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/pa-system-inspection/exportViewPdf/' . encryptId($row->fire_pa_system_id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
                             return $btn;
@@ -152,7 +155,17 @@ class PASystemInspectionController extends Controller
             }
         }
 
-        $data = array();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
         return view('inspection.fire.pa_system_inspection.list', $data);
     }
 
@@ -164,6 +177,7 @@ class PASystemInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('PASystemInspection');
 
             $data = array(
                 'locations' => $location,
@@ -171,6 +185,7 @@ class PASystemInspectionController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.pa_system_inspection.add', $data);
@@ -214,8 +229,6 @@ class PASystemInspectionController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            // dd($checklist_store);
-
             $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -227,7 +240,7 @@ class PASystemInspectionController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Fire Extinguisher Inspection",
+                    'message' => "Fire Associate create the Fire PA System Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -238,14 +251,12 @@ class PASystemInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            dd(1);
-
-            $title = 'Fire Associate create the Fire Extinguisher Inspection';
+            $title = 'Fire Associate create the Fire PA System Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -266,7 +277,6 @@ class PASystemInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/pa-system-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -283,17 +293,19 @@ class PASystemInspectionController extends Controller
             $inspection = $this->pa_system->selectOne($id);
             $inspection_details = $this->pa_system_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
+
             $status_log = $this->statusLog->selectOne($id, FIRE_PA_SYSTEM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.pa_system_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -308,19 +320,21 @@ class PASystemInspectionController extends Controller
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
 
             $inspection = $this->pa_system->selectOne($id);
+
             $inspection_details = $this->pa_system_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_PA_SYSTEM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -336,7 +350,7 @@ class PASystemInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully';
+                $message = 'Fire PA System Inspection Approved Successfully';
                 $web_link =   admin_url('fire/pa-system-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -370,7 +384,7 @@ class PASystemInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Fire Extinguisher Inspection',
+                'fire_type' => 'Fire PA System Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -391,7 +405,6 @@ class PASystemInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/pa-system-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -431,7 +444,7 @@ class PASystemInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/pa-system-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Fire Extinguisher Inspection',
+                'fire_type' => 'Fire PA System Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -504,7 +517,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -578,7 +591,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -616,7 +629,7 @@ class PASystemInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($status == 1) {
-                $message = 'Fire Extinguisher Inspection Approved Successfully!';
+                $message = 'Fire PA System Inspection Approved Successfully!';
                 $web_link =   admin_url('fire/pa-system-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
@@ -648,7 +661,7 @@ class PASystemInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Fire PA System Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -680,15 +693,19 @@ class PASystemInspectionController extends Controller
     {
         try {
             $allData = $this->pa_system->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -699,9 +716,12 @@ class PASystemInspectionController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
+                $export[] =  $data->date_of_inspection;
+                $export[] =  $data->next_due;
+                $export[] =  $data->location_name;
+                $export[] =  $data->shift;
+                $export[] =  $data->unit_name;
+                $export[] =  $data->frequency_name;
                 $export[] =  getInspectionStatus($data->inspection_status);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -709,12 +729,13 @@ class PASystemInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Fire Extinguisher Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire PA System Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
                 );
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -731,9 +752,12 @@ class PASystemInspectionController extends Controller
             }
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -742,7 +766,7 @@ class PASystemInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Fire Extinguisher Inspection",
+                'pagetitle' => "Fire PA System Inspection",
             );
 
             $property = [
@@ -762,7 +786,7 @@ class PASystemInspectionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire PA System.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -780,12 +804,14 @@ class PASystemInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id,FIRE_PA_SYSTEM_INSPECTION);
                 $forklift_details = $this->pa_system->selectOne($id);
                 $inspection = $this->pa_system_checklist->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectUsingName('PASystemInspection');
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Fire Extinguisher Inspection",
+                    'pagetitle' => "Fire PA System Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 
@@ -795,7 +821,6 @@ class PASystemInspectionController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
@@ -805,7 +830,7 @@ class PASystemInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Fire PA System.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

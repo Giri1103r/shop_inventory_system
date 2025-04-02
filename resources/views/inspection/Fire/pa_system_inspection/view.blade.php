@@ -34,7 +34,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->doc_no }}
+                                                    {{ $document_no->doc_no }}
                                                 </div>
                                             </div>
                                         </div>
@@ -42,7 +42,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->issue_date) }}
+                                                    {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -50,7 +50,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection->revision_data }}
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
@@ -109,7 +109,7 @@
                                                     class="form-label require">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
-                                                        style="width:50px; height:50px;" alt="" srcset="">
+                                                        style="width:100px; height:50px;" alt="" srcset="">
                                                 </div>
                                             </div>
                                         </div>
@@ -120,6 +120,7 @@
                                                 FIRE_PA_SYSTEM_INSPECTION,
                                             );
                                         @endphp
+
                                         @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -186,13 +187,21 @@
                                                     </div>
                                                 </div>
 
-                                                
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Audio Quality</label>
                                                         <div class="view_data">
-                                                            {{ $details->audio_quality }}
+                                                            @if ($details->audio_quality == 1)
+                                                                Good
+                                                            @elseif ($details->audio_quality == 2)
+                                                                Fair
+                                                            @elseif ($details->audio_quality == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -201,7 +210,15 @@
                                                         <label
                                                             class="form-label require">Mic Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->mic_condition }}
+                                                            @if ($details->mic_condition == 1)
+                                                                Good
+                                                            @elseif ($details->mic_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->mic_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -219,7 +236,15 @@
                                                         <label
                                                             class="form-label require">Physical Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->physical_condition }}
+                                                            @if ($details->physical_condition == 1)
+                                                                Good
+                                                            @elseif ($details->physical_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->physical_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -228,7 +253,15 @@
                                                         <label
                                                             class="form-label require">Cable Condition</label>
                                                         <div class="view_data">
-                                                            {{ $details->cable_condition }}
+                                                            @if ($details->cable_condition == 1)
+                                                                Good
+                                                            @elseif ($details->cable_condition == 2)
+                                                                Fair
+                                                            @elseif ($details->cable_condition == 3)
+                                                                Poor
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -237,7 +270,13 @@
                                                         <label
                                                             class="form-label require">Operation</label>
                                                         <div class="view_data">
-                                                            {{ $details->operation  }}
+                                                            @if ($details->operation == 1)
+                                                                Functional
+                                                            @elseif ($details->operation == 2)
+                                                                Non-functional
+                                                            @else
+                                                                Not Selected
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,7 +286,7 @@
                                                             class="form-label require">{{ __('inspection.remarks') }}
                                                         </label>
                                                         <div class="view_data">
-                                                            {{ $details->remarks }}
+                                                            {{ $details->remark }}
                                                         </div>
                                                     </div>
                                                 </div>

@@ -111,12 +111,15 @@ class MedicineExpireController extends Controller
                             }
                             $expireDate = Carbon::parse($row->expire_date);
                             $today = Carbon::today();
-                            if (($expireDate->lessThanOrEqualTo($today))) {
+                            if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVED) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" data-balance="' . $row->balance .  '" data-medicine="' . $row->medicine . '" data-unit="' . $row->unit .  '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;">
                                 <i class="fa fa-times-circle"></i>
                              </a>';
                             }
+                            if($row->approve_status != OHC_DISCARD_EHS_APPROVED){
 
+                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close" title="Close" style="color: white;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
+                            }
                             return $btn;
                         })
 
@@ -146,26 +149,7 @@ class MedicineExpireController extends Controller
         return view('ohcmanagement.report.expiremedicine.list', $data);
     }
 
-    public function balance(Request $request)
-    {
-        try {
-            $unit_id = decryptId($request->unit_id);
-            $medicine_id = $request->medicine_id;
 
-            $response = $this->inventory
-                ->where('unit_id', $unit_id)
-                ->where('medicine_id', $medicine_id)
-                ->first();
-
-            return response()->json([
-                'balance' => $response->balance ?? 0
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Invalid request'
-            ], 400);
-        }
-    }
     public function approval(Request $request)
     {
         try {
@@ -382,6 +366,43 @@ class MedicineExpireController extends Controller
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => __('ohc.Please try After Some time')], 406);
+        }
+    }
+
+    public function balance(Request $request)
+    {
+        try {
+            $unit_id = decryptId($request->unit_id);
+            $medicine_id = $request->medicine_id;
+
+            $response = $this->inventory
+                ->where('unit_id', $unit_id)
+                ->where('medicine_id', $medicine_id)
+                ->first();
+
+            return response()->json([
+                'balance' => $response->balance ?? 0
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Invalid request'
+            ], 400);
+        }
+    }
+
+    public function close(Request $request)
+    {
+
+        try {
+
+            $id = decryptId($request->id);
+            $remarks = $request->remarks;
+            $this->expire_medicine->closediscard($id);
+            return response()->json(['status' => 'success', 'msg' => __('Closed the Discarded the Medicine Successfully')], 200);
+        } catch (Exception $ex) {
+
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => __('Something Went Wrong please try again after some time')], 200);
         }
     }
     public function ExportExcel(Request $request)

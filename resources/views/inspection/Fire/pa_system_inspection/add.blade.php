@@ -11,9 +11,7 @@
 
     <div class="content-body  default-height">
         <div class="container-fluid main-content">
-            <!-- row -->
             <div class="row">
-
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
@@ -37,7 +35,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Document Number">
+                                                        placeholder="Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -45,15 +44,16 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                         value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="revision_data" id = "revision_data"
-                                                        class="form-control" value="{{ getDocumentReviewDate('PA-0') }}"
+                                                    <input type="text" name="rev_date" id = "rev_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}"
                                                         readonly>
                                                 </div>
                                             </div>
@@ -104,7 +104,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit" id="unit_id"
+                                                    <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
@@ -153,6 +153,8 @@
                                                     </div>
                                                 @endif
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ $document_no->id }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -201,7 +203,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit_id[1]" id="unit_id_1"
+                                                        <select name="unit[1]" id="unit_id_1"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -333,9 +335,6 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -351,15 +350,6 @@
 
                 $('#eyewashAdd').validate({
                     rules: {
-                        doc_no: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            noSpaces: true,
-                        },
-                        issue_date: {
-                            required: true,
-                        },
                         inspection_date: {
                             required: true,
                         },
@@ -372,7 +362,7 @@
                         next_due: {
                             required: true,
                         },
-                        unit: {
+                        unit_id: {
                             required: true,
                         },
                         frequency_id: {
@@ -404,7 +394,7 @@
                         "location[1]": {
                             required: true,
                         },
-                        "unit_id[1]": {
+                        "unit[1]": {
                             required: true,
                         },
                         device_image: {
@@ -420,18 +410,10 @@
 
                     },
                     messages: {
-                        doc_no: {
-                            required: "Document Number is Required",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
-                        },
                         signature_image: {
                             required: 'Please upload your signature',
                         },
-                        issue_date: {
-                            required: "Date Of Audit is required",
-                        },
-                        revision_data: {
+                        rev_date: {
                             required: "Revision Date required",
                         },
                         inspection_date: {
@@ -446,7 +428,7 @@
                         next_due: {
                             required: "Next due is required",
                         },
-                        unit: {
+                        unit_id: {
                             required: "Unit is required",
                         },
                         frequency_id: {
@@ -478,7 +460,7 @@
                         "operation[1]": {
                             required: "Please select the Operation",
                         },
-                        "unit_id[1]": {
+                        "unit[1]": {
                             required: "Please select the Unit",
                         },
                         device_image: {
@@ -488,7 +470,6 @@
                         observation: {
                             required: "Please add observation",
                         },
-
 
                     },
                     errorElement: 'span',
@@ -575,7 +556,7 @@
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                    <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}"
+                                    <select name="unit[${form_set_count}]" id="unit_id-${form_set_count}"
                                         class=" form-control single-select" style="width: 100%">
                                         <option value="">Select Unit</option>
                                         @foreach ($units as $unit)
@@ -673,7 +654,7 @@
 
                     $('.form-wrapper').append(newFormSetElement);
 
-                    $('select[name^="unit_id["]').each(function() {
+                    $('select[name^="unit["]').each(function() {
                         $(this).select2({
                             placeholder: "Select Unit",
                             width: '100%'
@@ -729,7 +710,7 @@
                         }
                     });
 
-                    $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
+                    $("select[name='unit[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Unit',
@@ -871,7 +852,7 @@
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
                     $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
-                    $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
+                    $(this).find('select[name^="unit"]').attr('name', 'unit[' + idx + ']');
                     $(this).find('select[name^="audio_quality"]').attr('name', 'audio_quality[' + idx + ']');
                     $(this).find('select[name^="mic_condition"]').attr('name', 'mic_condition[' + idx + ']');
                     $(this).find('input[name^="mic_quantity"]').attr('name', 'mic_quantity[' + idx + ']');

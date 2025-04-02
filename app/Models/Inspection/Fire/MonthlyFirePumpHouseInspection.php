@@ -32,8 +32,8 @@ class MonthlyFirePumpHouseInspection extends Model
         'checked_by',
         'verified_by',
         'approved_by',
-        'l1_manager_verification',
-        'l2_manager_verification',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -137,7 +137,7 @@ class MonthlyFirePumpHouseInspection extends Model
                     'remark' => $request->remarks[$sub_type_id][$checklist_id] ?? null,
                 ];
             }
-        }   
+        }
 
         $responsesJson = json_encode($mergedResponses);
 

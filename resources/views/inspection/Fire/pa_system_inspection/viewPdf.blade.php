@@ -157,22 +157,64 @@
 
     <table width="100%" style="width:100%;">
         <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.doc_no') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->doc_no) ? $forklift_details->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.issue_date') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($forklift_details->issue_date) ? $forklift_details->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.rev_date') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->revision_data) ? $forklift_details->revision_data : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.inspection_date') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->date_of_inspection) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.location') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname($forklift_details->location) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShiftName($forklift_details->shift) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.next_due') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->next_due) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.unit') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname($forklift_details->unit) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.frequency') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFrequencyname($forklift_details->frequency) }}
             </td>
         </tr>
         <tr>
@@ -205,78 +247,111 @@
             <tr>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
                 <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARKS</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px;">CYLINDER PRESSURE</th>
-                <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
-                <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
-                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
-                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
-                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
-                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px;">UNIT</th>
+                <th style="border: 1px solid black; padding: 8px;">AUDIO QUALITY</th>
+                <th style="border: 1px solid black; padding: 8px;">MIC CONDITION</th>
+                <th style="border: 1px solid black; padding: 8px;">MIC QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px;">PHYSICAL CONDITION</th>
+                <th style="border: 1px solid black; padding: 8px;">CABLE CONDITION</th>
+                <th style="border: 1px solid black; padding: 8px;">OPERATION</th>
+
             </tr>
         </thead>
 
         <tbody>
             @foreach ($inspection as $details)
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
-                    <!-- SL -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
-                    <!-- FIRE POINT NO. -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ GetDeptName($details->department) }}</td> <!-- DEPARTMENT -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getLocationname($details->location) }}</td> <!-- LOCATION -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $details->cylinder_pressure }}</td> <!-- CYLINDER PRESSURE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->safety_pin == PRESENT)
-                            {{ __('inspection.present') }}
-                        @elseif($details->safety_pin == MISSING)
-                            {{ __('inspection.missing') }}
-                        @endif
-                    </td> <!-- SAFETY PIN -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->approach }}
-                    </td> <!-- APPROACH -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->discharge_tube == FUNCTIONAL)
-                            {{ __('inspection.functional') }}
-                        @elseif($details->discharge_tube == NON_FUNCTIONAL)
-                            {{ __('inspection.non_functional') }}
-                        @endif
-                    </td> <!-- DISCHARGE TUBE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->type == ABC)
-                            {{ __('inspection.ABC') }}
-                        @elseif($details->type == CO2)
-                            {{ __('inspection.CO2') }}
-                        @elseif($details->type == WATER)
-                            {{ __('inspection.WATER') }}
-                        @elseif($details->type == FOAM)
-                            {{ __('inspection.FOAM') }}
-                        @endif
-                    </td> <!-- TYPE -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->capacity }}
-                    </td> <!-- CAPACITY -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->quantity }}
-                    </td> <!-- QUANTITY -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->description }}
-                    </td> <!-- DESCRIPTION -->
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->remarks }}</td>
-                    <!-- REMARKS -->
-                </tr>
+            <tr>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ getLocationname($details->location) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->mic_condition == 1 ? 'Good' : ($details->mic_condition == 2 ? 'Fair' : ($details->mic_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->mic_quantity }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->physical_condition == 1 ? 'Good' : ($details->physical_condition == 2 ? 'Fair' : ($details->physical_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->cable_condition == 1 ? 'Good' : ($details->cable_condition == 2 ? 'Fair' : ($details->cable_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->operation == 1 ? 'Functional' : ($details->operation == 2 ? 'Non-functional' : 'Not Selected') }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $details->remark }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ getUnitname($details->unit) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    @if ($details->audio_quality == 1)
+                        Good
+                    @elseif ($details->audio_quality == 2)
+                        Fair
+                    @elseif ($details->audio_quality == 3)
+                        Poor
+                    @else
+                        Not Selected
+                    @endif
+                </td>
+            </tr>
             @endforeach
+            @php
+                $prepared_by_signature = GetSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    FIRE_PA_SYSTEM_INSPECTION,
+                );
+                $verified_by_signature = GetSignature(
+                    $forklift_details->updated_by,
+                    $forklift_details->id,
+                    FIRE_PA_SYSTEM_INSPECTION,
+                );
+                $verified_by_signature = GetSignature(
+                    $forklift_details->approved_by,
+                    $forklift_details->id,
+                    FIRE_PA_SYSTEM_INSPECTION,
+                );
+            @endphp
+            <tr>
+                <td colspan="4"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                        style="height: 50px;">
+                    <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+                </td>
+                <td colspan="4"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($forklift_details->updated_by != null)
+                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                        <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+                <td colspan="4"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($forklift_details->approved_by != null)
+                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                        <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+            </tr>
         </tbody>
-
     </table>
-
-
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">

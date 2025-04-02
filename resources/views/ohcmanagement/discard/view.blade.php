@@ -45,7 +45,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Quantity') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($user_discard->quantity) ? $user_discard->quantity : '') }}
+                                            {{ isset($user_discard->quantity) ? $user_discard->quantity : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -84,7 +84,6 @@
                                         <h4 class="text-white">Status Logs</h4>
                                     </div>
                                 </div>
-
                                 <div class="table-responsive">
                                     <div class="col-md-12">
                                         <table class="table table-bordered">
@@ -99,24 +98,26 @@
                                             </thead>
 
                                             <tbody>
-                                                @foreach ($logData as $log)
-                                                <tr>
-                                                    <td>{{getDiscardStatus( isset($log['from_status']) ? $log['from_status'] : '-') }}</td>
-                                                    <td>{{ getDiscardStatus(isset($log['to_status']) ? $log['to_status'] : '-' )}}</td>
-                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
-                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
-                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
-                                                </tr>
-                                                @endforeach
+                                                @if (!$logData || count($logData) == 0)
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">No data is available</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach ($logData as $log)
+                                                        <tr>
+                                                            <td>{{ getDiscardStatus($log['from_status'] ?? '-') }}</td>
+                                                            <td>{{ getDiscardStatus($log['to_status'] ?? '-') }}</td>
+                                                            <td>{{ $log['remarks'] ?? '-' }}</td>
+                                                            <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
+                                                            <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
                                             </tbody>
+
                                         </table>
                                     </div>
                                 </div>
-
-
-
-
-
                             </div>
                         </div>
                     </div>
@@ -124,4 +125,4 @@
             </div>
         </div>
     </div>
-    @stop
+@stop

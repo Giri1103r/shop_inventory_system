@@ -117,7 +117,6 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 'frequency' => $frequency,
 
             );
-            // dd($data);
             
             return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.add',$data);
 

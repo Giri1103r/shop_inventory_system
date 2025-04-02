@@ -93,6 +93,7 @@ return [
     'upload_image' => 'Device Image',
     'observation_required' => 'Is Observation Required ?',
     'checked_obs' => 'Required Inspections',
+    'condition_of_hooter' => 'Condition Of The Hooter',
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
@@ -196,5 +197,11 @@ return [
     'drain_condition' => 'Drain Valve Condition',
     'ok' => 'Ok',
     'not_ok' => 'Not Ok',
- 
+
+    //Detector Inspection
+    'detector_type' => 'Detector Type',
+    'physical_condition' => 'Physical Condition',
+    'cable_condition' => 'Cable Condition',
+    'response_indicator' => 'Response Indicator',
+    'working_status' => 'Working Status',
 ];

@@ -122,11 +122,11 @@ class DiscardController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id) ) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
+                                $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
                             }
-                            // if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
+                            if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
                                 $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
+                            }
                             return $btn;
                         })
 
@@ -183,10 +183,9 @@ class DiscardController extends Controller
 
             if (Auth::check()) {
                 $user_discard = $this->user_discard->selectOne($id);
-
             }
             $unit = $this->unit->getunit();
-            $logData = $this->ohcStatus->where('reference_id', $user_discard->expire_id)->where('type',TYPE_OHC_MEDICINE_DISCARD)->get();
+            $logData = $this->ohcStatus->where('reference_id', $user_discard->id)->where('type', TYPE_OHC_MEDICINE_DISCARD)->get();
             $data = array(
                 'user_discard' => $user_discard,
                 'logData' => $logData,
@@ -214,8 +213,11 @@ class DiscardController extends Controller
                     'user_discard' => $user_discard,
                 );
             }
-
-            return view('ohcmanagement.discard.approve', $data);
+            if ($user_discard->approve_status == OHC_DISCARD_EHS_APPROVED) {
+                return redirect(admin_url('ohc/discard/view/' .$request->id));
+            } else {
+                return view('ohcmanagement.discard.approve', $data);
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -263,17 +265,17 @@ class DiscardController extends Controller
 
                 $ehsheaddiscard =  $this->user_discard->ehsheadapproval($id, $updateData);
 
-                $details =$this->user_discard->selectOne($id);
+                $details = $this->user_discard->selectOne($id);
                 $ohcStatus = $this->ohcStatus->medicineexpireapproval($id, $updateData);
 
                 $createdby = $this->user_discard->where('id', $id)->value('created_by');
                 $email = $this->user->where('id', $createdby)->value('email');
 
 
-                // if (!$email) {
+                if (!$email) {
 
-                //     return redirect()->back()->with('error', 'User email not found.');
-                // }
+                    return redirect()->back()->with('error', 'User email not found.');
+                }
 
                 $action = $request->action;
                 if ($action == 'approve') {
