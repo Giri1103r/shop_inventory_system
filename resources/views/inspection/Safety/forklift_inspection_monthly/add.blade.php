@@ -39,32 +39,42 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                    <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                    <input type="text" name="issue_date" id="issue_date"
+                                                           class="form-control" placeholder="Issued Date"
+                                                           value="{{ old('issue_date') }}">
+                                                    @error('issue_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('SAF-0') }}"
-                                                        readonly>
+                                                    <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                    <input type="text" name="rev_date" id="rev_date"
+                                                           class="form-control" readonly
+                                                           value="{{ getDocumentReviewDate('SAF-0') }}" />
                                                 </div>
                                             </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control">
+                                                        class="form-control" value="{{ old('inspection_date') }}">
+                                                    @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -76,10 +86,14 @@
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}">
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('location_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -89,10 +103,14 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
                                                         @foreach ($shift as $shift)
-                                                            <option value="{{ encryptId($shift->id) }}">
+                                                            <option value="{{ encryptId($shift->id) }}"
+                                                                {{ (old('shift_id')) == encryptId($shift->id) ? 'selected' : '' }}>
                                                                 {{ $shift->shift }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('shift_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -100,7 +118,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
                                                     <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control">
+                                                        class="form-control" value="{{ old('next_due') }}">
+                                                    @error('next_due')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -110,10 +131,14 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('unit_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -124,18 +149,27 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Frequency</option>
                                                         @foreach ($frequency as $frequency)
-                                                            <option value="{{ encryptId($frequency->id) }}">
+                                                            <option value="{{ encryptId($frequency->id) }}"
+                                                                {{ old('frequency_id') == encryptId($frequency->id) ? 'selected' : '' }}>
                                                                 {{ $frequency->frequency_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('frequency_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.identification_no') }}</label>
-                                                    <input type="text" name="identification_no" id = "identification_no"
-                                                        class="form-control" placeholder="Enter Identification No">
+                                                    <input type="text" name="identification_no"
+                                                        id = "identification_no" class="form-control"
+                                                        placeholder="Enter Identification No"
+                                                        value="{{ old('identification_no') }}">
+                                                    @error('identification_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -146,10 +180,14 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Forklift Type</option>
                                                         @foreach ($forklifts as $forklifts)
-                                                            <option value="{{ encryptId($forklifts->id) }}">
+                                                            <option value="{{ encryptId($forklifts->id) }}"
+                                                                {{ old('forklift_type') == encryptId($forklifts->id) ? 'selected' : '' }}>
                                                                 {{ $forklifts->forklift }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('forklift_type')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -157,8 +195,12 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.capacity') }}</label>
                                                     <input type="text" name="capacity" id = "capacity"
-                                                        class="form-control" placeholder="Enter Capacity">
+                                                        class="form-control" placeholder="Enter Capacity"
+                                                        value="{{ old('capacity') }}">
                                                 </div>
+                                                @error('capacity')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
 
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -175,6 +217,9 @@
                                                             accept="image/*" placeholder="Enter the image">
                                                         <small>Allowed file types: jpg, jpeg, png</small>
                                                         <div id="signature_upload" class="text-danger"></div>
+                                                        @error('signature_upload')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 @endif
                                             </div>

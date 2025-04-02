@@ -8,9 +8,12 @@ use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\ForkLiftInspection;
 use App\Models\Inspection\Safety\ForkliftInspectionDetails;
@@ -117,10 +120,91 @@ class ForkLiftInspectionController extends Controller
     {
         try {
 
+            $rules = [
+                'doc_no' => 'required',
+                'issue_date' => 'required',
+                'inspection_date' => 'required',
+                'department.*' => 'required',
+                'unit.*' => 'required',
+                'identification_no.*' => 'required',
+                'observation.*' => 'required',
+                'corrective_action.*' => 'required',
+                'date_of_compliance.*' => 'required',
+                'observation_status.*' => 'required',
+                'remarks.*' => 'required',
+                'emp_id.*' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (($user->signature_upload == null)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is Required',
+                'inspection_date.required' => 'Inspection  Date is Required',
+                'identification_no.required' => 'Identification Number is Required',
+                'department.*' => 'Department is Required',
+                'unit.*' => 'Unit is Required',
+                'identification_no.*' => 'Identfication Number is Required',
+                'observation.*' => 'Observation is Required',
+                'corrective_action.*' => 'Coreective and Preventive Action is Required',
+                'date_of_compliance.*' => 'Date of Compliance is Required',
+                'observation_status.*' => 'Observation Status is Required',
+                'emp_id.*' => 'Employee is Required',
+                'remarks.*' => 'Remarks is Required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $forklift_observation =  $this->forklift->Store();
             $forklift_observation_details = $this->observation_details->store($forklift_observation->id);
             $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $forklift_observation->id);
+
+            $ehsOfficer = GetEHSHead();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "FORKLIFT INSPECTION - Observation Has been Created",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $forklift_observation->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/forklift-inspection/view/' . encryptId($forklift_observation->id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'FORKLIFT INSPECTION - Observation has been Created';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/forklift-inspection/approval/' . encryptId($forklift_observation->id) . '/ehs');
+                $details = array(
+                    'safety_type' => 'Forklift Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $forklift_observation
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             Session::flash('success', 'Forklift Inspection added successfully!');
             return redirect(admin_url('safety/forklift-inspection/list'));
         } catch (Exception $ex) {
@@ -316,13 +400,12 @@ class ForkLiftInspectionController extends Controller
             $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);
             $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
-            $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $created_by = [$inspection_details->created_by];
             if ($status == 1) {
                 $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
                 $to_status = OBSERVATION_APPROVED;
             } else {
-                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
+                $message = 'FORKLIFT INSPECTION - OBSERVATION REJECTED';
                 $to_status = OBSERVATION_REJECTED;
             }
             $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
@@ -339,7 +422,7 @@ class ForkLiftInspectionController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($ehsOfficers),
+                'assigned_user' => array_to_string($created_by),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);

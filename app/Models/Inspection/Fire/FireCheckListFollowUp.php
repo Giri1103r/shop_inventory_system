@@ -133,6 +133,8 @@ class FireCheckListFollowUp extends Model
         $request = request();
 
         $data = array(
+            'inspection_type' => $inspection_type,
+            'inspeciton_id' => $inspection_id,
             'doc_no' => $request->doc_no,
             'issue_date' => $request->issue_date,
             'revision_data' => $request->rev_date,

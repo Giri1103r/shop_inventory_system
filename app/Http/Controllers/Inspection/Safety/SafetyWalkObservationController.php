@@ -8,13 +8,16 @@ use Illuminate\Http\Request;
 use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
-use App\Models\Inspection\Safety\SignatureUpload;
 
 class SafetyWalkObservationController extends Controller
 {
@@ -123,9 +126,115 @@ class SafetyWalkObservationController extends Controller
     {
         try {
 
+
+
+            $rules = [
+                'doc_no' => 'required',
+                'issue_date' => 'required',
+                'inspection_date' => 'required',
+                'shift_id' => 'required',
+                'month' => 'required',
+                'unit' => 'required',
+                'safety_walk_taken_by' => 'required',
+
+                'unit' => 'required',
+
+                'location.*' => 'required',
+                'date_of_observation.*' => 'required',
+                'observation.*' => 'required',
+                'checklist_file.*' => 'required',
+                'recomended_action.*' => 'required',
+                'date_of_compliance.*' => 'required',
+                'observation_status.*' => 'required',
+                'remarks.*' => 'required',
+                'emp_id.*' => 'required',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (($user->signature_upload == null)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+
+            ];
+
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue date is required.',
+                'inspection_date.required' => 'Inspection date is required.',
+                'shift_id.required' => 'Shift ID is required.',
+                'month.required' => 'Month is required.',
+                'unit.required' => 'Unit is required.',
+                'safety_walk_taken_by.required' => 'Safety walk taken by is required.',
+
+                'unit.*.required' => 'Unit is required.',
+
+                'location.*.required' => 'Location is required.',
+                'date_of_observation.*.required' => 'Date of observation is required.',
+                'observation.*.required' => 'Observation is required.',
+                'checklist_file.*.required' => 'Image is required.',
+                'recomended_action.*.required' => 'Recommended action is required.',
+                'date_of_compliance.*.required' => 'Date of compliance is required.',
+                'observation_status.*.required' => 'Observation status is required.',
+                'remarks.*.required' => 'Remarks are required.',
+                'emp_id.*.required' => 'Employee ID is required.',
+                'signature_upload' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if ($user->signature_upload == null) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
             $safety_walk_observation =  $this->safety_walk->Store();
             $safety_walk_observation_details = $this->observation_details->store($safety_walk_observation->id);
             $signature_update = $this->signature->signatureUpload(SAFETY_WALK_OBSERVATION, $safety_walk_observation->id);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'SAFETY INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Safety Walk Observation - Observation Has been Created",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $safety_walk_observation->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/safety-walk-observation/view/' . encryptId($safety_walk_observation->id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'FORKLIFT INSPECTION - Observation has been Created';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/safety-walk-observation/approval/' . encryptId($safety_walk_observation->id));
+                $details = array(
+                    'safety_type' => 'Safety Walk Observation',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $safety_walk_observation_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
@@ -325,13 +434,13 @@ class SafetyWalkObservationController extends Controller
             $eye_wash_inspection = $this->safety_walk->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->safety_walk->selectOne($id);
             $signature_update = $this->signature->signatureUpload(SAFETY_WALK_OBSERVATION, $id);
-            $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $ehsOfficer = [$inspection_details->created_by];
+
             if ($status == 1) {
-                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
+                $message = 'Safety Walk OBSERVATION APPROVED';
                 $to_status = OBSERVATION_APPROVED;
             } else {
-                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
+                $message = 'Safety Walk OBSERVATION Rejected';
                 $to_status = OBSERVATION_REJECTED;
             }
             $web_link =   admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
@@ -348,13 +457,30 @@ class SafetyWalkObservationController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($ehsOfficers),
+                'assigned_user' => array_to_string($ehsOfficer),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            $title = 'FORKLIFT INSPECTION - Observation Status';
+            $email_id = getUseremail($ehsOfficer);
+            $url = admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
+            $details = array(
+                'safety_type' => 'Safety Walk Observation',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyInspection($details));
+
+
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('safety/safety-walk-observation/list'));

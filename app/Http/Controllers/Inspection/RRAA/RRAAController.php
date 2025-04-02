@@ -54,17 +54,6 @@ class RRAAController extends Controller
                     $data =  $this->rraa_details->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('status', function ($row) {
-                            $text = "<span style='color:red'>In-Active</span>";
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
-                                }
-                            // }
-                            return $text;
-                        })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -82,7 +71,7 @@ class RRAAController extends Controller
                             </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'issue_date' ,'created_by', 'inspection_status', 'status'])
+                        ->rawColumns(['action', 'created_date', 'issue_date' ,'created_by'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -155,49 +144,10 @@ class RRAAController extends Controller
 
             try {
 
-               $rraa = $this->rraa_details->store();
-               $rraa_id = $rraa->id;
-               $this->rraa_checkList->store($rraa_id);
-
+                $rraa = $this->rraa_details->store();
+                $rraa_id = $rraa->id;
+                $this->rraa_checkList->store($rraa_id);
                 $this->signature->signatureStore(RRAA_INSPECTION,$rraa->id);
-
-               $mailsubject = 'RRAA Inspection completed by fire associate';
-               $ehsOfficer = GetEHSOfficer();
-               $message = 'RRAA Inspection completed by fire associate';
-
-               if (count($ehsOfficer) > 0) {
-                    foreach ($ehsOfficer as $user) {
-                        $email_id = $user->email;
-                        if ($email_id != '' || $email_id != null) {
-                            $data = $this->rraa_details->selectOne($rraa_id);
-                            $data = array(
-                                'data' => $data,
-                                'mail_subject' => 'RRAA Inspection',
-                                'message' => $message,
-                            );
-                            Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                        }
-                    }
-                }
-
-                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-                $notificationData = array(
-                    'notification_type' => RRAA_INSPECTION,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => $message,
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $rraa->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($rraa->id)),
-                    'assigned_user' => array_to_string($ehsOfficers),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -230,22 +180,6 @@ class RRAAController extends Controller
         );
     }
 
-    public function StatusChange(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $this->rraa_details->statuschange($id);
-
-            $this->rraa_checkList->statuschange($id);
-
-            return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
-
     public function view(Request $request)
     {
         try {
@@ -269,408 +203,6 @@ class RRAAController extends Controller
         }
     }
 
-    public function approvals(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $rraa_details = $this->rraa_details->find($id);
-            $rraa_checkList = $this->rraa_checkList->selectOne($id);
-            $data = [
-                'inspection_details' => $inspection_details,
-                'rraa_details' => $rraa_details,
-                'rraa_checkList' => $rraa_checkList,
-            ];
-            return view('inspection.rraa.approval', $data);
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-    public function EHSOfficerSubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $inspection_updates = $this->rraa_details->EHSOfficerUpdate($id);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $signature_update = $this->signature->signatureUpload();
-            if ($request->is_passed == 1) {
-                $message = 'RRAA Inspeciton Approved Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
-                $to_status = INSPECTION_APPROVED;
-            } else {
-                $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
-                $to_status = WAITING_FOR_CAPA_ACTION;
-            }
-            $userIds = [
-                'users' => $inspection_details->created_by,
-            ];
-            $mailsubject = 'SAFETY INSPECTION';
-            $notificationData = array(
-                'notification_type' => RRAA_INSPECTION,
-                'module_type' => 2,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
-                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                'to_status' => $to_status,
-                'approved_by' => Auth::id(),
-                'remarks' => $request->remarks,
-            ];
-            $this->statusLog->create($insert_array);
-
-            $ehsOfficer = GetEHSOfficer();
-
-            if (count($ehsOfficer) > 0) {
-                 foreach ($ehsOfficer as $user) {
-
-                     $email_id = $user->email;
-
-                     if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
-
-                        $data = array(
-                            'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
-                            'message' => $message,
-                        );
-                        Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                     }
-                 }
-             }
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', __('Something Went Wrong!'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-    public function CAPASubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $forklift_inspection = $this->rraa_details->capaSubmit($id);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $signature_update = $this->signature->signatureUpload();
-            $ehsOfficers = $inspection_details->verified_by;
-            $userIds = [
-                'users' => $ehsOfficers,
-            ];
-            $mailsubject = 'Safety Inspection';
-            $notificationData = array(
-                'notification_type' => RRAA_INSPECTION,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => "CAPA Action completed by Fire Associates",
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
-                'from_status' => WAITING_FOR_CAPA_ACTION,
-                'to_status' => WAITING_FOR_CAPA_VERIFICATION,
-                'created_by' => Auth::id(),
-                'remarks' => $request->capa_remarks,
-            ];
-            $this->statusLog->create($insert_array);
-
-            $message = 'CAPA Action completed by Fire Associates';
-            $ehsOfficer = GetEHSOfficer();
-
-            if (count($ehsOfficer) > 0) {
-                 foreach ($ehsOfficer as $user) {
-
-                     $email_id = $user->email;
-
-                     if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
-
-                        $data = array(
-                            'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
-                            'message' => $message,
-                        );
-                        Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                     }
-                 }
-             }
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-    public function CAPAVerifySubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->remarks;
-            $forklift_inspection = $this->rraa_details->capaVerifySubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $signature_update = $this->signature->signatureUpload();
-            if ($status == 1) {
-                $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
-                $user = GetLevelOneManager();
-                $users = $user ? $user->pluck('id')->toArray() : 1;
-                $to_status = WAITING_FOR_L1_VERIFICATION;
-            } else {
-                $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
-                $to_status = EHS_OFFICER_REJECTED;
-            }
-            $userIds = [
-                'users' => $users,
-            ];
-            $mailsubject = 'SAFETY INSPECTION';
-            $notificationData = array(
-                'notification_type' => RRAA_INSPECTION,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
-                'from_status' => WAITING_FOR_CAPA_VERIFICATION,
-                'to_status' => $to_status,
-                'approved_by' => Auth::id(),
-                'remarks' => $request->remarks,
-            ];
-            $this->statusLog->create($insert_array);
-
-            $ehsOfficer = GetEHSOfficer();
-
-            if (count($ehsOfficer) > 0) {
-                 foreach ($ehsOfficer as $user) {
-
-                     $email_id = $user->email;
-
-                     if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
-
-                        $data = array(
-                            'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
-                            'message' => $message,
-                        );
-                        Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                     }
-                 }
-             }
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-    public function levelOneManagerSubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->level_one_manager;
-            $forklift_inspection = $this->rraa_details->levelOneManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $signature_update = $this->signature->signatureUpload();
-            if ($status == 1) {
-                $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
-                $user = GetLevelTwoManager();
-                $users = $user ? $user->pluck('id')->toArray() : 1;
-                $to_status = WAITING_FOR_L2_VERIFICATION;
-            } else {
-                $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
-                $to_status = L1_MANAGER_REJECTED;
-            }
-            $userIds = [
-                'users' => $users,
-            ];
-            $mailsubject = 'SAFETY INSPECTION';
-            $notificationData = array(
-                'notification_type' => RRAA_INSPECTION,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
-                'from_status' => WAITING_FOR_L1_VERIFICATION,
-                'to_status' => $to_status,
-                'approved_by' => Auth::id(),
-                'remarks' => $request->level_one_manager,
-            ];
-            $this->statusLog->create($insert_array);
-
-            $ehsOfficer = GetEHSOfficer();
-
-            if (count($ehsOfficer) > 0) {
-                 foreach ($ehsOfficer as $user) {
-
-                     $email_id = $user->email;
-
-                     if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
-
-                        $data = array(
-                            'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
-                            'message' => $message,
-                        );
-                        Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                     }
-                 }
-             }
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-    public function levelTwoManagerSubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->level_two_manager;
-            $forklift_inspection = $this->rraa_details->levelTwoManagerSubmit($id, $status, $remarks);
-            $inspection_details = $this->rraa_details->selectOne($id);
-            $signature_update = $this->signature->signatureUpload();
-            if ($status == 1) {
-                $message = 'RRAA Inspeciton Approved Successfully!';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($inspection_details->id));
-                $to_status = INSPECTION_APPROVED;
-            } else {
-                $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('rraa/ohc_fire_environment_compliance/verification/' . encryptId($inspection_details->id) . '/capa');
-                $to_status = L2_MANAGER_REJECTED;
-            }
-            $users = $inspection_details->created_by;
-            $userIds = [
-                'users' => $users,
-            ];
-            $mailsubject = 'SAFETY INSPECTION';
-            $notificationData = array(
-                'notification_type' => RRAA_INSPECTION,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = [
-                'rraa_details_id' => $inspection_details->id,
-                'from_status' => WAITING_FOR_L2_VERIFICATION,
-                'to_status' => $to_status,
-                'approved_by' => Auth::id(),
-                'remarks' => $request->level_two_manager,
-            ];
-            $this->statusLog->create($insert_array);
-
-            $ehsOfficer = GetEHSOfficer();
-
-            if (count($ehsOfficer) > 0) {
-                 foreach ($ehsOfficer as $user) {
-
-                     $email_id = $user->email;
-
-                     if ($email_id != '' || $email_id != null) {
-                         $data = $this->rraa_details->selectOne($id);
-
-                        $data = array(
-                            'data' => $data,
-                            'mail_subject' => 'RRAA Inspection',
-                            'message' => $message,
-                        );
-                        Mail::to($email_id)->queue(new RRAAEmail($data));
-
-                     }
-                 }
-             }
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
-        }
-    }
-
-
     public function ExportExcel(Request $request)
     {
 
@@ -687,7 +219,6 @@ class RRAAController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -700,7 +231,6 @@ class RRAAController extends Controller
                 $export[] =  $data->document_number;
                 $export[] =  $data->issue_date;
                 $export[] =  $data->revision_date;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -708,14 +238,12 @@ class RRAAController extends Controller
 
                 $i++;
             }
-
             $writer = SimpleExcelWriter::streamDownload('RRAA.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
                 );
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
@@ -724,7 +252,6 @@ class RRAAController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
 
             $allData = $this->rraa_details->exportdata();
@@ -738,7 +265,6 @@ class RRAAController extends Controller
                 'Document Number',
                 'Issue Date',
                 'Revision Date',
-                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

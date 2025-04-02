@@ -54,7 +54,7 @@ class PASystemInspectionController extends Controller
     }
 
     public function Index(Request $request)
-    { 
+    {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -153,7 +153,7 @@ class PASystemInspectionController extends Controller
         }
 
         $data = array();
-        return view('inspection.Fire.pa_system_inspection.list', $data);
+        return view('inspection.fire.pa_system_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -173,7 +173,7 @@ class PASystemInspectionController extends Controller
                 'department' => $department,
             );
 
-            return view('inspection.Fire.pa_system_inspection.add', $data);
+            return view('inspection.fire.pa_system_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -204,13 +204,17 @@ class PASystemInspectionController extends Controller
         try {
 
             $inspection = $this->pa_system->store();
+
             $inspection_type = FIRE_PA_SYSTEM_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->pa_system_checklist->store($id);
+
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+
+            // dd($checklist_store);
 
             $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
 
@@ -233,6 +237,8 @@ class PASystemInspectionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            dd(1);
 
             $title = 'Fire Associate create the Fire Extinguisher Inspection';
             foreach ($ehsOfficers as $user) {
@@ -285,8 +291,9 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.view', $data);
+            return view('inspection.fire.pa_system_inspection.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -311,8 +318,9 @@ class PASystemInspectionController extends Controller
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
             );
-            return view('inspection.Fire.pa_system_inspection.approve', $data);
+            return view('inspection.fire.pa_system_inspection.approve', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -749,7 +757,7 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.Fire.pdf.pdf', $data);
+            $view = view('inspection.Fire.pa_system_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -793,7 +801,7 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Fire.pa_system_inspection.viewPdf',$data);
+            $html = view('inspection.fire.pa_system_inspection.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

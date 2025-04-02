@@ -71,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_TRAINER') or define('ROLE_TRAINER', 8);
         defined('ROLE_USER') or define('ROLE_USER', 9);
         defined('ROLE_VISE_PRESIDENT') or define('ROLE_VISE_PRESIDENT', 10);
+        defined('ROLE_INFRA_LEAD') or define('ROLE_INFRA_LEAD', 11);
         defined('ROLE_WORKER_REQUEST') or define('ROLE_WORKER_REQUEST', 12);
         defined('ROLE_PARAMEDICS') or define('ROLE_PARAMEDICS', 13);
         defined('ROLE_L1_EHS_OFFCIER') or define('ROLE_L1_EHS_OFFCIER', 14);
@@ -81,10 +82,10 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_L1_MANAGER') or define('ROLE_L1_MANAGER', 19);
         defined('ROLE_L2_MANAGER') or define('ROLE_L2_MANAGER', 20);
         defined('ROLE_FLOOR_MANAGER') or define('ROLE_FLOOR_MANAGER', 21);
-        defined('ROLE_EHS_TEAM') or define('ROLE_EHS_TEAM', 22);
-        defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 23);
-        defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 24);
-        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 25);
+        defined('ROLE_UNIT_HEAD') or define('ROLE_UNIT_HEAD', 22);
+        defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 23);
+        defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 24);
+        defined('ROLE_NURSING_OFFICER') or define('ROLE_NURSING_OFFICER', 25);
 
 
 

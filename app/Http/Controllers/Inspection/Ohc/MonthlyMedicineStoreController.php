@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
-use App\Models\Inspection\Ohc\monthlyMedicineStore;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\OhcManagement\Master\Medicine;
+use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\Ohc\monthlyMedicineStore;
+use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
 
 class MonthlyMedicineStoreController extends Controller
 {
@@ -115,10 +117,82 @@ class MonthlyMedicineStoreController extends Controller
     public function Store(Request $request)
     {
         try {
+
+            $rules = [
+                'inspection_date' => 'required',
+                'next_due' => 'required',
+                'available_quantity.*' => 'required',
+                'expired_date.*' => 'required',
+                'emp_id.*' => 'required',
+                'remarks.*' => 'required',
+                'signature_upload.*' => [
+                    function ($attribute, $value, $fail) {
+                        $user = Auth::user();
+                        if (is_null($user->signature_upload)) {
+                            $fail('Signature is required.');
+                        }
+                    }
+                ],
+            ];
+
+            $messages = [
+                'inspection_date.required' => 'Inspection Date is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'available_quantity.*.required' => 'Available Quantity is required',
+                'expired_date.*.required' => 'Expired Date is required',
+                'remarks.*' => 'Remarks is required',
+                'emp_id.*' => 'Employee is required',
+                'signature_upload' => 'Signature is required.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+
             $store = $this->medicine_checklist->store();
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);
             $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'OHC';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Monthly Medicine Store inspection Has been Created",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Monthly Medicine Store Observation has been Created';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id));
+                $details = array(
+                    'safety_type' => 'Monthly Medicine Store',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
+
 
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
@@ -327,34 +401,48 @@ class MonthlyMedicineStoreController extends Controller
             $remarks = $request->capa_remarks;
             $eye_wash_inspection = $this->medicine_checklist->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->medicine_checklist->selectOne($id);
+            $ehsOfficer = [$inspection_details->created_by];
+
             $signature_update = $this->signature->signatureUpload(OHC_TYPE_MONTHLY_MEDICINE_STORE);
-            // $ehsOfficer = GetEHSOfficer();
-            // $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            // if ($status == 1) {
-            //     $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
-            //     $to_status = OBSERVATION_APPROVED;
-            // } else {
-            //     $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
-            //     $to_status = OBSERVATION_REJECTED;
-            // }
-            // $web_link =   admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id));
-            // $mailsubject = 'SAFETY INSPECTION';
-            // $notificationData = array(
-            //     'notification_type' => SAFETY_INSPECTION,
-            //     'module_type' => 1,
-            //     'notification_message' => $mailsubject,
-            //     'mobile_notification' => json_encode(array(
-            //         'title' => $mailsubject,
-            //         'message' => $message,
-            //         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-            //         'id' => $inspection_details->id,
-            //         'module' => 1,
-            //     )),
-            //     'web_link' =>  $web_link,
-            //     'assigned_user' => array_to_string($ehsOfficers),
-            //     'created_by' => Auth::id(),
-            // );
-            // notificationSave($notificationData);
+            if ($status == 1) {
+                $message = 'Monthly Store Medicine Checklist - APPROVED';
+                $to_status = OBSERVATION_APPROVED;
+            } else {
+                $message = 'Monthly Store Medicine Checklist - REJECTED';
+                $to_status = OBSERVATION_REJECTED;
+            }
+            $web_link =   admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'OHC';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 1,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($ehsOfficer),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Monthly Store Medicine Checklist - Observation Status';
+            $email_id = getUseremail($ehsOfficer);
+            $url = admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id));
+            $details = array(
+                'safety_type' => 'Monthly Store Medicine Checklist',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyInspection($details));
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         } catch (Exception $ex) {

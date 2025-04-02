@@ -45,6 +45,7 @@ use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
+use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -582,6 +583,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
     });
+    Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
+        Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
+        Route::get('add', [FireSafetyEquipmentsController::class, 'add']);
+        Route::post('add/submit', [FireSafetyEquipmentsController::class, 'store']);
+        Route::get('view/{id}', [FireSafetyEquipmentsController::class, 'view']);
+        Route::post('delete', [FireSafetyEquipmentsController::class, 'delete']);
+        Route::get('export/excel', [FireSafetyEquipmentsController::class, 'exportExcel']);
+        Route::get('export/pdf', [FireSafetyEquipmentsController::class, 'exportPdf']);
+        Route::post('status', [FireSafetyEquipmentsController::class, 'statusChange']);
+    });
 });
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
@@ -610,16 +622,7 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
 });
-Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function () {
-    Route::GET('list', [MonthlyMedicineStoreController::class, 'Index']);
-    Route::POST('list', [MonthlyMedicineStoreController::class, 'Index']);
-    Route::GET('add', [MonthlyMedicineStoreController::class, 'Add']);
-    Route::POST('add/submit', [MonthlyMedicineStoreController::class, 'Store']);
-    Route::GET('view/{id}', [MonthlyMedicineStoreController::class, 'View']);
-    Route::GET('export/excel', [MonthlyMedicineStoreController::class, 'ExportExcel']);
-    Route::GET('export/pdf', [MonthlyMedicineStoreController::class, 'ExportPdf']);
-    Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
-});
+
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {
     Route::get('list', [HealthInstrumentCalibrationController::class, 'index']);
     Route::post('list', [HealthInstrumentCalibrationController::class, 'index']);

@@ -39,8 +39,12 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control inspection_date">
+                                                        class="form-control inspection_date"
+                                                        value="{{ old('inspection_date') }}">
                                                 </div>
+                                                @error('inspection_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
 
                                             <div class="col-md-4 mb-2">
@@ -48,8 +52,11 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
                                                     <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control next_due">
+                                                        class="form-control next_due" value="{{ old('next_due') }}">
                                                 </div>
+                                                @error('next_due')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="">
                                                 <table class="table table-bordered table-striped">
@@ -69,28 +76,41 @@
                                                             <tr>
                                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                                 <td class="text-center">
-                                                                    {{ getMedicinename($medicines->medicine_id) }} <input
-                                                                        type="hidden" name="id[{{ $medicines->id }}]"
-                                                                        value="{{ encryptId($medicines->id) }}"></td>
+                                                                    {{ getMedicinename($medicines->medicine_id) }}
+                                                                    <input type="hidden" name="id[{{ $medicines->id }}]"
+                                                                        value="{{ encryptId($medicines->id) }}">
+                                                                </td>
 
-                                                                <td class="text-center">{{ $medicines->freeze_quantity }}
+                                                                <td class="text-center">
+                                                                    {{ $medicines->freeze_quantity }}
                                                                     <input type="hidden"
                                                                         name="freeze_quantity[{{ $medicines->id }}]"
-                                                                        value="{{ ($medicines->freeze_quantity) }}">
+                                                                        value="{{ $medicines->freeze_quantity }}">
                                                                 </td>
+
                                                                 <td>
                                                                     <div class="form-input">
                                                                         <input class="form-control" type="text"
-                                                                            name="available_quantity[{{ $medicines->id }}]" />
+                                                                            name="available_quantity[{{ $medicines->id }}]"
+                                                                            value="{{ old('available_quantity.' . $loop->iteration) }}" />
                                                                     </div>
+                                                                    @error('available_quantity.' . $loop->iteration)
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </td>
+
                                                                 <td>
                                                                     <div class="form-input">
                                                                         <input class="form-control expired_date"
                                                                             type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]" />
+                                                                            name="expired_date[{{ $medicines->id }}]"
+                                                                            value="{{ old('expired_date.' . $loop->iteration) }}" />
+                                                                        @error('expired_date.' . $loop->iteration)
+                                                                            <div class="error">{{ $message }}</div>
+                                                                        @enderror
                                                                     </div>
                                                                 </td>
+
                                                                 <td>
                                                                     <div class="form-input">
                                                                         <select name="emp_id[{{ $medicines->id }}]"
@@ -99,15 +119,23 @@
                                                                             <option value="">Select Employee Name
                                                                             </option>
                                                                         </select>
+                                                                        @error('emp_id.' . $loop->iteration)
+                                                                            <div class="error">{{ $message }}</div>
+                                                                        @enderror
                                                                     </div>
                                                                 </td>
+
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <textarea class="form-control" type="text" style="resize: none" name="remarks[{{ $medicines->id }}]"></textarea>
+                                                                        <textarea class="form-control" style="resize: none" name="remarks[{{ $medicines->id }}]">{{ old('remarks.' . $loop->iteration) }}</textarea>
                                                                     </div>
+                                                                    @error('remarks.' . $loop->iteration)
+                                                                        <div class="error">{{ $message }}</div>
+                                                                    @enderror
                                                                 </td>
                                                             </tr>
                                                         @endforeach
+
                                                     </tbody>
                                                 </table>
 
