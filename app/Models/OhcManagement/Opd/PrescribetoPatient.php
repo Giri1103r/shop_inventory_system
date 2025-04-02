@@ -3,6 +3,8 @@
 namespace App\Models\OhcManagement\Opd;
 
 use App\Models\Master\Department;
+use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -82,7 +84,7 @@ class PrescribetoPatient extends Model
                 }
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_EHS_HEAD, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_opd_patient.id', 'DESC');
         } else {
             $query->where('ohc_management_opd_patient.created_by', Auth::id());
@@ -129,16 +131,12 @@ class PrescribetoPatient extends Model
 
     // store
 
-    public function store($department, $unit)
+    public function store()
     {
         $request = request();
 
 
-        if ($request->has('is_outside_worker') == 1) {
-            $employeeId =  $request->outside_emp_id;
-        } else {
-            $employeeId =   $request->emp_id;
-        }
+
         $destinationPath = 'uploads/ohc_management/opd/prescribe_to_patient';
 
         if (!File::exists(public_path($destinationPath))) {
@@ -156,11 +154,35 @@ class PrescribetoPatient extends Model
 
             $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
         }
-      
+        if ($request->has('is_outside_worker') == 1) {
+            $employeeId =  $request->outside_emp_id;
+        } else {
+            $employeeId =   $request->emp_id;
+        }
+        if ($request->is_outside_employee == 0) {
+
+            $employee = Employee::where('emp_id', $request->emp_id)
+                ->select('unit', 'department')
+                ->first();
+
+
+            if (!$employee) {
+                $employee = Work::where('emp_id', $request->emp_id)
+                    ->select('unit', 'department')
+                    ->first();
+            }
+
+
+            if ($employee) {
+                $unit = $employee->unit;
+                $department = $employee->department;
+            }
+        }
+
         $insert_array = [
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
-            'unit_id' =>  $unit->id ?? null,
-            'department_id' =>  $request->department_id ?? $department->id ?? null,
+            'unit_id' =>  $unit ?? Auth::user()->unit_id,
+            'department_id' =>  $department  ?? $request->department_id,
             'company_name' => $request->company_name,
             'emp_id' => $employeeId,
             'gender' => $request->gender,
@@ -181,7 +203,7 @@ class PrescribetoPatient extends Model
             'closed_description' => $request->close_description,
             'suggested_details' => $request->details,
             'created_by' => Auth::id(),
-            'file_upload'=> $ohc_file_path,
+            'file_upload' => $ohc_file_path,
             'dob' => DBdateformat($request->dob)
         ];
 
@@ -189,7 +211,7 @@ class PrescribetoPatient extends Model
         return $this->create($insert_array);
     }
 
-    public function updates($id, $department,$unit)
+    public function updates($id)
     {
         $request = request();
 
@@ -198,11 +220,30 @@ class PrescribetoPatient extends Model
         } else {
             $employeeId =   $request->emp_id;
         }
+        if ($request->is_outside_employee == 0) {
+
+            $employee = Employee::where('emp_id', $request->emp_id)
+                ->select('unit', 'department')
+                ->first();
+
+
+            if (!$employee) {
+                $employee = Work::where('emp_id', $request->emp_id)
+                    ->select('unit', 'department')
+                    ->first();
+            }
+
+
+            if ($employee) {
+                $unit = $employee->unit;
+                $department = $employee->department;
+            }
+        }
 
         $update_array = array(
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
-            'unit_id' =>  $unit->id ?? null,
-            'department_id' => $request->department_id ?? $department->id ?? null,
+            'unit_id' =>  $unit ?? Auth::user()->unit_id,
+            'department_id' =>  $department  ?? $request->department_id,
             'company_name' => $request->company_name,
             'emp_id' =>   $employeeId,
             'gender' => $request->gender,
