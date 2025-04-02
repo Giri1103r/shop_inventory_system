@@ -124,9 +124,9 @@ class DiscardController extends Controller
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ohc/discard/view/' . encryptId($row->id) ) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a>';
                             }
-                            // if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
+                            if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
                                 $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            // }
+                            }
                             return $btn;
                         })
 
