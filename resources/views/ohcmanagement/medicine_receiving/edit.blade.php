@@ -35,21 +35,7 @@
                                             value="{{ encryptId($medicine_receiving->id) }}">
                                         <hr>
                                         <div class="row">
-                                            {{-- <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="unit" class="form-label require ">Unit </label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class="form-control form-control-sm single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select the Medicine Name</option>
-                                                        @foreach ($unitList as $list)
-                                                            <option value="{{ encryptId($list->id) }}"
-                                                                @if ($medicine_receiving->unit_id == $list->id) selected @endif>
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div> --}}
+                                          
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="medicine_name" class="form-label require ">Medicine

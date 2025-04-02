@@ -700,9 +700,12 @@ class PASystemInspectionController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -713,9 +716,12 @@ class PASystemInspectionController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
+                $export[] =  $data->date_of_inspection;
+                $export[] =  $data->next_due;
+                $export[] =  $data->location_name;
+                $export[] =  $data->shift;
+                $export[] =  $data->unit_name;
+                $export[] =  $data->frequency_name;
                 $export[] =  getInspectionStatus($data->inspection_status);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -729,6 +735,7 @@ class PASystemInspectionController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
@@ -745,9 +752,12 @@ class PASystemInspectionController extends Controller
             }
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -794,12 +804,14 @@ class PASystemInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id,FIRE_PA_SYSTEM_INSPECTION);
                 $forklift_details = $this->pa_system->selectOne($id);
                 $inspection = $this->pa_system_checklist->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectUsingName('PASystemInspection');
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire PA System Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

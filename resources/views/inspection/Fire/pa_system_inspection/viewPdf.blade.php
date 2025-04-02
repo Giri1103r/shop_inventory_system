@@ -157,22 +157,64 @@
 
     <table width="100%" style="width:100%;">
         <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.doc_no') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->doc_no) ? $forklift_details->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.issue_date') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($forklift_details->issue_date) ? $forklift_details->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.rev_date') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->revision_data) ? $forklift_details->revision_data : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.inspection_date') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->date_of_inspection) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.location') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname($forklift_details->location) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShiftName($forklift_details->shift) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.next_due') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->next_due) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.unit') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname($forklift_details->unit) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.frequency') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFrequencyname($forklift_details->frequency) }}
             </td>
         </tr>
         <tr>

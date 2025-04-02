@@ -207,7 +207,7 @@ class HooterInspectionController extends Controller
 
             $rules = [
                 'issue_date' => 'required',
-                'rev_date' => 'requried',
+                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
@@ -297,7 +297,7 @@ class HooterInspectionController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -632,6 +632,7 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
