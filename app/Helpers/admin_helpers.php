@@ -36,6 +36,7 @@ use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\environment\Environment;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
@@ -260,6 +261,12 @@ if (!function_exists('getsequence')) {
                 $count = AuditAnalysis::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'AUDIT-ANALYSIS-' . getautogen($count);
+                break;
+            case 'audit_task':
+                $count = Task::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'AUDIT-TASk-' . getautogen($count);
+                break;
             case 'ambientNoiseNo':
                 $count = Environment::where('type', 1)->withoutGlobalScopes()->count();
                 $count = $count + 1;

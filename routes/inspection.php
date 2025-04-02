@@ -14,6 +14,8 @@ use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Fire\SprinklarSystemController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Inspection\Audit\Master\TaskMasterController;
+use App\Http\Controllers\Inspection\Audit\MonthlyAuditPlanController;
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
@@ -147,6 +149,37 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
     });
+
+    Route::group(['prefix' => 'master/task/'], function () {
+        Route::get('list', [TaskMasterController::class, 'index']);
+        Route::post('list', [TaskMasterController::class, 'index']);
+        Route::get('add', [TaskMasterController::class, 'add']);
+        Route::post('add/submit', [TaskMasterController::class, 'store']);
+        Route::get('edit/{id}', [TaskMasterController::class, 'edit']);
+        Route::post('edit/submit', [TaskMasterController::class, 'update']);
+        Route::get('view/{id}', [TaskMasterController::class, 'view']);
+        Route::get('export/excel', [TaskMasterController::class, 'exportExcel']);
+        Route::get('export/pdf', [TaskMasterController::class, 'exportPdf']);
+        Route::get('import', [TaskMasterController::class, 'import']);
+        Route::get('sample_download', [TaskMasterController::class, 'DownloadSample']);
+        Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
+        Route::post('delete', [TaskMasterController::class, 'Delete']);
+        Route::post('status', [TaskMasterController::class, 'StatusChange']);
+
+    });
+
+    Route::group(['prefix' => 'monthly-audit/audit-plan/'], function () {
+        Route::get('list', [MonthlyAuditPlanController::class, 'index']);
+        Route::post('list', [MonthlyAuditPlanController::class, 'index']);
+        Route::get('add', [MonthlyAuditPlanController::class, 'add']);
+        Route::post('add/submit', [MonthlyAuditPlanController::class, 'store']);
+        Route::get('view/{id}', [MonthlyAuditPlanController::class, 'view']);
+        Route::get('export/excel', [MonthlyAuditPlanController::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
+        Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
+
+    });
+
 });
 
 

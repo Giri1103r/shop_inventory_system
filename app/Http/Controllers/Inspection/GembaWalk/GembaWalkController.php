@@ -357,7 +357,7 @@ class GembaWalkController extends Controller
                 $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
                 //mail
                 $mailsubject = 'Gemba Walk CAPA Action  Report has been Submitted';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_TEAM, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
                 $userids = [];
                 $users = collect();
 
@@ -433,7 +433,7 @@ class GembaWalkController extends Controller
 
                 //mail
                 $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_TEAM, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
                 $userids = [];
                 $users = collect();
 
@@ -694,7 +694,7 @@ class GembaWalkController extends Controller
 
                 // mail
                 $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_TEAM, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
                 $userids = [];
                 $users = collect();
 
@@ -765,7 +765,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
 
                 $mailsubject = 'GembaWalk Report has been Rejected by EHS Officer';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_TEAM, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
                 $userids = [];
                 $users = collect();
 

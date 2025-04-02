@@ -289,7 +289,7 @@ class AppServiceProvider extends ServiceProvider
 
         //environment
 
-        defined('AmbientNoise') or define('AMBIENTNOISE', 1);
+        defined('AMBIENTNOISE') or define('AMBIENTNOISE', 1);
         defined('WORKNOISE') or define('WORKNOISE', 2);
         defined('AMBIENT_AIR') or define('AMBIENT_AIR', 3);
         defined('WORKZONE_AIR') or define('WORKZONE_AIR', 4);
@@ -397,6 +397,15 @@ class AppServiceProvider extends ServiceProvider
 
         defined('OK') or define('OK',1);
         defined('NOT_OK') or define('NOT_OK',2);
+
+        // Audit
+        defined('FIRE') or define('FIRE',1);
+        defined('HEALTH') or define('HEALTH',2);
+        defined('SAFETY') or define('SAFETY',3);
+        defined('MIS') or define('MIS',4);
+
+
+
 
         View::composer('*', function ($view) {
 
