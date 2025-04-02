@@ -411,6 +411,15 @@ class AppServiceProvider extends ServiceProvider
         defined('OK') or define('OK', 1);
         defined('NOT_OK') or define('NOT_OK', 2);
 
+        // Audit
+        defined('FIRE') or define('FIRE',1);
+        defined('HEALTH') or define('HEALTH',2);
+        defined('SAFETY') or define('SAFETY',3);
+        defined('MIS') or define('MIS',4);
+
+
+
+
         View::composer('*', function ($view) {
 
             /**

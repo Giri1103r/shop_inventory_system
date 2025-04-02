@@ -72,7 +72,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.doc_no') }}</th>
                                         <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.revision_data') }}</th>
+                                        <th>{{ __('inspection.rev_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
