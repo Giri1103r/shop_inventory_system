@@ -294,11 +294,11 @@ class OhcStatuslog extends Model
 
     // expire
 
-    public function medicineexpire($id){
+    public function medicineexpire($discard_id){
         $request = request();
         $insert_data = [
             'type' => TYPE_OHC_MEDICINE_DISCARD,
-            'reference_id' => $id,
+            'reference_id' =>$discard_id->id,
             'from_status' => OHC_DISCARD_MEDICINE_CREATION,
             'to_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
             'remarks' =>  $request->remarks,
@@ -313,13 +313,14 @@ class OhcStatuslog extends Model
     {
         $request = request();
         $insert_data = [
-            'type' => TYPE_OHC_MEDICINE,
+            'type' => TYPE_OHC_MEDICINE_DISCARD,
             'reference_id' => $id,
             'from_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
             'to_status' => $updateData['approve_status'],
             'remarks' =>  $request->remarks,
             'created_by' => Auth::id(),
         ];
+
         return $this->create($insert_data);
     }
     // get medicine log

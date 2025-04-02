@@ -83,40 +83,7 @@
 
                                 </div>
 
-                                {{-- <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Status Logs</h4>
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered">
-                                            <thead class="bg-secondary" style="color: #ffff">
-                                                <tr>
-                                                    <th>From Status</th>
-                                                    <th>To Status</th>
-                                                    <th>Remarks</th>
-                                                    <th>Approver Name</th>
-                                                    <th>Approver Date</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                @foreach ($logData as $log)
-                                                <tr>
-                                                    <td>{{getDiscardStatus( isset($log['from_status']) ? $log['from_status'] : '-') }}</td>
-                                                    <td>{{ getDiscardStatus(isset($log['to_status']) ? $log['to_status'] : '-' )}}</td>
-                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
-                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
-                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div> --}}
-
+                             
 
                             </div>
                         </div>

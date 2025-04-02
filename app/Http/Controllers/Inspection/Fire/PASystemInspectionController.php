@@ -209,9 +209,12 @@ class PASystemInspectionController extends Controller
             $id = $inspection->id;
 
             $inspection_details = $this->pa_system_checklist->store($id);
+
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+
+            // dd($checklist_store);
 
             $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
 
@@ -234,6 +237,8 @@ class PASystemInspectionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
+
+            dd(1);
 
             $title = 'Fire Associate create the Fire Extinguisher Inspection';
             foreach ($ehsOfficers as $user) {
@@ -288,6 +293,7 @@ class PASystemInspectionController extends Controller
             );
             return view('inspection.fire.pa_system_inspection.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/pa-system-inspection/list'));
