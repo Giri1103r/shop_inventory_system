@@ -63,7 +63,7 @@ use App\Http\Controllers\Inspection\Ohc\OccupationHealthInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyAmbulanceController;
 use App\Http\Controllers\OhcManagement\MedicineFirstAidController;
 use App\Http\Controllers\OhcManagement\DiscardController;
-use App\Http\Controllers\Ohcmanagement\Master\HospitalDetailsController;
+use App\Http\Controllers\OhcManagement\Master\HospitalDetailsController;
 use App\Http\Controllers\OhcManagement\MedicalFitnessCertificateController;
 use App\Http\Controllers\OhcManagement\Report\InventoryController;
 use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
