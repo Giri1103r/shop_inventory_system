@@ -40,6 +40,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
@@ -2401,6 +2402,42 @@ if (!function_exists('getMonth')) {
             if ($data) {
                 return $data->department_name;
             }
+        }
+    }
+    
+
+    // Get Audit Category Type
+
+    if (!function_exists('getCategoryType')) {
+        function getCategoryType($type_id)
+        {
+            if ($type_id == 1) {
+                return 'FIRE';
+            } elseif ($type_id == 2) {
+                return 'HEALTH';
+            } 
+            elseif ($type_id == 3) {
+                return 'SAFETY';
+            }
+            elseif ($type_id == 4) {
+                return 'MIS';
+            }else {
+                return 'Unknown';
+            }
+        }
+    }
+
+    // Get Audit Task
+    if (!function_exists('getTaskName')) {
+
+        function getTaskName($id)
+        {
+            $audit_task_name = Task::select('task_name')->where('id', $id)->where('trash', 'NO')->first();
+            if ($audit_task_name === null) {
+                return '';
+            }
+
+            return $audit_task_name->task_name;
         }
     }
     if (!function_exists('getDetectorName')) {
