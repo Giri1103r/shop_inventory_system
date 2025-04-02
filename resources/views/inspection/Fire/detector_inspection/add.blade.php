@@ -62,7 +62,10 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control">
+                                                        class="form-control" value="{{old('inspection_date')}}">
+                                                    @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -74,10 +77,14 @@
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}">
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('location_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -87,19 +94,26 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
                                                         @foreach ($shifts as $shift)
-                                                            <option value="{{ encryptId($shift->id) }}">
+                                                            <option value="{{ encryptId($shift->id) }}"
+                                                                {{ old('shift_id') == encryptId($shift->id) ? 'selected' : '' }}>
                                                                 {{ $shift->shift }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                                @error('shift_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
                                                     <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control">
+                                                        class="form-control" value="{{ old('next_due') }}">
                                                 </div>
+                                                @error('next_due')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -108,11 +122,15 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -122,11 +140,15 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Frequency</option>
                                                         @foreach ($frequency as $frequency)
-                                                            <option value="{{ encryptId($frequency->id) }}">
+                                                            <option value="{{ encryptId($frequency->id) }}"
+                                                                {{ old('frequency_id') == encryptId($frequency->id) ? 'selected' : '' }}>
                                                                 {{ $frequency->frequency_name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
+                                                @error('frequency_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -187,19 +209,27 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
                                                             @foreach ($department as $department)
-                                                                <option value="{{ encryptId($department->id) }}">
+                                                                <option value="{{ encryptId($department->id) }}"
+                                                                    {{ old('department.1') == encryptId($department->id) ? 'selected' : '' }}>
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
+                                                    @error('department.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[1]"
-                                                            id = "resource_code" class="form-control">
+                                                            id = "resource_code" class="form-control"
+                                                            value="{{ old('resource_code.1') }}">
                                                     </div>
+                                                    @error('resource_code.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -209,11 +239,15 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Detector Type</option>
                                                             @foreach ($detector_types as $detector_type)
-                                                                <option value="{{ encryptId($detector_type->id) }}">
+                                                                <option value="{{ encryptId($detector_type->id) }}"
+                                                                    {{ old('detector_type.1') == encryptId($detector_type->id) ? 'selected' : '' }}>
                                                                     {{ $detector_type->detector_type }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
+                                                    @error('detector_type.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -223,11 +257,20 @@
                                                         <select name="physical_condition[1]" id="physical_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Physical Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('physical_condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}"
+                                                                {{ old('physical_condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
+                                                                Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}"
+                                                                {{ old('physical_condition.1') == encryptId(POOR) ? 'selected' : '' }}>
+                                                                Poor</option>
                                                         </select>
                                                     </div>
+                                                    @error('physical_condition.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -236,11 +279,20 @@
                                                         <select name="cable_condition[1]" id="cable_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Cable Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('cable_condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}"
+                                                                {{ old('cable_condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
+                                                                Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}"
+                                                                {{ old('cable_condition.1') == encryptId(POOR) ? 'selected' : '' }}>
+                                                                Poor</option>
                                                         </select>
                                                     </div>
+                                                    @error('cable_condition.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -249,11 +301,18 @@
                                                         <select name="response_indicator[1]" id="response_indicator"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Response Indicator</option>
-                                                            <option value="{{ encryptId(WORKING) }}">Working</option>
-                                                            <option value="{{ encryptId(NOTWORKING) }}">Not Working
+                                                            <option value="{{ encryptId(WORKING) }}"
+                                                                {{ old('response_indicator.1') == encryptId(WORKING) ? 'selected' : '' }}>
+                                                                Working</option>
+                                                            <option value="{{ encryptId(NOTWORKING) }}"
+                                                                {{ old('response_indicator.1') == encryptId(NOTWORKING) ? 'selected' : '' }}>
+                                                                Not Working
                                                             </option>
                                                         </select>
                                                     </div>
+                                                    @error('response_indicator.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -263,21 +322,30 @@
                                                         <select name="working_status[1]" id="working_status"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Working Status</option>
-                                                            <option value="{{ encryptId(OPERATIONAL) }}">Operational
+                                                            <option value="{{ encryptId(OPERATIONAL) }}"
+                                                                {{ old('working_status.1') == encryptId(OPERATIONAL) ? 'selected' : '' }}>
+                                                                Operational
                                                             </option>
-                                                            <option value="{{ encryptId(NONOPERATIONAL) }}">
+                                                            <option value="{{ encryptId(NONOPERATIONAL) }}"
+                                                                {{ old('working_status.1') == encryptId(NONOPERATIONAL) ? 'selected' : '' }}>
                                                                 Non-Operational</option>
                                                         </select>
                                                     </div>
+                                                    @error('working_status.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
 
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
+                                                    @error('remarks.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
 
 

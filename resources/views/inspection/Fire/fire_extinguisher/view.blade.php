@@ -191,15 +191,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.type') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->type == ABC)
-                                                                {{ __('inspection.ABC') }}
-                                                            @elseif($details->type == CO2)
-                                                                {{ __('inspection.CO2') }}
-                                                            @elseif($details->type == WATER)
-                                                                {{ __('inspection.WATER') }}
-                                                            @elseif($details->type == FOAM)
-                                                                {{ __('inspection.FOAM') }}
-                                                            @endif
+                                                            {{ getExtinguisherTypeName($details->type) }}
                                                         </div>
 
 
@@ -288,9 +280,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
                                             </div>
                                         </div>
                                     @endforeach

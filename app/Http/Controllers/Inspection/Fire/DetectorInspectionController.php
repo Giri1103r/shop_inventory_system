@@ -228,15 +228,17 @@ class DetectorInspectionController extends Controller
     {
         try {
 
+            dd($request->all());
 
             $rules = [
                 'issue_date' => 'required',
-                'rev_date' => 'requried',
+                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
                 'next_due' => 'required',
                 'unit_id' => 'required',
+                'frequency_id' => 'required',
                 'department.*' => 'required',
                 'resource_code.*' => 'required',
                 'detector_type.*' => 'required',
@@ -245,24 +247,27 @@ class DetectorInspectionController extends Controller
                 'response_indicator.*' => 'required',
                 'working_status.*' => 'required',
                 'remarks.*' => 'required',
+                'observation' => 'required',
             ];
 
             $messages = [
                 'issue_date.required' => 'Issue Date is required.',
-                'rev_date.required' => 'Revision Date is required.', // Fixed the message for rev_date
+                'rev_date.required' => 'Revision Date is required.',
                 'inspection_date.required' => 'Inspection Date is required.',
                 'location_id.required' => 'Location is required.',
                 'shift_id.required' => 'Shift is required.',
+                'frequency_id.required' => 'Frequency is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
-                'department.*.required' => 'Department is required for all entries.',
-                'resource_code.*.required' => 'Resource Code is required for all entries.',
-                'detector_type.*.required' => 'Detector Type is required for all entries.',
-                'physical_condition.*.required' => 'Physical Condition is required for all entries.',
-                'cable_condition.*.required' => 'Cable Condition is required for all entries.',
-                'response_indicator.*.required' => 'Response Indicator is required for all entries.',
-                'working_status.*.required' => 'Working Status is required for all entries.',
-                'remarks.*.required' => 'Remarks are required for all entries.',
+                'department.*.required' => 'Department is required.',
+                'resource_code.*.required' => 'Resource Code is required.',
+                'detector_type.*.required' => 'Detector Type is required.',
+                'physical_condition.*.required' => 'Physical Condition is required.',
+                'cable_condition.*.required' => 'Cable Condition is required.',
+                'response_indicator.*.required' => 'Response Indicator is required.',
+                'working_status.*.required' => 'Working Status is required.',
+                'remarks.*.required' => 'Remarks are required.',
+                'observation*.required' => 'Observation is  required.',
             ];
 
 
@@ -272,7 +277,6 @@ class DetectorInspectionController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            dd(2);
 
 
             $inspection = $this->detector->store();
@@ -846,10 +850,12 @@ class DetectorInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
                 $forklift_details = $this->detector->selectOne($id);
                 $inspection = $this->detector_details->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
+                    'document_no' => $document_no,
                     'pagetitle' => "Detector Inspection",
                     'inspection' => $inspection,
                 ];
@@ -872,7 +878,7 @@ class DetectorInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

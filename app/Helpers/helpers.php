@@ -26,28 +26,29 @@ use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\Ohc\OhcSignature;
 use Kreait\Firebase\Messaging\CloudMessage;
+use App\Models\Inspection\audit\Master\Task;
+use App\Models\Inspection\Fire\DetectorType;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
 use App\Models\Inspection\MSDS\MSDSCheckList;
 use App\Models\Inspection\RRAA\RRAACheckList;
+use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\FloorStretcherFiles;
 use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\RRAA\RRAASignatureUpload;
+use App\Models\Inspection\Fire\FireExtinguisherType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
-use App\Models\Inspection\audit\AuditAnalysis;
-use App\Models\Inspection\audit\Master\Task;
-use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
-use App\Models\Inspection\MSDS\MSDSSignatureUpload;
-use App\Models\Inspection\Ohc\DailyVitalEquipment;
-use App\Models\Inspection\Ohc\OhcSignature;
-use App\Models\Inspection\RRAA\RRAASignatureUpload;
-use App\Models\Inspection\Safety\SignatureUpload;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2448,6 +2449,20 @@ if (!function_exists('getMonth')) {
             if ($data) {
                 return $data->detector_type;
             }
+        }
+    }
+
+    // Get Fire Extinguisher Type Name
+    if(!function_exists('getExtinguisherTypeName'))
+    {
+        function getExtinguisherTypeName($id)
+        {
+            $data = FireExtinguisherType::where('id',$id)->first();
+            if($data)
+            {
+                return $data;
+            }
+            return null;
         }
     }
 }
