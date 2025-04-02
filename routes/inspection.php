@@ -49,6 +49,7 @@ use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
 use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
 use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
+use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -645,6 +646,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [DetectorInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [DetectorInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [DetectorInspectionController::class, 'GetDepartment']);
+    });
+    Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
+        Route::GET('list', [SandBucketInspectionController::class, 'Index']);
+        Route::POST('list', [SandBucketInspectionController::class, 'Index']);
+        Route::GET('add', [SandBucketInspectionController::class, 'Add']);
+        Route::POST('add/submit', [SandBucketInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [SandBucketInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [SandBucketInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [SandBucketInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [SandBucketInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [SandBucketInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [SandBucketInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [SandBucketInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [SandBucketInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
     });
 });
 
