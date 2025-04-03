@@ -51,32 +51,38 @@ class CoTypeFireExtinguisherDetails extends Model
     {
         $request = request();
 
-
+        $sr_no = $request->sr_no;
+        $fire_point_no = $request->fire_point_no;
         $department = $request->department;
-        $detector_type = $request->detector_type;
-        $physical_condition = $request->physical_condition;
-        $cable_condition = $request->cable_condition;
-        $working_status = $request->working_status;
+        $location = $request->location;
+        $type = $request->type;
+        $capacity = $request->capacity;
+        $quantity = $request->quantity;
+        $discharge_tube = $request->discharge_tube;
+        $discharge_horn = $request->discharge_horn;
+        $weight_of_co2_in_fe = $request->weight_of_co2_in_fe;
+        $safety_pin = $request->safety_pin;
+        $approach = $request->approach;
         $remarks = $request->remarks;
-        $resource_code = $request->resource_code;
-        $response_indicator = $request->response_indicator;
 
-
-
-        foreach ($department as $index => $department) {
+        foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
-                'resource_code' => $resource_code[$index],
-                'department' => decryptId($department),
-                'detector_type' => decryptId($detector_type[$index]),
-                'physical_condition' => decryptId($physical_condition[$index]),
-                'cable_condition' => decryptId($cable_condition[$index]),
-                'working_status' => decryptId($working_status[$index]),
+                'sr_no' => $sr_no_value,
+                'fire_point_no' => $fire_point_no[$index],
+                'department' => decryptId($department[$index]),
+                'location' => decryptId($location[$index]),
+                'type' => decryptId($type[$index]),
+                'capacity' => $capacity[$index],
+                'quantity' => $quantity[$index],
+                'discharge_tube' => decryptId($discharge_tube[$index]),
+                'discharge_horn' => decryptId($discharge_horn[$index]),
+                'weight_of_co2_in_fe' => $weight_of_co2_in_fe[$index],
+                'safety_pin' => decryptId($safety_pin[$index]),
+                'approach' => $approach[$index],
                 'remarks' => $remarks[$index],
-                'response_indicator' => decryptId($response_indicator[$index]),
                 'created_by' => Auth::id(),
             );
-
 
             $this->create($data);
         }
@@ -90,7 +96,7 @@ class CoTypeFireExtinguisherDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_detector_details'));
+        static::addGlobalScope(new TrashScope('inspection_co_type_fire_extinguisher_details'));
     }
 
 }
