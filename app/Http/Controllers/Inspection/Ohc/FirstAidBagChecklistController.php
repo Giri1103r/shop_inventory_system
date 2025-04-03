@@ -11,6 +11,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 
@@ -19,12 +20,16 @@ class FirstAidBagChecklistController extends Controller
     private $medicine_checklist;
     private $medicine;
     private $signature;
+    private $document_reference;
+
 
     public function __construct()
     {
         $this->medicine_checklist = new FirstAidBagChecklist();
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -91,9 +96,12 @@ class FirstAidBagChecklistController extends Controller
         try {
 
             $medicines = $this->medicine->getFirstAidData();
+            $document_no = $this->document_reference->selectUsingName('EmergencyFloorFirstAidBagChecklist');
 
             $data = array(
                 'medicines' => $medicines,
+                'document_no' => $document_no,
+
             );
             return view('inspection.inspection_ohc.first_aid_bag_inspection.add', $data);
         } catch (Exception $ex) {
@@ -164,12 +172,14 @@ class FirstAidBagChecklistController extends Controller
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
                 'verified_by' => $verified_by,
+                'document_no' => $document_no,
             );
 
 
@@ -284,6 +294,7 @@ class FirstAidBagChecklistController extends Controller
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
             $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
             $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
 
             $property = [
@@ -302,6 +313,7 @@ class FirstAidBagChecklistController extends Controller
                 'inspection_data' => $inspection_data,
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
+                'document_no' => $document_no,
             );
 
             $mpdf = new \Mpdf\Mpdf($property);
@@ -329,11 +341,14 @@ class FirstAidBagChecklistController extends Controller
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
+                'document_no' => $document_no,
+
             );
 
             return view('inspection.inspection_ohc.first_aid_bag_inspection.approval', $data);

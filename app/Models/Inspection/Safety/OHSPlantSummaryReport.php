@@ -13,9 +13,7 @@ class OHSPlantSummaryReport extends Model
     protected $primarykey = 'id';
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'inspection_date',
         'updated_frequency',
         'quantity_details',
@@ -36,46 +34,40 @@ class OHSPlantSummaryReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_ohs_report.*');
+        $query = $this->select(
+            'inspection_safety_ohs_report.*',
+            'inspection_static_docno.*',
+            'inspection_safety_ohs_report.id as inspection_id'
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_safety_ohs_report.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
+
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
 
 
-
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_ohs_report.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_safety_ohs_report.issue_date', '=', DBdateformat($request->issue_date));
-        }
         if (isset($request->inspection_date) && $request->inspection_date) {
             $query = $query->whereDate('inspection_safety_ohs_report.inspection_date', '=', DBdateformat($request->inspection_date));
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_safety_ohs_report.status', decryptId($request->status));
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_safety_ohs_report.updated_frequency', '=', ($request->frequency));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "rev_data":
-                    $query->orderBy('inspection_safety_ohs_report.revision_data', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_safety_ohs_report.issue_date', $columnorder);
-                    break;
-                case "doc_no":
-                    $query = $query->orderBy('inspection_safety_ohs_report.document_number', $columnorder);
-                    break;
                 case "status":
                     $query = $query->orderBy('inspection_safety_ohs_report.inspection_status', $columnorder);
                     break;
@@ -140,9 +132,7 @@ class OHSPlantSummaryReport extends Model
         $fire_water_pump_details = json_encode($fire_water_pump_details);
 
         $insert_array = [
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
-            'doc_no' => $request->doc_no,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
             'updated_frequency' => ($request->updated_frequency),
             'quantity_details' => $quantity_details,
@@ -161,29 +151,32 @@ class OHSPlantSummaryReport extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_ohs_report.*');
+        $query = $this->select(
+            'inspection_safety_ohs_report.*',
+            'inspection_static_docno.*',
+            'inspection_safety_ohs_report.id as inspection_id'
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_safety_ohs_report.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('inspection_date LIKE "%' . $search . '%"');
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
 
 
-        if (isset($request->doc_no) && $request->doc_no) {
-            $query = $query->where('inspection_safety_ohs_report.doc_no', 'LIKE', '%' . $request->doc_no . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_safety_ohs_report.issue_date', '=', DBdateformat($request->issue_date));
-        }
         if (isset($request->inspection_date) && $request->inspection_date) {
-            $query = $query->whereDate('inspection_safety_ohs_report.inspection_date', '=', DBdateformat($request->inspection_date));
+            $query = $query->whereDate('inspection_safety_ohs_report.issue_date', '=', DBdateformat($request->inspection_date));
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_safety_ohs_report.status', decryptId($request->status));
+
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->whereDate('inspection_safety_ohs_report.updated_frequency', '=', ($request->frequency));
         }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

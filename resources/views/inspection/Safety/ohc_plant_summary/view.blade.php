@@ -30,7 +30,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->doc_no }}
+                                                    {{ $document_no->doc_no }}
                                                 </div>
                                             </div>
                                         </div>
@@ -38,7 +38,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->issue_date) }}
+                                                    {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -46,7 +46,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->revision_data }}
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
