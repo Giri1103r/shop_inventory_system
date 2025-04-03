@@ -193,14 +193,12 @@
                                                         <label
                                                             class="form-label require">Audio Quality</label>
                                                         <div class="view_data">
-                                                            @if ($details->audio_quality == 1)
-                                                                Good
-                                                            @elseif ($details->audio_quality == 2)
-                                                                Fair
-                                                            @elseif ($details->audio_quality == 3)
-                                                                Poor
-                                                            @else
-                                                                Not Selected
+                                                            @if ($details->audio_quality == GOOD)
+                                                                GOOD
+                                                            @elseif($details->audio_quality == FAIR)
+                                                                FAIR
+                                                            @elseif($details->audio_quality == POOR)
+                                                                POOR
                                                             @endif
                                                         </div>
                                                     </div>
@@ -210,14 +208,12 @@
                                                         <label
                                                             class="form-label require">Mic Condition</label>
                                                         <div class="view_data">
-                                                            @if ($details->mic_condition == 1)
-                                                                Good
-                                                            @elseif ($details->mic_condition == 2)
-                                                                Fair
-                                                            @elseif ($details->mic_condition == 3)
-                                                                Poor
-                                                            @else
-                                                                Not Selected
+                                                            @if ($details->mic_condition == GOOD)
+                                                                GOOD
+                                                            @elseif($details->mic_condition == FAIR)
+                                                                FAIR
+                                                            @elseif($details->mic_condition == POOR)
+                                                                POOR
                                                             @endif
                                                         </div>
                                                     </div>
@@ -236,14 +232,12 @@
                                                         <label
                                                             class="form-label require">Physical Condition</label>
                                                         <div class="view_data">
-                                                            @if ($details->physical_condition == 1)
-                                                                Good
-                                                            @elseif ($details->physical_condition == 2)
-                                                                Fair
-                                                            @elseif ($details->physical_condition == 3)
-                                                                Poor
-                                                            @else
-                                                                Not Selected
+                                                            @if ($details->physical_condition == GOOD)
+                                                                GOOD
+                                                            @elseif($details->physical_condition == FAIR)
+                                                                FAIR
+                                                            @elseif($details->physical_condition == POOR)
+                                                                POOR
                                                             @endif
                                                         </div>
                                                     </div>
@@ -270,12 +264,10 @@
                                                         <label
                                                             class="form-label require">Operation</label>
                                                         <div class="view_data">
-                                                            @if ($details->operation == 1)
-                                                                Functional
-                                                            @elseif ($details->operation == 2)
-                                                                Non-functional
-                                                            @else
-                                                                Not Selected
+                                                            @if ($details->operation == FUNCTIONAL)
+                                                                {{ __('inspection.functional') }}
+                                                            @elseif($details->operation == NON_FUNCTIONAL)
+                                                                {{ __('inspection.non_functional') }}
                                                             @endif
                                                         </div>
                                                     </div>

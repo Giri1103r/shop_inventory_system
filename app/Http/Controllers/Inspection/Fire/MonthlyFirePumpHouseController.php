@@ -17,6 +17,7 @@ use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\MonthlyFirePumpHouseInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 
 class MonthlyFirePumpHouseController extends Controller
 {
@@ -27,6 +28,7 @@ class MonthlyFirePumpHouseController extends Controller
     private $frequency;
     private $statusLog;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -36,6 +38,7 @@ class MonthlyFirePumpHouseController extends Controller
         $this->statusLog = new FireStatusLog();
         $this->signature = new FireSignatureUpload();
         $this->shift = new Shift();
+        $this->document_reference = new InspectionStaticDocno();
     }
     public function Index(Request $request)
     {
@@ -148,11 +151,14 @@ class MonthlyFirePumpHouseController extends Controller
             $getoption = string_to_array($options->type);
             $shifts = $this->shift->getShiftname();
             $unit = $this->unit->getUnit();
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirePumpHouseInspection');
+
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'getoption' => $getoption,
                 'shifts' => $shifts,
                 'units' => $unit,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.monthly_fire_pump_house.add', $data);
         } catch (Exception $ex) {
@@ -229,9 +235,11 @@ class MonthlyFirePumpHouseController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->monthlyfirepump->selectOne($id);
             $status_log = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             ];
             return view('inspection.fire.monthly_fire_pump_house.view', $data);
         } catch (Exception $ex) {
@@ -246,8 +254,10 @@ class MonthlyFirePumpHouseController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->monthlyfirepump->selectOne($id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
             ];
             return view('inspection.fire.monthly_fire_pump_house.approve', $data);
         } catch (Exception $ex) {
@@ -712,11 +722,13 @@ class MonthlyFirePumpHouseController extends Controller
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, MONTHLY_FIRE_PUMP);
                 $forklift_details = $this->monthlyfirepump->selectOne($id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Monthly Fire Pump House Inspection",
+                    'document_no' => $document_no,
                 ];
             }
 

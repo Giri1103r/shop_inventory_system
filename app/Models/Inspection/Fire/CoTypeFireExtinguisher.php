@@ -13,7 +13,7 @@ class CoTypeFireExtinguisher extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
-        'date_of_inspection',
+        'inspection_date',
         'location',
         'shift',
         'next_due',
@@ -89,8 +89,8 @@ class CoTypeFireExtinguisher extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_co_type_fire_extinguisher.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_co_type_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_co_type_fire_extinguisher.inspection_date', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_co_type_fire_extinguisher.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -138,15 +138,16 @@ class CoTypeFireExtinguisher extends Model
 
     public function store()
     {
+
         $request = request();
 
         $data = array(
             'doc_no' => $request->doc_no,
-            'document_reference_id' => $request->document_reference_id,
-            'date_of_inspection' => $request->inspection_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
+            'inspection_date' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' => DBdateformat($request->next_due),
             'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
@@ -178,7 +179,6 @@ class CoTypeFireExtinguisher extends Model
             });
         }
 
-
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_co_type_fire_extinguisher.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
@@ -194,17 +194,16 @@ class CoTypeFireExtinguisher extends Model
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_co_type_fire_extinguisher.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_co_type_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_co_type_fire_extinguisher.inspection_date', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_co_type_fire_extinguisher.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_co_type_fire_extinguisher.id', 'DESC');
 
         return  $query->get();
     }
-
 
 
     public function EHSOfficerUpdate($id)

@@ -14,9 +14,7 @@ class SafetyWalkObservation extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date',
         'shift_id',
         'month',
@@ -41,27 +39,40 @@ class SafetyWalkObservation extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_walk_observation.*');
+        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id')
+            ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
+
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw('shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_walk_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
-        }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_walk_observation.inspection_status', decryptId($request->inspection_status));
+
+        if (isset($request->month) && $request->month) {
+            $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');
+        }
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->whereDate('inspection_safety_walk_observation.date', '=', DBdateformat($request->inspection_date));
+        }
+        if (isset($request->observation_status) && $request->observation_status) {
+            $query = $query->where('inspection_safety_walk_observation.observation_status', decryptId($request->observation_status));
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_safety_walk_observation.unit', decryptId($request->unit));
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -114,9 +125,7 @@ class SafetyWalkObservation extends Model
     {
         $request = request();
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date' => DBdateformat($request->inspection_date),
             'month' => $request->month,
             'safety_walk_taken_by' => decryptId($request->shift_id),
@@ -134,29 +143,37 @@ class SafetyWalkObservation extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_walk_observation.*');
+        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id')
+            ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('shift_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_walk_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->month) && $request->month) {
+            $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->whereDate('inspection_safety_walk_observation.date', '=', DBdateformat($request->inspection_date));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_walk_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->observation_status) && $request->observation_status) {
+            $query = $query->where('inspection_safety_walk_observation.observation_status', decryptId($request->observation_status));
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_safety_walk_observation.unit', decryptId($request->unit));
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_walk_observation.inspection_status', decryptId($request->inspection_status));
-        }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

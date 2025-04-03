@@ -14,9 +14,7 @@ class MonthlyFirePumpHouseInspection extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date_of_inspection',
         'shift',
         'unit',
@@ -145,9 +143,7 @@ class MonthlyFirePumpHouseInspection extends Model
         $remarks = $request->remarks;
         $respones = json_encode($responses);
         $insert_array = [
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
-            'doc_no' => $request->doc_no,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'shift' => decryptId($request->shift),
             'unit' => decryptId($request->unit_id),

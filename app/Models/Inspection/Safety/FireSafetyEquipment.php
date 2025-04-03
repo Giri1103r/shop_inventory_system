@@ -13,9 +13,7 @@ class FireSafetyEquipment extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'status',
         'trash',
         'created_by',
@@ -34,7 +32,18 @@ class FireSafetyEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_equipment.*');
+        $query = $this->select(
+            'inspection_safety_ohs_report.*',
+            'inspection_static_docno.*',
+            'inspection_safety_ohs_report.id as inspection_id'
+        )
+        ->leftJoin(
+            'inspection_static_docno',
+            'inspection_safety_ohs_report.document_reference_id',
+            '=',
+            'inspection_static_docno.id'
+        );
+        
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -113,9 +122,7 @@ class FireSafetyEquipment extends Model
         $request = request();
 
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => ($request->issue_date),
-            'revision_data' => $request->rev_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'created_by' => Auth::id(),
         );
 

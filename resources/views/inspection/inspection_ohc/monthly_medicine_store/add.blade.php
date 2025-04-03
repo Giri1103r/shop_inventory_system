@@ -1,4 +1,4 @@
-@extends('admin.layouts.admin')
+    @extends('admin.layouts.admin')
 @section('title', 'Medicine Store Inspection Checklist')
 @section('pageurl', admin_url('ohc/monthly-medicine-store/inspection/list'))
 @section('content')

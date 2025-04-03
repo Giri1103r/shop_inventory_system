@@ -36,7 +36,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                                 @error('doc_no')
                                                     <div class="error">{{ $message }}</div>
@@ -48,7 +49,7 @@
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
                                                         class="form-control" placeholder="Issued Date"
-                                                        value="{{ old('issue_date') }}">
+                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                     @error('issue_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -59,10 +60,11 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FSE-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label

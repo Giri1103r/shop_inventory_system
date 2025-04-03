@@ -48,7 +48,7 @@ class MSDSCheckList extends Model
                 'serial_number' =>$request->serial_number[$index],
                 'item_code' => $itemCode,
                 'name_of_chemical' => $request->name_of_chemical[$index],
-                'msds_availability_status' => $request->msds_availability_status[$index],
+                'msds_availability_status' => decryptId($request->msds_availability_status[$index]),
                 'remark' => $request->remark[$index],
                 'created_by' => Auth::id(),
             );

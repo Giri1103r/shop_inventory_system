@@ -272,19 +272,41 @@
                     {{ getLocationname($details->location) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->mic_condition == 1 ? 'Good' : ($details->mic_condition == 2 ? 'Fair' : ($details->mic_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                    @if ($details->mic_condition == GOOD)
+                        GOOD
+                    @elseif($details->mic_condition == FAIR)
+                        FAIR
+                    @elseif($details->mic_condition == POOR)
+                        POOR
+                    @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
                     {{ $details->mic_quantity }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->physical_condition == 1 ? 'Good' : ($details->physical_condition == 2 ? 'Fair' : ($details->physical_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                    @if ($details->physical_condition == GOOD)
+                        GOOD
+                    @elseif($details->physical_condition == FAIR)
+                        FAIR
+                    @elseif($details->physical_condition == POOR)
+                        POOR
+                    @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->cable_condition == 1 ? 'Good' : ($details->cable_condition == 2 ? 'Fair' : ($details->cable_condition == 3 ? 'Poor' : 'Not Selected')) }}
+                    @if ($details->cable_condition == GOOD)
+                        GOOD
+                    @elseif($details->cable_condition == FAIR)
+                        FAIR
+                    @elseif($details->cable_condition == POOR)
+                        POOR
+                    @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->operation == 1 ? 'Functional' : ($details->operation == 2 ? 'Non-functional' : 'Not Selected') }}
+                    @if ($details->operation == FUNCTIONAL)
+                        {{ __('inspection.functional') }}
+                    @elseif($details->operation == NON_FUNCTIONAL)
+                        {{ __('inspection.non_functional') }}
+                    @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
                     {{ $details->remark }}
@@ -293,14 +315,12 @@
                     {{ getUnitname($details->unit) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->audio_quality == 1)
-                        Good
-                    @elseif ($details->audio_quality == 2)
-                        Fair
-                    @elseif ($details->audio_quality == 3)
-                        Poor
-                    @else
-                        Not Selected
+                    @if ($details->audio_quality == GOOD)
+                        GOOD
+                    @elseif($details->audio_quality == FAIR)
+                        FAIR
+                    @elseif($details->audio_quality == POOR)
+                        POOR
                     @endif
                 </td>
             </tr>

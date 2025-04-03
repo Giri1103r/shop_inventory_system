@@ -23,31 +23,64 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                            <label for="emp_name" class="form-label ">Month</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="month" id="month"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="observation_status" id="observation_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
+                                                <option value="{{ encryptId('1') }}">Observation Pending</option>
+                                                <option value="{{ encryptId('3') }}">Observation Approved</option>
+                                                <option value="{{ encryptId('2') }}">Observation Rejected</option>
 
                                             </select>
                                         </div>
@@ -71,9 +104,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.month') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -96,8 +130,14 @@
                 firstTh.removeClass('sorting_asc');
             });
 
-            flatpickr("#issue_date", {
+            flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
+            });
+
+            $('#month').datepicker({
+                format: 'MM',
+                minViewMode: 1,
+                autoclose: true
             });
 
             $(function() {
@@ -133,10 +173,11 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.shift = $('#shift').val();
+                            d.unit = $('#unit').val();
+                            d.month = $('#month').val();
+                            d.observation_status = $('#observation_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -152,16 +193,20 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'shift',
+                            name: 'shift',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'month',
+                            name: 'month',
                         },
                         {
                             data: 'observation_status',
@@ -196,20 +241,22 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        month = $('#month').val();
+                                        observation_status = $('#observation_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/safety-walk-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&observation_status=' + observation_status +
+                                            '&month=' + month
                                     }
                                 },
                                 {
@@ -217,19 +264,23 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+
+                                        inspection_date = $('#inspection_date').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        month = $('#month').val();
+                                        observation_status = $('#observation_status').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/safety-walk-observation/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&observation_status=' + observation_status +
+                                            '&month=' + month
                                     }
                                 },
                             ]

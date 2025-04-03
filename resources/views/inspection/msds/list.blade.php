@@ -23,15 +23,15 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number" class="form-label ">Document Number</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="item_code" class="form-label ">Item Code</label>
+                                            <input type="text" name="item_code" id="item_code" placeholder="Item Code"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date" class="form-label ">Issue Date</label>
-                                            <input type="text" name="issue_date" id="issue_date"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="name_of_chemical" class="form-label ">Name of Chemical</label>
+                                            <input type="text" name="name_of_chemical" id="name_of_chemical"
+                                                placeholder="Name of Chemical" class="form-control">
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -52,9 +52,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Document Number</th>
-                                        <th>Issue Date</th>
-                                        <th>Revision & Data</th>
+                                        <th>Item Code</th>
+                                        <th>Name of Chemical</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -77,16 +76,6 @@
 
         var firstTh = $('.datatable-list thead th:first');
         firstTh.removeClass('sorting_asc');
-
-        var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            // minDate: new Date(),
-        });
-
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-            // minDate: new Date(),
-        });
 
     });
 
@@ -123,9 +112,8 @@
                         .attr('content')
                 },
                 data: function(d) {
-                    d.document_number = $('#document_number').val();
-                    d.issue_date = $('#issue_date').val();
-                    d.revision_date = $('#revision_date').val();
+                    d.item_code = $('#item_code').val();
+                    d.name_of_chemical = $('#name_of_chemical').val();
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -139,22 +127,17 @@
                     orderable: false,
                     searchable: true,
                 },
-
                 {
-                    data: 'document_number',
-                    name: 'document_number'
+                    data: 'item_code',
+                    name: 'item_code',
                 },
                 {
-                    data: 'issue_date',
-                    name: 'issue_date'
-                },
-                {
-                    data: 'revision_date',
-                    name: 'revision_date'
+                    data: 'name_of_chemical',
+                    name: 'name_of_chemical',
                 },
                 {
                     data: 'created_date',
-                    name: 'created_date'
+                    name: 'created_date',
                 },
                 {
                     data: 'action',
@@ -185,16 +168,16 @@
                             text: '{{ __('common.pdf') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                document_number = $('#document_number').val();
-                                issue_date = $('#issue_date').val();
+                                item_code = $('#item_code').val();
+                                name_of_chemical = $('#name_of_chemical').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('msds/export/pdf') }}" +
                                     '?search=' + searchValue +
-                                    '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date
+                                    '&item_code=' + item_code +
+                                    '&name_of_chemical=' + name_of_chemical 
                             }
                         },
                         {
@@ -202,16 +185,16 @@
                             text: '{{ __('common.excel') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                document_number = $('#document_number').val();
-                                issue_date = $('#issue_date').val();
+                                item_code = $('#item_code').val();
+                                name_of_chemical = $('#name_of_chemical').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('msds/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date
+                                    '&item_code=' + item_code +
+                                    '&name_of_chemical=' + name_of_chemical
                             }
                         },
                     ]

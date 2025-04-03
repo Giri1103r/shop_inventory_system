@@ -206,6 +206,7 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -221,8 +222,8 @@
                         },
 
                         {
-                            data: 'date_of_inspection',
-                            name: 'date_of_inspection',
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
                             data: 'next_due',
