@@ -160,20 +160,20 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($msdsDetails->document_number) ? $msdsDetails->document_number : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($msdsDetails->issue_date) ? $msdsDetails->issue_date : '') }}
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($msdsDetails->revision_date) ? $msdsDetails->revision_date : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -207,9 +207,6 @@
         <thead>
             <tr>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    SR. NO.
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
                     SERIAL NUMBER
                 </th>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
@@ -226,47 +223,34 @@
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
                     REMARK
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    CREATED BY
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    CREATED AT
-                </th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($msdsCheckList as $item)
                 <tr>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ $loop->iteration }}
+                        {{ isset($msdsDetails->serial_number) ? $msdsDetails->serial_number : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($item->serial_number) ? $item->serial_number : '' }}
+                        {{ isset($msdsDetails->item_code) ? $msdsDetails->item_code : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($item->item_code) ? $item->item_code : '' }}
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($item->name_of_chemical) ? $item->name_of_chemical : '' }}
+                        {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($item->msds_availability_status == 'Yes')
+                        @if ($msdsDetails->msds_availability_status == YES)
                             <span style="color: green; font-size: 20px;">✓</span>
-                        @elseif ($item->msds_availability_status == 'No' || $item->msds_availability_status == 'N/A')
+                        @elseif ($msdsDetails->msds_availability_status == NO)
                             <span style="color: red; font-size: 20px;">X</span>
+                        @elseif ($msdsDetails->msds_availability_status == 'N/A')
+                            <span style="color: gray; font-size: 20px;">N/A</span>
+                        @else
+                            <span style="color: gray; font-size: 20px;">-</span>
                         @endif
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($item->remark) ? $item->remark : '' }}
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ getUsername(isset($item->created_by) ? $item->created_by : '') }}
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ displayDateformat($item->created_at) }}
+                        {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
                     </td>
                 </tr>
-            @endforeach
             @php
                $signature = GetSignature(
                     $inspection_details->created_by,
@@ -275,7 +259,7 @@
                 );
             @endphp
             <tr>
-                <td colspan="8"
+                <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($signature) }}" alt="Checked By Signature"
                         style="height: 50px;">

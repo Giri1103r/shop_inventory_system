@@ -6,7 +6,7 @@
 
     <style>
         .card-header-inner {
-            padding: 11px;
+            padding: 10px;
         }
     </style>
 
@@ -45,14 +45,16 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name ="document_number" class="form-control"
-                                                        placeholder="Document Number" value="">
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
                                                     <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date" value="">
+                                                        class="form-control" placeholder="Issue Date" value="{{ $document_no->rev_dt }}"
+                                                         readonly>
                                                 </div>
                                             </div>
 
@@ -81,6 +83,8 @@
                                                     </div>
                                                 @endif
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
                                         </div>
 
                                         <div class="row mt-4">
@@ -139,10 +143,9 @@
                                                                     Status</label>
                                                                 <select name="msds_availability_status[1]"
                                                                     class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select MSDS Availability Status
-                                                                    </option>
-                                                                    <option value="Yes">Yes</option>
-                                                                    <option value="No">No</option>
+                                                                    <option value="">Select MSDS Availability Status</option>
+                                                                    <option value="{{ encryptId(YES) }}">YES</option>
+                                                                    <option value="{{ encryptId(NO) }}">NO</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -187,11 +190,6 @@
         $('#resetform').on('click', function(e) {
             e.preventDefault();
             location.reload();
-        });
-
-        var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
         $.validator.addMethod("noSpaces", function(value, element) {
@@ -353,8 +351,8 @@
                                 <label class="form-label require">MSDS Availability Status</label>
                                 <select name="msds_availability_status[${form_set_count}]" class="form-control single-select" style="width: 100%">
                                     <option value="">Select MSDS Availability Status</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
+                                    <option value="{{ encryptId(YES) }}">YES</option>
+                                    <option value="{{ encryptId(NO) }}">NO</option>
                                 </select>
                             </div>
                         </div>

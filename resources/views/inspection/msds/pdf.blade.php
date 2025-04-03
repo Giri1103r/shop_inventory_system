@@ -26,14 +26,10 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->document_number }}
+                            {{ $value->item_code }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_date }}
+                            {{ $value->name_of_chemical }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
