@@ -159,7 +159,7 @@ class UserDiscard extends Model
             });
         }
 
-        $query->orderBy('discard_id', 'DESC');
+        $query->orderBy('ohc_management_discard.id', 'DESC');
 
         return  $query->get();
     }

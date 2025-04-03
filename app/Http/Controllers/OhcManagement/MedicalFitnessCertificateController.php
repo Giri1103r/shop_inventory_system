@@ -252,7 +252,7 @@ class MedicalFitnessCertificateController extends Controller
                     'ehsheadlog' => $ehsheadlog,
 
                 );
-               
+
             }
             return view('ohcmanagement.medical_fitness_certificate.view', $data);
         } catch (Exception $ex) {
@@ -504,7 +504,7 @@ class MedicalFitnessCertificateController extends Controller
 
 
                 );
-                // dd($data);
+
             }
 
             return view('ohcmanagement.medical_fitness_certificate.edit', $data);
@@ -538,7 +538,6 @@ class MedicalFitnessCertificateController extends Controller
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -547,7 +546,7 @@ class MedicalFitnessCertificateController extends Controller
 
 
                 $this->medical_fitness_certificate->updates($id);
-                // $this->ohc_status->medicalfitnessstore($id);
+
                 $mailsubject = 'Medical Fitness Check';
                 $user_role = ROLE_DOCTOR;
 
@@ -686,6 +685,8 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -786,6 +787,8 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 }
