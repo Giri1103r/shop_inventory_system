@@ -32,39 +32,33 @@
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
+                                        <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
-                                                @error('doc_no')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date" value="{{ old('issue_date') }}">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
-                                                @error('issue_date')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('MEW-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
-                                                @error('rev_date')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -86,7 +80,8 @@
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}" {{ old('location_id.1') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('location_id.1') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -102,7 +97,8 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
                                                         @foreach ($shifts as $shift)
-                                                            <option value="{{ encryptId($shift->id) }}" {{ old('shift_id.1') == encryptId($shift->id) ? 'selected' : '' }}> 
+                                                            <option value="{{ encryptId($shift->id) }}"
+                                                                {{ old('shift_id.1') == encryptId($shift->id) ? 'selected' : '' }}>
                                                                 {{ $shift->shift }}</option>
                                                         @endforeach
                                                     </select>
@@ -129,7 +125,8 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}" {{ old('unit_id.1') == encryptId($unit->id) ? 'selected' : '' }}>
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                {{ old('unit_id.1') == encryptId($unit->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -146,7 +143,8 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Frequency</option>
                                                         @foreach ($frequency as $frequency)
-                                                            <option value="{{ encryptId($frequency->id) }}" {{ old('frequency_id.1') == encryptId($frequency->id) ? 'selected' : '' }}>
+                                                            <option value="{{ encryptId($frequency->id) }}"
+                                                                {{ old('frequency_id.1') == encryptId($frequency->id) ? 'selected' : '' }}>
                                                                 {{ $frequency->frequency_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -212,7 +210,8 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Location</option>
                                                             @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}" {{ old('location.1') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                <option value="{{ encryptId($location->id) }}"
+                                                                    {{ old('location.1') == encryptId($location->id) ? 'selected' : '' }}>
                                                                     {{ $location->location_name }}</option>
                                                             @endforeach
                                                         </select>
@@ -226,7 +225,8 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[1]"
-                                                            id = "resource_code" class="form-control" value="{{ old('resource_code.1') }}">
+                                                            id = "resource_code" class="form-control"
+                                                            value="{{ old('resource_code.1') }}">
                                                     </div>
                                                     @error('resource_code.1')
                                                         <div class="error">{{ $message }}</div>
@@ -239,9 +239,15 @@
                                                         <select name="condition[1]" id="condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}" {{ old('condition.1') == encryptId(GOOD) ? 'selected' : '' }}>Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}" {{ old('condition.1') == encryptId(FAIR) ? 'selected' : '' }}>Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}" {{ old('condition.1') == encryptId(POOR) ? 'selected' : '' }}>Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}"
+                                                                {{ old('condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
+                                                                Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}"
+                                                                {{ old('condition.1') == encryptId(POOR) ? 'selected' : '' }}>
+                                                                Poor</option>
                                                         </select>
                                                     </div>
                                                     @error('condition.1')
@@ -286,7 +292,8 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.eyewash_heads') }}</label>
                                                         <input type="text" name="eyewash_heads[1]"
-                                                            id = "eyewash_heads" class="form-control" value="{{ old('eyewash_head.1') }}">
+                                                            id = "eyewash_heads" class="form-control"
+                                                            value="{{ old('eyewash_head.1') }}">
                                                     </div>
                                                     @error('eyewash_heads.1')
                                                         <div class="error">{{ $message }}</div>
@@ -310,9 +317,15 @@
                                                         <select name="water[1]" id="water"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Water</option>
-                                                            <option value="{{ encryptId(GOOD) }}" {{ old('condition.1') == encryptId(GOOD) ? 'selected' : '' }}>Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}" {{ old('condition.1') == encryptId(FAIR) ? 'selected' : '' }}>Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}" {{ old('condition.1') == encryptId(POOR) ? 'selected' : '' }}>Poor</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(FAIR) }}"
+                                                                {{ old('condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
+                                                                Fair</option>
+                                                            <option value="{{ encryptId(POOR) }}"
+                                                                {{ old('condition.1') == encryptId(POOR) ? 'selected' : '' }}>
+                                                                Poor</option>
                                                         </select>
                                                     </div>
                                                     @error('water.1')
@@ -356,7 +369,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{old('remarks.1')}}</textarea>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
                                                     @error('remarks.1')

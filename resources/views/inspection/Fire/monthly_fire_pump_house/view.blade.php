@@ -38,25 +38,25 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.doc_no') }}</label>
+                                            <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                             <div class="view_data">
-                                                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}
+                                                {{ $document_no->doc_no }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                            <label class="form-label require">{{ __('inspection.issue_date') }}</label>
                                             <div class="view_data">
-                                                {{ displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
+                                                {{ Displaydateformat($document_no->issue_date) }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.rev_date') }}</label>
+                                            <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                             <div class="view_data">
-                                                {{ isset($inspection_details->revision_data) ? $inspection_details->revision_data : '' }}
+                                                {{ $document_no->rev_dt }}
                                             </div>
                                         </div>
                                     </div>

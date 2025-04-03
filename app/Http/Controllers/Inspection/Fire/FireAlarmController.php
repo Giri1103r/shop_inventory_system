@@ -19,6 +19,7 @@ use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireAlarmInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
@@ -37,6 +38,7 @@ class FireAlarmController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -51,6 +53,7 @@ class FireAlarmController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -164,6 +167,8 @@ class FireAlarmController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('FireAlarmInspection');
+
 
             $data = array(
                 'locations' => $location,
@@ -171,6 +176,7 @@ class FireAlarmController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.fire_alarm.add', $data);
@@ -326,12 +332,15 @@ class FireAlarmController extends Controller
             $inspection_details = $this->fire_alarm_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_alarm.view', $data);
         } catch (Exception $ex) {
@@ -352,12 +361,15 @@ class FireAlarmController extends Controller
             $inspection_details = $this->fire_alarm_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_alarm.approve', $data);
         } catch (Exception $ex) {
@@ -821,12 +833,13 @@ class FireAlarmController extends Controller
                 $status_log = $this->statusLog->selectOne($id,FIRE_ALARM_INSPECTION);
                 $forklift_details = $this->fire_alarm->selectOne($id);
                 $inspection = $this->fire_alarm_details->GetDetails($forklift_details->id);
-
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire Alarm Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

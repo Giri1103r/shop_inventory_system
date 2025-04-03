@@ -12,9 +12,7 @@ class IsolationValve extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -129,9 +127,7 @@ class IsolationValve extends Model
         $request = request();
 
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
