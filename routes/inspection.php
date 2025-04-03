@@ -154,6 +154,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
         Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
+        Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
 
     Route::group(['prefix' => 'master/task/'], function () {

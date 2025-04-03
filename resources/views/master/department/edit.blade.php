@@ -214,7 +214,6 @@
                         required: true,
                         minlength: 3,
                         maxlength: 70,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()&]*$/,
                         remote: {
                             url: '{{ admin_url('department/unique') }}',
                             type: 'post',
@@ -255,8 +254,7 @@
                         required: "{{ __('Department  Name is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 70",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () & are allowed",
-                         remote: "{{ __('Department Name should be unique') }}"
+                        remote: "{{ __('Department Name should be unique') }}"
                     },
 
                 },
