@@ -145,7 +145,7 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]" id="quantity"
+                                                                    <input type="number" min = "1" name="quantity[0]" id="quantity"
                                                                         placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
@@ -282,7 +282,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 

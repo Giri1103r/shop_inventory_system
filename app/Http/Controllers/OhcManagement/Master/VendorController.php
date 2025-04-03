@@ -118,15 +118,21 @@ class VendorController extends Controller
 
             $rules = [
 
-                'vendor_name' => 'required',
-                'license_no' => 'required',
-                'address' => 'required',
+                'vendor_name' => 'required|min:3|max:30',
+                'license_no' => 'required|min:3|max:30',
+                'address' => 'required|min:3|max:600',
             ];
             $messages = [
 
                 'vendor_name.required' => 'Please enter vendor Name',
+                'vendor_name.min' => 'The Vendor must be at least 3.',
+                'vendor_name.max' => 'The Vendor must not exceed 30.',
                 'license_no.required' => 'Please enter license number',
+                'license_no.min' => 'The license number must be at least 3.',
+                'license_no.max' => 'The license number must not exceed 30.',
                 'address.required' => 'Please enter vendor Address',
+                'address.min' => 'The vendor Address must be at least 3.',
+                'address.max' => 'The vendor Address must not exceed 600.',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -196,20 +202,26 @@ class VendorController extends Controller
             $id = decryptId($request->id);
             $rules = [
 
-                'vendor_name' => 'required',
-                'license_no' => 'required',
-                'address' => 'required',
+                'vendor_name' => 'required|min:3|max:30',
+                'license_no' => 'required|min:3|max:30',
+                'address' => 'required|min:3|max:600',
             ];
             $messages = [
 
                 'vendor_name.required' => 'Please enter vendor Name',
+                'vendor_name.min' => 'The Vendor must be at least 3.',
+                'vendor_name.max' => 'The Vendor must not exceed 30.',
                 'license_no.required' => 'Please enter license number',
+                'license_no.min' => 'The license number must be at least 3.',
+                'license_no.max' => 'The license number must not exceed 30.',
                 'address.required' => 'Please enter vendor Address',
+                'address.min' => 'The vendor Address must be at least 3.',
+                'address.max' => 'The vendor Address must not exceed 600.',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
+                
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 

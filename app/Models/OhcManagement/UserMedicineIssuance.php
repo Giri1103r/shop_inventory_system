@@ -77,19 +77,21 @@ class UserMedicineIssuance extends Model
         }
 
 
-        $org_total_counts = $query->count();
-
+        $totalFilteredRecords = $query->count();
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('id', 'DESC');
+
+        $query->orderBy('ohc_management_user_medicine_issuance.id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
 
         return [
             'data' => $data,
             'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
+            'filter_records' => $totalFilteredRecords,
         ];
     }
 
@@ -193,7 +195,7 @@ class UserMedicineIssuance extends Model
         $request = request();
         $search = '';
         $query = $this->select('ohc_management_user_medicine_issuance.*', 'masters_department.department_name', 'masters_unit.unit_name')
-        ->where('ohc_management_user_medicine_issuance.unit_id', '!=', 1)
+            ->where('ohc_management_user_medicine_issuance.unit_id', '!=', 1)
             ->join('masters_department', 'ohc_management_user_medicine_issuance.department_id', '=', 'masters_department.id')
             ->join('masters_unit', 'ohc_management_user_medicine_issuance.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.trash', 'NO')
@@ -253,6 +255,7 @@ class UserMedicineIssuance extends Model
             ->where('unit_id', $selectedUnit)
             ->pluck('id')
             ->toArray();
+            
     }
 
     public function getYealyunitdata($selectedYear, $selectedUnit)

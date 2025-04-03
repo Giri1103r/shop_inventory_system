@@ -184,6 +184,11 @@ class Inventory extends Model
         return $this->where('medicine_id', $id)->where('trash', 'NO')->where('status', 1)->select('balance')->where('unit_id', 1)->first();
     }
 
+    public function getreportmedicine()
+    {
+        return $this->where('unit_id', 1)->where('status', 1)->get();
+    }
+
     public function issuestockupdate($user_medicine_requisition, $medicinedata)
     {
 
@@ -202,18 +207,21 @@ class Inventory extends Model
                 ->where('medicine_id', $data['medicine_id'])
                 ->update(['balance' => $newbalance]);
         }
+
         foreach ($medicinedata as $data) {
             $olddata =   $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])->first();
             $newdata =  $olddata->total_received + $data['quantity'];
+
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
-                ->update(['total_received' => $newdata]);
+                ->increment('total_received', $data['quantity']);
+
             $balancedata = $olddata->balance + $data['quantity'];
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
                 ->update(['balance' => $balancedata]);
-              
+
         }
     }
 
@@ -258,9 +266,7 @@ class Inventory extends Model
         return $this->when($selectedUnit, function ($query) use ($selectedUnit) {
             return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
         })
-            ->when($selectedYear, function ($query) use ($selectedYear) {
-                return $query->whereYear('ohc_report_inventory.created_at', $selectedYear);
-            })
+
             ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
             ->select(
                 'ohc_master_medicine.medicine as medicine_name',
@@ -290,52 +296,5 @@ class Inventory extends Model
         return $this->where('unit_id', $unit_id)->where('status', 1)->get();
     }
 
-    // public function firstaidstockupdate(){
-    //     $request -
-    //     foreach ($request->medicine_id as $index => $medicine_id) {
-    //         $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->first();
-    //         $newQuantity = $request->quantity[$index];
 
-    //         if ($medicineRecord) {
-    //             $oldquantity = $medicineRecord->quantity;
-    //             $newquantity = $request->quantity[$index];
-    //             if ($oldquantity > $newquantity) {
-    //                 $difference = $oldquantity - $newquantity;
-
-    //                 $this->inventory
-    //                     ->where('medicine_id', $medicine_id)
-    //                     ->where('unit_id',  $user_medicine_first_aid->unit_id)
-    //                     ->decrement('total_first_aid', $difference);
-
-    //                 $this->inventory
-    //                     ->where('medicine_id', $medicine_id)
-    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
-    //                     ->decrement('balance', $difference);
-    //             } elseif ($oldquantity < $newquantity) {
-    //                 $difference = $newquantity - $oldquantity;
-
-    //                 $this->inventory
-    //                     ->where('medicine_id', $medicine_id)
-    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
-    //                     ->increment('total_first_aid', $difference);
-
-    //                 $this->inventory
-    //                     ->where('medicine_id', $medicine_id)
-    //                     ->where('unit_id', $user_medicine_first_aid->unit_id)
-    //                     ->increment('balance', $difference);
-    //             }
-    //         } else {
-    //             $newquantity = $request->quantity[$index];
-    //             $this->inventory
-    //                 ->where('medicine_id', $medicine_id)
-    //                 ->where('unit_id', $user_medicine_first_aid->unit_id)
-    //                 ->increment('total_first_aid',  $newquantity);
-
-    //             $this->inventory
-    //                 ->where('medicine_id', $medicine_id)
-    //                 ->where('unit_id', $user_medicine_first_aid->unit_id)
-    //                 ->decrement('balance',  $newquantity);
-    //         }
-    //     }
-    // }
 }

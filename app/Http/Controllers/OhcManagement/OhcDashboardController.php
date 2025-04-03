@@ -26,21 +26,21 @@ class OhcDashboardController extends Controller
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        // 'link' => 'ohc/medicine/list',
+
                         'name' => 'Current Stock',
                         'count' => getohctotalCount('medicine'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        'link' => 'ohc/medicine-receiving-form/list',
+
                         'name' => 'Today’s Purchase',
                         'count' => getohctotalCount('medicineReceiving'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        'link' => 'ohc/medicine-issuance/list',
+
                         'name' => 'Medicine Issuance',
                         'count' => getohctotalCount('usermedicineissuance'),
                         'icon' => 'bx bx-message-square-detail',
@@ -48,28 +48,28 @@ class OhcDashboardController extends Controller
                     ],
 
                     [
-                        'link' => 'ohc/prescribe-to-patient/list',
+                     
                         'name' => "Unit 1",
                         'count' => getohctotalCount('prescribetopatient1'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        'link' => 'ohc/prescribe-to-patient/list',
+                     
                         'name' => "Unit 2",
                         'count' => getohctotalCount('prescribetopatient2'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        'link' => 'ohc/prescribe-to-patient/list',
+                     
                         'name' => "Unit 3",
                         'count' => getohctotalCount('prescribetopatient3'),
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
                     [
-                        'link' => 'ohc/prescribe-to-patient/list',
+                     
                         'name' => "Unit 4",
                         'count' => getohctotalCount('prescribetopatient4'),
                         'icon' => 'bx bx-message-square-detail',
@@ -77,7 +77,7 @@ class OhcDashboardController extends Controller
                     ],
 
                     [
-                        'link' => 'ohc/prescribe-to-patient/list',
+                     
                         'name' => "Today's OPD",
                         'count' => getohctotalCount('prescribetopatient'),
                         'icon' => 'bx bx-message-square-detail',
@@ -90,13 +90,29 @@ class OhcDashboardController extends Controller
                         'icon' => 'bx bx-message-square-detail',
                         'icon_color' => 'text-primary',
                     ],
+                    [
+
+                        'name' => "Today's Inspection",
+                        'count' => getohctotalCount('certifiedFirstAider'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
+
+
+                    [
+
+                        'name' => "Certified First Aiders",
+                        'count' => getohctotalCount('certifiedFirstAider'),
+                        'icon' => 'bx bx-message-square-detail',
+                        'icon_color' => 'text-primary',
+                    ],
 
                 ];
 
                 $medicines = Inventory::where('ohc_report_inventory.unit_id',Auth::user()->unit_id)
                     ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
                     ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance')
-                    ->where('ohc_report_inventory.trash', 'NO') 
+                    ->where('ohc_report_inventory.trash', 'NO')
                     ->get();
 
                 $data = [
@@ -115,7 +131,7 @@ class OhcDashboardController extends Controller
         //
     }
 
-    
+
     public function store(Request $request)
     {
         //

@@ -84,10 +84,12 @@ class MonthlyInventoryController extends Controller
         $inventory =  $this->inventory->getmonthlyinventoryreport($selectedUnit, $selectedMonth, $selectedYear);
         $receiving = $this->medicine_receiving->getPurchaseddate($selectedYear, $selectedMonth);
         $medicineIssuing = $this->user_medicine_issuance->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
+
         $allIssuances = [];
         foreach ($medicineIssuing as $id) {
 
             $allIssuances[] = $this->medicine_issuance->getissuedDate($selectedYear, $selectedMonth, [$id]);
+
         }
 
         $data = [
