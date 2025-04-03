@@ -24,6 +24,7 @@ use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\FireExtinguisherDetails;
 use App\Models\Inspection\Fire\FireExtinguisherType;
+use App\Models\Inspection\InspectionStaticDocno;
 
 class FireExtinguisherController extends Controller
 {
@@ -39,6 +40,7 @@ class FireExtinguisherController extends Controller
     private $statusLog;
     private $checklist_follow;
     private $fire_type;
+    private $document_reference;
 
     public function __construct()
     {
@@ -54,6 +56,7 @@ class FireExtinguisherController extends Controller
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->fire_type = new FireExtinguisherType();
+        $this->document_reference = new InspectionStaticDocno();
 
     }
 
@@ -169,6 +172,7 @@ class FireExtinguisherController extends Controller
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
             $types = $this->fire_type->getTypes();
+            $document_no = $this->document_reference->selectUsingName('FireExtinguisherInspection');
 
             $data = array(
                 'locations' => $location,
@@ -177,6 +181,7 @@ class FireExtinguisherController extends Controller
                 'shifts' => $shifts,
                 'department' => $department,
                 'types' => $types,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.fire_extinguisher.add', $data);
@@ -338,12 +343,14 @@ class FireExtinguisherController extends Controller
             $inspection_details = $this->fire_extinguisher_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_extinguisher.view', $data);
         } catch (Exception $ex) {
@@ -365,11 +372,14 @@ class FireExtinguisherController extends Controller
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
 
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_extinguisher.approve', $data);
         } catch (Exception $ex) {
@@ -832,12 +842,14 @@ class FireExtinguisherController extends Controller
                 $status_log = $this->statusLog->selectOne($id, FIRE_EXTINGUISHER_INSPECTION);
                 $forklift_details = $this->fire_extinguisher->selectOne($id);
                 $inspection = $this->fire_extinguisher_details->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire Extinguisher Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

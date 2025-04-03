@@ -23,6 +23,7 @@ use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\SprinklarSystemInspection;
 use App\Models\Inspection\Fire\SprinklarSystemInspectionDetails;
+use App\Models\Inspection\InspectionStaticDocno;
 
 class SprinklarSystemController extends Controller
 {
@@ -37,6 +38,7 @@ class SprinklarSystemController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -51,6 +53,7 @@ class SprinklarSystemController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -164,6 +167,7 @@ class SprinklarSystemController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('SprinklerInspection');
 
             $data = array(
                 'locations' => $location,
@@ -171,6 +175,7 @@ class SprinklarSystemController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.sprinklar_system.add', $data);
@@ -330,12 +335,14 @@ class SprinklarSystemController extends Controller
             $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.sprinklar_system.view', $data);
         } catch (Exception $ex) {
@@ -356,12 +363,14 @@ class SprinklarSystemController extends Controller
             $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.sprinklar_system.approve', $data);
         } catch (Exception $ex) {
@@ -824,12 +833,13 @@ class SprinklarSystemController extends Controller
                 $status_log = $this->statusLog->selectOne($id,SPRINKLAR_SYSTEM_INSPECTION);
                 $forklift_details = $this->sprinklar_system->selectOne($id);
                 $inspection = $this->sprinklar_system_details->GetDetails($forklift_details->id);
-
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Sprinklar System Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 
