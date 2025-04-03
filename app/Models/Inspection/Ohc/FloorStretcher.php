@@ -114,7 +114,7 @@ class FloorStretcher extends Model
         ];
 
         $data = array(
-            'issue_date' => $request->inspection_date,
+            'issue_date' => DBdateformat($request->inspection_date),
             'unit' => decryptId($request->unit_id),
             'shift' => decryptId($request->shift_id),
             'frequency' => decryptId($request->frequency_id),
