@@ -12,9 +12,7 @@ class FireMockDrillInspection extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'inspection_status',
         'created_by',
         'updated_by',
@@ -106,9 +104,7 @@ class FireMockDrillInspection extends Model
     {
         $request = request();
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
             'created_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

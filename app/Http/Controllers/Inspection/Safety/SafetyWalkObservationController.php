@@ -15,6 +15,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
@@ -27,6 +28,9 @@ class SafetyWalkObservationController extends Controller
     private $unit;
     private $location;
     private $signature;
+    private $document_reference;
+
+
 
     public function __construct()
     {
@@ -36,6 +40,8 @@ class SafetyWalkObservationController extends Controller
         $this->unit = new Unit();
         $this->location = new Location();
         $this->signature = new SignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -64,13 +70,13 @@ class SafetyWalkObservationController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/safety-walk-observation/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('safety/safety-walk-observation/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('safety/safety-walk-observation/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('safety/safety-walk-observation/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
 
                             if ($row->observation_status == OBSERVATION_PENDING && (isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/safety-walk-observation/approval/' . encryptId($row->id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/safety-walk-observation/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
                         })
@@ -79,6 +85,9 @@ class SafetyWalkObservationController extends Controller
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
+                        })
+                        ->addColumn('inspection_date', function ($row) {
+                            return Displaydateformat($row->date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -97,7 +106,16 @@ class SafetyWalkObservationController extends Controller
             }
         }
 
-        $data = array();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'shifts' => $shifts,
+        );
+
         return view('inspection.Safety.safety_walk_observation.list', $data);
     }
 
@@ -108,10 +126,14 @@ class SafetyWalkObservationController extends Controller
             $shift = $this->shift->getShiftname();
             $unit = $this->unit->getunit();
             $locations = $this->location->getLocationName();
+            $document_no = $this->document_reference->selectUsingName('SafetyWalkObservationSheet');
+
             $data = array(
                 'shift' => $shift,
                 'unit' => $unit,
                 'locations' => $locations,
+                'document_no' => $document_no,
+
             );
             return view('inspection.Safety.safety_walk_observation.add', $data);
         } catch (Exception $ex) {
@@ -251,9 +273,14 @@ class SafetyWalkObservationController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->safety_walk->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
+
+
             );
 
             return view('inspection.Safety.safety_walk_observation.view', $data);
@@ -271,9 +298,13 @@ class SafetyWalkObservationController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->safety_walk->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
+
             );
 
             return view('inspection.Safety.safety_walk_observation.approval', $data);
@@ -391,12 +422,15 @@ class SafetyWalkObservationController extends Controller
                 $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
                 $last_month_inspection = $this->safety_walk->GetLastMonthObservation($id);
                 $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $current_month_inspection,
                     'last_month_observation_details' => $last_month_observation_details,
                     'pagetitle' => "Safety Walk Observation",
+                    'document_no' => $document_no,
                 ];
             }
             $property = [
@@ -418,7 +452,6 @@ class SafetyWalkObservationController extends Controller
             $filename = "Safety Walk Observation.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/safety-walk-observation/list'));

@@ -39,7 +39,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                     @error('doc_no')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -50,8 +51,9 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date" value="{{ old('issue_date') }}">
-                                                        @error('issue_date')
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                    @error('issue_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -61,17 +63,18 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('SGI-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
                                                         class="form-control" value="{{ old('inspection_date') }}">
-                                                        @error('inspection_date')
+                                                    @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -81,8 +84,8 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                     <input type="text" name="resource_code" id = "resource_code"
-                                                        class="form-control"  value="{{ old('resource_code') }}">
-                                                        @error('resource_code')
+                                                        class="form-control" value="{{ old('resource_code') }}">
+                                                    @error('resource_code')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -96,13 +99,14 @@
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}"   {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('location_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -112,13 +116,14 @@
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"   {{ old('unit_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                {{ old('unit_id') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">

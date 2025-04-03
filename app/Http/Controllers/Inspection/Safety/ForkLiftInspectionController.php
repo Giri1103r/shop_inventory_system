@@ -14,6 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\ForkLiftInspection;
 use App\Models\Inspection\Safety\ForkliftInspectionDetails;
@@ -25,6 +26,8 @@ class ForkLiftInspectionController extends Controller
     private $unit;
     private $department;
     private $signature;
+    private $document_reference;
+
 
     public function __construct()
     {
@@ -33,6 +36,7 @@ class ForkLiftInspectionController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->signature = new SignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -61,13 +65,13 @@ class ForkLiftInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/forklift-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('safety/forklift-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('safety/forklift-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('safety/forklift-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                     <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                 </a>';
 
                             if ($row->observation_status == OBSERVATION_PENDING && (isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/approval/' . encryptId($row->id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
                         })
@@ -77,10 +81,13 @@ class ForkLiftInspectionController extends Controller
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
                         })
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->inspection_date);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'observation_status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'observation_status', 'date_of_inspection', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -103,9 +110,12 @@ class ForkLiftInspectionController extends Controller
         try {
             $unit = $this->unit->getunit();
             $departments = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('ForliftInspectionReport');
+
             $data = array(
                 'unit' => $unit,
                 'departments' => $departments,
+                'document_no' => $document_no,
             );
             return view('inspection.Safety.forklift_inspection.add', $data);
         } catch (Exception $ex) {
@@ -220,9 +230,12 @@ class ForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
+
             );
 
             return view('inspection.Safety.forklift_inspection.view', $data);
@@ -240,9 +253,11 @@ class ForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
             );
 
             return view('inspection.Safety.forklift_inspection.approval', $data);
@@ -358,11 +373,13 @@ class ForkLiftInspectionController extends Controller
             if (Auth::check()) {
                 $inspection_details = $this->forklift->selectOne($id);
                 $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $current_month_inspection,
                     'pagetitle' => "Forklift Inspection",
+                    'document_no' => $document_no,
                 ];
             }
             $property = [
