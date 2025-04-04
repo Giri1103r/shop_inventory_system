@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire PA System Inspection View')
-@section('pageurl', admin_url('fire/pa-system-inspection/list'))
+@section('title', 'Cartridge Type Fire Extinguisher Inspection Approve')
+@section('pageurl', admin_url('fire/fire-extinguisher/cartridge/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -10,6 +10,7 @@
     </div>
 
     <div class="content-body  default-height">
+
         <div class="container-fluid main-content">
             <!-- row -->
             <div class="row">
@@ -20,13 +21,14 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form mx-3">
+
 
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
@@ -49,7 +51,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ $document_no->rev_dt }}
+                                                    {{ Displaydateformat($inspection->inspection_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -58,7 +60,7 @@
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->date_of_inspection) }}
+                                                    {{ Displaydateformat($inspection->inspection_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -108,7 +110,7 @@
                                                     class="form-label require">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
-                                                        style="width:100px; height:50px;" alt="" srcset="">
+                                                        style="width:50px; height:50px;" alt="" srcset="">
                                                 </div>
                                             </div>
                                         </div>
@@ -116,7 +118,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                FIRE_PA_SYSTEM_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -134,7 +136,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Fire PA System Observation</h4>
+                                                <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -152,8 +154,8 @@
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire PA System Checklist</h4>
+                                                <div class="card-header-inner p-2 col-12">
+                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -169,18 +171,39 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
+                                                            class="form-label require">{{ __('inspection.fire_point_no') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->fire_point_no }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <div class="view_data">
+                                                            {{ GetDeptName($details->department) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.unit') }}</label>
+                                                            class="form-label require">{{ __('inspection.type') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUnitname($details->unit) }}
+                                                           {{ getExtinguisherTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -188,69 +211,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Audio Quality</label>
+                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->audio_quality == GOOD)
-                                                                GOOD
-                                                            @elseif($details->audio_quality == FAIR)
-                                                                FAIR
-                                                            @elseif($details->audio_quality == POOR)
-                                                                POOR
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Mic Condition</label>
-                                                        <div class="view_data">
-                                                            @if ($details->mic_condition == GOOD)
-                                                                GOOD
-                                                            @elseif($details->mic_condition == FAIR)
-                                                                FAIR
-                                                            @elseif($details->mic_condition == POOR)
-                                                                POOR
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Mic Quantity</label>
-                                                        <div class="view_data">
-                                                            {{ $details->mic_quantity }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Physical Condition</label>
-                                                        <div class="view_data">
-                                                            @if ($details->physical_condition == GOOD)
-                                                                GOOD
-                                                            @elseif($details->physical_condition == FAIR)
-                                                                FAIR
-                                                            @elseif($details->physical_condition == POOR)
-                                                                POOR
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Cable Condition</label>
-                                                        <div class="view_data">
-                                                            @if ($details->cable_condition == GOOD)
-                                                               GOOD
-                                                            @elseif($details->cable_condition == FAIR)
-                                                                FAIR
-                                                            @elseif($details->cable_condition == POOR)
-                                                                POOR
-                                                            @endif
+                                                           {{ $details->capacity }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -258,13 +221,85 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Operation</label>
+                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->operation == FUNCTIONAL)
+                                                           {{ $details->quantity }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.discharge_tube') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->discharge_tube == FUNCTIONAL)
                                                                 {{ __('inspection.functional') }}
-                                                            @elseif($details->operation == NON_FUNCTIONAL)
+                                                            @elseif($details->discharge_tube == NON_FUNCTIONAL)
                                                                 {{ __('inspection.non_functional') }}
                                                             @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Wheel</label>
+                                                        <div class="view_data">
+                                                            @if ($details->wheel == FUNCTIONAL)
+                                                            FUNCTIONAL
+                                                            @elseif($details->wheel == NON_FUNCTIONAL)
+                                                            NON_FUNCTIONAL
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Handle</label>
+                                                        <div class="view_data">
+                                                            @if ($details->handle == GOOD)
+                                                            GOOD
+                                                            @elseif($details->handle == DAMAGED)
+                                                            DAMAGED
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Weight of Cartridge</label>
+                                                        <div class="view_data">
+                                                           {{ $details->weight_of_cartidge }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.safety_pin') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->safety_pin == PRESENT)
+                                                                {{ __('inspection.present') }}
+                                                            @elseif($details->safety_pin == MISSING)
+                                                                {{ __('inspection.missing') }}
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Approach</label>
+                                                        <div class="view_data">
+                                                           {{ $details->approach }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -278,6 +313,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
                                     @endforeach
@@ -291,11 +327,10 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/pa-system-inspection/ehsofficer/verify/submit') }}"
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -345,7 +380,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <button class="btn btn-success">Verify</button>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -369,7 +404,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                        CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -451,7 +486,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->created_by,
                                                         $inspection->id,
-                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                        CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -503,7 +538,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        FIRE_PA_SYSTEM_INSPECTION,
+                                                        CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -556,7 +591,7 @@
                                                 $signature = GetFireSignature(
                                                     $inspection->l1_manager_verified_by,
                                                     $inspection->id,
-                                                    FIRE_PA_SYSTEM_INSPECTION,
+                                                    CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -607,7 +642,7 @@
                                                 $signature = GetFireSignature(
                                                     $inspection->l2_manager_verified_by,
                                                     $inspection->id,
-                                                    FIRE_PA_SYSTEM_INSPECTION,
+                                                    CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -644,11 +679,10 @@
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/pa-system-inspection/capa/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/capa/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -685,7 +719,7 @@
                                             <div class="submit-button" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-cancel>
                                             </div>
                                         </div>
                                     </form>
@@ -693,11 +727,10 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
                                     <form method="POST" id="forklistassessmentAdd"
-                                        action="{{ admin_url('fire/pa-system-inspection/capa/reverify/submit') }}"
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -744,11 +777,10 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
                                     <form method="POST" id="levelOneManager"
-                                        action="{{ admin_url('fire/pa-system-inspection/level-one/verify/submit') }}"
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
@@ -797,11 +829,10 @@
 
                                 @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
                                     <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('fire/pa-system-inspection/level-two/verify/submit') }}"
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
@@ -856,181 +887,181 @@
 
     @stop
     @push('script')
-    <script>
-        $('#forklistassessmentAdd').validate({
-            rules: {
-                remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $.validator.addMethod("noSpaces", function(value) {
-            return value.trim().length > 0;
-        }, "Spaces are not allowed");
+            $.validator.addMethod("noSpaces", function(value) {
+                return value.trim().length > 0;
+            }, "Spaces are not allowed");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#capaAction').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                capa_remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelOneManager').validate({
-            rules: {
-                level_one_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelOneManager').validate({
+                rules: {
+                    level_one_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_one_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_one_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelTwoManager').validate({
-            rules: {
-                level_two_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelTwoManager').validate({
+                rules: {
+                    level_two_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_two_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_two_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-    </script>
-@endpush
+            });
+        </script>
+    @endpush

@@ -326,17 +326,17 @@
             </tr>
             @endforeach
             @php
-                $prepared_by_signature = GetSignature(
+                $prepared_by_signature = GetFireSignature(
                     $forklift_details->created_by,
                     $forklift_details->id,
                     FIRE_PA_SYSTEM_INSPECTION,
                 );
-                $verified_by_signature = GetSignature(
+                $verified_by_signature = GetFireSignature(
                     $forklift_details->updated_by,
                     $forklift_details->id,
                     FIRE_PA_SYSTEM_INSPECTION,
                 );
-                $verified_by_signature = GetSignature(
+                $verified_by_signature = GetFireSignature(
                     $forklift_details->approved_by,
                     $forklift_details->id,
                     FIRE_PA_SYSTEM_INSPECTION,

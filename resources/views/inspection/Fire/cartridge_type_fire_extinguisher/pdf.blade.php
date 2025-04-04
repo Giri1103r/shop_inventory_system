@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Daily Vital Equipment Pdf')
+@section('title', 'Cartridge Type Fire Extinguisher Inspection Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -25,14 +25,25 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->date_of_inspection }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getShift($value->shift) }}
+                            {{ displaydateformat($value->inspection_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
+                            {{ displaydateformat($value->next_due) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->location_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->shift }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->unit_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->frequency_name }}
+                        </td>
+                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
+                            {{ getInspectionStatus($value->inspection_status); }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

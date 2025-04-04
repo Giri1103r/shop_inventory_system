@@ -39,7 +39,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -47,7 +47,8 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -55,8 +56,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="revision_data" id = "revision_data"
-                                                        class="form-control" value="{{ getDocumentReviewDate('DVE-0') }}"
-                                                        readonly>
+                                                        class="form-control"value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -111,6 +111,8 @@
                                                     </div>
                                                 @endif
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                    value="{{ encryptId($document_no->id) }}">
                                             <table class="container p-5">
                                                 <thead>
                                                     <tr>
@@ -124,7 +126,7 @@
                                                             Check Points
                                                         </th>
 
-                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;class="require">
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; class="require">
                                                             Quantity
                                                         </th>
 
@@ -214,9 +216,6 @@
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
                     location.reload();
-                });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
                 });
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",

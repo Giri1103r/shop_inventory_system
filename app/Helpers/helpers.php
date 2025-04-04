@@ -1904,7 +1904,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
-           
+
             $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
                 ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
                 ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
@@ -1921,7 +1921,7 @@ if (!function_exists('getMonth')) {
                     'inspection_master_checklist_sub_type_data_name.name as checklist_name',
                     'inspection_master_checklist_option.type',
                 ]);
-                
+
             $data = $data->groupBy('subcategory_name');
 
             if ($data) {
@@ -2588,6 +2588,21 @@ if (!function_exists('getMonth')) {
 
                 case HOSE_BOX_INSPECTION:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOSE_BOX_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+
+                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {
