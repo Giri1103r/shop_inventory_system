@@ -62,6 +62,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('department_id')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                             </div>
 
@@ -217,7 +220,7 @@
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
-            var totalRows = $(".medicinedetails").length; 
+            var totalRows = $(".medicinedetails").length;
 
             if (totalRows <= 1) {
                 Swal.fire({

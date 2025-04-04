@@ -304,7 +304,7 @@
                                                                             <div class="form-group form-input">
                                                                                 <label for="quantity"
                                                                                     class="require">Quantity</label>
-                                                                                <input type="text"
+                                                                                <input type="number" min = "1"
                                                                                     name="quantity[{{ $key }}]"
                                                                                     id="quantity"
                                                                                     placeholder="Enter the quantity"
@@ -592,13 +592,7 @@
                             return $('#first_aid_treatment').is(':checked');
                         }
                     },
-                    // 'remarks[0]': {
-                    //     required: function() {
-                    //         return $('#first_aid_treatment').is(':checked');
-                    //     },
-                    //     minlength: 3,
-                    //     maxlength: 600
-                    // },
+
                     details: {
                         required: function() {
                             return $('#suggested_by').val() == '3';
@@ -610,8 +604,7 @@
                         required: function() {
                             return $('#is_reffered').is(':checked');
                         },
-                        minlength: 3,
-                        maxlength: 100
+
                     },
                     first_aider: {
                         required: function() {
@@ -745,8 +738,7 @@
                     },
                     hospital_name: {
                         required: "Hospital name is required .",
-                        minlength: "Hospital name must be at least 3 characters.",
-                        maxlength: "Hospital name must not exceed 100 characters.",
+
 
                     },
                     first_aider: {
@@ -1265,7 +1257,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 

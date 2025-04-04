@@ -23,32 +23,69 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                <input type="text" name="resource_code" id = "resource_code"
+                                                    class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
 
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -69,9 +106,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.resource_code') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -94,7 +132,7 @@
                 firstTh.removeClass('sorting_asc');
             });
 
-            flatpickr("#issue_date", {
+            flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
             });
 
@@ -131,10 +169,11 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.resource_code = $('#resource_code').val();
+                            d.location = $('#location').val();
+                            d.unit = $('#unit').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -150,16 +189,20 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'resource_code',
+                            name: 'resource_code',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'location_name',
+                            name: 'location_name',
+                        },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name',
                         },
                         {
                             data: 'inspection_status',
@@ -194,20 +237,22 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        resource_code = $('#resource_code').val();
+                                        location = $('#location').val();
+                                        unit = $('#unit').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&resource_code=' + resource_code +
+                                            '&location=' + location +
+                                            '&unit=' + unit +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                                 {
@@ -215,19 +260,22 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        resource_code = $('#resource_code').val();
+                                        location = $('#location').val();
+                                        unit = $('#unit').val();
+                                        inspection_status = $('#inspection_status').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&resource_code=' + resource_code +
+                                            '&location=' + location +
+                                            '&unit=' + unit +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]

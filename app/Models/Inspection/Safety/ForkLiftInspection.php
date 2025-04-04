@@ -13,9 +13,7 @@ class ForkLiftInspection extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'rev_data',
+        'document_reference_id',
         'inspection_date',
         'observation_status',
         'approval_remarks',
@@ -37,27 +35,23 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*');
+        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_forklift_inspection.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
+
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+            $query = $query->whereDate('inspection_safety_forklift_inspection.inspection_date', '=', DBdateformat($request->issue_date));
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->inspection_status));
+        if (isset($request->obsrevation_status) && $request->obsrevation_status) {
+            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->obsrevation_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -110,9 +104,7 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $data = array(
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'rev_data' => $request->rev_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
             'created_by' => Auth::id(),
             'observation_status' => OBSERVATION_PENDING,
@@ -126,7 +118,9 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*');
+        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -136,19 +130,14 @@ class ForkLiftInspection extends Model
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_forklift_inspection.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_forklift_inspection.rev_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->whereDate('inspection_safety_forklift_inspection.inspection_date', '=', DBdateformat($request->issue_date));
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->inspection_status));
+        if (isset($request->obsrevation_status) && $request->obsrevation_status) {
+            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->obsrevation_status));
         }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

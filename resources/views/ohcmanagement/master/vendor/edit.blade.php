@@ -43,6 +43,9 @@
                                                     <input type="text" name ="vendor_name" id="vendor_name"
                                                         class="form-control" placeholder="Enter the vendor name"
                                                         value="{{ $vendor->vendor_name }}">
+                                                        @error('vendor_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -51,6 +54,9 @@
                                                     <input type="text" name="license_no" id="license_no"
                                                         class="form-control" placeholder="Enter the License_no"
                                                         value="{{ $vendor->license_no }}">
+                                                        @error('license_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -59,6 +65,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
                                                     <textarea name="address" class="form-control" placeholder="Enter the Address">{{ $vendor->address }}</textarea>
+                                                    @error('address')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                                 </div>
                                             </div>
                                         </div>

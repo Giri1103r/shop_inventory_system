@@ -6,7 +6,7 @@
 
     <style>
         .card-header-inner {
-            padding: 11px;
+            padding: 10px;
         }
     </style>
 
@@ -45,14 +45,16 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name ="document_number" class="form-control"
-                                                        placeholder="Document Number" value="">
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
                                                     <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date" value="">
+                                                        class="form-control" placeholder="Issue Date" value="{{ displaydateformat($document_no->issue_date) }}"
+                                                         readonly>
                                                 </div>
                                             </div>
 
@@ -60,27 +62,12 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date" value="{{ getDocumentReviewDate('MSDS-0') }}"
+                                                        placeholder="Revision Date" value="{{ $document_no->rev_dt }}"
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mt-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image" id="signature_upload"
-                                                            class="form-control form-control-sm" accept="image/*"
-                                                            placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
 
                                         <div class="row mt-4">
@@ -139,10 +126,9 @@
                                                                     Status</label>
                                                                 <select name="msds_availability_status[1]"
                                                                     class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select MSDS Availability Status
-                                                                    </option>
-                                                                    <option value="Yes">Yes</option>
-                                                                    <option value="No">No</option>
+                                                                    <option value="">Select MSDS Availability Status</option>
+                                                                    <option value="{{ encryptId(YES) }}">YES</option>
+                                                                    <option value="{{ encryptId(NO) }}">NO</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -189,11 +175,6 @@
             location.reload();
         });
 
-        var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            // minDate: new Date(),
-        });
-
         $.validator.addMethod("noSpaces", function(value, element) {
             return this.optional(element) || value.trim().length > 0;
         }, "This field cannot contain only spaces");
@@ -208,9 +189,6 @@
                     required: true,
                 },
                 revision_date: {
-                    required: true,
-                },
-                signature_image: {
                     required: true,
                 },
                 'item_code[1]': {
@@ -239,9 +217,6 @@
                 },
                 revision_date: {
                     required: "Please Select Revision Date",
-                },
-                signature_image: {
-                    required: "Signature is Required",
                 },
                 'item_code[1]': {
                     required: "Item Code is Required",
@@ -353,8 +328,8 @@
                                 <label class="form-label require">MSDS Availability Status</label>
                                 <select name="msds_availability_status[${form_set_count}]" class="form-control single-select" style="width: 100%">
                                     <option value="">Select MSDS Availability Status</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
+                                    <option value="{{ encryptId(YES) }}">YES</option>
+                                    <option value="{{ encryptId(NO) }}">NO</option>
                                 </select>
                             </div>
                         </div>

@@ -42,6 +42,9 @@
                                                     <label class="form-label require">Hospital Name</label>
                                                     <input type="text" name="hospital_name" id="hospital_name"
                                                         class="form-control" placeholder="Hospital Name">
+                                                    @error('hospital_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -51,6 +54,9 @@
                                                     <label class="form-label require">Mobile Number </label>
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         class="form-control" placeholder="Enter the Mobile Number">
+                                                    @error('mobile_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -58,12 +64,18 @@
                                                     <label class="form-label require">Telephone Number </label>
                                                     <input type="text" name="tel_no" id="tel_no" class="form-control"
                                                         placeholder="Enter the Mobile Number">
+                                                    @error('tel_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
                                                     <textarea name="address" class="form-control" placeholder="Enter the Address"></textarea>
+                                                    @error('address')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -99,7 +111,7 @@
 
 
         $(function() {
-            // Custom method for regex validation
+
             $.validator.addMethod("regex", function(value, element, regexp) {
                 var re = new RegExp(regexp);
                 return this.optional(element) || re.test(value);

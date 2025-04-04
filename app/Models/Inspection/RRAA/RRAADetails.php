@@ -11,26 +11,22 @@ class RRAADetails extends Model
 {
     use  HasFactory;
 
-    protected $table = 'inspection_rraa_details';
+    protected $table = 'inspection_rraa';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'document_number',
-        'issue_date',
-        'revision_date',
-        'inspection_status',
-        'remarks',
-        'capa_recomendation',
-        'capa_remarks',
-        'capa_ehs_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'verified_by',
-        'approved_by',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'document_reference_id',
+        'serial_number',
+        'category',
+        'ohs_compliance_index',
+        'frequency',
+        'scope',
+        'responsibility',
+        'authority',
+        'accountability',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -48,7 +44,9 @@ class RRAADetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_rraa_details.*');
+        $query = $this->select('inspection_rraa.*', 'inspection_master_checklist_type.category_name', 'inspection_frequency_option.frequency_name')
+                ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
+                ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -58,25 +56,30 @@ class RRAADetails extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhereRaw('inspection_master_checklist_type.category_name LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_rraa.ohs_compliance_index LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_rraa.scope LIKE ?', ['%' . $search . '%']);
             });
         }
 
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('category') && $request->category) {
+            $query = $query->where('inspection_rraa.category', 'LIKE', '%' . decryptId($request->category) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
+            $query = $query->where('inspection_rraa.ohs_compliance_index', 'LIKE', '%' . $request->ohs_compliance_index . '%');
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        if ($request->has('frequency') && $request->frequency) {
+            $query = $query->where('inspection_rraa.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
+        if (isset($request->scope) && $request->scope) {
+            $query = $query->where('inspection_rraa.scope', 'LIKE', '%' . $request->scope . '%');
+        }
+
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_rraa.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -95,15 +98,28 @@ class RRAADetails extends Model
     public function store()
     {
         $request = request();
+        $insertedData = [];
 
-        $insert_array = array(
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
-            'created_by' => Auth::id(),
-        );
+        foreach ($request->scope as $index => $Scope) {
+            $insert_array = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'serial_number' =>$request->serial_number[$index],
+                'category' =>decryptId($request->category[$index]),
+                'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
+                'frequency' =>decryptId($request->frequency[$index]),
+                'scope' => $Scope,
+                'responsibility' =>$request->emp_id[$index],
+                'authority' => $request->authority[$index],
+                'accountability' => $request->accountability[$index],
+                'remark' => $request->remark[$index],
+                'created_by' => Auth::id(),
+            );
 
-        return $this->create($insert_array);
+            $insertedData []=  $this->create($insert_array);
+
+        }
+
+        return $insertedData;
     }
 
     public function selectOne($id)
@@ -115,32 +131,41 @@ class RRAADetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_rraa_details.*');
+        $query = $this->select('inspection_rraa.*', 'inspection_master_checklist_type.category_name', 'inspection_frequency_option.frequency_name')
+                ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
+                ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhereRaw('inspection_master_checklist_type.category_name LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_rraa.ohs_compliance_index LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE ?', ['%' . $search . '%'])
+                    ->orWhereRaw('inspection_rraa.scope LIKE ?', ['%' . $search . '%']);
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('category') && $request->category) {
+            $query = $query->where('inspection_rraa.category', 'LIKE', '%' . decryptId($request->category) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
+            $query = $query->where('inspection_rraa.ohs_compliance_index', 'LIKE', '%' . $request->ohs_compliance_index . '%');
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        if ($request->has('frequency') && $request->frequency) {
+            $query = $query->where('inspection_rraa.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        if (isset($request->scope) && $request->scope) {
+            $query = $query->where('inspection_rraa.scope', 'LIKE', '%' . $request->scope . '%');
+        }
+
+        $query->orderBy('inspection_rraa.id', 'DESC');
 
         return  $query->get();
     }
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_rraa_details'));
+        static::addGlobalScope(new TrashScope('inspection_rraa'));
     }
 }

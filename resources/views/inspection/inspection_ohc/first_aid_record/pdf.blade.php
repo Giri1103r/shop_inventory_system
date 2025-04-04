@@ -26,20 +26,10 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->document_number }}
+                            {{ $value->month }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_date }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                             {{ $status }}
+                            {{ $value->year }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

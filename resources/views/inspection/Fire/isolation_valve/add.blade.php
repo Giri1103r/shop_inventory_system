@@ -31,13 +31,14 @@
                                         action="{{ admin_url('fire/isolating-valve-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-
+                                        <input type="hidden" name="document_reference_id" value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -45,7 +46,8 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -53,8 +55,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FEX-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -347,7 +348,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/isolating-valve-inspection') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -546,7 +547,7 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
-                        }
+                        },
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",

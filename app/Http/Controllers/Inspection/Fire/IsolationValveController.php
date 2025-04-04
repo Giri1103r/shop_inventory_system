@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
@@ -22,6 +23,7 @@ use App\Models\Inspection\Fire\IsolationValve;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\IsolationValveDetails;
+use App\Models\Inspection\InspectionStaticDocno;
 
 class IsolationValveController extends Controller
 {
@@ -36,6 +38,7 @@ class IsolationValveController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -50,6 +53,7 @@ class IsolationValveController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -64,9 +68,9 @@ class IsolationValveController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -117,23 +121,23 @@ class IsolationValveController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/isolating-valve-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/isolating-valve-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspectiony/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -151,7 +155,17 @@ class IsolationValveController extends Controller
             }
         }
 
-        $data = array();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
         return view('inspection.fire.isolation_valve.list', $data);
     }
 
@@ -163,6 +177,7 @@ class IsolationValveController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('IsolatingValveInspection');
 
             $data = array(
                 'locations' => $location,
@@ -170,6 +185,7 @@ class IsolationValveController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.isolation_valve.add', $data);
@@ -202,7 +218,55 @@ class IsolationValveController extends Controller
 
     public function Store(Request $request)
     {
-        try {
+        try {   
+
+            $rules = [
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'location_isv.*' => 'required',
+                'resource_code.*' => 'required',
+                'isv_status.*' => 'required',
+                'size_isv.*' => 'required',
+                'wheel_operation.*' => 'required',
+                'leakage.*' => 'required',
+                'type.*' => 'required',
+                'open.*' => 'required',
+                'close.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'location_isv.*.required' => 'Location ISV is required',
+                'resource_code.*.required' => 'Resource Code is required',
+                'size_isv.*.required' => 'Size of ISV is required',
+                'isv_status.*.required' => 'Status Of ISV is required',
+                'wheel_operation.*.required' => 'Wheel Operation Status is required',
+                'leakage.*.required' => 'Leakage Status is required',
+                'type.*.required' => 'Valve Type is required',
+                'open.*.required' => 'Valve Open Status is required',
+                'close.*.required' => 'Valve Close Status is required',
+                'observation.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $inspection = $this->isolation_valve->store();
             $inspection_type = ISOLATION_VALVE_INSPECTION;
@@ -279,11 +343,14 @@ class IsolationValveController extends Controller
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
 
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.isolation_valve.view', $data);
         } catch (Exception $ex) {
@@ -304,12 +371,14 @@ class IsolationValveController extends Controller
             $inspection_details = $this->isolation_valve_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.isolation_valve.approve', $data);
         } catch (Exception $ex) {
@@ -772,12 +841,14 @@ class IsolationValveController extends Controller
                 $status_log = $this->statusLog->selectOne($id,ISOLATION_VALVE_INSPECTION);
                 $forklift_details = $this->isolation_valve->selectOne($id);
                 $inspection = $this->isolation_valve_details->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Isolation Valve Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

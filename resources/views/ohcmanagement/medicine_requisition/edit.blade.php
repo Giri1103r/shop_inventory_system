@@ -46,14 +46,18 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit </label>
-                                                    <input type="text" name="unit_id" id="unit_id" value="{{getUnitname($user_medicine_requisition->unit_id)}}" class="form-control" readonly>
+                                                    <input type="text" name="unit_id" id="unit_id"
+                                                        value="{{ getUnitname($user_medicine_requisition->unit_id) }}"
+                                                        class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="department_id" class="form-label require">Department
                                                     </label>
-                                                    <input type="text" name="department_id" id="department_id" value="{{getDepartment($user_medicine_requisition->department_id)}}" class="form-control" readonly>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        value="{{ getDepartment($user_medicine_requisition->department_id) }}"
+                                                        class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -67,62 +71,7 @@
                                             </div>
 
                                         </div>
-                                        {{-- <div class="table-responsive">
-                                            <div class="col-md-12">
-                                                <table class="table table-bordered ">
 
-                                                    <thead class="bg-secondary" style="color: #ffff">
-                                                    <tr>
-                                                        <th>Medicine</th>
-                                                        <th>Quantity</th>
-                                                        <th>Remarks</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="medicine-tbody">
-                                                    @foreach ($medicine_requisition as $key => $requisition)
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine Name</label>
-                                                                    <select name="medicine_id[{{ $key }}]" id="medicine_id" class="form-control single-select" style="width: 100%">
-                                                                        <option value="">Select the Medicine Name</option>
-                                                                        @foreach ($medicine as $list)
-                                                                            <option value="{{ $list->id }}" @if ($requisition->medicine_id == $list->id) selected @endif>
-                                                                                {{ $list->medicine }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[{{ $key }}]" id="quantity" placeholder="Enter the quantity" class="form-control" value="{{ $requisition->quantity }}">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="remarks" class="require">Remarks</label>
-                                                                    <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $requisition->remarks }}</textarea>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="row gap-2">
-                                                                    <div class="d-flex justify-content-center align-items-center bg-primary mt-2 ml-2 text-white rounded add-row" style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-plus"></i>
-                                                                    </div>
-                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-
-                                            </table>
-                                        </div> --}}
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
@@ -197,10 +146,9 @@
                                                                     <div class="form-group form-input">
                                                                         <label for="quantity"
                                                                             class="require">Quantity</label>
-                                                                        <input type="text"
+                                                                        <input type="number" min = "1"
                                                                             name="quantity[{{ $key }}]"
-                                                                            id="quantity"
-                                                                            placeholder="Enter the quantity"
+                                                                            id="quantity" placeholder="Enter the quantity"
                                                                             value="{{ $requisition->quantity }}"
                                                                             class="form-control">
                                                                         <span id="quantity-error" style=" display:none;"
@@ -216,10 +164,10 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
-                                                                            style="width: 30px; height: 30px;">
-                                                                            <i class="fa-solid fa-trash"></i>
-                                                                        </div>
+                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 me-5 text-white rounded delete-row"
+                                                                        style="width: 30px; height: 30px;">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </div>
 
 
                                                                 </td>
@@ -312,11 +260,21 @@
         // delete the row
 
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevents the form from submitting
+            event.preventDefault();
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
+            var totalRows = $(".medicinedetails").length;
 
+            if (totalRows <= 1) {
+                Swal.fire({
+                    title: 'Cannot delete!',
+                    text: 'At least one row is required.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
             if (rowId) {
                 Swal.fire({
                     title: 'Are you sure?',
@@ -411,7 +369,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label class="require">Quantity</label>
-                        <input type="text" name="quantity[${rowcount}]" placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${rowcount}]" placeholder="Enter the quantity" class="form-control">
                         <span class="text-danger quantity-error" style="display:none;">Quantity must be less than available quantity.</span>
                     </div>
                 </td>

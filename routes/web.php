@@ -1138,6 +1138,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}/{medicineId}', [DiscardController::class, 'edit']);
                 Route::post('/edit/submit', [DiscardController::class, 'update']);
                 Route::get('/view/{id}', [DiscardController::class, 'view']);
+                Route::get('generalpdf/{id}', [DiscardController::class, 'generalpdf']);
                 Route::post('/delete', [DiscardController::class, 'delete']);
                 Route::get('/export/excel', [DiscardController::class, 'exportExcel']);
                 Route::get('/export/pdf', [DiscardController::class, 'exportPdf']);
@@ -1482,7 +1483,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [FirstAiderlistController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [FirstAiderlistController::class, 'ExportPDF']);
                     Route::POST('/lists', [FirstAiderlistController::class, 'Checklists']);
-                    Route::GET('/emplyeename', [FirstAiderlistController::class, 'employeename']);
+                    Route::GET('/employeename', [FirstAiderlistController::class, 'employeename']);
                     Route::GET('/employeedetails ', [FirstAiderlistController::class, 'employeedetails']);
 
 

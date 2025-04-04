@@ -16,11 +16,11 @@ class GembaWalk extends Model
 
     protected $fillable = [
         'gemba_walk_auto_id',
-        'document_no',
-        'issue_date',
-        'revision_date',
-        'status',
+        'document_reference_id',
+        'date',
+        'shift_id',
         'gemba_walk_status',
+        'status',
         'trash',
         'created_by',
         'updated_by',
@@ -38,39 +38,41 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_gemba_walk.document_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_gemba_walk.issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_gemba_walk.revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
+
             });
         }
 
         if ($request->has('doc_no') && $request->doc_no) {
-            $query = $query->where('inspection_gemba_walk.document_no', 'LIKE', '%' . $request->doc_no . '%');
-        }
-        if ($request->has('issue_date') && $request->issue_date) {
-
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('inspection_gemba_walk.issue_date', $formattedDate);
+            $query = $query->where('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $request->doc_no . '%');
         }
 
-        if ($request->has('revision_date') && $request->revision_date) {
+        if ($request->has('date') && $request->date) {
 
-            $formattedDate = DBdateformat($request->revision_date);
-            $query = $query->whereDate('inspection_gemba_walk.revision_date', $formattedDate);
+            $formattedDate = DBdateformat($request->date);
+            $query = $query->whereDate('inspection_gemba_walk.date', $formattedDate);
         }
 
         if ($request->has('inspection_status') && $request->inspection_status) {
-
             $query = $query->where('inspection_gemba_walk.gemba_walk_status',  decryptId($request->inspection_status));
+        }
+
+        if ($request->has('shift') && $request->shift) {
+            $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
         }
 
 
@@ -91,7 +93,6 @@ class GembaWalk extends Model
             'filter_records' => $total_records,
         );
         return $datas;
-        
     }
 
     public function store()
@@ -99,12 +100,13 @@ class GembaWalk extends Model
         $request = request();
         $insert_array = array(
             'gemba_walk_auto_id' => $request->gemba_walk_id,
-            'document_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->document_upload_date),
-            'revision_date' => DBdateformat($request->document_revision_date),
+            'document_reference_id' => $request->document_reference_id,
+            'date' => DBdateformat($request->document_upload_date),
+            'shift_id' => decryptId($request->shift),
             'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION,
             'created_by' => Auth::id()
         );
+        // dd($insert_array);
         return $this->create($insert_array);
     }
 
@@ -130,8 +132,6 @@ class GembaWalk extends Model
     public function getUserId($id)
     {
         return $this->where('id', $id)->first();
-            
-
     }
 
     public function selectSingnature($id)
@@ -189,37 +189,38 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color')
-        ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+       $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
+            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_gemba_walk.document_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_gemba_walk.issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_gemba_walk.revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
+
             });
         }
         if ($request->has('doc_no') && $request->doc_no) {
-            $query = $query->where('inspection_gemba_walk.document_no', 'LIKE', '%' . $request->doc_no . '%');
-        }
-        if ($request->has('issue_date') && $request->issue_date) {
-
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('inspection_gemba_walk.issue_date', $formattedDate);
+            $query = $query->where('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $request->doc_no . '%');
         }
 
-        if ($request->has('revision_date') && $request->revision_date) {
+        if ($request->has('date') && $request->date) {
 
-            $formattedDate = DBdateformat($request->revision_date);
-            $query = $query->whereDate('inspection_gemba_walk.revision_date', $formattedDate);
+            $formattedDate = DBdateformat($request->date);
+            $query = $query->whereDate('inspection_gemba_walk.date', $formattedDate);
         }
 
         if ($request->has('inspection_status') && $request->inspection_status) {
-
             $query = $query->where('inspection_gemba_walk.gemba_walk_status',  decryptId($request->inspection_status));
         }
+
+        if ($request->has('shift') && $request->shift) {
+            $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
+        }
+        
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

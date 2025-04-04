@@ -207,9 +207,9 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.physical_condition') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->physical_condition == 'GOOD')
+                                                            @if ($details->physical_condition == GOOD)
                                                                 <p>Good</p>
-                                                            @elseif ($details->physical_condition == 'FAIR')
+                                                            @elseif ($details->physical_condition == FAIR)
                                                                 <p>Fair</p>
                                                             @else
                                                                 <p>Poor</p>
@@ -224,9 +224,9 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.cable_condition') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->cable_condition == 'GOOD')
+                                                            @if ($details->cable_condition == GOOD)
                                                                 <p>Good</p>
-                                                            @elseif ($details->cable_condition == 'FAIR')
+                                                            @elseif ($details->cable_condition == FAIR)
                                                                 <p>Fair</p>
                                                             @else
                                                                 <p>Poor</p>

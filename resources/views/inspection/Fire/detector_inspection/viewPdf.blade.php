@@ -205,7 +205,7 @@
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                 colspan="3">
-                DATE OF INSPECTION: {{ DBdateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
+                DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                 colspan="3">
@@ -219,7 +219,7 @@
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                 colspan="3">
-                NEXT DUE: {{ DBdateformat($forklift_details->next_due) ?? 'N/A' }}
+                NEXT DUE: {{ Displaydateformat($forklift_details->next_due) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                 colspan="3">

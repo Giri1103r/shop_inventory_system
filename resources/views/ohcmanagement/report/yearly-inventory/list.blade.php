@@ -66,7 +66,7 @@
                                         <center>
                                             <b>Medical Treatment Slip<br>
                                                 PN International Pvt Ltd. <br>
-
+                                                <span class="year"></span>
                                             </b>
                                         </center>
 
@@ -83,6 +83,27 @@
     @stop
     @push('script')
         <script>
+            $(document).ready(function() {
+                let today = new Date();
+                let currentYear = today.getFullYear();
+                let currentMonth = today.getMonth() + 1;
+
+                let startYear, endYear;
+
+                if (currentMonth > 3) {
+
+                    startYear = currentYear;
+                    endYear = currentYear + 1;
+                } else {
+
+                    startYear = currentYear - 1;
+                    endYear = currentYear;
+                }
+
+                let financialYearText = `Financial Year (April ${startYear} - March ${endYear})`;
+                $(".year").text(financialYearText);
+            });
+
             $(document).ready(function() {
 
 
@@ -137,7 +158,7 @@
                         },
                         success: function(response) {
                             let medicineData = response.inventory.length ? response.inventory : response
-                                .medicine; // Use inventory if available, otherwise fallback to medicine
+                                .medicine;
 
                             if (medicineData && Array.isArray(medicineData) && medicineData.length > 0) {
                                 $(".selectedMonthYear").text(monthNames[parseInt(selectedYear) - 1] + " " +
@@ -179,7 +200,7 @@
                     <td>ID</td>
                     <td>Medicine Name</td>`;
 
-                // Adding Month Headers (Short Names) for Purchase and Issue Data
+
                 const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
                 monthNamesShort.forEach(month => {
@@ -203,14 +224,14 @@
                     let issueQuantities = new Array(12).fill(0);
                     let medicineName = item.medicine || item
                         .medicine_name;
-                    // Process received medicines
+
                     receivingData.forEach((received) => {
                         if (received.medicine_name === item.medicine_name) {
                             let approvedDate = new Date(received.approved_date);
                             if (!isNaN(approvedDate.getTime()) && approvedDate.getUTCFullYear() === parseInt(
                                     year)) {
                                 let monthIndex = approvedDate
-                                    .getUTCMonth(); // 0-based month index (Jan = 0, Dec = 11)
+                                    .getUTCMonth();
                                 purchaseData[monthIndex] += received.quantity || 0;
                             }
                         }

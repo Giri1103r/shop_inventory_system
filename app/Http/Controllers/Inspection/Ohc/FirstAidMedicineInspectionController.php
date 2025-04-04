@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\Inspection\Ohc\FirstAidMedicineInspection;
 
@@ -21,12 +22,16 @@ class FirstAidMedicineInspectionController extends Controller
     private $medicine_checklist;
     private $medicine;
     private $signature;
+    private $document_reference;
+
 
     public function __construct()
     {
         $this->medicine_checklist = new FirstAidMedicineInspection();
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -101,9 +106,11 @@ class FirstAidMedicineInspectionController extends Controller
         try {
 
             $medicines = $this->medicine->getFirstAidData();
+            $document_no = $this->document_reference->selectUsingName('OHCFirstAidOPDMedicineInspection');
 
             $data = array(
                 'medicines' => $medicines,
+                'document_no' => $document_no,
             );
             return view('inspection.inspection_ohc.first_aid_inspection.add', $data);
         } catch (Exception $ex) {
@@ -212,12 +219,14 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
                 'verified_by' => $verified_by,
+                'document_no' => $document_no,
             );
 
 
@@ -332,6 +341,7 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
             $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
             $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -349,6 +359,8 @@ class FirstAidMedicineInspectionController extends Controller
                 'inspection_data' => $inspection_data,
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
+                'document_no' => $document_no,
+
             );
 
             $mpdf = new \Mpdf\Mpdf($property);
@@ -376,11 +388,15 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
+                'document_no' => $document_no,
+
             );
 
             return view('inspection.inspection_ohc.first_aid_inspection.approval', $data);

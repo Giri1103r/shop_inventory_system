@@ -18,6 +18,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\EyeWashInspectionDetails;
@@ -35,6 +36,7 @@ class MonthlyEyeWashInspectionController extends Controller
     private $statusLog;
     private $eye_wash_details;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -48,6 +50,7 @@ class MonthlyEyeWashInspectionController extends Controller
         $this->statusLog = new SafetyStatusLog();
         $this->eye_wash_details = new EyeWashInspectionDetails();
         $this->signature = new SignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -161,12 +164,14 @@ class MonthlyEyeWashInspectionController extends Controller
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
+            $document_no = $this->document_reference->selectUsingName('DetectorInspection');
 
             $data = array(
                 'locations' => $location,
                 'units' => $unit,
                 'frequency' => $frequency,
                 'shifts' => $shifts,
+                'document_no' => $document_no,
             );
             return view('inspection.Safety.eye_wash_inspection.add', $data);
         } catch (Exception $ex) {
@@ -183,8 +188,6 @@ class MonthlyEyeWashInspectionController extends Controller
             // dd($request->all());
 
             $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'requried',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
@@ -207,8 +210,6 @@ class MonthlyEyeWashInspectionController extends Controller
             ];
 
             $messages = [
-                'issue_date.required' => 'Issue Date is required',
-                'rev_date.required' => 'Revision Data is required',
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
                 'shift_id.required' => 'Shift is required',
@@ -319,10 +320,12 @@ class MonthlyEyeWashInspectionController extends Controller
             $inspection_details = $this->eye_wash->selectOne($id);
             $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
             $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
 
             return view('inspection.Safety.eye_wash_inspection.view', $data);
@@ -339,10 +342,12 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->eye_wash->selectOne($id);
             $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
             );
 
             return view('inspection.Safety.eye_wash_inspection.approve', $data);
@@ -808,12 +813,14 @@ class MonthlyEyeWashInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'inspection_details' => $inspection_details,
                     'inspection' => $inspection,
                     'pagetitle' => "Monthly EyeWash Inspection",
+                    'document_no' => $document_no,
                 ];
             }
 

@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireAlarmInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
@@ -36,6 +38,7 @@ class FireAlarmController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -50,6 +53,7 @@ class FireAlarmController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -64,9 +68,9 @@ class FireAlarmController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -117,23 +121,23 @@ class FireAlarmController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/fire-alarm-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/fire-alarm-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -151,7 +155,17 @@ class FireAlarmController extends Controller
             }
         }
 
-        $data = array();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
         return view('inspection.fire.fire_alarm.list', $data);
     }
 
@@ -163,6 +177,8 @@ class FireAlarmController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('FireAlarmInspection');
+
 
             $data = array(
                 'locations' => $location,
@@ -170,6 +186,7 @@ class FireAlarmController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.fire_alarm.add', $data);
@@ -203,6 +220,52 @@ class FireAlarmController extends Controller
     public function Store(Request $request)
     {
         try {
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'quantity.*' => 'required',
+                'resource_code.*' => 'required',
+                'glass.*' => 'required',
+                'hammer.*' => 'required',
+                'mannual_call_point.*' => 'required',
+                'approach.*' => 'required',
+                'observation.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'quantity.*.required' => 'Quantity is required',
+                'resource_code.*.required' => 'Resource Code is required',
+                'glass.*.required' => 'Status of Glass is required',
+                'hammer.*.required' => 'Status Of Hammer is required',
+                'mannual_call_point.*.required' => 'Mannual Call Point is required',
+                'leakage.*.required' => 'Leakage Status is required',
+                'approach.*.required' => 'Approach is required',
+                'observation.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $inspection = $this->fire_alarm->store();
             $inspection_type = FIRE_ALARM_INSPECTION;
@@ -213,7 +276,7 @@ class FireAlarmController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -279,12 +342,15 @@ class FireAlarmController extends Controller
             $inspection_details = $this->fire_alarm_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_alarm.view', $data);
         } catch (Exception $ex) {
@@ -305,15 +371,19 @@ class FireAlarmController extends Controller
             $inspection_details = $this->fire_alarm_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_alarm.approve', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -770,15 +840,16 @@ class FireAlarmController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,FIRE_ALARM_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
                 $forklift_details = $this->fire_alarm->selectOne($id);
                 $inspection = $this->fire_alarm_details->GetDetails($forklift_details->id);
-
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire Alarm Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 
@@ -794,7 +865,7 @@ class FireAlarmController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.fire_alarm.viewPdf',$data);
+            $html = view('inspection.fire.fire_alarm.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

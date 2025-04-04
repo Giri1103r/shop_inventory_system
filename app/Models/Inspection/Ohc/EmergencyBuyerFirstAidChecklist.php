@@ -39,7 +39,7 @@ class EmergencyBuyerFirstAidChecklist extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.*', 'inspection_shift_option.shift', 'masters_unit.unit_name')
+        $query = $this->select('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.*','inspection_shift_option.shift', 'masters_unit.unit_name')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.shift_id')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.unit_id');
 

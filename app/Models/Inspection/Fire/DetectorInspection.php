@@ -55,12 +55,11 @@ class DetectorInspection extends Model
             ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id');
-
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_detector.document_reference_id', '=', 'inspection_static_docno.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-
 
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -86,22 +85,14 @@ class DetectorInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
-        }
-        if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_detector.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
-        }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
             $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-
-
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_detector.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_detector.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -146,7 +137,7 @@ class DetectorInspection extends Model
 
         $data = array(
             'doc_no' => $request->doc_no,
-            'document_reference_id' => $request->document_reference_id,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => $request->inspection_date,
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
@@ -195,14 +186,15 @@ class DetectorInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_detector.location', 'LIKE', '%' . decryptId($request->location) . '%');
-        }
+
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
             $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_detector.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
         $query->orderBy('id', 'DESC');
 

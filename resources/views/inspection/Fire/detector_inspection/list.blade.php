@@ -137,7 +137,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -206,6 +206,7 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

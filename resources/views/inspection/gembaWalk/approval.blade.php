@@ -46,7 +46,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Gemba Walk Document No</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->document_no) ? $gembaWalk->document_no : '' }}
+                                                    {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                                 </div>
                                             </div>
                                         </div>
@@ -55,7 +55,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Issue Date</label>
                                                 <div class="view_data">
-                                                    {{ displaydateformat(isset($gembaWalk->issue_date) ? $gembaWalk->issue_date : '') }}
+                                                    {{ displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -64,7 +64,25 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Revision Date</label>
                                                 <div class="view_data">
-                                                    {{ displaydateformat(isset($gembaWalk->revision_date) ? $gembaWalk->revision_date : '') }}
+                                                    {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Date</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($gembaWalk->date) ? $gembaWalk->date : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Shift</label>
+                                                <div class="view_data">
+                                                    {{ getShift(isset($gembaWalk->shift_id) ? $gembaWalk->shift_id : '') }}
                                                 </div>
                                             </div>
                                         </div>

@@ -165,6 +165,7 @@ return [
     'present' => 'Present',
     'missing' => 'Missing',
     'ohc_hygiene_cleaning_checklist' => 'Is Floor Tiles, wall, Dust Bin, Washbasin, Bed, Bedsheet, Computer Table, window, window cover, Fire Extinguishers, Fan, AC, Body Weigh Measurement, Almirah, Wall Boards, Stickers & others all useful equipment has been cleaned properly?',
+    'discharge_horn' => 'Discharge Horn',
 
     // Isolation Valve Inspection
     'location_isv' => 'Location Of ISV',
@@ -204,4 +205,17 @@ return [
     'cable_condition' => 'Cable Condition',
     'response_indicator' => 'Response Indicator',
     'working_status' => 'Working Status',
+
+    //Fire Sand Bucket Inspection
+    'fire_sand_bucket_stand_no' => 'Fire Sand Bucket Stand No.',
+    'fire_sand_bucket_no' => 'Fire Sand Bucket No.',
+    'qualtiy_quantity_sand' => 'Select Quality and Quantity of Sand',
+    'paint_condition' => 'Select the Paint Condition',
+    'fire_bucket_condition' => 'Select the Fire Bucket Condition',
+
+    // Hose Box Inspection
+    'hose_box_inspection' => 'Hose Box Inspection',
+    'branch_quantity' => 'Branch Quantity',
+    'hose_box_key' => 'Hose Box Key',
+    'hose_types' => 'Hose Box Types',
 ];

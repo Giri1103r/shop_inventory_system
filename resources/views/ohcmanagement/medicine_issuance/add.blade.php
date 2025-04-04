@@ -140,7 +140,7 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]" id="quantity"
+                                                                    <input type="number" name="quantity[0]" id="quantity" min="1"
                                                                         placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
@@ -156,7 +156,7 @@
                                                                         style="width: 30px; height: 30px;">
                                                                         <i class="fa-solid fa-trash"></i>
                                                                     </div>
-                                                               
+
 
                                                             </td>
                                                         </tr>
@@ -280,7 +280,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 

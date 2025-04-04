@@ -26,7 +26,7 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
                                         <div class="col-md-3 form-input">

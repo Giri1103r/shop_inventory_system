@@ -31,17 +31,15 @@
                                         action="{{ admin_url('fire/fire_extinguisher-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-
+                                        <input type="hidden" name="document_reference_id" value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number" value="{{ old('doc_no') }}">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
-                                                @error('doc_no')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -49,21 +47,16 @@
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
                                                         class="form-control" placeholder="Issued Date"
-                                                        value="{{ old('issue_date') }}">
+                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
-                                                @error('issue_date')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FEX-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
-
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -86,7 +79,7 @@
                                                         </option>
                                                         @foreach ($locations as $location)
                                                             <option value="{{ encryptId($location->id) }}"
-                                                                {{ old('location_id.1') == encrytpId($location->id) ? 'selected' : '' }}>
+                                                                {{ old('location_id.1') == encryptId($location->id) ? 'selected' : '' }}>
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -103,7 +96,7 @@
                                                         <option value="">Select Shift</option>
                                                         @foreach ($shifts as $shift)
                                                             <option value="{{ encryptId($shift->id) }}"
-                                                                {{ old('shift_id.1') == encrytpId($shift->id) ? 'selected' : '' }}>
+                                                                {{ old('shift_id.1') == encryptId($shift->id) ? 'selected' : '' }}>
                                                                 {{ $shift->shift }}</option>
                                                         @endforeach
                                                     </select>
@@ -131,7 +124,7 @@
                                                         <option value="">Select Unit</option>
                                                         @foreach ($units as $unit)
                                                             <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id.1') == encrytpId($unit->id) ? 'selected' : '' }}>
+                                                                {{ old('unit_id.1') == encryptId($unit->id) ? 'selected' : '' }}>
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -149,7 +142,7 @@
                                                         <option value="">Select Frequency</option>
                                                         @foreach ($frequency as $frequency)
                                                             <option value="{{ encryptId($frequency->id) }}"
-                                                                {{ old('frequency_id.1') == encrytpId($frequency->id) ? 'selected' : '' }}>
+                                                                {{ old('frequency_id.1') == encryptId($frequency->id) ? 'selected' : '' }}>
                                                                 {{ $frequency->frequency_name }}</option>
                                                         @endforeach
                                                     </select>
@@ -227,7 +220,7 @@
                                                             <option value="">Select Location</option>
                                                             @foreach ($locations as $location)
                                                                 <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location.1') == encrytpId($location->id) ? 'selected' : '' }}>
+                                                                    {{ old('location.1') == encryptId($location->id) ? 'selected' : '' }}>
                                                                     {{ $location->location_name }}</option>
                                                             @endforeach
                                                         </select>
@@ -245,7 +238,7 @@
                                                             <option value="">Select Department</option>
                                                             @foreach ($department as $department)
                                                                 <option value="{{ encryptId($department->id) }}"
-                                                                    {{ old('department.1') == encrytpId($department->id) ? 'selected' : '' }}>
+                                                                    {{ old('department.1') == encryptId($department->id) ? 'selected' : '' }}>
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
@@ -273,7 +266,7 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encrytpId($department->id) ? 'selected' : '' }}>
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
                                                                     {{ $type->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -324,10 +317,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of Discharge Tube</option>
                                                             <option value="{{ encryptId(FUNCTIONAL) }}"
-                                                                {{ old('discharge_tube.1') == encrytpId(FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_tube.1') == encryptId(FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.functional') }}</option>
                                                             <option value="{{ encryptId(NON_FUNCTIONAL) }}"
-                                                                {{ old('discharge_tube.1') == encrytpId(NON_FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_tube.1') == encryptId(NON_FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.non_functional') }}</option>
                                                         </select>
                                                     </div>
@@ -344,10 +337,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of Safety Pin</option>
                                                             <option value="{{ encryptId(PRESENT) }}"
-                                                                {{ old('safety_pin.1') == encrytpId(PRESENT) ? 'selected' : '' }}>
+                                                                {{ old('safety_pin.1') == encryptId(PRESENT) ? 'selected' : '' }}>
                                                                 {{ __('inspection.present') }}</option>
                                                             <option value="{{ encryptId(MISSING) }}"
-                                                                {{ old('safety_pin.1') == encrytpId(MISSING) ? 'selected' : '' }}>
+                                                                {{ old('safety_pin.1') == encryptId(MISSING) ? 'selected' : '' }}>
                                                                 {{ __('inspection.missing') }}</option>
                                                         </select>
                                                     </div>
@@ -717,7 +710,7 @@
                                                         <select name="location[${form_set_count}]" id="location-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Location</option>
-                                                            
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -728,7 +721,7 @@
                                                         <select name="department[${form_set_count}]" id="department-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
-                                                           
+
                                                         </select>
                                                     </div>
                                                 </div>
