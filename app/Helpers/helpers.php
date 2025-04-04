@@ -2395,6 +2395,10 @@ if (!function_exists('getMonth')) {
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
+
+                case HOSE_BOX_INSPECTION:
+                    return 'HBI-000001';
+                    break;
             }
         }
     }
@@ -2574,7 +2578,6 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
-                
             }
         }
     }
@@ -2596,7 +2599,7 @@ if (!function_exists('getMonth')) {
                         return $name->signature_upload;
                     } else {
                         return $name->file_path;
-                    }                
+                    }
             }
         }
     }
