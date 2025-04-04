@@ -26,7 +26,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form mx-3">
-                                    <form method="POST" id="eyewashAdd"
+                                    <form method="POST" id="cotypefireAdd"
                                         action="{{ admin_url('fire/fire-extinguisher/co2/add/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
@@ -164,7 +164,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                    <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -178,7 +178,16 @@
                                                         <i class="fa-solid fa-trash me-2"></i> Remove
                                                     </button>
                                                 </div>
-
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                        <input type="text" name="sr_no[1]" id = "sr_no"
+                                                            class="form-control"
+                                                            value="{{ FireSequence(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -253,10 +262,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of Discharge Tube</option>
                                                             <option value="{{ encryptId(FUNCTIONAL) }}"
-                                                                {{ old('discharge_tube.1') == encrytpId(FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_tube.1') == encryptId(FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.functional') }}</option>
                                                             <option value="{{ encryptId(NON_FUNCTIONAL) }}"
-                                                                {{ old('discharge_tube.1') == encrytpId(NON_FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_tube.1') == encryptId(NON_FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.non_functional') }}</option>
                                                         </select>
                                                     </div>
@@ -269,10 +278,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Discharge Horn</option>
                                                             <option value="{{ encryptId(FUNCTIONAL) }}"
-                                                                {{ old('discharge_horn.1') == encrytpId(FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_horn.1') == encryptId(FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.functional') }}</option>
                                                             <option value="{{ encryptId(NON_FUNCTIONAL) }}"
-                                                                {{ old('discharge_horn.1') == encrytpId(NON_FUNCTIONAL) ? 'selected' : '' }}>
+                                                                {{ old('discharge_horn.1') == encryptId(NON_FUNCTIONAL) ? 'selected' : '' }}>
                                                                 {{ __('inspection.non_functional') }}</option>
                                                         </select>
                                                     </div>
@@ -292,10 +301,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of Safety Pin</option>
                                                             <option value="{{ encryptId(PRESENT) }}"
-                                                                {{ old('safety_pin.1') == encrytpId(PRESENT) ? 'selected' : '' }}>
+                                                                {{ old('safety_pin.1') == encryptId(PRESENT) ? 'selected' : '' }}>
                                                                 {{ __('inspection.present') }}</option>
                                                             <option value="{{ encryptId(MISSING) }}"
-                                                                {{ old('safety_pin.1') == encrytpId(MISSING) ? 'selected' : '' }}>
+                                                                {{ old('safety_pin.1') == encryptId(MISSING) ? 'selected' : '' }}>
                                                                 {{ __('inspection.missing') }}</option>
                                                         </select>
                                                     </div>
@@ -324,14 +333,14 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Observation</h4>
+                                                    <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Observation</h4>
                                                 </div>
 
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="observation" id="observation" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -365,9 +374,6 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -384,7 +390,7 @@
                 $.validator.addMethod("uniqueItemCode", function(value, element) {
                     var itemCodes = [];
 
-                    $("input[name^='resource_code']").each(function() {
+                    $("input[name^='fire_point_no']").each(function() {
                         var itemCodeValue = $(this).val();
                         if (itemCodeValue) {
                             itemCodes.push(itemCodeValue);
@@ -392,19 +398,10 @@
                     });
 
                     return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
-                }, "Resource Code must be unique");
+                }, "Fire Point No must be unique");
 
-                $('#eyewashAdd').validate({
+                $('#cotypefireAdd').validate({
                     rules: {
-                        doc_no: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            noSpaces: true,
-                        },
-                        issue_date: {
-                            required: true,
-                        },
                         inspection_date: {
                             required: true,
                         },
@@ -423,64 +420,68 @@
                         frequency_id: {
                             required: true,
                         },
-                        identification_no: {
+                        "fire_point_no[1]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 100,
                             noSpaces: true,
-                        },
-                        forklift_type: {
-                            required: true,
-                        },
-                        "physical_condition[1]": {
-                            required: true,
-                        },
-                        "cable_condition[1]": {
-                            required: true,
-                        },
-                        "response_indicator[1]": {
-                            required: true,
-                        },
-                        "working_status[1]": {
-                            required: true,
-                        },
-                        "detector_type[1]": {
-                            required: true,
+                            number: true,
+                            uniqueItemCode: true,
                         },
                         "department[1]": {
                             required: true,
                         },
-                        "resource_code[1]": {
+                        "location[1]": {
                             required: true,
-                            uniqueItemCode: true,
+                        },
+                        "type[1]": {
+                            required: true,
+                        },
+                        "capacity[1]": {
+                            required: true,
+                            noSpaces: true,
+                        },
+                        "quantity[1]": {
+                            required: true,
+                            noSpaces: true,
+                            number: true,
+                            min: 1,
+                        },
+                        "discharge_tube[1]": {
+                            required: true,
+                        },
+                        "discharge_horn[1]": {
+                            required: true,
+                        },
+                        "weight_of_co2_in_fe[1]": {
+                            required: true,
+                            noSpaces: true,
+                        },
+                        "safety_pin[1]": {
+                            required: true,
+                        },
+                        "approach[1]": {
+                            required: true,
+                            noSpaces: true,
                         },
                         "remarks[1]": {
                             required: true,
+                            noSpaces: true,
                         },
                         device_image: {
                             required: true,
-                            extension: "jpg",
+                            // extension: "jpg",
                             filesize: 2097152
                         },
                         observation: {
                             required: true,
+                            noSpaces: true,
                         },
                         signature_image: {
                             required: true,
                         },
-
                     },
                     messages: {
-                        doc_no: {
-                            required: "Document Number is Required",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
-                        },
                         signature_image: {
                             required: 'Please upload your signature',
-                        },
-                        issue_date: {
-                            required: "Date Of Audit is required",
                         },
                         rev_date: {
                             required: "Revision Date required",
@@ -500,40 +501,52 @@
                         unit_id: {
                             required: "Unit is required",
                         },
-                        'detector_type[1]': {
-                            required: "Please Select the Detector Type",
-                        },
-                        "physical_condition[1]": {
-                            required: "Please Enter the Physical Condition",
-                        },
-                        "cable_condition[1]": {
-                            required: "Please Enter the Cable Condition",
-                        },
-                        "response_indicator[1]": {
-                            required: "Please Enter the Response Indicator",
+                        'fire_point_no[1]': {
+                            required: "Please Enter the Fire Point Number",
+                            uniqueItemCode: 'Fire Point Number must be unique',
+                            number: 'Quantity Must be valid Number',
                         },
                         "department[1]": {
-                            required: "Please Select The Department",
+                            required: "Please Select the Department",
                         },
-                        "working_status[1]": {
-                            required: "Please Select the Working Status",
+                        "location[1]": {
+                            required: "Please Select the Location",
                         },
-                        "resource_code[1]": {
-                            required: "Please add the resource code",
+                        "type[1]": {
+                            required: "Please Select the Fire Type",
+                        },
+                        "capacity[1]": {
+                            required: "Please Enter Capacity",
+                        },
+                        "quantity[1]": {
+                            required: "Please Enter the Quantity",
+                        },
+                        "discharge_tube[1]": {
+                            required: "Please Select the Discharge Tube",
+                        },
+                        "discharge_horn[1]": {
+                            required: "Please Select the Discharge Horn",
+                        },
+                        "weight_of_co2_in_fe[1]": {
+                            required: "Please Enter the Weight of CO2 in FE",
+                        },
+                        "safety_pin[1]": {
+                            required: "Please Select the Safety Pin",
+                        },
+                        "approach[1]": {
+                            required: "Please Enter the Approach",
                         },
                         "remarks[1]": {
-                            required: "Please add remarks",
+                            required: "Please Enter the Remarks",
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
+                            // extension: "Only JPG files are allowed.",
                             filesize: "Image must be under 2MB."
                         },
                         observation: {
-                            required: "Please add observation",
+                            required: "Please Enter the Observation",
                         },
-
-
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
@@ -557,8 +570,6 @@
             });
 
 
-
-
             let form_set_count = 2;
             let formIndex = 1;
             const minFormSets = 1;
@@ -575,8 +586,8 @@
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection CheckList Reached',
-                            text: 'You can only add up to 200 Detector Inspection CheckList.',
+                            title: 'Maximum Co2 Type Fire Extinguisher Inspection CheckList Reached',
+                            text: 'You can only add up to 200 Co2 Type Fire Extinguisher Inspection CheckList.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -586,111 +597,167 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
-                                                </div>
+                            <div class="card-header-inner p-2">
+                                <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
+                            </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
+                            <div class="d-flex justify-content-end gap-0 m-2">
+                                <button class="btn btn-primary add-row me-3" type="button"
+                                    id="add-row" style="width: 84px;">
+                                    Add
+                                </button>
+                                <button type="button" class="btn btn-danger remove-row">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
 
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                        </select>
-                                                    </div>
-                                                </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                    <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                        class="form-control" value="{{ FireSequence(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
+                                </div>
+                            </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
-                                                        <input type="text" name="resource_code[${form_set_count}]"
-                                                            id = "resource_code" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
-                                                        <select name="detector_type[${form_set_count}]" id="detector_type"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Detector Type</option>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">FIRE POINT NO</label>
+                                    <input type="text" name="fire_point_no[${form_set_count}]" id="fire_point_no-${form_set_count}" class="form-control">
+                                </div>
+                            </div>
 
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
-                                                        <select name="physical_condition[${form_set_count}]" id="physical_condition"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Physical Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                               <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <select name="cable_condition[${form_set_count}]" id="cable_condition"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Cable Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                 <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <select name="response_indicator[${form_set_count}]" id="response_indicator"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Response Indicator</option>
-                                                            <option value="{{ encryptId(WORKING) }}">Working</option>
-                                                            <option value="{{ encryptId(NOTWORKING) }}">Not Working</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.department') }}</label>
+                                    <select name="department[${form_set_count}]" id="department-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                    </select>
+                                </div>
+                            </div>
 
-                                                 <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <select name="working_status[${form_set_count}]" id="working_status"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Working Status</option>
-                                                            <option value="{{ encryptId(OPERATIONAL) }}">Operational</option>
-                                                            <option value="{{ encryptId(NONOPERATIONAL) }}">Non-Operational</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                             <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.location') }}</label>
+                                    <select name="location[${form_set_count}]" id="location-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select {{ __('inspection.location') }}
+                                        </option>
+                                        @foreach ($locations as $location)
+                                            <option value="{{ encryptId($location->id) }}"
+                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                {{ $location->location_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.type') }}</label>
+                                    <select name="type[${form_set_count}]" id="type-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Type</option>
+                                        @foreach ($types as $type)
+                                            <option value="{{ encryptId($type->id) }}">
+                                                {{ $type->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Capacity</label>
+                                    <input type="text" name="capacity[${form_set_count}]" id="capacity-${form_set_count}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Quantity</label>
+                                    <input type="text" name="quantity[${form_set_count}]" id="quantity-${form_set_count}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.discharge_tube') }}</label>
+                                    <select name="discharge_tube[${form_set_count}]" id="discharge_tube-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Status Of Discharge Tube</option>
+                                        <option value="{{ encryptId(FUNCTIONAL) }}"
+                                            {{ old('discharge_tube.1') == encryptId(FUNCTIONAL) ? 'selected' : '' }}>
+                                            {{ __('inspection.functional') }}</option>
+                                        <option value="{{ encryptId(NON_FUNCTIONAL) }}"
+                                            {{ old('discharge_tube.1') == encryptId(NON_FUNCTIONAL) ? 'selected' : '' }}>
+                                            {{ __('inspection.non_functional') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Discharge Horn</label>
+                                    <select name="discharge_horn[${form_set_count}]" id="discharge_horn-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Discharge Horn</option>
+                                        <option value="{{ encryptId(FUNCTIONAL) }}"
+                                            {{ old('discharge_horn.1') == encryptId(FUNCTIONAL) ? 'selected' : '' }}>
+                                            {{ __('inspection.functional') }}</option>
+                                        <option value="{{ encryptId(NON_FUNCTIONAL) }}"
+                                            {{ old('discharge_horn.1') == encryptId(NON_FUNCTIONAL) ? 'selected' : '' }}>
+                                            {{ __('inspection.non_functional') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Weight of CO2 in FE</label>
+                                    <input type="text" name="weight_of_co2_in_fe[${form_set_count}]" id="weight_of_co2_in_fe-${form_set_count}" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.safety_pin') }}</label>
+                                    <select name="safety_pin[${form_set_count}]" id="safety_pin-${form_set_count}"
+                                        class=" form-control single-select" style="width: 100%">
+                                        <option value="">Select Status Of Safety Pin</option>
+                                        <option value="{{ encryptId(PRESENT) }}"
+                                            {{ old('safety_pin.1') == encryptId(PRESENT) ? 'selected' : '' }}>
+                                            {{ __('inspection.present') }}</option>
+                                        <option value="{{ encryptId(MISSING) }}"
+                                            {{ old('safety_pin.1') == encryptId(MISSING) ? 'selected' : '' }}>
+                                            {{ __('inspection.missing') }}</option>
+                                    </select>
+                                </div>
+                                @error('safety_pin.1')
+                                    <div class="error">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">Approach</label>
+                                    <input type="text" name="approach[${form_set_count}]" id="approach-${form_set_count}" class="form-control">
+                                </div>
+                            </div>
 
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.remarks') }}</label>
+                                    <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
 
-                                                    </div>
-                                                </div>
+                                </div>
+                            </div>
 
-                                            </div>
+                        </div>
                     `;
 
                     let newFormSetElement = $(newFormSet);
@@ -700,6 +767,26 @@
 
                     $('.form-wrapper').append(newFormSetElement);
 
+                    $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Serial number is required',
+                        }
+                    });
+
+                    $("input[name='fire_point_no[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        uniqueItemCode: true,
+                        noSpaces: true,
+                        number: true,
+                        messages: {
+                            required: 'Please Enter the Fire Point Number',
+                            uniqueItemCode: 'Fire Point Number must be unique',
+                            noSpaces: 'Fire Point Number cannot be empty or only spaces',
+                            number: 'Quantity Must be valid Number',
+                        }
+                    });
+
                     $("select[name='department[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
@@ -707,47 +794,85 @@
                         }
                     });
 
-                    $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
+                    $("select[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        uniqueItemCode: true,
                         messages: {
-                            required: 'Please add the resource code',
+                            required: 'Please Select the Location',
                         }
                     });
 
-                    $("select[name='physical_condition[" + form_set_count + "]']").rules('add', {
+                    $("select[name='type[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Physical Condition',
+                            required: 'Please Select the Type',
                         }
                     });
 
-                    $("select[name='cable_condition[" + form_set_count + "]']").rules('add', {
+                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        noSpaces: true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Enter the Capacity',
+                            noSpaces: 'Capacity cannot be empty or only spaces'
                         }
                     });
-                    $("select[name='resource_indicator[" + form_set_count + "]']").rules('add', {
+
+                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        noSpaces: true,
+                        number:true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Enter the Quantity',
+                            noSpaces: 'Quantity cannot be empty or only spaces',
+                            number: 'Quantity Must be valid Number',
                         }
                     });
-                    $("select[name='working_status[" + form_set_count + "]']").rules('add', {
+
+                    $("select[name='discharge_tube[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Select the Discharge Tube',
+                        }
+                    });
+
+                    $("select[name='discharge_horn[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please Select the Discharge Horn',
+                        }
+                    });
+
+                    $("input[name='weight_of_co2_in_fe[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        noSpaces: true,
+                        messages: {
+                            required: 'Please Enter the Weight of CO2 in FE',
+                            noSpaces: 'Weight of CO2 in FE cannot be empty or only spaces',
+                        }
+                    });
+
+                    $("select[name='safety_pin[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please Select the Safety Pin',
+                        }
+                    });
+
+                    $("input[name='approach[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        noSpaces: true,
+                        messages: {
+                            required: 'Please Enter the Approach',
+                            noSpaces: 'Approach cannot be empty or only spaces',
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add the remarks',
+                            required: 'Please Enter the Remarks',
                         }
                     });
-
 
                     serial_number++;
                     form_set_count++;
@@ -761,8 +886,8 @@
                     if (currentFormSets >= maxObsSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection Observation Limit Reached',
-                            text: 'You can only add up to 5 Detector Inspection Observation.',
+                            title: 'Maximum Co2 Type Fire Extinguisher Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Co2 Type Fire Extinguisher Inspection Observation.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -770,36 +895,36 @@
 
                     var newObsSet = `
                         <div class="row mt-4 form-obs">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Observation</h4>
-                                                </div>
+                            <div class="card-header-inner p-2">
+                                <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Observation</h4>
+                            </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
+                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                    style="width: 120px;">
+                                    Add
+                                </button>
+                                <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                    style="width: 150px;">
+                                    Add Observation
+                                </button>
+                                <button type="button"
+                                    class="btn btn-danger remove-row d-flex align-items-center"
+                                    style="width: 120px;">
+                                    <i class="fa-solid fa-trash me-2"></i> Remove
+                                </button>
+                            </div>
 
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                            <div class="col-md-12 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label require">{{ __('inspection.obs') }}</label>
+                                    <textarea name="observation[1]" id="observation" class="form-control" style="resize: none;"></textarea>
 
-                                                    </div>
-                                                </div>
+                                </div>
+                            </div>
 
-                                            </div>
+                        </div>
                     `;
 
                 });
@@ -825,13 +950,20 @@
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
-
+                    let newSerialNumber = 'CTFE-' + ('000000' + idx).slice(-6);
+                    $(this).find("input[name^='sr_no']").val(newSerialNumber);
+                    $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
+                    $(this).find('input[name^="fire_point_no"]').attr('name', 'fire_point_no[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
-                    $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
-                    $(this).find('select[name^="physical_condition"]').attr('name', 'physical_condition[' + idx + ']');
-                    $(this).find('select[name^="cable_condition"]').attr('name', 'cable_condition[' + idx + ']');
-                    $(this).find('select[name^="response_indicator"]').attr('name', 'response_indicator[' + idx + ']');
-                    $(this).find('select[name^="working_status"]').attr('name', 'working_status[' + idx + ']');
+                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('select[name^="type"]').attr('name', 'type[' + idx + ']');
+                    $(this).find('input[name^="capacity"]').attr('name', 'capacity[' + idx + ']');
+                    $(this).find('input[name^="quantity"]').attr('name', 'quantity[' + idx + ']');
+                    $(this).find('select[name^="discharge_tube"]').attr('name', 'discharge_tube[' + idx + ']');
+                    $(this).find('select[name^="discharge_horn"]').attr('name', 'discharge_horn[' + idx + ']');
+                    $(this).find('input[name^="weight_of_co2_in_fe"]').attr('name', 'weight_of_co2_in_fe[' + idx + ']');
+                    $(this).find('select[name^="safety_pin"]').attr('name', 'safety_pin[' + idx + ']');
+                    $(this).find('input[name^="approach"]').attr('name', 'approach[' + idx + ']');
                     $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
@@ -846,7 +978,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum One CheckList Required',
-                        text: 'At least One Detector Inspection Checklist is required.',
+                        text: 'At least One Co2 Type Fire Extinguisher Inspection Checklist is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;

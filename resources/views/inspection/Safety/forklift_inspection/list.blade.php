@@ -23,32 +23,23 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="observation_status" id="observation_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
-
+                                                <option value="{{ encryptId('1') }}">Observation Pending</option>
+                                                <option value="{{ encryptId('3') }}">Observation Approved</option>
+                                                <option value="{{ encryptId('2') }}">Observation Rejected</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -71,9 +62,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -132,10 +121,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
                             d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.observation_status = $('#observation_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -150,17 +137,10 @@
                             searchable: true,
                         },
 
+
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date',
-                        },
-                        {
-                            data: 'rev_data',
-                            name: 'rev_data',
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection',
                         },
                         {
                             data: 'observation_status',
@@ -195,20 +175,16 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        observation_status = $('#observation_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/forklift-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&observation_status=' + observation_status
                                     }
                                 },
                                 {
@@ -216,19 +192,15 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        observation_status = $('#observation_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/forklift-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&observation_status=' + observation_status
                                     }
                                 },
                             ]

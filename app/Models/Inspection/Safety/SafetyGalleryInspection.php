@@ -13,9 +13,7 @@ class SafetyGalleryInspection extends Model
 
     protected $fillable = [
         'id',
-        'doc_no',
-        'issue_date',
-        'revision_data',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'unit',
@@ -53,29 +51,40 @@ class SafetyGalleryInspection extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_safety_gallery.*');
+
+
+        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id')
+            ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
+            ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_safety_gallery.resource_code LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_gallery.doc_no', 'LIKE', '%' . $request->document_number . '%');
+
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_safety_gallery.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->resource_code) && $request->resource_code) {
+            $query = $query->where('inspection_safety_gallery.resource_code', 'LIKE', '%' . ($request->resource_code) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_gallery.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_safety_gallery.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->whereDate('inspection_safety_gallery.date_of_inspection', '=', DBdateformat($request->inspection_date));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_safety_gallery.inspection_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -129,9 +138,7 @@ class SafetyGalleryInspection extends Model
         $responses = $request->checklist;
         $respones = json_encode($responses);
         $insert_array = [
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_data' => $request->rev_date,
-            'doc_no' => $request->doc_no,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
@@ -273,28 +280,37 @@ class SafetyGalleryInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_gallery.*');
+        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id')
+            ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
+            ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
+
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.resource_code LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_safety_gallery.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->resource_code) && $request->resource_code) {
+            $query = $query->where('inspection_safety_gallery.resource_code', 'LIKE', '%' . ($request->resource_code) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_safety_gallery.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->whereDate('inspection_safety_gallery.date_of_inspection', '=', DBdateformat($request->inspection_date));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_safety_gallery.inspection_status', decryptId($request->inspection_status));
         }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\Master\Equipment;
 use App\Models\Inspection\Safety\FireSafetyEquipment;
 use App\Models\Inspection\Safety\FireSafetyEquipmentDetails;
@@ -21,12 +22,16 @@ class FireSafetyEquipmentController extends Controller
     private $safety_equipment;
     private $safety_equipment_details;
     private $equipment;
+    private $document_reference;
+
 
     public function __construct()
     {
         $this->safety_equipment = new FireSafetyEquipment();
         $this->equipment = new Equipment();
         $this->safety_equipment_details = new FireSafetyEquipmentDetails();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -86,8 +91,11 @@ class FireSafetyEquipmentController extends Controller
     {
         try {
             $equipment = $this->equipment->get();
+            $document_no = $this->document_reference->selectUsingName('ListofFireSafetyEquipment');
+
             $data = array(
                 'equipment' => $equipment,
+                'document_no' => $document_no,
             );
             return view('inspection.Safety.safety_equipment.add', $data);
         } catch (Exception $ex) {
@@ -175,9 +183,12 @@ class FireSafetyEquipmentController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->safety_equipment->selectOne($id);
             $inspection = $this->safety_equipment_details->GetDetails($inspection_details->id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
+                'document_no' => $document_no,
             );
 
             return view('inspection.Safety.safety_equipment.view', $data);
@@ -293,11 +304,13 @@ class FireSafetyEquipmentController extends Controller
             if (Auth::check()) {
                 $inspection_details = $this->safety_equipment->selectOne($id);
                 $inspection = $this->safety_equipment_details->GetDetails($inspection_details->id);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $inspection,
                     'pagetitle' => "Safety Equipment List",
+                    'document_no' => $document_no,
                 ];
             }
 

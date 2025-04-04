@@ -11,26 +11,22 @@ class RRAADetails extends Model
 {
     use  HasFactory;
 
-    protected $table = 'inspection_rraa_details';
+    protected $table = 'inspection_rraa';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'document_number',
-        'issue_date',
-        'revision_date',
-        'inspection_status',
-        'remarks',
-        'capa_recomendation',
-        'capa_remarks',
-        'capa_ehs_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'verified_by',
-        'approved_by',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'document_reference_id',
+        'serial_number',
+        'category',
+        'ohs_compliance_index',
+        'frequency',
+        'scope',
+        'responsibility',
+        'authority',
+        'accountability',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -48,7 +44,7 @@ class RRAADetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_rraa_details.*');
+        $query = $this->select('inspection_rraa.*');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -65,13 +61,13 @@ class RRAADetails extends Model
         }
 
         if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_rraa.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_rraa.revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -115,7 +111,7 @@ class RRAADetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_rraa_details.*');
+        $query = $this->select('inspection_rraa.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -126,13 +122,13 @@ class RRAADetails extends Model
             });
         }
         if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('inspection_rraa_details.document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_rraa.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
         }
         if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('inspection_rraa_details.revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_rraa.revision_date', 'LIKE', '%' . $request->revision_date . '%');
         }
         $query->orderBy('id', 'DESC');
 
@@ -141,6 +137,6 @@ class RRAADetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_rraa_details'));
+        static::addGlobalScope(new TrashScope('inspection_rraa'));
     }
 }

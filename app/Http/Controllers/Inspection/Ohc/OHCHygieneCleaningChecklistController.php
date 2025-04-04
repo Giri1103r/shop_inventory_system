@@ -12,6 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
 
 class OHCHygieneCleaningChecklistController extends Controller
@@ -19,12 +20,16 @@ class OHCHygieneCleaningChecklistController extends Controller
     private $ohc_hygiene;
     private $shift;
     private $signature;
+    private $document_reference;
+
 
     public function __construct()
     {
         $this->ohc_hygiene = new OHCHygieneCleaningChecklist();
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -108,8 +113,12 @@ class OHCHygieneCleaningChecklistController extends Controller
     {
         try {
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
+            $document_no = $this->document_reference->selectUsingName('DailyOHCHygieneCleaningChecklist');
+
             $data = array(
                 'shifts' => $shift,
+                'document_no' => $document_no,
+
             );
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.add', $data);
         } catch (Exception $ex) {
@@ -170,10 +179,14 @@ class OHCHygieneCleaningChecklistController extends Controller
             $inspection_details = $this->ohc_hygiene->selectOne($id);
             $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = [
                 'inspection_details' => $inspection_details,
                 'cleaner_signature' => $cleaner_signature,
                 'nursing_signature' => $nursing_signature,
+                'document_no' => $document_no,
+
             ];
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
         } catch (Exception $ex) {
@@ -190,10 +203,14 @@ class OHCHygieneCleaningChecklistController extends Controller
             $inspection_details = $this->ohc_hygiene->selectOne($id);
             $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = [
                 'inspection_details' => $inspection_details,
                 'cleaner_signature' => $cleaner_signature,
                 'nursing_signature' => $nursing_signature,
+                'document_no' => $document_no,
+
             ];
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
         } catch (Exception $ex) {
@@ -326,12 +343,14 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $inspection_details = $this->ohc_hygiene->selectone($id);
                 $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
                 $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
                 $data = [
                     'cleaner_signature' => $cleaner_signature,
                     'nursing_signature' => $nursing_signature,
                     'inspection_details' => $inspection_details,
                     'pagetitle' => "OHC Hygiene Inspection Checklist",
+                    'document_no' => $document_no,
                 ];
             }
             $property = [

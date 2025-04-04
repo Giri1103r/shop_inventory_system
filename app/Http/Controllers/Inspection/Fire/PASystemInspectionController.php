@@ -233,7 +233,7 @@ class PASystemInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -361,7 +361,7 @@ class PASystemInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 2,
@@ -422,7 +422,7 @@ class PASystemInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire PA System Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -494,7 +494,7 @@ class PASystemInspectionController extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -568,7 +568,7 @@ class PASystemInspectionController extends Controller
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -639,7 +639,7 @@ class PASystemInspectionController extends Controller
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -716,8 +716,8 @@ class PASystemInspectionController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->date_of_inspection;
-                $export[] =  $data->next_due;
+                $export[] =  displaydateformat($data->date_of_inspection);
+                $export[] =  displaydateformat($data->next_due);
                 $export[] =  $data->location_name;
                 $export[] =  $data->shift;
                 $export[] =  $data->unit_name;

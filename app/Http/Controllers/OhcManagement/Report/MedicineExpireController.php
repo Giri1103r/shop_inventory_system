@@ -112,11 +112,12 @@ class MedicineExpireController extends Controller
                             $expireDate = Carbon::parse($row->expire_date);
                             $today = Carbon::today();
                             if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVED) {
+
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" data-balance="' . $row->balance .  '" data-medicine="' . $row->medicine . '" data-unit="' . $row->unit .  '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;">
                                 <i class="fa fa-times-circle"></i>
                              </a>';
                             }
-                            if($row->approve_status != OHC_DISCARD_EHS_APPROVED){
+                            if($row->approve_status != OHC_DISCARD_EHS_APPROVED && checkUserRole(ROLE_EHS_HEAD)){
 
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close" title="Close" style="color: white;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
                             }

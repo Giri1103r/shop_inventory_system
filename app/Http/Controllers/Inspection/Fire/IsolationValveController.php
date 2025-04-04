@@ -23,6 +23,7 @@ use App\Models\Inspection\Fire\IsolationValve;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\IsolationValveDetails;
+use App\Models\Inspection\InspectionStaticDocno;
 
 class IsolationValveController extends Controller
 {
@@ -37,6 +38,7 @@ class IsolationValveController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
 
     public function __construct()
     {
@@ -51,6 +53,7 @@ class IsolationValveController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -164,6 +167,7 @@ class IsolationValveController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('IsolatingValveInspection');
 
             $data = array(
                 'locations' => $location,
@@ -171,6 +175,7 @@ class IsolationValveController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.isolation_valve.add', $data);
@@ -206,8 +211,6 @@ class IsolationValveController extends Controller
         try {   
 
             $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
@@ -230,8 +233,6 @@ class IsolationValveController extends Controller
             ];
 
             $messages = [
-                'issue_date.required' => 'Issue Date is required',
-                'rev_date.required' => 'Revision Data is required',
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
                 'shift_id.required' => 'Shift is required',
@@ -332,11 +333,14 @@ class IsolationValveController extends Controller
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
 
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.isolation_valve.view', $data);
         } catch (Exception $ex) {
@@ -357,12 +361,14 @@ class IsolationValveController extends Controller
             $inspection_details = $this->isolation_valve_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.isolation_valve.approve', $data);
         } catch (Exception $ex) {
@@ -825,12 +831,14 @@ class IsolationValveController extends Controller
                 $status_log = $this->statusLog->selectOne($id,ISOLATION_VALVE_INSPECTION);
                 $forklift_details = $this->isolation_valve->selectOne($id);
                 $inspection = $this->isolation_valve_details->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Isolation Valve Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

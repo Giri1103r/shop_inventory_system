@@ -56,27 +56,29 @@
                                                         placeholder="6S Audit Analysis Report" value="">
                                                 </div>
                                             </div>
+                                            <input type="hidden" class="form-control" name="docNo_id"
+                                                value="{{ encryptId($staticDocno->id) }}">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Document Number</label>
-                                                    <input type="text" name ="document_number" class="form-control"
-                                                        placeholder="Document Number" value="">
+                                                    <label class="form-label require">Doc. No</label>
+                                                    <input type="text" name ="doc_no" class="form-control"
+                                                        value="{{ $staticDocno->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Issue Date</label>
+                                                    <label class="form-label require">Issue Dt.</label>
                                                     <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date" value="">
+                                                        class="form-control"
+                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}" readonly>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Revision Date</label>
-                                                    <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date"
-                                                        value="{{ getDocumentReviewDate('Audit Analysis-0') }}" readonly>
+                                                    <label class="form-label require">Rev. & Dt.</label>
+                                                    <input type="text" name ="rev_dt" class="form-control"
+                                                        value="{{ $staticDocno->rev_dt }}" readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -99,14 +101,14 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Serial Number</label>
-                                                                <input type="text" name="serial_number[1]"
-                                                                    class="form-control" value="00001" readonly>
+                                                                <input type="text" name="audit[1][serial_number]" id="serial_number_1"
+                                                                    class="form-control" value="AUDIT-0001" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department Name</label>
-                                                                <select name="department_id[1]"
+                                                                <select name="audit[1][department_id]" id="department_id_1"
                                                                     class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Department</option>
                                                                     @foreach ($departmentList as $department)
@@ -119,7 +121,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit Name</label>
-                                                                <select name="unit_id[1]" class="form-control single-select"
+                                                                <select name="audit[1][unit_id]"  id="unit_id_1" class="form-control single-select"
                                                                     style="width: 100%">
                                                                     <option value="">Select Unit</option>
                                                                     @foreach ($unitList as $unit)
@@ -132,7 +134,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Year</label>
-                                                                <input type="text" name ="year" id="year"
+                                                                <input type="text" id="year_1" name="audit[1][year]"
                                                                     class="form-control" placeholder="Year"
                                                                     value="">
                                                             </div>
@@ -141,7 +143,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Month</label>
-                                                                <input type="text" name ="month" id="month"
+                                                                <input type="text" id="month_1" name="audit[1][month]"
                                                                     class="form-control" placeholder="month"
                                                                     value="">
                                                             </div>
@@ -150,7 +152,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Mark</label>
-                                                                <input type="text" name ="mark" id="mark"
+                                                                <input type="text" name="audit[1][mark]" id="mark_1"
                                                                     class="form-control" placeholder="mark"
                                                                     value="">
                                                             </div>
@@ -162,14 +164,14 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total No's of
                                                                     Audit</label>
-                                                                <input type="text" name="no_of_audit[1]"
+                                                                <input type="text" name="audit[1][no_of_audit]" id="no_of_audit_1"
                                                                     class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total Marks</label>
-                                                                <input type="text" name="total_marks[1]"
+                                                                <input type="text" name="audit[1][total_marks]" id="total_marks_1"
                                                                     class="form-control">
                                                             </div>
                                                         </div>
@@ -177,14 +179,14 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total Marks
                                                                     Obtained</label>
-                                                                <input type="text" name="marks_obtained[1]"
+                                                                <input type="text" name="audit[1][marks_obtained]" id="marks_obtained_1"
                                                                     class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">%</label>
-                                                                <input type="text" name="percentage[1]"
+                                                                <input type="text" name="audit[1][percentage]" id="percentage_1"
                                                                     class="form-control">
                                                             </div>
                                                         </div>
@@ -219,6 +221,55 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
+            function checkSelections() {
+                var departmentId = $("input[id^='department_id_']").val();
+                var unitId = $("input[id^='unit_id_']").val();
+                var year = $("input[id^='year_']").val();
+                var month = $("input[id^='month_']").val();
+
+                if (month && year && unitId && departmentId) {
+                    $.ajax({
+                        url: "{{ url('audit/6s-analysis/ajax-list') }}",
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            departmentId: departmentId,
+                            unitId: unitId,
+                            year: year,
+                            month: month,
+                        },
+                        success: function(response) {
+                            $('.text-danger').remove();
+                            var conflicts = response.conflicts;
+
+                            if (Object.keys(conflicts).length > 0) {
+                                for (var key in conflicts) {
+                                    if (conflicts.hasOwnProperty(key)) {
+                                        $('#' + key).closest('.form-group').append(
+                                            '<div><span class="text-danger">' + conflicts[key] +
+                                            '</span></div>'
+                                        );
+                                    }
+                                }
+                                $('#auditAnalysisAdd').data('conflict', true);
+                            } else {
+                                $('#auditAnalysisAdd').data('conflict', false);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching data. Please try again.');
+                        }
+                    });
+                } else {
+                    $('.text-danger').remove();
+                    $('#auditAnalysisAdd').data('conflict', false);
+                }
+            }
+
+            $("input[id^='department_id_']").on('change', checkSelections);
+            $("input[id^='unit_id_']").on('change', checkSelections);
+            $("input[id^='year_']").on('change', checkSelections);
+            $("input[id^='month_']").on('change', checkSelections);
 
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
@@ -390,13 +441,13 @@
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Serial Number</label>
-                                    <input type="text" name="serial_number[${form_set_count}]" class="form-control" value="${newSerialNumber}" readonly>
+                                    <input type="text" name="audit[${form_set_count}][serial_number]" id="serial_number_${form_set_count}" class="form-control" value="${newSerialNumber}" readonly>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Department Name</label>
-                                    <select name="department_id[${form_set_count}]" class="form-control single-select" style="width: 100%">
+                                    <select name="audit[${form_set_count}][department_id]" id="department_id_${form_set_count}" class="form-control single-select" style="width: 100%">
                                         <option value="">Select Department</option>
                                         @foreach ($departmentList as $department)
                                             <option value="{{ $department->id }}">{{ $department->department_name }}</option>
@@ -407,7 +458,7 @@
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Unit Name</label>
-                                    <select name="unit_id[${form_set_count}]" class="form-control single-select">
+                                    <select name="audit[${form_set_count}][unit_id]" id="unit_id_${form_set_count}" class="form-control single-select">
                                         <option value="">Select Unit</option>
                                         @foreach ($unitList as $unit)
                                             <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
@@ -418,19 +469,19 @@
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Year</label>
-                                    <input type="text" name="year[${form_set_count}]" class="form-control year-picker" placeholder="Year">
+                                    <input type="text" name="audit[${form_set_count}][year]" class="form-control year-picker" id="year_${form_set_count}" placeholder="Year">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Month</label>
-                                    <input type="text" name="month[${form_set_count}]" class="form-control month-picker" placeholder="Month">
+                                    <input type="text" name="audit[${form_set_count}][month]" class="form-control month-picker" id="month_${form_set_count}" placeholder="Month">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Mark</label>
-                                    <input type="text" name="mark[${form_set_count}]" class="form-control" placeholder="Mark">
+                                    <input type="text" name="audit[${form_set_count}][mark]" id="mark_${form_set_count}" class="form-control" placeholder="Mark">
                                 </div>
                             </div>
                         </div>
@@ -439,25 +490,25 @@
                             <div class="col-md-3">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Total No's of Audit</label>
-                                    <input type="text" name="no_of_audit[${form_set_count}]" class="form-control">
+                                    <input type="text" name="audit[${form_set_count}][no_of_audit]" id="no_of_audit_${form_set_count}" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Total Marks</label>
-                                    <input type="text" name="total_marks[${form_set_count}]" class="form-control">
+                                    <input type="text" name="audit[${form_set_count}][total_marks]" id="total_marks_${form_set_count}" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Total Marks Obtained</label>
-                                    <input type="text" name="marks_obtained[${form_set_count}]" class="form-control">
+                                    <input type="text" name="audit[${form_set_count}][marks_obtained]" id="marks_obtained_${form_set_count}"  class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group form-input">
                                     <label class="form-label require">%</label>
-                                    <input type="text" name="percentage[${form_set_count}]" class="form-control">
+                                    <input type="text" name="audit[${form_set_count}][percentage]"  id="percentage_${form_set_count}" class="form-control">
                                 </div>
                             </div>
                         </div>

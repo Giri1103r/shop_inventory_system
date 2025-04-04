@@ -12,26 +12,18 @@ class MSDSDetails extends Model
 
     use  HasFactory;
 
-    protected $table = 'inspection_msds_details';
+    protected $table = 'inspection_msds';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'document_number',
-        'issue_date',
-        'revision_date',
-        'inspection_status',
-        'remarks',
-        'capa_recomendation',
-        'capa_remarks',
-        'capa_ehs_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'verified_by',
-        'approved_by',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'document_reference_id',
+        'serial_number',
+        'item_code',
+        'name_of_chemical',
+        'msds_availability_status',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -49,7 +41,8 @@ class MSDSDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_msds_details.*');
+
+        $query = $this->select('inspection_msds.*');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -59,20 +52,16 @@ class MSDSDetails extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('item_code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('name_of_chemical', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('item_code') && $request->item_code) {
+            $query = $query->where('item_code', 'LIKE', '%' . $request->item_code . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
-        }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        if (isset($request->name_of_chemical) && $request->name_of_chemical) {
+            $query = $query->where('name_of_chemical', 'LIKE', '%' . $request->name_of_chemical . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -97,12 +86,23 @@ class MSDSDetails extends Model
     {
         $request = request();
 
-        $insert_array = array(
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
-            'created_by' => Auth::id(),
-        );
+        $insertedData = [];
+
+        foreach ($request->item_code as $index => $itemCode) {
+            $insert_array = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'serial_number' =>$request->serial_number[$index],
+                'item_code' => $itemCode,
+                'name_of_chemical' => $request->name_of_chemical[$index],
+                'msds_availability_status' => decryptId($request->msds_availability_status[$index]),
+                'remark' => $request->remark[$index],
+                'created_by' => Auth::id(),
+            );
+
+
+            $insertedData []=  $this->create($insert_array);
+
+        }
 
         return $this->create($insert_array);
     }
@@ -116,24 +116,21 @@ class MSDSDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_msds_details.*');
+        $query = $this->select('inspection_msds.*');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                $query->orWhere('item_code', 'LIKE', '%' . $search . '%')
+                    ->orWhere('name_of_chemical', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('item_code') && $request->item_code) {
+            $query = $query->where('item_code', 'LIKE', '%' . $request->item_code . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
-        }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+        if (isset($request->name_of_chemical) && $request->name_of_chemical) {
+            $query = $query->where('name_of_chemical', 'LIKE', '%' . $request->name_of_chemical . '%');
         }
 
         $query->orderBy('id', 'DESC');
@@ -143,6 +140,6 @@ class MSDSDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_msds_details'));
+        static::addGlobalScope(new TrashScope('inspection_msds'));
     }
 }

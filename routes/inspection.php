@@ -154,6 +154,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
         Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
+        Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
 
     Route::group(['prefix' => 'master/task/'], function () {
@@ -852,25 +853,6 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
 });
 
 
-Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
-    Route::GET('list', [PASystemInspectionController::class, 'Index']);
-    Route::POST('list', [PASystemInspectionController::class, 'Index']);
-    Route::GET('add', [PASystemInspectionController::class, 'Add']);
-    Route::POST('add/submit', [PASystemInspectionController::class, 'Store']);
-    Route::GET('view/{id}', [PASystemInspectionController::class, 'View']);
-    Route::GET('verification/{id}/{employee_type}', [PASystemInspectionController::class, 'approvals']);
-    Route::POST('ehsofficer/verify/submit', [PASystemInspectionController::class, 'EHSOfficerSubmit']);
-    Route::POST('capa/submit', [PASystemInspectionController::class, 'CAPASubmit']);
-    Route::POST('capa/reverify/submit', [PASystemInspectionController::class, 'CAPAVerifySubmit']);
-    Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
-    Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
-    Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
-    Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
-    Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
-    Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
-});
-
-
 Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::get('list', [CurrentNewExtCodeDialingController::class, 'Index']);
     Route::post('list', [CurrentNewExtCodeDialingController::class, 'Index']);
@@ -891,4 +873,3 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
 
 
 });
-

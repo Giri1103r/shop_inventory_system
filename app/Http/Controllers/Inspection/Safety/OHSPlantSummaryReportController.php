@@ -11,16 +11,21 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\OHSPlantSummaryReport;
 
 class OHSPlantSummaryReportController extends Controller
 {
     private $ohsreport;
     private $unit;
+    private $document_reference;
+
     public function __construct()
     {
         $this->unit = new Unit();
         $this->ohsreport = new OHSPlantSummaryReport();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
     public function Index(Request $request)
     {
@@ -34,9 +39,9 @@ class OHSPlantSummaryReportController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -90,23 +95,23 @@ class OHSPlantSummaryReportController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/ohc-plant-summary/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/ohc-plant-summary/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -118,6 +123,7 @@ class OHSPlantSummaryReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -132,8 +138,13 @@ class OHSPlantSummaryReportController extends Controller
     {
         try {
             $unit = $this->unit->getUnit();
+            $document_no = $this->document_reference->selectUsingName('OhsPlantSummaryReport');
+
+
             $data = array(
                 'units' => $unit,
+                'document_no' => $document_no,
+
             );
             return view('inspection.Safety.ohc_plant_summary.add', $data);
         } catch (Exception $ex) {
@@ -201,7 +212,7 @@ class OHSPlantSummaryReportController extends Controller
             }
 
             $ohc_plant_summary = $this->ohsreport->store();
-           
+
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('safety/ohc-plant-summary/list'));
         } catch (Exception $ex) {
@@ -219,11 +230,15 @@ class OHSPlantSummaryReportController extends Controller
             $quantity_details = json_decode($inspection_details->quantity_details, true);
             $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
             $unit = $this->unit->getUnit();
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
             $data = [
                 'inspection_details' => $inspection_details,
                 'quantity_details' => $quantity_details,
                 'fire_water_pump_details' => $fire_water_pump_details,
                 'units' => $unit,
+                'document_no' => $document_no,
+
             ];
             return view('inspection.Safety.ohc_plant_summary.view', $data);
         } catch (Exception $ex) {
@@ -342,6 +357,8 @@ class OHSPlantSummaryReportController extends Controller
                 $quantity_details = json_decode($inspection_details->quantity_details, true);
                 $units = $this->unit->getUnit();
                 $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
                 $data = [
                     'inspection_details' => $inspection_details,
@@ -349,6 +366,7 @@ class OHSPlantSummaryReportController extends Controller
                     'fire_water_pump_details' => $fire_water_pump_details,
                     'pagetitle' => "OHS Plant Summary Report",
                     'units' => $units,
+                    'document_no' => $document_no,
                 ];
             }
 

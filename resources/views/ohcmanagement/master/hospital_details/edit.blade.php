@@ -44,6 +44,9 @@
                                                     <input type="text" name="hospital_name" id="hospital_name"
                                                         value="{{ $hospitalDetails->hospital_name }}" class="form-control"
                                                         placeholder="Hospital Name">
+                                                    @error('hospital_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -52,6 +55,9 @@
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         class="form-control"value="{{ $hospitalDetails->mobile_no }}"
                                                         placeholder="Enter the Mobile Number">
+                                                    @error('mobile_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -60,12 +66,18 @@
                                                     <input type="text" name="tel_no" id="tel_no" class="form-control"
                                                         value="{{ $hospitalDetails->tel_no }}"
                                                         placeholder="Enter the Mobile Number">
+                                                    @error('tel_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
                                                     <textarea name="address" class="form-control" placeholder="Enter the Address">{{ $hospitalDetails->address }}</textarea>
+                                                    @error('address')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>

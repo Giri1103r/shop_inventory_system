@@ -25,12 +25,7 @@
                             {{ $i }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department_id) }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getMedicineName($value->medicine_id) }}
                         </td>
@@ -44,14 +39,14 @@
                             {{ displaydateformat($value->discard_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
+                            {{ getDiscardStatus($value->approve_status) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getusername($value->approved_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}

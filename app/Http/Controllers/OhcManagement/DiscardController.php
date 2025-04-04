@@ -127,6 +127,7 @@ class DiscardController extends Controller
                             if (((CheckUserRole(ROLE_SUPERADMIN) && $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&   $row->approve_status != OHC_DISCARD_EHS_APPROVED) || (CheckUserRole(ROLE_EHS_HEAD) &&  $row->approve_status == OHC_DISCARD_EHS_APPROVAL_PENDING &&  $row->approve_status != OHC_DISCARD_EHS_APPROVED))) {
                                 $btn .= '<a href="' . admin_url('ohc/discard/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
+                            $btn .= '<a href="' . admin_url('ohc/discard/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             return $btn;
                         })
 
@@ -224,6 +225,50 @@ class DiscardController extends Controller
             return redirect(admin_url('ohc/discard/list'));
         }
     }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+
+
+            if (Auth::check()) {
+                $user_discard = $this->user_discard->selectOne($id);
+            }
+            $unit = $this->unit->getunit();
+            $logData = $this->ohcStatus->where('reference_id', $user_discard->id)->where('type', TYPE_OHC_MEDICINE_DISCARD)->get();
+
+
+            $data = [
+                'user_discard' => $user_discard,
+                'logData' => $logData,
+                'pagetitle' => "Discarded Medicine",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('ohcmanagement.discard.exportpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Discarded Medicine.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
     public function approvalsubmit(Request $request)
     {
         try {
@@ -350,14 +395,13 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit Name',
-                'Department Name',
                 'Medicine Name',
                 'Quantity',
                 'Remarks',
                 'Discard Date',
-                'Status',
+                'Approve status',
                 'Created by',
+                'Approved by',
                 'Created at'
             ];
 
@@ -366,14 +410,13 @@ class DiscardController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  getUnitname($data->unit_id);
-                $export[] =  getDepartment($data->department_id);
                 $export[] =  getMedicinename($data->medicine_id);
                 $export[] = $data->quantity;
                 $export[] = $data->remarks;
                 $export[] = Displaydateformat($data->discard_date);
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  getDiscardStatus($data->approve_status);
                 $export[] =  getusername($data->created_by);
+                $export[] =  getusername($data->approved_by);
                 $export[] =  Displaydateformat($data->created_at);
 
                 $exportData[] = $export;
@@ -389,6 +432,8 @@ class DiscardController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            return redirect(admin_url('ohc/discard/list'))
+            ->with('error', 'Something went wrong, Please try again later.');
         }
     }
 
@@ -405,21 +450,20 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit Name',
-                'Department Name',
                 'Medicine Name',
                 'Quantity',
                 'Remarks',
                 'Discard Date',
-                'Status',
+                'Approve status',
                 'Created by',
+                'Approved by',
                 'Created at'
             ];
 
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Expired Medicines",
+                'pagetitle' => "Discarded Medicine",
             );
 
             $property = [
@@ -441,11 +485,13 @@ class DiscardController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Expired Medicines.pdf";
+            $filename = "Discarded Medicine.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
+            return redirect(admin_url('ohc/discard/list'))
+            ->with('error', 'Something went wrong, Please try again later.');
         }
     }
 

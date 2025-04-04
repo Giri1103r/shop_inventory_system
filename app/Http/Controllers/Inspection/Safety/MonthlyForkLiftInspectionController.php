@@ -19,6 +19,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Http\Controllers\Admin\AdminController;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
@@ -35,6 +36,7 @@ class MonthlyForkLiftInspectionController extends Controller
     private $frequency;
     private $statusLog;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -46,6 +48,7 @@ class MonthlyForkLiftInspectionController extends Controller
         $this->frequency = new Frequency();
         $this->forklift_type = new ForkLiftType();
         $this->statusLog = new SafetyStatusLog();
+        $this->document_reference = new InspectionStaticDocno();
         $this->signature = new SignatureUpload();
     }
 
@@ -61,9 +64,9 @@ class MonthlyForkLiftInspectionController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -73,6 +76,9 @@ class MonthlyForkLiftInspectionController extends Controller
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
+                        })
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -114,41 +120,52 @@ class MonthlyForkLiftInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/forklift-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/forklift-inspection/monthly/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('safety/forklift-inspection/monthly/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'issue_date', 'date_of_inspection'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = array();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
         return view('inspection.Safety.forklift_inspection_monthly.list', $data);
     }
 
@@ -163,6 +180,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $forklifts = $this->forklift_type->getForkLift();
+            $document_no = $this->document_reference->selectUsingName('MonthlyForkliftInspectionChecklist');
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'shift' => $shift,
@@ -171,6 +189,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'units' => $unit,
                 'frequency' => $frequency,
                 'forklifts' => $forklifts,
+                'document_no' => $document_no,
             );
             return view('inspection.Safety.forklift_inspection_monthly.add', $data);
         } catch (Exception $ex) {
@@ -227,7 +246,7 @@ class MonthlyForkLiftInspectionController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             $forklift_inspection = $this->forklift->store();
             $id = $forklift_inspection->id;
             $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);
@@ -291,9 +310,11 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
             $status_log = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             ];
             return view('inspection.Safety.forklift_inspection_monthly.view', $data);
         } catch (Exception $ex) {
@@ -310,9 +331,11 @@ class MonthlyForkLiftInspectionController extends Controller
             $id = decryptId($request->id);
             $approval_type = $request->employee_type;
             $inspection_details = $this->forklift->selectOne($id);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
                 'approval_type' => $approval_type,
+                'document_no' => $document_no,
             ];
             return view('inspection.Safety.forklift_inspection_monthly.approval', $data);
         } catch (Exception $ex) {
@@ -740,6 +763,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Monthly ForkLift Inspection",
+
             );
 
             $property = [
@@ -776,11 +800,13 @@ class MonthlyForkLiftInspectionController extends Controller
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
                 $forklift_details = $this->forklift->selectOne($id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Monthly ForkLift Inspection",
+                    'document_no' => $document_no,
                 ];
             }
 

@@ -304,7 +304,7 @@
                                                                             <div class="form-group form-input">
                                                                                 <label for="quantity"
                                                                                     class="require">Quantity</label>
-                                                                                <input type="text"
+                                                                                <input type="number" min = "1"
                                                                                     name="quantity[{{ $key }}]"
                                                                                     id="quantity"
                                                                                     placeholder="Enter the quantity"
@@ -738,7 +738,7 @@
                     },
                     hospital_name: {
                         required: "Hospital name is required .",
-                   
+
 
                     },
                     first_aider: {
@@ -1257,7 +1257,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 

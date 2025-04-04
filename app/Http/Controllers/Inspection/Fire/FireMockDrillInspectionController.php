@@ -18,6 +18,7 @@ use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\FireMockDrillInspection;
@@ -36,6 +37,8 @@ class FireMockDrillInspectionController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
+    private $document_reference;
+
 
     public function __construct()
     {
@@ -50,6 +53,8 @@ class FireMockDrillInspectionController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
+        $this->document_reference = new InspectionStaticDocno();
+
     }
 
     public function Index(Request $request)
@@ -163,6 +168,8 @@ class FireMockDrillInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('FireMockDrillObservation');
+
 
             $data = array(
                 'locations' => $location,
@@ -170,6 +177,7 @@ class FireMockDrillInspectionController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.fire_mock_drill_inspection.add', $data);
@@ -277,11 +285,14 @@ class FireMockDrillInspectionController extends Controller
             $inspection = $this->fire_mock_drill_inspection->selectOne($id);
             $inspection_details = $this->fire_mock_drill_inspection_details->GetDetails($inspection->id);
             $status_log = $this->statusLog->selectOne($id, FIRE_MOCK_DRILL_INSPECION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.fire_mock_drill_inspection.view', $data);
         } catch (Exception $ex) {
@@ -303,12 +314,16 @@ class FireMockDrillInspectionController extends Controller
             $inspection_details = $this->fire_mock_drill_inspection_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, FIRE_MOCK_DRILL_INSPECION);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
+
             );
             return view('inspection.fire.fire_mock_drill_inspection.approve', $data);
         } catch (Exception $ex) {
@@ -771,12 +786,14 @@ class FireMockDrillInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id,FIRE_MOCK_DRILL_INSPECION);
                 $forklift_details = $this->fire_mock_drill_inspection->selectOne($id);
                 $inspection = $this->fire_mock_drill_inspection_details->GetDetails($forklift_details->id);
+                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire Mock Drill Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 

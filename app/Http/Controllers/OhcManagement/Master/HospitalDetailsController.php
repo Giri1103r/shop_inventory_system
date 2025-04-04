@@ -31,6 +31,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\OhcManagement\Report\Inventory;
+use Illuminate\Validation\Rule;
 
 class HospitalDetailsController extends Controller
 {
@@ -92,15 +93,15 @@ class HospitalDetailsController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('ohc/hospital-details/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/hospital-details/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit') ) {
-                                $btn .= '<a href="' . admin_url('ohc/hospital-details/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/hospital-details/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', ])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status',])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -139,6 +140,42 @@ class HospitalDetailsController extends Controller
     public function Store(Request $request)
     {
         try {
+            $rules = [
+                'hospital_name' => [
+                    'required',
+
+                ],
+                'mobile_no' => [
+                    'required',
+                    'digits:10',
+
+                ],
+                'tel_no' => [
+                    'required',
+                    'regex:/^(\+?[0-9]{1,4})?[0-9]{7,15}$/',
+                ],
+                'address' => [
+                    'required',
+                    'max:300',
+                ],
+            ];
+
+            $messages = [
+                'hospital_name.required' => 'Hospital name is required.',
+                'mobile_no.required' => 'Mobile Number is required.',
+                'mobile_no.digits' => 'Mobile Number should be numeric with exactly 10 digits.',
+                'tel_no.required' => 'Telephone Number is required.',
+                'tel_no.regex' => 'Enter a valid telephone number with 7-15 digits.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
+            ];
+
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
 
             $data =  $this->hospital_details->store();
             Session::flash('success', 'Your data has been created successfully!');
@@ -192,12 +229,41 @@ class HospitalDetailsController extends Controller
     {
         try {
             $id = decryptId($request->id);
+            $rules = [
+                'hospital_name' => [
+                    'required',
 
+                ],
+                'mobile_no' => [
+                    'required',
+                    'digits:10',
 
+                ],
+                'tel_no' => [
+                    'required',
+                    'regex:/^(\+?[0-9]{1,4})?[0-9]{7,15}$/',
+                ],
+                'address' => [
+                    'required',
+                    'max:300',
+                ],
+            ];
 
+            $messages = [
+                'hospital_name.required' => 'Hospital name is required.',
+                'mobile_no.required' => 'Mobile Number is required.',
+                'mobile_no.digits' => 'Mobile Number should be numeric with exactly 10 digits.',
+                'tel_no.required' => 'Telephone Number is required.',
+                'tel_no.regex' => 'Enter a valid telephone number with 7-15 digits.',
+                'address.required' => 'Address is required.',
+                'address.max' => 'Address cannot exceed 300 characters.',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
             $this->hospital_details->updates($id);
-
-
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/hospital-details/list'));
         } catch (Exception $ex) {
@@ -217,11 +283,11 @@ class HospitalDetailsController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = $this->hospital_details->uniqueCheck($hospital_name,$mobile_no);
+                $isUnique = $this->hospital_details->uniqueCheck($hospital_name, $mobile_no);
             } else {
                 $id = decryptId($id);
 
-                $isUnique = $this->hospital_details->existUniqueCheck($hospital_name,$mobile_no, $id);
+                $isUnique = $this->hospital_details->existUniqueCheck($hospital_name, $mobile_no, $id);
             }
 
             if ($isUnique->count()) {
@@ -359,6 +425,4 @@ class HospitalDetailsController extends Controller
             return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
-
-
 }
