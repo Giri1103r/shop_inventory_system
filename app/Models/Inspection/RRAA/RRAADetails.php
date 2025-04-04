@@ -91,13 +91,26 @@ class RRAADetails extends Model
     public function store()
     {
         $request = request();
+        $insertedData = [];
 
-        $insert_array = array(
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
-            'created_by' => Auth::id(),
-        );
+        foreach ($request->scope as $index => $Scope) {
+            $insert_array = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'serial_number' =>$request->serial_number[$index],
+                'category' =>decryptId($request->category[$index]),
+                'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
+                'frequency' =>decryptId($request->frequency[$index]),
+                'scope' => $Scope,
+                'responsibility' =>$request->emp_id[$index],
+                'authority' => $request->authority[$index],
+                'accountability' => $request->accountability[$index],
+                'remark' => $request->remark[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $insertedData []=  $this->create($insert_array);
+
+        }
 
         return $this->create($insert_array);
     }
