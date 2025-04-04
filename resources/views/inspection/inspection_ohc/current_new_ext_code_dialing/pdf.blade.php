@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'CO2 Type Fire Extinguisher Inspection Pdf')
+@section('title', 'Current New Code Dailing')
 @section('content')
 
     <div style="width:100%;">
@@ -25,26 +25,24 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->inspection_date) }}
+                            {{ $value->unit_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->next_due) }}
+                            {{ $value->department_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->location_name }}
+                            {{ $value->emp_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->shift }}
+                            {{ $value->number}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->unit_name }}
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->frequency_name }}
-                        </td>
-                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
-                            {{ getInspectionStatus($value->inspection_status); }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

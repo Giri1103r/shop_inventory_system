@@ -2162,6 +2162,20 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
+                case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', CO_TYPE_FIRE_EXTINGUISHER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -2377,6 +2391,10 @@ if (!function_exists('getMonth')) {
                 case FIRE_PA_SYSTEM_INSPECTION:
                     return 'PA-000001';
                     break;
+
+                case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    return 'CTFE-000001';
+                    break;
             }
         }
     }
@@ -2461,7 +2479,7 @@ if (!function_exists('getMonth')) {
         {
             $data = FireExtinguisherType::where('id', $id)->first();
             if ($data) {
-                return $data;
+                return $data->name;
             }
             return null;
         }

@@ -36,7 +36,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -44,7 +45,8 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -52,10 +54,11 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
                                                     <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('FI-0') }}"
-                                                        readonly>
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -122,7 +125,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                        <select name="shift[1]" id="shift[1]"
+                                                        <select name="shift_id[1]" id="shift[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Shift</option>
                                                             @foreach ($shifts as $shift)
@@ -136,7 +139,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit[1]" id="unit[1]"
+                                                        <select name="unit_id[1]" id="unit[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -157,8 +160,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.action_taken') }}</label>
-                                                        <textarea type="text" name="action_taken[1]" id = "action_taken" class="form-control"
-                                                           ></textarea>
+                                                        <textarea type="text" name="action_taken[1]" id = "action_taken" class="form-control"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -287,10 +289,10 @@
                             "observation[1]": {
                                 required: true,
                             },
-                            "shift[1]": {
+                            "shift_id[1]": {
                                 required: true,
                             },
-                            "unit[1]": {
+                            "unit_id[1]": {
                                 required: true,
                             },
                             "action_taken[1]": {
@@ -339,10 +341,10 @@
                             "inspection_date": {
                                 required: "Inspection Date is required",
                             },
-                            "shift[1]": {
+                            "shift_id[1]": {
                                 required: "Shift is required",
                             },
-                            "unit[1]": {
+                            "unit_id[1]": {
                                 required: "Unit is required",
                             },
                             "action_taken[1]": {
@@ -484,7 +486,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                        <select name="shift[${form_set_current_count}]" id="shift[${form_set_current_count}]"
+                                                        <select name="shift_id[${form_set_current_count}]" id="shift[${form_set_current_count}]"
                                                             class=" form-control single-select shift" style="width: 100%">
                                                             <option value="">Select Shift</option>
                                                             @foreach ($shifts as $shift)
@@ -498,7 +500,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit[${form_set_current_count}]" id="unit[${form_set_current_count}]"
+                                                        <select name="unit_id[${form_set_current_count}]" id="unit[${form_set_current_count}]"
                                                             class=" form-control single-select unit" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)

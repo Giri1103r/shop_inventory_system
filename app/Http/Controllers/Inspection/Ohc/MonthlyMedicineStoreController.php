@@ -22,6 +22,7 @@ class MonthlyMedicineStoreController extends Controller
     private $medicine_checklist;
     private $medicine;
     private $signature;
+    
 
     public function __construct()
     {

@@ -97,7 +97,7 @@ class MedicineFirstAidController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'request_date'])
+                        ->rawColumns(['action', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -148,12 +148,15 @@ class MedicineFirstAidController extends Controller
                 'unit_id' => 'required',
                 'department_id' => 'required',
                 'issue_date' => 'required',
+
+
             ];
 
             $messages = [
-                'department_id.required' => 'Please select a Department.',
-                'unit_id.required' => 'Please select a unit.',
-                'issue_date.required' => 'Please select the Issued date.',
+                'unit_id.required' => 'Please select the Unit name.',
+                'department_id.required' => 'Please select the Department Name.',
+                'issue_date.required' => 'Please select the request date.',
+
             ];
 
 
@@ -189,19 +192,13 @@ class MedicineFirstAidController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
-
-
                 Session::flash('error', 'Something went wrong, Please try again later!');
             }
-
-
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later!');
-
-
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -227,7 +224,7 @@ class MedicineFirstAidController extends Controller
                 'user_medicine_first_aid' => $user_medicine_first_aid,
                 'medicine_first_aid' => $medicine_first_aid
             );
-            // dd($data );
+
             return view('ohcmanagement.medicine-first-aid.edit', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -257,7 +254,7 @@ class MedicineFirstAidController extends Controller
 
             $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
             $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
-            // dd($user_medicine_first_aid->unit_id);
+
             foreach ($request->medicine_id as $index => $medicine_id) {
                 $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->where('reference_id', $id)->first();
 

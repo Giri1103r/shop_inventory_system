@@ -151,13 +151,13 @@ class Medicine extends Model
         $user = User::where('status', 1)->where('id',Auth::id())->first();
 
 
-        $approveStatus = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
+        $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
             ? STATUS_OHC_EHS_HEAD_APPROVED
             : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
-            $Status = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
+            $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
             ?1
             : 0;
-        // Construct the insert array
+
         $insert_array = [
             'medicine' => $request->medicine,
             'pack' => $request->pack,
@@ -177,19 +177,16 @@ class Medicine extends Model
 
         $request = request();
         $user = User::where('status', 1)->first();
-        $approveStatus = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
+        $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
         ? STATUS_OHC_EHS_HEAD_APPROVED
         : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
-        $Status = ($user && ($user->role == ROLE_SUPERADMIN || $user->role == ROLE_EHS_HEAD))
+        $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
         ?1
         : 0;
         $update_array = array(
             'medicine' => $request->medicine,
             'pack' => $request->pack,
-
             'threshold_limit' => $request->threshold_limit,
-            // 'unit_id' => $request->unit_id,
-
             'remarks' => $request->remarks,
             'updated_by' => Auth::id(),
             'approve_status' =>   $approveStatus,

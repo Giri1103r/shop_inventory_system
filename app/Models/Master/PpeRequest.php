@@ -107,19 +107,21 @@ class PpeRequest extends Model
             $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
         }
 
-        $org_total_counts = $query->count();
-
+        $totalFilteredRecords = $query->count();
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
+
         $query->orderBy('ppe_pperequest.id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
 
         return [
             'data' => $data,
             'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
+            'filter_records' => $totalFilteredRecords,
         ];
     }
 

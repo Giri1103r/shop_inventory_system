@@ -154,7 +154,7 @@
                                                 @endif
                                             </div>
                                             <input type="hidden" name="document_reference_id"
-                                                value="{{ $document_no->id }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">

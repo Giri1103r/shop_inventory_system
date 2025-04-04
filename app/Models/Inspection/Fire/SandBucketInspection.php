@@ -73,12 +73,6 @@ class SandBucketInspection extends Model
             });
         }
 
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_sand_bucket.location', 'LIKE', '%' . decryptId($request->location) . '%');
-        }
-        if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_sand_bucket.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
-        }
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_fire_sand_bucket.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
@@ -145,7 +139,7 @@ class SandBucketInspection extends Model
 
         $data = array(
             'doc_no' => $request->doc_no,
-            'document_reference_id' => $request->document_reference_id,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => $request->inspection_date,
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),

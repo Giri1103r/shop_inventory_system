@@ -143,7 +143,7 @@ class PASystemInspection extends Model
         $request = request();
 
         $data = array(
-            'document_reference_id' => $request->document_reference_id,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),

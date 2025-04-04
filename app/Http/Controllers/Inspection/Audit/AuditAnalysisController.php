@@ -14,6 +14,7 @@ use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\audit\AuditAnalysisChecklist;
 use App\Models\Inspection\MSDSCheckList;
 use Exception;
+use App\Models\Inspection\InspectionStaticDocno;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class AuditAnalysisController extends Controller
@@ -22,6 +23,7 @@ class AuditAnalysisController extends Controller
     private $department;
     private $auditAnalysis;
     private $auditAnalysisCheckList;
+    private $static_docno;
 
     public function __construct()
     {
@@ -29,6 +31,7 @@ class AuditAnalysisController extends Controller
         $this->auditAnalysisCheckList = new AuditAnalysisChecklist();
         $this->department = new Department();
         $this->unit = new Unit();
+        $this->static_docno = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -42,11 +45,11 @@ class AuditAnalysisController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
-                                }
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                            }
                             // }
                             return $text;
                         })
@@ -90,6 +93,10 @@ class AuditAnalysisController extends Controller
         try {
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                ['type', "6SAuditAnalysis"],
+                ['status', '1']
+            ])->first();
             $months = [
                 'April',
                 'May',
@@ -107,6 +114,7 @@ class AuditAnalysisController extends Controller
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
+                'staticDocno' => $staticDocno,
                 'months' => $months,
             );
             return view('inspection.inspection_audit.auditAnalysis.add', $data);
@@ -117,14 +125,14 @@ class AuditAnalysisController extends Controller
 
     public function Store(Request $request)
     {
-       
+
         try {
-            
+
             try {
 
-               $auditAnalysis = $this->auditAnalysis->store();
-               $auditanalysis_id = $auditAnalysis->id;
-               $this->auditAnalysisCheckList->store($auditanalysis_id);
+                $auditAnalysis = $this->auditAnalysis->store();
+                $auditanalysis_id = $auditAnalysis->id;
+                $this->auditAnalysisCheckList->store($auditanalysis_id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -140,14 +148,32 @@ class AuditAnalysisController extends Controller
             return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
+    public function Uniquecheck(Request $request)
+    {
+        $ids = decryptId($request->input('id'));
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+        $topicId = decryptId($request->input('topicId'));
+        $trainerId = decryptId($request->input('trainerId'));
+        $unitId = decryptId($request->input('unitId'));
+        $departmentId = decryptId($request->input('departmentId'));
+        $venueId = decryptId($request->input('venueId'));
 
+        if (empty($ids)) {
+            $conflicts = $this->training_schedule->getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId);
+        } else {
+            $conflicts = $this->training_schedule->getExistUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId, $ids);
+        }
+
+        return response()->json(['conflicts' => $conflicts]);
+    }
     public function StatusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
 
             $this->msdsDetails->statuschange($id);
-           
+
             $this->msdsCheckList->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -163,7 +189,7 @@ class AuditAnalysisController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $msdsDetails = $this->msdsDetails->find($id);
-              
+
                 $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
                 $data = array(
@@ -183,7 +209,7 @@ class AuditAnalysisController extends Controller
         try {
 
             $allData = $this->msdsDetails->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -285,10 +311,10 @@ class AuditAnalysisController extends Controller
     public function edit($id)
     {
         try {
-            $id = decryptId($id); 
+            $id = decryptId($id);
 
             $msdsDetails = $this->msdsDetails->find($id);
-            
+
             $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
             $data = [
@@ -304,7 +330,7 @@ class AuditAnalysisController extends Controller
 
     public function update(Request $request)
     {
-       
+
         try {
             $id = decryptId($request->id);
 
@@ -326,19 +352,19 @@ class AuditAnalysisController extends Controller
                 'msds_availability_status.required' => __('MSDS Availability Status is required'),
                 'remark.required' => __('Remark is required'),
             ];
-         
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             try {
 
-               $msds = $this->msdsDetails->updates($id);
+                $msds = $this->msdsDetails->updates($id);
                 $msds_details = $this->msdsDetails->selectOne($id);
-               $msdsId = $msds_details->id;
-            
-               $this->msdsCheckList->updates($msdsId);
+                $msdsId = $msds_details->id;
+
+                $this->msdsCheckList->updates($msdsId);
 
                 Session::flash('success', __('Your data has been updated successfully'));
             } catch (Exception $ex) {
@@ -351,6 +377,4 @@ class AuditAnalysisController extends Controller
             return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
-
-
 }

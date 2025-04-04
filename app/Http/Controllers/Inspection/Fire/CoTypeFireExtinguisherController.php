@@ -226,48 +226,56 @@ class CoTypeFireExtinguisherController extends Controller
 
     public function Store(Request $request)
     {
+
         try {
 
             $rules = [
-                // 'issue_date' => 'required',
-                // 'rev_date' => 'required',
-                // 'inspection_date' => 'required',
-                // 'location_id' => 'required',
-                // 'shift_id' => 'required',
-                // 'next_due' => 'required',
-                // 'unit_id' => 'required',
-                // 'frequency_id' => 'required',
-                // 'department.*' => 'required',
-                // 'resource_code.*' => 'required',
-                // 'detector_type.*' => 'required',
-                // 'physical_condition.*' => 'required',
-                // 'cable_condition.*' => 'required',
-                // 'response_indicator.*' => 'required',
-                // 'working_status.*' => 'required',
-                // 'remarks.*' => 'required',
-                // 'observation' => 'required',
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'fire_point_no.*' => 'required',
+                'department.*' => 'required',
+                'location.*' => 'required',
+                'type.*' => 'required',
+                'capacity.*' => 'required',
+                'quantity.*' => 'required',
+                'discharge_tube.*' => 'required',
+                'discharge_horn.*' => 'required',
+                'weight_of_co2_in_fe.*' => 'required',
+                'safety_pin.*' => 'required',
+                'approach.*' => 'required',
+                'remarks.*' => 'required',
+                'observation' => 'required',
             ];
 
             $messages = [
-                // 'issue_date.required' => 'Issue Date is required.',
-                // 'rev_date.required' => 'Revision Date is required.',
-                // 'inspection_date.required' => 'Inspection Date is required.',
-                // 'location_id.required' => 'Location is required.',
-                // 'shift_id.required' => 'Shift is required.',
-                // 'frequency_id.required' => 'Frequency is required.',
-                // 'next_due.required' => 'Next Due Date is required.',
-                // 'unit_id.required' => 'Unit is required.',
-                // 'department.*.required' => 'Department is required.',
-                // 'resource_code.*.required' => 'Resource Code is required.',
-                // 'detector_type.*.required' => 'Detector Type is required.',
-                // 'physical_condition.*.required' => 'Physical Condition is required.',
-                // 'cable_condition.*.required' => 'Cable Condition is required.',
-                // 'response_indicator.*.required' => 'Response Indicator is required.',
-                // 'working_status.*.required' => 'Working Status is required.',
-                // 'remarks.*.required' => 'Remarks are required.',
-                // 'observation*.required' => 'Observation is  required.',
+                'issue_date.required' => 'Issue Date is required.',
+                'rev_date.required' => 'Revision Date is required.',
+                'inspection_date.required' => 'Inspection Date is required.',
+                'location_id.required' => 'Location is required.',
+                'shift_id.required' => 'Shift is required.',
+                'frequency_id.required' => 'Frequency is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'unit_id.required' => 'Unit is required.',
+                'fire_point_no.*.required' => 'Fire Point No is required.',
+                'department.*.required' => 'Department is required.',
+                'location.*.required' => 'Location is required.',
+                'type.*.required' => 'Fire Type is required.',
+                'capacity.*.required' => 'capacity is required.',
+                'quantity.*.required' => 'quantity is required.',
+                'discharge_tube.*.required' => 'Discharge Tube is required.',
+                'discharge_horn.*.required' => 'Discharge Horn is required.',
+                'weight_of_co2_in_fe.*.required' => 'Weight of CO2 in FE is required.',
+                'safety_pin.*.required' => 'Safety Pin is required.',
+                'approach.*.required' => 'Approach is required.',
+                'remarks.*.required' => 'Remarks are required.',
+                'observation.required' => 'Observation is  required.',
             ];
-
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -281,19 +289,20 @@ class CoTypeFireExtinguisherController extends Controller
 
             $inspection_details = $this->co_type_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
+
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Detector Inspection",
+                    'message' => "Fire Associate create the CO2 Type Fire Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -304,12 +313,12 @@ class CoTypeFireExtinguisherController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Detector Inspection';
+            $title = 'Fire Associate create the CO2 Type Fire Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('fire/fire-extinguisher/co2/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'CO2 Type Fire Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -327,10 +336,9 @@ class CoTypeFireExtinguisherController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
@@ -346,6 +354,7 @@ class CoTypeFireExtinguisherController extends Controller
             $inspection = $this->co_type->selectOne($id);
             $inspection_details = $this->co_type_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
+
             $status_log = $this->statusLog->selectOne($id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
@@ -402,7 +411,7 @@ class CoTypeFireExtinguisherController extends Controller
             $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Detector Inspeciton Approved Successfully';
+                $message = 'CO2 Type Fire Inspeciton Approved Successfully';
                 $web_link =   admin_url('fire/fire-extinguisher/co2/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -413,7 +422,7 @@ class CoTypeFireExtinguisherController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 2,
@@ -436,7 +445,7 @@ class CoTypeFireExtinguisherController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/fire-extinguisher/co2/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Detector Inspection',
+                'fire_type' => 'CO2 Type Fire Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -457,7 +466,6 @@ class CoTypeFireExtinguisherController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
@@ -475,7 +483,7 @@ class CoTypeFireExtinguisherController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -547,7 +555,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -570,7 +578,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'CO2 Type Fire Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -621,7 +629,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -644,7 +652,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'CO2 Type Fire Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -682,7 +690,7 @@ class CoTypeFireExtinguisherController extends Controller
             $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($status == 1) {
-                $message = 'detector Inspeciton Approved Successfully!';
+                $message = 'CO2 Type Fire Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/fire-extinguisher/co2/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
@@ -692,7 +700,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'CO2 TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -714,7 +722,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'CO2 Type Fire Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -752,9 +760,12 @@ class CoTypeFireExtinguisherController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -765,9 +776,12 @@ class CoTypeFireExtinguisherController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] =  $data->revision_data;
+                $export[] =  displaydateformat($data->inspection_date);
+                $export[] =  displaydateformat($data->next_due);
+                $export[] =  $data->location_name;
+                $export[] =  $data->shift;
+                $export[] =  $data->unit_name;
+                $export[] =  $data->frequency_name;
                 $export[] =  getInspectionStatus($data->inspection_status);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -775,7 +789,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Detector Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('CO2 Type Fire Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -797,9 +811,12 @@ class CoTypeFireExtinguisherController extends Controller
             }
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.next_due') ,
+                __('inspection.location'),
+                __('inspection.shifts'),
+                __('inspection.unit'),
+                __('inspection.frequency'),
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -808,7 +825,7 @@ class CoTypeFireExtinguisherController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Detector Inspection",
+                'pagetitle' => "CO2 Type Fire Inspection",
             );
 
             $property = [
@@ -823,14 +840,15 @@ class CoTypeFireExtinguisherController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.co_type_fire_extinguisher.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Detector Inspection.pdf";
+            $filename = "CO2 Type Fire Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
@@ -852,7 +870,7 @@ class CoTypeFireExtinguisherController extends Controller
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'document_no' => $document_no,
-                    'pagetitle' => "Detector Inspection",
+                    'pagetitle' => "CO2 Type Fire Inspection",
                     'inspection' => $inspection,
                 ];
             }
@@ -873,10 +891,9 @@ class CoTypeFireExtinguisherController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'i');
+            $filename = "CO2 Type Fire Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));

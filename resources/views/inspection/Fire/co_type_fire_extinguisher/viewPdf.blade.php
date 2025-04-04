@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly ForkLift Inspection | KARAM</title>
+    <title>CO2 Type Fire Extinguisher Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly ForkLift Inspection </td>
+                    CO2 Type Fire Extinguisher Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly ForkLift Inspection
+                    CO2 Type Fire Extinguisher Inspection
                 </td>
             </tr>
         </table>
@@ -160,19 +160,63 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.inspection_date') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->inspection_date) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.location') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname($forklift_details->location) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShiftName($forklift_details->shift) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.next_due') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat($forklift_details->next_due) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.unit') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname($forklift_details->unit) }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.frequency') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFrequencyname($forklift_details->frequency) }}
             </td>
         </tr>
         <tr>
@@ -189,59 +233,143 @@
     </table>
 
     <br>
-    @php
-        $user_response = json_decode($forklift_details->responses, true);
-    @endphp
 
-    <table style="width:100%;">
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    CO2 Type Fire Extinguisher Inspection Details
+                </td>
+            </tr>
+        </table>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
         <thead>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Sr. No</th>
-                <th colspan="3"
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Check Points</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Reports</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+                <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
+            </tr>
+            <tr>
+                <th colspan="3" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
+                <th colspan="5" style="border: 1px solid black; padding: 8px;">CONDITION</th>
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
+                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
+                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
+                <th style="border: 1px solid black; padding: 8px;">DISCHARGE HORN</th>
+                <th style="border: 1px solid black; padding: 8px;">WEIGHT OF CO2 IN FE</th>
+                <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
+                <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
             </tr>
         </thead>
+
+
         <tbody>
-            @foreach ($user_response as $subcategory => $questions)
-                @php
-                    $rowCount = count($questions);
-                    $firstRow = true;
-                    $srNo = 1;
-                @endphp
-                @foreach ($questions as $questionId => $answer)
-                    <tr>
-                        @if ($firstRow)
-                            <td rowspan="{{ $rowCount }}"
-                                style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                {{ $srNo }}</td>
-                            <td rowspan="{{ $rowCount }}"
-                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                {{ GetSubChecklistTypeName($subcategory) }}
-                            </td>
-                            @php
-                                $srNo++;
-                                $firstRow = false;
-                            @endphp
+            @foreach ($inspection as $details)
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;"> {{ $details->sr_no }}</td>
+
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $details->fire_point_no }}</td>
+
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ GetDeptName($details->department) }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getLocationname($details->location) }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getExtinguisherTypeName($details->type) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->capacity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->quantity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->discharge_tube == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @elseif($details->discharge_tube == NON_FUNCTIONAL)
+                            {{ __('inspection.non_functional') }}
                         @endif
-                        <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                            {{ GetChecklistTypeDate($questionId) }}
-                        </td>
-                        <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                            @if ($answer == 'YES')
-                                <span style="color: green; font-size: 20px;">✓</span>
-                            @elseif ($answer == 'NO' || $answer == 'N/A')
-                                <span style="color: red; font-size: 20px;">X</span>
-                            @endif
-                        </td>
-                    </tr>
-                @endforeach
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->discharge_horn == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @elseif($details->discharge_horn == NON_FUNCTIONAL)
+                            {{ __('inspection.non_functional') }}
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $details->weight_of_co2_in_fe }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->safety_pin == PRESENT)
+                            {{ __('inspection.present') }}
+                        @elseif($details->safety_pin == MISSING)
+                            {{ __('inspection.missing') }}
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->approach }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->remarks }}
+                    </td>
+                </tr>
+            @endforeach
+            @php
+            $prepared_by_signature = GetSignature(
+                $forklift_details->created_by,
+                $forklift_details->id,
+                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+            );
+            $verified_by_signature = GetSignature(
+                $forklift_details->updated_by,
+                $forklift_details->id,
+                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+            );
+            $verified_by_signature = GetSignature(
+                $forklift_details->approved_by,
+                $forklift_details->id,
+                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+            );
+        @endphp
+        <tr>
+            <td colspan="4"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                    style="height: 50px;">
+                <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+            </td>
+            <td colspan="4"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                @if ($forklift_details->updated_by != null)
+                    <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                        style="height: 50px;">
+                    <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
+                @else
+                    <p>Inspection has not been Verified Yet</p>
+                @endif
+            </td>
+            <td colspan="5"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                @if ($forklift_details->approved_by != null)
+                    <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                        style="height: 50px;">
+                    <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+                @else
+                    <p>Inspection has not been Verified Yet</p>
+                @endif
+            </td>
+        </tr>
         </tbody>
-        @endforeach
+
     </table>
+
 
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
@@ -263,7 +391,6 @@
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
             @endif
-
             @if (isset($forklift_details->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -283,7 +410,6 @@
                     </tr>
                 @endif
             @endif
-
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
@@ -298,21 +424,6 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $forklift_details->remarks }}
-                </tr>
-            @endif
-            @php
-                $getSafetySignature = GetSafetySignature(
-                    $forklift_details->verified_by,
-                    $forklift_details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
-            @endphp
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
-                            alt="" style="height: 60px; width:60px;"></td>
                 </tr>
             @endif
         </table>
@@ -349,21 +460,6 @@
                     {{ $forklift_details->capa_remarks }}
                 </td>
             </tr>
-            @php
-                $getSafetySignature = GetSafetySignature(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
-            @endphp
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
-                            alt="" style="height: 60px; width:60px;"></td>
-                </tr>
-            @endif
         </table>
         <br>
     @endif
@@ -399,21 +495,6 @@
                     {{ $forklift_details->capa_ehs_remarks }}
                 </td>
             </tr>
-            @php
-                $getSafetySignature = GetSafetySignature(
-                    $forklift_details->verified_by,
-                    $forklift_details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
-            @endphp
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
-                            alt="" style="height: 60px; width:60px;"></td>
-                </tr>
-            @endif
         </table>
         <br>
     @endif
@@ -450,21 +531,6 @@
                     {{ $forklift_details->level_one_manager_remarks }}
                 </td>
             </tr>
-            @php
-                $getSafetySignature = GetSafetySignature(
-                    $forklift_details->l1_manager_verified_by,
-                    $forklift_details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
-            @endphp
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
-                            alt="" style="height: 60px; width:60px;"></td>
-                </tr>
-            @endif
         </table>
         <br>
     @endif
@@ -507,21 +573,6 @@
                     {{ $forklift_details->level_two_manager_remarks }}
                 </td>
             </tr>
-            @php
-                $getSafetySignature = GetSafetySignature(
-                    $forklift_details->l2_manager_verified_by,
-                    $forklift_details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
-            @endphp
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
-                            alt="" style="height: 60px; width:60px;"></td>
-                </tr>
-            @endif
         </table>
         <br>
     @endif
@@ -570,7 +621,7 @@
                     </table>
                 @else
                     <div class="card-body">
-                        <p class="text-dark">{{ __('No status logs available.') }}</p>
+                        <p class="text-dark">No status logs available.</p>
                     </div>
                 @endif
             </div>
