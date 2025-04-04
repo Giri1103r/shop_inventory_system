@@ -243,102 +243,102 @@
             let rowCount = 1;
 
             $(".add-row").click(function() {
-    let rowCount = $('#medicine-tbody tr').length;
-    let newRow = `
-        <tr>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Unit Name</label>
-                    <select name="unit_id[${rowCount}]" class="form-control unit-select select2" style="width: 100%">
-                        <option value="">Select the Unit Name</option>
-                        @foreach ($unit as $list)
-                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Department</label>
-                    <select name="department_id[${rowCount}]" class="form-control department-select select2" style="width:100%">
-                        <option value="">Select Department</option>
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Employee Name</label>
-                    <select name="emp_name[${rowCount}]" class="form-control emp-select select2" style="width:100%">
-                        <option value="">Select Employee</option>
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Designation</label>
-                    <input type="text" name="designation_id[${rowCount}]" class="form-control designation-field" readonly>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Mobile Number</label>
-                    <input type="text" name="mobile_no[${rowCount}]" class="form-control mobile-field" readonly>
-                </div>
-            </td>
-            <td>
-                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px; cursor: pointer;">
-                    <i class="fa-solid fa-trash"></i>
-                </div>
-            </td>
-        </tr>
-    `;
+                let rowCount = $('#medicine-tbody tr').length;
+                let newRow = `
+                        <tr>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Unit Name</label>
+                                    <select name="unit_id[${rowCount}]" class="form-control unit-select select2" style="width: 100%">
+                                        <option value="">Select the Unit Name</option>
+                                        @foreach ($unit as $list)
+                                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Department</label>
+                                    <select name="department_id[${rowCount}]" class="form-control department-select select2" style="width:100%">
+                                        <option value="">Select Department</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Employee Name</label>
+                                    <select name="emp_name[${rowCount}]" class="form-control emp-select select2" style="width:100%">
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Designation</label>
+                                    <input type="text" name="designation_id[${rowCount}]" class="form-control designation-field" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Mobile Number</label>
+                                    <input type="text" name="mobile_no[${rowCount}]" class="form-control mobile-field" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px; cursor: pointer;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
 
-    // Append the new row first
-    $('#medicine-tbody').append(newRow);
+                // Append the new row first
+                $('#medicine-tbody').append(newRow);
 
-    // Initialize Select2 for new elements
-    $('.select2').select2({
-        width: '100%'
-    });
+                // Initialize Select2 for new elements
+                $('.select2').select2({
+                    width: '100%'
+                });
 
-    // Now apply validation rules
-    $('select[name="unit_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This unit name is required'
-        }
-    });
+                // Now apply validation rules
+                $('select[name="unit_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This unit name is required'
+                    }
+                });
 
-    $('select[name="department_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This department name is required'
-        }
-    });
+                $('select[name="department_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This department name is required'
+                    }
+                });
 
-    $('select[name="emp_name[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This Employee name is required'
-        }
-    });
+                $('select[name="emp_name[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Employee name is required'
+                    }
+                });
 
-    $('input[name="designation_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This Designation name is required'
-        }
-    });
+                $('input[name="designation_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Designation name is required'
+                    }
+                });
 
-    $('input[name="mobile_no[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This mobile number is required'
-        }
-    });
-});
+                $('input[name="mobile_no[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This mobile number is required'
+                    }
+                });
+            });
 
-            // Load departments based on unit selection
+           
             $(document).on('change', '.unit-select', function() {
                 let unitId = $(this).val();
                 let row = $(this).closest('tr');

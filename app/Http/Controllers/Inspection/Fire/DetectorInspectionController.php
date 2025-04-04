@@ -352,6 +352,7 @@ class DetectorInspectionController extends Controller
             $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
+
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
@@ -359,6 +360,8 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
+
+            dd($data);
             return view('inspection.fire.detector_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);

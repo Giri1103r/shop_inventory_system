@@ -160,20 +160,35 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($first_aid_details->document_number) ? $first_aid_details->document_number : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($first_aid_details->issue_date) ? $first_aid_details->issue_date : '') }}
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($first_aid_details->revision_date) ? $first_aid_details->revision_date : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Month</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($first_aid_details->month) ? $first_aid_details->month : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Year</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($first_aid_details->year) ? $first_aid_details->year : '' }}
             </td>
         </tr>
         <tr>
@@ -208,7 +223,6 @@
             <tr>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">MONTH</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">UNIT</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">FIRST AID STATION NUMBER</th>
@@ -227,7 +241,6 @@
             <tr>
                 <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
                 <td style="border: 2px solid black; padding: 8px;">{{ isset($item->serial_number) ? $item->serial_number : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->month) ? $item->month : '' }}</td>
                 <td style="border: 2px solid black; padding: 8px;"> {{ getDepartment($item->department) }}</td>
                 <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($item->unit) }}</td>
                 <td style="border: 2px solid black; padding: 8px;">{{ isset($item->first_aid_station_number) ? $item->first_aid_station_number : '' }}</td>
