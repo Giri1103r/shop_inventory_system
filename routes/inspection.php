@@ -873,7 +873,22 @@ Route::group(['prefix' => 'fire/pa-system-inspection'], function () {
 
 Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::get('list', [CurrentNewExtCodeDialingController::class, 'Index']);
+    Route::post('list', [CurrentNewExtCodeDialingController::class, 'Index']);
     Route::get('add', [CurrentNewExtCodeDialingController::class, 'add']);
+    Route::post('add/submit', [CurrentNewExtCodeDialingController::class, 'store']);
+    Route::get('view/{id}', [CurrentNewExtCodeDialingController::class, 'View']);
+    Route::get('edit/{id}', [CurrentNewExtCodeDialingController::class, 'edit']);
+    Route::post('edit/submit', [CurrentNewExtCodeDialingController::class, 'update']);
+    Route::get('export/pdf', [CurrentNewExtCodeDialingController::class, 'ExportPDF']);
+    Route::get('export/excel', [CurrentNewExtCodeDialingController::class, 'ExportExcel']);
+    Route::post('unique', [CurrentNewExtCodeDialingController::class, 'UniqueCheck']);
+    Route::post('delete', [CurrentNewExtCodeDialingController::class, 'Delete']);
+    Route::post('status', [CurrentNewExtCodeDialingController::class, 'StatusChange']);
+
+
+
+
+
 
 });
 

@@ -1482,7 +1482,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [FirstAiderlistController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [FirstAiderlistController::class, 'ExportPDF']);
                     Route::POST('/lists', [FirstAiderlistController::class, 'Checklists']);
-                    Route::GET('/emplyeename', [FirstAiderlistController::class, 'employeename']);
+                    Route::GET('/employeename', [FirstAiderlistController::class, 'employeename']);
                     Route::GET('/employeedetails ', [FirstAiderlistController::class, 'employeedetails']);
 
 

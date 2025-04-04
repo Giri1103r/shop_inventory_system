@@ -20,31 +20,57 @@
                             href="{{ admin_url('ohc/current-new-ext-code-dialing/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
-                    {{-- <div id="search" class="collapse">
+                    <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4 mb-2">
+                                        <div class="col-md-3 mb-3">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Medicine Name</label>
-                                                <select name="medicine_id" id="medicine_id"
+                                                <label for="unit_id" class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id"
                                                     class="form-control single-select" style="width: 100%">
-                                                    <option value="">Select the option</option>
-                                                    @foreach ($medicine as $medicine)
-                                                    <option value="{{ encryptId($medicine->id) }}">
-                                                        {{ $medicine->medicine }}</option>
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($unitList as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+
+                                        <!-- Department Selection -->
+                                        <div class="col-md-3 mb-3">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Freeze Quantity</label>
-                                                <input type="text" name="freeze_quantity" id ="freeze_quantity" class="form-control"
-                                                    placeholder="Medicine Name">
+                                                <label class="form-label require">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class="form-control department-select select2 single-select"
+                                                    style="width:100%">
+                                                    <option value="">Select Department Name</option>
+                                                </select>
                                             </div>
                                         </div>
+
+                                        <!-- Employee Name Selection -->
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Employee Name</label>
+                                                <select name="emp_name" id="emp_name"
+                                                    class="form-control emp-select single-select select2"
+                                                    style="width:100%">
+                                                    <option value="">Select Employee</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Enter Number</label>
+                                                <input type="text" name="number" id="number"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -65,7 +91,7 @@
                             </div>
                         </form>
                         <hr>
-                    </div> --}}
+                    </div>
 
 
                     <div class="card-body">
@@ -75,8 +101,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Medicine Name</th>
-                                        <th>Freeze Quantity</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
+                                        <th>Employee Name</th>
+                                        <th>Number</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -99,6 +127,69 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department Name</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value.id + '">' +
+                                    value
+                                    .name + '</option>');
+                            });
+                            $('#department_id').trigger('change');
+                        },
+                        error: function(xhr) {
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department Name</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
+
+            $(document).on('change', '#unit_id, #department_id', function() {
+                var unitId = $('#unit_id').val();
+                var departmentId = $('#department_id').val();
+
+                if (unitId && departmentId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/first-aider/employeename') }}",
+                        type: 'GET',
+                        data: {
+                            unit_id: unitId,
+                            department: departmentId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            var empSelect = $('#emp_name');
+                            empSelect.empty().append('<option value="">Select Employee</option>');
+
+                            if (response.employee && response.employee.length > 0) {
+                                $.each(response.employee, function(index, employee) {
+                                    empSelect.append('<option value="' + employee.id + '">' + employee.emp_name + '</option>');
+                                });
+                            } else {
+                                empSelect.append('<option value="">No Employees Found</option>');
+                            }
+
+                            empSelect.trigger('change');
+                        },
+                        error: function(xhr) {
+                        }
+                    });
+                } else {
+                    $('#emp_name').empty().append('<option value="">Select Employee</option>').trigger('change');
+                }
             });
 
             $(function() {
@@ -134,8 +225,10 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.medicine_id = $('#medicine_id').val();
-                            d.freeze_quantity = $('#freeze_quantity').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
+                            d.emp_name_id = $('#emp_name').val();
+                            d.number = $('#number').val();
                             d.status = $('#status').val();
 
                         },
@@ -152,12 +245,20 @@
                             searchable: true,
                         },
                         {
-                            data: 'medicine',
-                            name: 'medicine'
+                            data: 'unit_name',
+                            name: 'unit_name'
                         },
                         {
-                            data: 'freeze_quantity',
-                            name: 'freeze_quantity'
+                            data: 'department_name',
+                            name: 'department_name'
+                        },
+                        {
+                            data: 'emp_name',
+                            name: 'emp_name'
+                        },
+                        {
+                            data: 'number',
+                            name: 'number'
                         },
                         {
                             data: 'status',
@@ -196,17 +297,20 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        medicine_id = $('#medicine_id').val();
-                                        freeze_quantity = $('#freeze_quantity').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        emp_name_id = $('#emp_name').val();
                                         status = $('#status').val();
+
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/current-new-ext-code-dialing/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&medicine_id=' + medicine_id +
-                                            '&freeze_quantity=' + freeze_quantity +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
+                                            '&emp_name=' + emp_name_id +
                                             '&status=' + status
                                     }
                                 },
@@ -215,16 +319,19 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        medicine_id = $('#medicine_id').val();
-                                        freeze_quantity = $('#freeze_quantity').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        emp_name_id = $('#emp_name').val();
                                         status = $('#status').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/current-new-ext-code-dialing/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&medicine_id=' + medicine_id +
-                                            '&freeze_quantity=' + freeze_quantity +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
+                                            '&emp_name=' + emp_name_id +
                                             '&status=' + status
                                     }
                                 },
@@ -261,12 +368,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate First Aid Detail') }}';
+                        var title = '{{ __('Do You want to In-Activate Current New Ext Code Dailing  Detail') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate First Aid Detail') }}';
+                        var title = '{{ __('Do You want to Activate Current New Ext Code Dailing Detail') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -284,7 +391,7 @@
                     }).then((result) => {
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/master/first-aid-stock/status') }}",
+                                url: "{{ admin_url('ohc/current-new-ext-code-dialing/status') }}",
                                 type: 'post',
                                 data: {
                                     id: id,
@@ -331,7 +438,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete the First Aid Detail') }}';
+                    var title = '{{ __('Do You want to Delete the Current New Ext Code Dailing Detail') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -351,7 +458,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/master/first-aid-stock/delete') }}",
+                                url: "{{ admin_url('ohc/current-new-ext-code-dialing/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
