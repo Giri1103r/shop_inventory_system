@@ -271,6 +271,18 @@
                     return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
                 }, "Item Code must be unique");
 
+                $.validator.addMethod("uniqueEquipmentName", function(value, element) {
+                    var isDuplicate = false;
+                    $("input[name^='equipment_name']").each(function() {
+                        if ($(this).val() === value && this !== element) {
+                            isDuplicate = true;
+                            return false;
+                        }
+                    });
+                    return !isDuplicate;
+                }, "This Equipment Name has already been selected.");
+
+
 
                 $('#eyewashAdd').validate({
                     rules: {
@@ -288,10 +300,32 @@
                         },
                         "equipment_name[1]": {
                             required: true,
+                            uniqueEquipmentName: true,
+                            remote: {
+                                url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
+                                type: "post",
+                                data: {
+                                    equipment_name: function() {
+                                        return $('#equipment_name').val();
+                                    },
+                                }
+                            }
                         },
                         "item_code[1]": {
                             required: true,
                             uniqueItemCode: true,
+                            remote: {
+                                url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
+                                type: "post",
+                                data: {
+                                    equipment_name: function() {
+                                        return $('#equipment_name').val();
+                                    },
+                                    item_code: function() {
+                                        return $('#item_code').val();
+                                    }
+                                }
+                            }
                         },
                         "standard_norms[1]": {
                             required: true,
@@ -330,6 +364,7 @@
                         },
                         "equipment_name[1]": {
                             required: "Please Enter the Equipment Name",
+                            remote: "This Equipment Name is already Exists"
                         },
                         "item_code[1]": {
                             required: "Please Enter the Item Code",
@@ -384,6 +419,10 @@
                         });
                     }
                 });
+
+                $('#equipment_name').on('change', function() {
+                    $(this).valid(); // Re-trigger validation
+                });
             });
 
             let form_set_count = 2;
@@ -395,8 +434,6 @@
             $(document).ready(function() {
                 $(document).on('click', '#add-row', function() {
                     let currentFormSets = $('.form-wrapper .form-set').length;
-
-
 
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
@@ -442,7 +479,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.item_code') }}</label>
                                                         <input type="text" name="item_code[${form_set_count}]"
-                                                            id = "item_code" class="form-control">
+                                                            id = "item_code_${form_set_count}" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -522,17 +559,41 @@
 
                     $("select[name='equipment_name[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        uniqueEquipmentName: true,
+                        remote: {
+                            url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
+                            type: "post",
+                            data: {
+                                equipment_name: function() {
+                                    return $('#equipment_name_' + form_set_count).val();
+                                },
+                            }
+                        },
                         messages: {
                             required: 'Please select the Equipment',
+                            remote: 'Equipment already exists',
                         }
                     });
 
                     $("input[name='item_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        remote: {
+                            url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
+                            type: "post",
+                            data: {
+                                equipment_name: function() {
+                                    return $('#equipment_name_' + form_set_count).val();
+                                },
+                                item_code: function() {
+                                    return $('#item_code_' + form_set_count).val();
+                                }
+                            }
+                        },
                         messages: {
                             required: 'Please add the Item code',
-                            uniqueItemCode: 'Item Code Must be Unique',
+                            uniqueItemCode: 'Equipment name and Item Code Already Exists',
+                            remote: 'Equipment name and Item Code Already Exists'
                         }
                     });
 

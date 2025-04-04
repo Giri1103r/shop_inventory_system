@@ -384,7 +384,9 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+        Route::post('Equipmentunique', [FireSafetyEquipmentController::class, 'Equipmentunique']);
         Route::POST('/status', [FireSafetyEquipmentController::class, 'StatusChange']);
+        Route::POST('/unique', [FireSafetyEquipmentController::class, 'UniqueCheck']);
     });
 
     Route::group(['prefix' => 'safety-walk-observation/'], function () {

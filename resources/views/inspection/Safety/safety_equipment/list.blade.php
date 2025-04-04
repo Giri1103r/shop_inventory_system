@@ -62,11 +62,11 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
+                                                <option value="{{ encryptId('0') }}">InActive</option>
 
                                             </select>
                                         </div>
@@ -309,7 +309,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/list/status') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -377,7 +377,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/list/delete') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
