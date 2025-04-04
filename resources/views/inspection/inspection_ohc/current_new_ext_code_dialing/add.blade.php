@@ -52,7 +52,8 @@
                                                         <div class="form-group form-input">
                                                             <label for="unit_id" class="form-label require">Unit</label>
                                                             <select name="unit_id[1]" id="unit_id"
-                                                                class="form-control single-select" style="width: 100%">
+                                                                class="form-control unit-select  single-select"
+                                                                style="width: 100%">
                                                                 <option value="">Select Unit</option>
                                                                 @foreach ($unitList as $unit)
                                                                     <option value="{{ encryptId($unit->id) }}">
@@ -127,139 +128,12 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
-
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department Name</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value.id + '">' +
-                                value
-                                .name + '</option>');
-                        });
-                        $('#department_id').trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching locations. Please try again.');
-                    }
-                });
-            } else {
-                $('#department_id').empty().append('<option value="">Select Department Name</option>');
-                $('#department_id').trigger('change.');
-            }
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
         });
-
-        $(document).on('change', '#unit_id, #department_id', function() {
-            var unitId = $('#unit_id').val();
-            var departmentId = $('#department_id').val();
-
-            if (unitId && departmentId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/first-aider/employeename') }}",
-                    type: 'GET',
-                    data: {
-                        unit_id: unitId,
-                        department: departmentId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        var empSelect = $('#emp_name');
-                        empSelect.empty().append('<option value="">Select Employee</option>');
-
-                        if (response.employee && response.employee.length > 0) {
-                            $.each(response.employee, function(index, employee) {
-                                empSelect.append('<option value="' + employee.id + '">' + employee.emp_name + '</option>');
-                            });
-                        } else {
-                            empSelect.append('<option value="">No Employees Found</option>');
-                        }
-
-                        empSelect.trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching employee details. Please try again.');
-                    }
-                });
-            } else {
-                $('#emp_name').empty().append('<option value="">Select Employee</option>').trigger('change');
-            }
-        });
-        
-
-        $(document).on('change', '[id^="unit_id-"]', function() {
-            let formSet = $(this).closest('.form-set');
-            let unitId = $(this).val();
-            let departmentSelect = formSet.find('[id^="department_id-"]');
-
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        departmentSelect.empty().append('<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            departmentSelect.append('<option value="' + value.id + '">' + value
-                                .name + '</option>');
-                        });
-                        departmentSelect.trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
-                    }
-                });
-            } else {
-                departmentSelect.empty().append('<option value="">Select Department</option>');
-                departmentSelect.trigger('change');
-            }
-        });
-
-        $(document).on('change', '[id^="unit_id-"], [id^="department_id-"]', function() {
-            let formSet = $(this).closest('.form-set');
-            let unitId = formSet.find('[id^="unit_id-"]').val();
-            let departmentId = formSet.find('[id^="department_id-"]').val();
-            let employeeSelect = formSet.find('[id^="emp_name-"]');
-
-            if (unitId && departmentId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/first-aider/employeename') }}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        unit_id: unitId,
-                        department: departmentId
-                    },
-                    success: function(response) {
-                        employeeSelect.empty().append('<option value="">Select Employee</option>');
-
-                        if (response.employee && response.employee.length > 0) {
-                            $.each(response.employee, function(index, employee) {
-                                employeeSelect.append('<option value="' + employee.id + '">' +
-                                    employee.emp_name + '</option>');
-                            });
-                        } else {
-                            employeeSelect.append('<option value="">No Employees Found</option>');
-                        }
-
-                        employeeSelect.trigger('change');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching first aid details. Please try again.');
-                    }
-                });
-            } else {
-                employeeSelect.empty().append('<option value="">Select Employee</option>');
-                employeeSelect.trigger('change');
-            }
-        });
-
-
         $("#currentNewExtCodeDialingAdd").validate({
             rules: {
                 "unit_id[1]": {
@@ -275,20 +149,20 @@
                     required: true,
                     number: true,
                     remote: {
-                            url: '{{ admin_url('ohc/current-new-ext-code-dialing/unique') }}',
-                            type: 'post',
-                            data: {
-                                unit_id: function() {
-                                    return $('#unit_id').val();
-                                },
-                                department_id: function() {
-                                    return $('#department_id').val();
-                                },
-                                emp_name_id: function() {
-                                    return $('#emp_name').val();
-                                }
+                        url: '{{ admin_url('ohc/current-new-ext-code-dialing/unique') }}',
+                        type: 'post',
+                        data: {
+                            unit_id: function() {
+                                return $('#unit_id').val();
+                            },
+                            department_id: function() {
+                                return $('#department_id').val();
+                            },
+                            emp_name_id: function() {
+                                return $('#emp_name').val();
                             }
                         }
+                    }
                 }
             },
             messages: {
@@ -302,36 +176,62 @@
                 }
             },
             errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    console.log('test');
-                    form.submit();
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+            submitHandler: function(form) {
+                let employeeValues = [];
+                let isDuplicate = false;
 
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
+                $('.emp-select').each(function() {
+                    let empVal = $(this).val();
+                    let currentSelect = $(this);
+
+                    if (empVal) {
+                        if (employeeValues.includes(empVal)) {
+                            isDuplicate = true;
+
+                            currentSelect.addClass('is-invalid');
+                            currentSelect.closest('.form-input').find('span.error').remove();
+
+                            let error = $(
+                                '<span class="error invalid-feedback">This employee is already selected in another row.</span>'
+                            );
+                            currentSelect.closest('.form-input').append(error);
+                        } else {
+                            employeeValues.push(empVal);
+                            currentSelect.removeClass('is-invalid');
+                            currentSelect.closest('.form-input').find('span.error').remove();
+                        }
+                    }
+                });
+
+                if (isDuplicate) {
+                    return false;
                 }
-        });
 
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                console.log(errors + " field(s) are invalid");
+                validator.errorList.forEach(function(error) {
+                    console.log("Field: " + error.element.name + ", Error: " + error
+                        .message);
+                });
+            }
+        });
 
         let form_set_count = 2;
         const maxFormSets = 200;
         const minFormSets = 1;
-
 
         $(document).on('click', ".add-row", function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
@@ -346,105 +246,182 @@
                 return;
             }
 
-
             let newFormSet = `
-                            <div class="form-set mb-3 p-3 ">
-                                <div class="d-flex justify-content-end mb-2">
-                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                                            id="add-row" style="width: 84px;">
-                                                                            Add
-                                                                        </button>
-                                    <button type="button" class="btn btn-danger remove-row">
-                                        <i class="fa-solid fa-trash"></i> Remove
-                                    </button>
-                                </div>
-                                <div class="row">
-                                    
-
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label require">Unit</label>
-                                        <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}" class="form-control single-select">
+                        <div class="form-set mb-3">
+                            <div class="d-flex justify-content-end mb-2">
+                                <button class="btn btn-primary add-row me-3" type="button" style="width: 84px;">Add</button>
+                                <button type="button" class="btn btn-danger remove-row">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Unit</label> 
+                                        <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}" class="form-control unit-select single-select">
                                             <option value="">Select Unit</option>
                                             @foreach ($unitList as $unit)
                                                 <option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="col-md-4 mb-3">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group form-input">
                                         <label class="form-label require">Department</label>
                                         <select name="department_id[${form_set_count}]" id="department_id-${form_set_count}" class="form-control department-select select2">
                                             <option value="">Select Department</option>
                                         </select>
                                     </div>
-
-                                    <div class="col-md-4 mb-3">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group form-input">
                                         <label class="form-label require">Employee Name</label>
                                         <select name="emp_name[${form_set_count}]" id="emp_name-${form_set_count}" class="form-control emp-select single-select select2">
                                             <option value="">Select Employee</option>
                                         </select>
                                     </div>
-
-                                    <div class="col-md-4 mb-3">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group form-input">
                                         <label class="form-label require">Enter Number</label>
                                         <input type="text" name="number[${form_set_count}]" id="number-${form_set_count}" class="form-control">
                                     </div>
-                                    
                                 </div>
-                            </div>`;
+                            </div>
+                        </div>
+                    `;
 
             $('#form-wrapper').append(newFormSet);
 
-
-            $('select[name^="unit_id["]').each(function() {
-                $(this).select2({
-                    placeholder: "Select Unit",
-                    width: '100%'
-                });
-            });
-            $('select[name^="department_id["]').each(function() {
-                $(this).select2({
-                    placeholder: "Select Department",
-                    width: '100%'
-                });
-            });
-            $('select[name^="emp_name["]').each(function() {
-                $(this).select2({
-                    placeholder: "Select Employee",
-                    width: '100%'
-                });
+            $('.unit-select, .department-select, .emp-select').select2({
+                width: '100%'
             });
 
-            $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
+            $(`select[name='unit_id[${form_set_count}]']`).rules('add', {
                 required: true,
                 messages: {
-                    required: 'Unit is required',
+                    required: 'Unit is required'
                 }
             });
 
-            $("select[name='department_id[" + form_set_count + "]']").rules('add', {
+            $(`select[name='department_id[${form_set_count}]']`).rules('add', {
                 required: true,
                 messages: {
-                    required: 'Department is required',
+                    required: 'Department is required'
                 }
             });
-            $("select[name='emp_name[" + form_set_count + "]']").rules('add', {
+
+            $(`select[name='emp_name[${form_set_count}]']`).rules('add', {
                 required: true,
                 messages: {
-                    required: 'Employee name is required',
+                    required: 'Employee name is required'
                 }
             });
-             $("select[name='number[" + form_set_count + "]']").rules('add', {
+
+            let numberInput = $(`#number-${form_set_count}`);
+
+            numberInput.rules('add', {
                 required: true,
+                digits: true,
+                remote: {
+                    url: '{{ admin_url('ohc/current-new-ext-code-dialing/unique') }}',
+                    type: 'post',
+                    data: {
+                        unit_id: function() {
+                            return numberInput.closest('.form-set').find('.unit-select').val();
+                        },
+                        department_id: function() {
+                            return numberInput.closest('.form-set').find('.department-select').val();
+                        },
+                        emp_name_id: function() {
+                            return numberInput.closest('.form-set').find('.emp-select').val();
+                        }
+                    }
+                },
                 messages: {
-                    required: 'number is required',
+                    required: 'Number is required',
+                    digits: 'Only numeric values are allowed',
+                    remote: "This number is already in use. Please enter a unique number."
                 }
             });
 
             form_set_count++;
             updatePageIndices();
-
         });
+
+        $(document).on('change', '.unit-select', function() {
+            let unitId = $(this).val();
+            let row = $(this).closest('.form-set');
+            let departmentSelect = row.find('.department-select');
+            let empSelect = row.find('.emp-select');
+
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        departmentSelect.empty().append('<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            departmentSelect.append(
+                                `<option value="${value.id}">${value.name}</option>`);
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error fetching department. Please try again.'
+                        });
+                    }
+                });
+            } else {
+                departmentSelect.html('<option value="">Select Department</option>');
+                empSelect.html('<option value="">Select Employee</option>');
+            }
+        });
+
+        $(document).on('change', '.unit-select, .department-select', function() {
+            let row = $(this).closest('.form-set');
+            let unitId = row.find('.unit-select').val();
+            let departmentId = row.find('.department-select').val();
+
+            if (unitId && departmentId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/first-aider/employeename') }}",
+                    type: 'GET',
+                    data: {
+                        unit_id: unitId,
+                        department: departmentId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        let empSelect = row.find('.emp-select');
+                        empSelect.empty().append('<option value="">Select Employee</option>');
+                        $.each(response.employee, function(index, employee) {
+                            empSelect.append(
+                                `<option value="${employee.id}">${employee.emp_name}</option>`
+                            );
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error fetching employees. Please try again.'
+                        });
+                    }
+                });
+            } else {
+                row.find('.emp-select').html('<option value="">Select Employee</option>');
+            }
+        });
+
+
+
+
+
 
         $(document).on('click', '.remove-row', function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
@@ -475,7 +452,5 @@
                 $(this).find('input[name^="number"]').attr('name', 'number[' + (index + 1) + ']');
             });
         }
-
-          
     </script>
 @endpush
