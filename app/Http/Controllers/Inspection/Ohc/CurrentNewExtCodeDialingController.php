@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportCurrentNewExtCodeDailingJob;
 use App\Models\Inspection\Ohc\CurrentNewExtCodeDialing;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
+use App\Models\UploadLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -15,7 +17,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class CurrentNewExtCodeDialingController extends Controller
 {
@@ -23,6 +26,7 @@ class CurrentNewExtCodeDialingController extends Controller
     private $unit;
     private $department;
     private $employee;
+    private $uploadlog;
 
 
 
@@ -32,6 +36,8 @@ class CurrentNewExtCodeDialingController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->employee = new Employee();
+        $this->uploadlog = new UploadLog();
+
     }
 
     public function Index(Request $request)
@@ -104,6 +110,7 @@ class CurrentNewExtCodeDialingController extends Controller
 
     public function Store(Request $request)
     {
+        dd($request->all());
         try {
             // $rules = [
             //     'unit_id' => 'required',
@@ -330,6 +337,93 @@ class CurrentNewExtCodeDialingController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+        }
+    }
+
+    public function Import(Request $request)
+    {
+        $data = array();
+
+        return view('inspection.inspection_ohc.current_new_ext_code_dialing.import', $data);
+    }
+
+    public function DownloadSample(Request $request)
+    {
+        $filedetails =  exportsamplefile('code_dailing');
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+        return Response::download($filePath, $customFileName);
+    }
+
+
+    public function ImportSubmit(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $file = $request->file('code_dailing_file');
+
+            $rules = [
+                'code_dailing_file' => 'required',
+            ];
+            $messages = [
+                'code_dailing_file.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            if ($file != null) {
+                $uploadpath = 'public/uploads/inspection/ohc/code_dailing';
+                $folderPath = public_path('uploads/inspection/ohc/code_dailing');
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 14,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new ImportCurrentNewExtCodeDailingJob($details));
+                // dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('equipmentimport'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Current New Ext Code Dailing Uploaded sucessfully'));
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        } catch (Exception $ex) {
+            Session::flash('error', __('Current New Ext Code Dailing to be taken upload failed'));
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 

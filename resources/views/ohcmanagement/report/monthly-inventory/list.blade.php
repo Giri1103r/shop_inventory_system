@@ -298,7 +298,7 @@
 
                                 if (monthIndex === parseInt(month) && issuedDate.getUTCFullYear() === parseInt(
                                         year)) {
-                                    issueQuantities[dayIndex] = issued.quantity || ""; // Set empty if no data
+                                    issueQuantities[dayIndex] = issued.quantity || ""; 
                                 }
                             }
                         }

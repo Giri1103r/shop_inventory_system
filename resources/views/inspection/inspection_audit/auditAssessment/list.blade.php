@@ -24,8 +24,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">Work Name</label>
-                                            <input type="text" name="checklist" id="checklist"
+                                            <label for="audit_id" class="form-label ">Audit Id</label>
+                                            <input type="text" name="audit_id" id="audit_id"
                                                 class="form-control">
                                         </div>
 
@@ -118,7 +118,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.checklist = $('#checklist').val();
+                            d.audit_id = $('#audit_id').val();
                             d.status = $('#status').val();
 
                         },
@@ -245,12 +245,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate 6S Audit Assessment') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate 6S Audit Assessment') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }

@@ -801,6 +801,7 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::group(['prefix' => 'ohc'], function () {
                 Route::get('/dashboard', [OhcDashboardController::class, 'index']);
+                Route::get('/dashboard/medicine-requisition', [OhcDashboardController::class, 'medicineRequisition']);
             });
 
 

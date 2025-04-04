@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,

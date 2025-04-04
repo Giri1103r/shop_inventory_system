@@ -218,4 +218,18 @@ return [
     'branch_quantity' => 'Branch Quantity',
     'hose_box_key' => 'Hose Box Key',
     'hose_types' => 'Hose Box Types',
+
+    // Hose Reel Inspection
+    'length' => 'Hose Reel Length',
+    'nozzle' => 'Nozzle Condition',
+    'hose' => 'Hose Condition',
+    'flow' => 'Flow Test',
+    'fail' => 'Fail',
+    'pass' => 'Pass',
+    //Fire Modular Inspection
+    'types_of_equipment' => 'Types Of Equipment',
+    'capacity_of_equipment' => 'Capacity Of Equipment',
+    'working_temperature' => 'Working Temperature',
+    'sprinkler_head' => 'Sprinkler Head',
+    'neck_ring' => 'Neck Rink',
 ];

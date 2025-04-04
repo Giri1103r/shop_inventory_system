@@ -1904,10 +1904,11 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
+
             $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
                 ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
-                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
-                ->join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+                ->leftJoin('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
                 ->where('inspection_master_checklist_type.id', $id)
 
                 ->get([
@@ -1920,6 +1921,7 @@ if (!function_exists('getMonth')) {
                     'inspection_master_checklist_sub_type_data_name.name as checklist_name',
                     'inspection_master_checklist_option.type',
                 ]);
+
             $data = $data->groupBy('subcategory_name');
 
             if ($data) {
@@ -2359,7 +2361,7 @@ if (!function_exists('getMonth')) {
     }
 
     // Fire Inspection Hooter Sequence
-    if (!function_exists('HooterSequence')) {
+    if (!function_exists('FireSequence')) {
         function FireSequence($type)
         {
             switch ($type) {
@@ -2399,6 +2401,10 @@ if (!function_exists('getMonth')) {
 
                 case HOSE_BOX_INSPECTION:
                     return 'HBI-000001';
+                    break;
+
+                case HOSE_REEL_INSPECTION:
+                    return 'HRI-000001';
                     break;
             }
         }
@@ -2594,8 +2600,23 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+
                 case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case HOSE_REEL_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOSE_REEL_INSPECTION)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {

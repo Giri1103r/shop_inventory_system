@@ -221,14 +221,13 @@ class VendorController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                
+
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
             $this->vendor->updates($id);
 
-            // $vendor = $this->vendor->find($id);
-            // $this->user->vendorUpdate($vendor->login_id);
+          
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/vendor/list'));

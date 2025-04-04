@@ -532,9 +532,7 @@ class MedicineController extends Controller
                 __("common.sno"),
                 'Medicine Name',
                 'Pack',
-                'HSN Number',
                 'Threshold Limt',
-                'Expiry date',
                 'Reamrks',
                 'From Status',
                 'To Status',
@@ -550,9 +548,7 @@ class MedicineController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->medicine;
                 $export[] =  $data->pack;
-                $export[] =  $data->hsn;
                 $export[] =  $data->threshold_limit;
-                $export[] =  Displaydateformat($data->expiry_date);
                 $export[] =  $data->remarks;
                 if ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
                     $export[] = 'Stock Requested ';
@@ -605,9 +601,7 @@ class MedicineController extends Controller
                 __("common.sno"),
                 'Medicine Name',
                 'Pack',
-                'HSN Number',
                 'Threshold Limt',
-                'Expiry date',
                 'Reamrks',
                 'From Status',
                 'To Status',

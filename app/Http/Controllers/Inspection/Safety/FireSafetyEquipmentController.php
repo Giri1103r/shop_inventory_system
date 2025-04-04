@@ -123,7 +123,6 @@ class FireSafetyEquipmentController extends Controller
 
             $rules = [
                 'issue_date' => 'required',
-
                 'equipment_name.*' => 'required',
                 'item_code.*' => 'required',
                 'standard_norms.*' => 'required',

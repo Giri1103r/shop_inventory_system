@@ -40,6 +40,9 @@
                             {{ $value->station_number}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->first_aid_box_no}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
                             @endphp
