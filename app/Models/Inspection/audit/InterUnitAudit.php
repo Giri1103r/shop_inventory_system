@@ -6,19 +6,18 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class AuditAssessment extends Model
+class InterUnitAudit extends Model
 {
 
-    protected $table = 'inspection_audit_assessment';
+    protected $table = 'inspection_audit_inter_unit';
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
         'audit_id',
-        'floor_name',
+        'safety_officer',
         'audit_date',
-        'shift_id',
-        'floor_executive',
+        'unit_id',
         'checklist',
         'status',
         'trash',
@@ -37,7 +36,7 @@ class AuditAssessment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit_assessment.*', 'masters_employee.emp_name')->leftjoin('masters_employee', 'masters_employee.id', '=', 'inspection_audit_assessment.floor_executive');
+        $query = $this->select('inspection_audit_inter_unit.*', 'masters_unit.unit_name')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_audit_inter_unit.unit_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -49,10 +48,10 @@ class AuditAssessment extends Model
         }
 
         if (isset($request->audit_id) && $request->audit_id) {
-            $query = $query->where('inspection_audit_assessment.audit_id', 'LIKE', '%' . $request->audit_id . '%');
+            $query = $query->where('inspection_audit_inter_unit.audit_id', 'LIKE', '%' . $request->audit_id . '%');
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_audit_assessment.status', decryptId($request->status));
+            $query = $query->where('inspection_audit_inter_unit.status', decryptId($request->status));
         }
         $query->orderBy('id', 'desc');
 
@@ -76,12 +75,22 @@ class AuditAssessment extends Model
     public function store()
     {
         $request = request();
+        $structuredChecklist = [];
+
+        foreach ($request->checklist as $subTypeId => $checklists) {
+            foreach ($checklists as $checklistId => $response) {
+                $structuredChecklist[$checklistId] = [
+                    'response' => $response,
+                    'remarks' => $request->remarks[$checklistId] ?? '',
+                    'sub_type_id' => $subTypeId
+                ];
+            }
+        }
         $insert_array = [
-            'floor_name' => $request->floor_name,
+            'safety_officer' => $request->safety_officer,
             'audit_date' => DBdateformat($request->audit_date),
-            'shift_id' => decryptId($request->shift_id),
-            'floor_executive' => decryptId($request->floor_executive),
-            'checklist' => json_encode($request->checklist, true),
+            'unit_id' => decryptId($request->unit_id),
+            'checklist' => json_encode($structuredChecklist),
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);
@@ -196,10 +205,10 @@ class AuditAssessment extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_audit_assessment'));
+        static::addGlobalScope(new TrashScope('inspection_audit_inter_unit'));
         static::created(function ($model) {
 
-            $uniqueId = 'AUDIT-ASSESSMENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $uniqueId = 'INTER-UNIT-MONTHLY-AUDIT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['audit_id' => $uniqueId]);
         });
     }

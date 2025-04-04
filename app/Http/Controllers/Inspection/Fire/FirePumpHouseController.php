@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Inspection\Audit;
+namespace App\Http\Controllers\Inspection\Fire;
 
 use Exception;
 use Response;
@@ -12,29 +12,35 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\Fire\DailyFireHouseInspection;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Master\Unit;
+use App\Models\Inspection\Fire\FireSignatureUpload;
 
-class AuditAssessmentController extends Controller
+class FirePumpHouseController extends Controller
 {
 
     private $checklist_type;
     private $checklist_subtype;
     private $checklist_subtypedata;
     private $checklist_subtypename;
-    private $audit_assessment;
+    private $dailyFire;
     private $upload_log;
     private $checklist_option;
     private $shift;
+    private $static_docno;
+    private $unit;
+    private $signature;
 
     public function __construct()
     {
-        $this->audit_assessment = new AuditAssessment();
+        $this->dailyFire = new DailyFireHouseInspection();
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
         $this->checklist_option = new ChecklistOptionType();
@@ -42,6 +48,9 @@ class AuditAssessmentController extends Controller
         $this->checklist_subtypename = new ChecklistSubTypeDataName();
         $this->checklist_subtypedata = new ChecklistSubTypeData();
         $this->shift = new Shift();
+        $this->static_docno = new InspectionStaticDocno();
+        $this->unit = new Unit();
+        $this->signature = new FireSignatureUpload();
     }
 
     public function index(Request $request)
@@ -49,7 +58,7 @@ class AuditAssessmentController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =    $this->audit_assessment->list();
+                    $data =    $this->dailyFire->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -72,9 +81,9 @@ class AuditAssessmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
                             return $btn;
                         })
@@ -96,7 +105,7 @@ class AuditAssessmentController extends Controller
             'checklist_types' => $checklist_types,
 
         );
-        return view('inspection.inspection_audit.auditAssessment.list', $data);
+        return view('inspection.fire.firePumpHouse.list', $data);
     }
 
     public function add(Request $request)
@@ -104,62 +113,51 @@ class AuditAssessmentController extends Controller
         try {
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
-            $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
-            $options =  getoption(CHECKLIST_AUDIT_ASSESSMENT);
+            $unit  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
+            $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
+
+            $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                ['type', "DailyFirePumpHouseChecklist"],
+                ['status', '1']
+            ])->first();
             $data = array(
                 'checklist_types' => $checklist_types,
                 'shift' => $shift,
                 'checklist_details' => $checklist_details,
                 'getoption' => $getoption,
+                'staticDocno' => $staticDocno,
+                'unit' => $unit,
             );
-            return view('inspection.inspection_audit.auditAssessment.add', $data);
+            return view('inspection.fire.firePumpHouse.add', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
         }
     }
 
-    public function employeename(Request $request)
-    {
-        $name = $request->input('search');
-
-        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->orWhere('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
-
-
-        return response()->json(
-            $employees->map(function ($employee) {
-                return [
-                    'id' => encryptId($employee->id),
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-                ];
-            })
-        );
-    }
     public function store(Request $request)
     {
 
         try {
             try {
 
-                $this->audit_assessment->store();
+                $inspection_type = DAILY_FIRE_PUMP;
+                $inspection = $this->dailyFire->store();
+                $id = $inspection->id;
+                $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-
-
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
-
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         } catch (Exception $ex) {
+
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
     public function view($id)
@@ -167,30 +165,33 @@ class AuditAssessmentController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $audit_assessment =   $this->audit_assessment->selectOne($id);
+                $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
+                $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
+                $getoption = string_to_array($options->type);
+                $dailyFire =   $this->dailyFire->selectOne($id);
 
 
                 $data = array(
-                    'audit_assessment' => $audit_assessment,
+                    'dailyFire' => $dailyFire,
+                    'checklist_details' => $checklist_details,
+                    'getoption' => $getoption,
                 );
             }
-            return view('inspection.inspection_audit.auditAssessment.view', $data);
+            return view('inspection.fire.firePumpHouse.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
-
-
 
     public function statusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $this->audit_assessment->statuschange($id);
+            $this->dailyFire->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => '6S Audit Assessment status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Daily Fire Pump House Inspection status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -273,7 +274,7 @@ class AuditAssessmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.inspection_audit.auditAssessment.pdf', $data);
+            $view = view('inspection.fire.firePumpHouse.pdf', $data);
             $html = $view->render();
 
 

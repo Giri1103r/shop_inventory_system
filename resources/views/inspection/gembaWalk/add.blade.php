@@ -334,6 +334,13 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).ready(function() {
            
             flatpickr("#document_upload_date", {

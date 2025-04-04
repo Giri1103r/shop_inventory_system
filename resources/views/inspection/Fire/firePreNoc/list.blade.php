@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', '6S Audit Assessment')
-@section('pageurl', admin_url('audit/assessment/list'))
+@section('title', 'Fire Pre Noc Checklist')
+@section('pageurl', admin_url('fire/pre-noc/checklist/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('audit/assessment/add') }}">Add</x-button-add>
+                                href="{{ admin_url('fire/pre-noc/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -24,8 +24,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="audit_id" class="form-label ">Audit Id</label>
-                                            <input type="text" name="audit_id" id="audit_id"
+                                            <label for="inspection_id" class="form-label ">Inspection Id</label>
+                                            <input type="text" name="inspection_id" id="inspection_id"
                                                 class="form-control">
                                         </div>
 
@@ -58,10 +58,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('Audit ID')}}</th>
-                                        <th>{{__('Date of Audit')}}</th>
-                                        <th>{{__('Shop Floor')}}</th>
-                                        <th>{{__('Floor Executive')}}</th>
+                                        <th>Inspection Id</th>
+                                        <th>Doc No.</th>
+                                        <th>Issue Date</th>
+                                        <th>Rev. Date </th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -111,14 +111,14 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('audit/assessment/list') }}",
+                        url: "{{ admin_url('fire/pre-noc/checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.audit_id = $('#audit_id').val();
+                            d.inspection_id = $('#inspection_id').val();
                             d.status = $('#status').val();
 
                         },
@@ -136,21 +136,23 @@
                         },
 
                         {
-                            data: 'audit_id',
-                            name: 'audit_id'
+                            data: 'inspection_id',
+                            name: 'inspection_id'
                         },
                         {
-                            data: 'audit_date',
-                            name: 'audit_date'
+                            data: 'doc_no',
+                            name: 'doc_no'
                         },
                         {
-                            data: 'floor_name',
-                            name: 'floor_name'
+                            data: 'issue_date',
+                            name: 'issue_date'
                         },
+                       
                         {
-                            data: 'emp_name',
-                            name: 'emp_name'
+                            data: 'rev_dt',
+                            name: 'rev_dt'
                         },
+                       
                         {
                             data: 'status',
                             name: 'status'
@@ -245,12 +247,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate 6S Audit Assessment') }}';
+                        var title = '{{ __('Do You want to In-Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate 6S Audit Assessment') }}';
+                        var title = '{{ __('Do You want to Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -270,7 +272,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/status') }}",
+                                url: "{{ admin_url('fire/pre-noc/checklist/status') }}",
                                 type: 'post',
 
                                 data: {
