@@ -137,7 +137,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

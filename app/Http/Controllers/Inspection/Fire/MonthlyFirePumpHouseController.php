@@ -52,9 +52,9 @@ class MonthlyFirePumpHouseController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -105,23 +105,23 @@ class MonthlyFirePumpHouseController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -133,13 +133,20 @@ class MonthlyFirePumpHouseController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = array();
+        $unit = $this->unit->getUnit();
+        $shifts = $this->shift->getShiftname();
+
+        $data = array(
+            'units' => $unit,
+            'shifts' => $shifts,
+        );
         return view('inspection.fire.monthly_fire_pump_house.list', $data);
     }
 
