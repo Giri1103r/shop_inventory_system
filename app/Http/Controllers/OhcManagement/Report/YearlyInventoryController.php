@@ -87,12 +87,12 @@ class YearlyInventoryController extends Controller
         $selectedYear = $request->input('year');
 
         $inventory = $this->inventory->getyearlyinventoryreport($selectedUnit, $selectedYear);
-        $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear); // Ensure this method exists
+        $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear); 
         $medicineIssuing = $this->user_medicine_issuance->getYealyunitdata($selectedYear, $selectedUnit);
 
 
         $allIssuances = $this->medicine_issuance->getYearlyissuedDate($selectedYear, $medicineIssuing);
-      
+
         $data = [
             'medicine' => $medicine,
             'inventory' => $inventory,

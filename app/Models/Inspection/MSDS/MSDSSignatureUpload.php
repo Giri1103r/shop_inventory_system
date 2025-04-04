@@ -77,7 +77,7 @@ class MSDSSignatureUpload extends Model
     public function signatureStrore($type,$id)
     {
         try {
-           
+
             $request = Request();
             // $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
@@ -103,8 +103,8 @@ class MSDSSignatureUpload extends Model
                     'file_extension' => $fileExt,
                     'created_by' => Auth::id(),
                 ];
-// dd( $insert_array);
-                $this->create($insert_array);
+
+              return $this->create($insert_array);
             }
         } catch (Exception $ex) {
             report($ex);

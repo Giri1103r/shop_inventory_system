@@ -315,14 +315,18 @@ class FirstAiderlistController extends Controller
     {
         $unit_id = decryptId($request->input('unit_id'));
         $department_id = decryptId($request->input('department'));
-        $employee = Employee::where('unit', $unit_id)
+        $employees = Employee::where('unit', $unit_id)
             ->where('department', $department_id)
             ->get();
-        if ($employee) {
+    
+        if ($employees->isNotEmpty()) {
             return response()->json([
-                'employee' => $employee,
-
-
+                'employee' => $employees->map(function ($employee) {
+                    return [
+                        'id' => encryptId($employee->id),
+                        'emp_name' => $employee->emp_name,
+                    ];
+                }),
             ]);
         } else {
             return response()->json([
@@ -330,6 +334,7 @@ class FirstAiderlistController extends Controller
             ], 404);
         }
     }
+    
 
     public function employeedetails(Request $request)
     {

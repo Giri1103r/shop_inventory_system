@@ -40,6 +40,9 @@
                                                     <input type="text" name ="unit_id" id="unit_id"
                                                         class="form-control" placeholder="Enter the Unit Name"
                                                         value="{{ getUnitname(Auth::user()->unit_id) }}" readonly>
+                                                    @error('unit_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -53,6 +56,9 @@
                                                                 {{ $list->department_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('department_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -66,6 +72,9 @@
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
+                                                        @error('issue_date')
+                                                            <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
                                             </div>
@@ -120,6 +129,9 @@
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
+                                                                    @error('medicine_id.0')
+                                                                        <div class="text-danger">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -127,10 +139,13 @@
                                                                     <label for="available_quantity"
                                                                         class="require">Available
                                                                         Quantity</label>
-                                                                    <input type="text" name="available_quantity[0]"
-                                                                        id="available_quantity" value=""
-                                                                        placeholder="Available quantity"
+                                                                    <input type="number" min = "1"
+                                                                        name="available_quantity[0]" id="available_quantity"
+                                                                        value="" placeholder="Available quantity"
                                                                         class="form-control" readonly>
+                                                                    @error('available_quantity.0')
+                                                                        <div class="text-danger">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
 
@@ -143,17 +158,20 @@
                                                                     <span id="quantity-error" style=" display:none;"
                                                                         class="text-danger">Quantity must be less
                                                                         than available quantity.</span>
+                                                                    @error('quantity.0')
+                                                                        <div class="text-danger">{{ $message }}</div>
+                                                                    @enderror
                                                                 </div>
                                                             </td>
 
                                                             <td>
 
 
-                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                        style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </div>
-                                                               
+                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </div>
+
 
                                                             </td>
                                                         </tr>
@@ -185,7 +203,7 @@
 @push('script')
     <script>
         // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#request_date", {
+        //     var fromDatepicker = flatpickr("#issue_date", {
         //         dateFormat: "d-m-Y",
         //         minDate: new Date(),
 
@@ -265,18 +283,21 @@
                                                                         </option>
                                                                     @endforeach
                         </select>
+
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Available Quantity</label>
                         <input type="text" name="available_quantity[${rowcount}]" class="form-control" readonly>
+
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -370,7 +391,7 @@
 
 
             $(document).on("input", 'input[name^="quantity"]', function() {
-                var row = $(this).closest('tr'); // Get the row of the current input
+                var row = $(this).closest('tr');
                 var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
                 var quantity = parseInt($(this).val());
 
@@ -424,7 +445,7 @@
                     req_id: {
                         required: true,
                     },
-                    request_date: {
+                    issue_date: {
                         required: true,
                     },
                     'medicine_id[0]': {
@@ -447,7 +468,7 @@
                     req_id: {
                         required: "Requisition ID cannot be empty.",
                     },
-                    request_date: {
+                    issue_date: {
                         required: "Please select the request date.",
                     },
                     'medicine_id[0]': {

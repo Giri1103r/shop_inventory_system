@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'MSDS Pdf')
+@section('title', 'Current New Code Dailing')
 @section('content')
 
     <div style="width:100%;">
@@ -24,13 +24,25 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->unit_name}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->department_name}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->emp_name}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->number}}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
+                        </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->item_code }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->name_of_chemical }}
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

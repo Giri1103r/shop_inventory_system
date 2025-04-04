@@ -409,6 +409,9 @@ if (!function_exists('getohctotalCount')) {
             case 'medicineissuance':
                 $count = UserMedicineIssuance::where('created_at', Carbon::today())->count();
                 break;
+            case 'certifiedFirstAider':
+                $count = User::where('role', ROLE_CERTIFIED_FIRST_AIDER)->where('status',1)->count();
+                break;
 
             default:
                 $count = 0;

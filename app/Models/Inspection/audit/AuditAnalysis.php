@@ -16,9 +16,7 @@ class AuditAnalysis extends Model
         'id',
         'audit_analysis_id',
         'audit_analysis',
-        'document_number',
-        'issue_date',
-        'revision_date',
+        'docNo_id',
         'status',
         'trash',
         'created_by',
@@ -79,9 +77,7 @@ class AuditAnalysis extends Model
         $insert_array = array(
             'audit_analysis_id' => $request->audit_analysis_id,
             'audit_analysis' => $request->audit_analysis,
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
+            'docNo_id' => decryptId($request->docNo_id),
             'created_by' => Auth::id(),
         );
 

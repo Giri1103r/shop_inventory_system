@@ -160,14 +160,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 refered_to " style="display: none ">
-                                                <div class="form-group form-input">
-                                                    <label for="follow" class="form-label require">Refered To</label>
-                                                    <input type="text" name="refered_to" class="form-control"
-                                                        id="refered_to">
-                                                </div>
-
-                                            </div>
+                                         
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">Remarks</label>
