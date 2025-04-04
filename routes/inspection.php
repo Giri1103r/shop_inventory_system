@@ -866,10 +866,9 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::post('unique', [CurrentNewExtCodeDialingController::class, 'UniqueCheck']);
     Route::post('delete', [CurrentNewExtCodeDialingController::class, 'Delete']);
     Route::post('status', [CurrentNewExtCodeDialingController::class, 'StatusChange']);
-
-
-
-
+    Route::get('import', [CurrentNewExtCodeDialingController::class, 'Import']);
+    Route::post('import/Submit', [CurrentNewExtCodeDialingController::class, 'ImportSubmit']);
+    Route::get('sample_download', [CurrentNewExtCodeDialingController::class, 'DownloadSample']);
 
 
 });
