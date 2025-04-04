@@ -45,14 +45,16 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name ="document_number" class="form-control"
-                                                        placeholder="Document Number" value="">
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
                                                     <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date" value="">
+                                                        class="form-control" placeholder="Issue Date" value="{{ displaydateformat($document_no->issue_date) }}"
+                                                        readonly>
                                                 </div>
                                             </div>
 
@@ -61,9 +63,28 @@
                                                     <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
                                                         placeholder="Revision Date"
-                                                        value="{{ getDocumentReviewDate('FIR-0') }}" readonly>
+                                                        value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-4 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Month</label>
+                                                    <input type="text" name="month" id="month"
+                                                        class="form-control" placeholder="Month" value="">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Year</label>
+                                                    <input type="text" name="year" id="year"
+                                                        class="form-control" placeholder="Year" value="">
+                                                </div>
+                                            </div>
+
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
 
                                         <div class="row mt-4">
@@ -96,15 +117,6 @@
                                                                     value="FIR-00001" readonly>
                                                             </div>
                                                         </div>
-
-                                                        <div class="col-md-4 mt-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Month</label>
-                                                                <input type="text" name="month[1]" id="month"
-                                                                    class="form-control" placeholder="Month" value="">
-                                                            </div>
-                                                        </div>
-
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit</label>
@@ -216,14 +228,15 @@
                 location.reload();
             });
 
-            var fromDatepicker = flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-                // minDate: new Date(),
-            });
-
             $('#month').datepicker({
                 format: 'MM',
                 minViewMode: 1,
+                autoclose: true
+            });
+            $('#year').datepicker({
+                format: 'yyyy',
+                viewMode: 'years',
+                minViewMode: 'years',
                 autoclose: true
             });
 
@@ -349,19 +362,23 @@
 
             $('#fir_add').validate({
                 rules: {
-                    document_number: {
-                        required: true,
-                        noSpaces: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                    },
-                    issue_date: {
+                    month: {
                         required: true,
                     },
-                    revision_date: {
+                    year: {
                         required: true,
-                    },
-                    'month[1]': {
-                        required: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/first-aid-record/unique') }}',
+                            type: 'post',
+                            data: {
+                                year: function() {
+                                    return $('#year').val();
+                                },
+                                month: function() {
+                                    return $('#month').val();
+                                }
+                            }
+                        }
                     },
                     'department_id[1]': {
                         required: true,
@@ -392,18 +409,12 @@
                     },
                 },
                 messages: {
-                    document_number: {
-                        required: "Document Number is Required",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                    },
-                    issue_date: {
-                        required: "Please Select Issue Date",
-                    },
-                    revision_date: {
-                        required: "Please Select Revision Date",
-                    },
-                    'month[1]': {
+                    month: {
                         required: "Month is Required",
+                    },
+                    year: {
+                        required: "Year is Required",
+                        remote: "This combination of year and month already exists"
                     },
                     'department_id[1]': {
                         required: "Department is Required",
@@ -494,13 +505,6 @@
 
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
-                                <label class="form-label require">Month</label>
-                                <input type="text" name="month[${form_set_count}]" id="month" class="form-control month" placeholder="Month" value="">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
                                 <label class="form-label require">Unit</label>
                                 <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}"
                                     class="form-control single-select" style="width: 100%">
@@ -566,12 +570,6 @@
 
                 serial_number++;
 
-                $('.month').datepicker({
-                    format: 'MM',
-                    minViewMode: 1,
-                    autoclose: true
-                });
-
                 $('select[name^="unit_id["]').each(function() {
                     $(this).select2({
                         placeholder: "Select Unit",
@@ -583,13 +581,6 @@
                         placeholder: "Select Department",
                         width: '100%'
                     });
-                });
-
-                $("input[name='month[" + form_set_count + "]']").rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'Month is required',
-                    }
                 });
 
                 $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
@@ -672,7 +663,6 @@
 
                     $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index +
                         1) + ']');
-                    $(this).find('input[name^="month"]').attr('name', 'month[' + (index + 1) + ']');
                     $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + (index + 1) + ']');
                     $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + (index +
                         1) + ']');

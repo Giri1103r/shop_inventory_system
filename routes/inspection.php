@@ -114,7 +114,6 @@ Route::group(['prefix' => 'inspection/master/'], function () {
         Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
 
 
-        
     });
 });
 
@@ -732,6 +731,7 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::post('status', [FirstAidRecordController::class, 'statusChange']);
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
+    Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {
