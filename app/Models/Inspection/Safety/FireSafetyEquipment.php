@@ -45,7 +45,8 @@ class FireSafetyEquipment extends Model
             'inspection_safety_equipment.*',
             'inspection_static_docno.*',
             'inspection_safety_master_equipment.*',
-            'inspection_safety_equipment.id as inspection_id'
+            'inspection_safety_equipment.id as inspection_id',
+            'inspection_safety_equipment.status as equipment_status',
         )
             ->leftJoin(
                 'inspection_static_docno',
@@ -71,6 +72,7 @@ class FireSafetyEquipment extends Model
                 $query->orWhereRaw('item_code LIKE "%' . $search . '%"');
             });
         }
+
 
         if (isset($request->equipment_name) && $request->equipment_name) {
             $query = $query->where('inspection_safety_equipment.equipment_id', 'LIKE', '%' . decryptId($request->equipment_name) . '%');
@@ -162,7 +164,10 @@ class FireSafetyEquipment extends Model
                 'remark' => $remarks[$index],
                 'created_by' => Auth::id(),
             );
-            $this->create($data);
+            $result =  $this->EquipmentUniqueCheck($data['equipment_id']);
+            if($result){
+                $this->create($data);
+            }
         }
     }
 
@@ -241,5 +246,34 @@ class FireSafetyEquipment extends Model
         }
 
         return $this->where('id', $id)->update($update_data);
+    }
+
+    public function UniqueCheck($item_code, $equipment_name)
+    {
+        $unique =  $this->where('equipment_id',  $equipment_name)->where('item_code', $item_code)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+    public function EquipmentUniqueCheck($equipment_name)
+    {
+        $unique =  $this->where('equipment_id',  $equipment_name)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        $unique =  $this->where('resource_code',  $data['category_name'])
+            ->where('id', '!=', ($data['id']))
+            ->get();
+
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
     }
 }
