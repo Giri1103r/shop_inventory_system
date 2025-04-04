@@ -171,6 +171,7 @@
 
     @push('script')
         <script>
+
             $(document).ready(function() {
                 var fromDatepicker = flatpickr("#issue_date", {
                     dateFormat: "d-m-Y",
@@ -315,7 +316,7 @@
                     } else {
                         if (selectedMedicineId) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/medicine-first-aid/editquantity') }}/" +
+                                url: "{{ admin_url('ohc/medicine-requisition/quantity') }}/" +
                                     selectedMedicineId,
                                 type: 'get',
                                 dataType: 'json',
