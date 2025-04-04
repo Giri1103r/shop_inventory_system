@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Inspection\Ohc;
 
-use App\Http\Controllers\Controller;
-use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
-use App\Models\Inspection\Ohc\FirstAidRecordDetails;
-use App\Models\Inspection\Ohc\FirstAidRecordSignatureUpload;
-use App\Models\Inspection\Ohc\FirstAidRecordStatusLog;
-use App\Models\Master\Unit;
-use App\Models\OhcManagement\Master\FirstAidLocation;
-use Illuminate\Http\Request;
 use Exception;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Master\Unit;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\FirstAidRecordDetails;
+use App\Models\OhcManagement\Master\FirstAidLocation;
+use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\Ohc\FirstAidRecordStatusLog;
+use App\Models\Inspection\Ohc\FirstAidRecordSignatureUpload;
 
 class FirstAidRecordController extends Controller
 {
@@ -24,6 +26,7 @@ class FirstAidRecordController extends Controller
     private $first_aid_checklist;
     private $unit;
     private $firstAidLocation;
+    private $document_reference;
 
     public function __construct()
     {
@@ -31,7 +34,7 @@ class FirstAidRecordController extends Controller
         $this->first_aid_checklist = new FirstAidRecordChecklist();
         $this->unit = new Unit();
         $this->firstAidLocation = new FirstAidLocation();
-
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -92,13 +95,35 @@ class FirstAidRecordController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
             $data = [
                 'unit' => $unit,
+                'document_no' => $document_no,
             ];
             return view('inspection.inspection_ohc.first_aid_record.add', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $month = $request->month;
+            $year = $request->year;
+            $id = $request->id;
+
+            if ($id == '') {
+                $record = $this->first_aid_details->uniqueCheck($month, $year);
+            } else {
+                $id = decryptId($id);
+                $record = $this->first_aid_details->ExistuniqueCheck($month, $year, $id);
+            }
+
+            if ($record->count()) {
+                return Response::json(false);
+            }
+
+            return Response::json(true);
         }
     }
 
@@ -127,7 +152,7 @@ class FirstAidRecordController extends Controller
         try {
 
             $first_aid_details = $this->first_aid_details->store();
-            $first_aid_detail_id = $first_aid_details->id; 
+            $first_aid_detail_id = $first_aid_details->id;
             $this->first_aid_checklist->store($first_aid_detail_id);
 
             Session::flash('success', __('Your data has been created successfully'));
@@ -145,7 +170,7 @@ class FirstAidRecordController extends Controller
             $id = decryptId($request->id);
 
             $this->first_aid_details->statuschange($id);
-           
+
             $this->first_aid_checklist->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -162,10 +187,12 @@ class FirstAidRecordController extends Controller
             if (Auth::check()) {
                 $first_aid_details = $this->first_aid_details->find($id);
                 $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectOne($first_aid_details->document_reference_id);
 
                 $data = array(
                     'first_aid_details' => $first_aid_details,
                     'first_aid_checklist' => $first_aid_checklist  ?? [],
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.first_aid_record.view', $data);
@@ -179,17 +206,15 @@ class FirstAidRecordController extends Controller
         try {
 
             $allData = $this->first_aid_details->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
+                    'Month',
+                    'Year',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -199,10 +224,8 @@ class FirstAidRecordController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->document_number;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  $data->month;
+                $export[] =  $data->year;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -236,10 +259,8 @@ class FirstAidRecordController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
+                    'Month',
+                    'Year',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -284,10 +305,12 @@ class FirstAidRecordController extends Controller
             if (Auth::check()) {
                 $first_aid_details = $this->first_aid_details->find($id);
                 $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
 
                 $data = array(
                     'first_aid_details' => $first_aid_details,
                     'first_aid_checklist' => $first_aid_checklist  ?? [],
+                    'document_no' => $document_no,
                     'pagetitle' => "OHC FIRST AID RECORD",
                 );
             }

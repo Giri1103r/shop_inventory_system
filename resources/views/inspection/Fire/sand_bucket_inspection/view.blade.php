@@ -113,10 +113,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                SAND_BUCKET_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -307,10 +307,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        DETECTOR_INSPECTION,
+                                                        SAND_BUCKET_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -346,10 +346,10 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSignature(
+                                                        $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            DETECTOR_INSPECTION,
+                                                            SAND_BUCKET_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -409,10 +409,10 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    DETECTOR_INSPECTION,
+                                                    SAND_BUCKET_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -462,10 +462,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                SAND_BUCKET_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -514,10 +514,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                SAND_BUCKET_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -565,10 +565,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                SAND_BUCKET_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -592,10 +592,10 @@
                                             </div>
                                         @endif
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                SAND_BUCKET_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

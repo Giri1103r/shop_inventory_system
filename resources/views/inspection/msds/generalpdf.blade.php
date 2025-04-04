@@ -160,7 +160,8 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
@@ -251,22 +252,6 @@
                         {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
                     </td>
                 </tr>
-            @php
-               $signature = GetSignature(
-                    $inspection_details->created_by,
-                    $inspection_details->id,
-                    MSDS_INSPECTION,
-                );
-            @endphp
-            <tr>
-                <td colspan="5"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($signature) }}" alt="Checked By Signature"
-                        style="height: 50px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
-                </td>
-            </tr>
-
         </tbody>
     </table>
     <br>

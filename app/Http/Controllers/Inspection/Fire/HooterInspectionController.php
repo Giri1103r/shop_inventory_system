@@ -23,7 +23,6 @@ use App\Models\Inspection\Fire\HooterInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\HooterInspectionDetails;
-use App\Models\Inspection\InspectionStaticDocno;
 
 class HooterInspectionController extends Controller
 {
@@ -38,7 +37,6 @@ class HooterInspectionController extends Controller
     private $signature;
     private $statusLog;
     private $checklist_follow;
-    private $document_reference;
 
     public function __construct()
     {
@@ -53,7 +51,6 @@ class HooterInspectionController extends Controller
         $this->signature = new FireSignatureUpload();
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
-        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -167,8 +164,6 @@ class HooterInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
-            $document_no = $this->document_reference->selectUsingName('HooterInspection');
-
 
             $data = array(
                 'locations' => $location,
@@ -176,7 +171,6 @@ class HooterInspectionController extends Controller
                 'frequency' => $frequency,
                 'shifts' => $shifts,
                 'department' => $department,
-                'document_no' => $document_no,
             );
 
             return view('inspection.fire.hooter_inspection.add', $data);
@@ -323,15 +317,12 @@ class HooterInspectionController extends Controller
             $inspection_details = $this->hooter_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
-            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
-
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
-                'document_no' => $document_no,
             );
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
@@ -352,15 +343,12 @@ class HooterInspectionController extends Controller
             $inspection_details = $this->hooter_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
-            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
-
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
-                'document_no' => $document_no,
             );
             return view('inspection.fire.hooter_inspection.approve', $data);
         } catch (Exception $ex) {
@@ -824,14 +812,12 @@ class HooterInspectionController extends Controller
                 $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
                 $forklift_details = $this->hooter->selectOne($id);
                 $inspection = $this->hooter_details->GetDetails($forklift_details->id);
-                $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Hooter Inspection",
                     'inspection' => $inspection,
-                    'document_no' => $document_no,
                 ];
             }
 

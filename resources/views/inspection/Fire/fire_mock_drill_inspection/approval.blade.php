@@ -60,10 +60,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSafetySignature(
+                                            $signature = GetFireSignature(
                                                 $inspection_details->created_by,
                                                 $inspection_details->id,
-                                                FORKLIFT_INSPECTION,
+                                                FIRE_MOCK_DRILL_INSPECION,
                                             );
                                         @endphp
                                         @if (isset($signature))
