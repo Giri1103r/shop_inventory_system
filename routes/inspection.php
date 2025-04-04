@@ -112,6 +112,9 @@ Route::group(['prefix' => 'inspection/master/'], function () {
         Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
         Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
         Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
+
+
+        
     });
 });
 
