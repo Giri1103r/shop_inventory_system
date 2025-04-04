@@ -619,14 +619,14 @@ class MedicineIssuanceController extends Controller
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, please try again later!');
                 return redirect()->back();
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, please try again later!');
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
@@ -664,37 +664,7 @@ class MedicineIssuanceController extends Controller
             ['available_quantity' => $availableQuantity->balance]
         );
     }
-    // public function delete(Request $request, $id)
-    // {
-    //     try {
-    //         $ids = decryptId($id);
-
-    //         $data =    $this->medicine_issuance->firstdata($ids);
-
-    //         $referenceId =   $data->reference_id;
-    //         $user_medicine_issuance = $this->user_medicine_issuance->selectOne($referenceId);
-    //         $this->inventory->where('unit_id', 1)
-    //             ->where('medicine_id', $data->medicine_id)
-    //             ->decrement('total_issue', $data->quantity);
-
-    //         $this->inventory->where('unit_id', 1)
-    //             ->where('medicine_id', $data->medicine_id)
-    //             ->decrement('balance', $data->quantity);
-
-    //         $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-    //             ->where('medicine_id', $data->medicine_id)
-    //             ->decrement('total_purchase', $data->quantity);
-
-    //         $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-    //             ->where('medicine_id', $data->medicine_id)
-    //             ->decrement('balance', $data->quantity);
-    //         $this->medicine_issuance->deleterecord($ids);
-    //         return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
-    //     } catch (Exception $ex) {
-    //         report($ex);
-    //         return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
-    //     }
-    // }
+   
 
     public function import()
     {

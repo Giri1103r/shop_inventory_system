@@ -325,7 +325,7 @@ class MedicineFirstAidController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again later!');
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
