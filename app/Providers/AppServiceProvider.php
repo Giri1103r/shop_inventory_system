@@ -382,6 +382,7 @@ class AppServiceProvider extends ServiceProvider
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
         defined('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION', 13);
         defined('HOSE_BOX_INSPECTION') or define('HOSE_BOX_INSPECTION',9);
+        defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION',23);
 
         // OPTIONS
         defined('YES') or define('YES', 1);

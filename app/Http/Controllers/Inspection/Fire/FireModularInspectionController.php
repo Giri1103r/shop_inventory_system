@@ -25,9 +25,12 @@ use App\Models\Inspection\Fire\DetectorInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\DetectorInspectionDetails;
+use App\Models\Inspection\Fire\FireModularInspection;
+use App\Models\Inspection\Fire\FireModularInspectionDetails;
 
-class DetectorInspectionController extends Controller
+class FireModularInspectionController extends Controller
 {
+
     private $detector;
     private $detector_details;
     private $shift;
@@ -44,8 +47,8 @@ class DetectorInspectionController extends Controller
 
     public function __construct()
     {
-        $this->detector = new DetectorInspection();
-        $this->detector_details = new DetectorInspectionDetails();
+        $this->detector = new FireModularInspection();
+        $this->detector_details = new FireModularInspectionDetails();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -127,23 +130,23 @@ class DetectorInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/detector-inspection/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/fire-modular-inspection/checklist/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/detector-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -172,7 +175,7 @@ class DetectorInspectionController extends Controller
             'frequency' => $frequency,
             'shifts' => $shifts,
         );
-        return view('inspection.fire.detector_inspection.list', $data);
+        return view('inspection.fire.fire_modular_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -183,7 +186,7 @@ class DetectorInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
-            $document_no = $this->document_reference->selectUsingName('DetectorInspection');
+            $document_no = $this->document_reference->selectUsingName('FireModularInspection');
             $detector_type = $this->detector_type->getDetectorType();
 
             $data = array(
@@ -196,11 +199,11 @@ class DetectorInspectionController extends Controller
                 'detector_types' => $detector_type,
             );
 
-            return view('inspection.fire.detector_inspection.add', $data);
+            return view('inspection.fire.fire_modular_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -240,11 +243,13 @@ class DetectorInspectionController extends Controller
                 'frequency_id' => 'required',
                 'department.*' => 'required',
                 'resource_code.*' => 'required',
-                'detector_type.*' => 'required',
-                'physical_condition.*' => 'required',
-                'cable_condition.*' => 'required',
-                'response_indicator.*' => 'required',
-                'working_status.*' => 'required',
+                'location.*' => 'required',
+                'types_of_equipment.*' => 'required',
+                'capacity_of_equipment.*' => 'required',
+                'working_temperature.*' => 'required',
+                'sprinkler_head.*' => 'required',
+                'neck_ring.*' => 'required',
+                'cylinder_pressure.*' => 'required',
                 'remarks.*' => 'required',
                 'observation' => 'required',
             ];
@@ -255,19 +260,24 @@ class DetectorInspectionController extends Controller
                 'inspection_date.required' => 'Inspection Date is required.',
                 'location_id.required' => 'Location is required.',
                 'shift_id.required' => 'Shift is required.',
-                'frequency_id.required' => 'Frequency is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
+                'frequency_id.required' => 'Frequency is required.',
+
                 'department.*.required' => 'Department is required.',
                 'resource_code.*.required' => 'Resource Code is required.',
-                'detector_type.*.required' => 'Detector Type is required.',
-                'physical_condition.*.required' => 'Physical Condition is required.',
-                'cable_condition.*.required' => 'Cable Condition is required.',
-                'response_indicator.*.required' => 'Response Indicator is required.',
-                'working_status.*.required' => 'Working Status is required.',
+                'location.*.required' => 'Location is required.',
+                'types_of_equipment.*.required' => 'Type of Equipment is required.',
+                'capacity_of_equipment.*.required' => 'Capacity of Equipment is required.',
+                'working_temperature.*.required' => 'Working Temperature is required.',
+                'sprinkler_head.*.required' => 'Sprinkler Head is required.',
+                'neck_ring.*.required' => 'Neck Ring is required.',
+                'cylinder_pressure.*.required' => 'Cylinder Pressure is required.',
                 'remarks.*.required' => 'Remarks are required.',
-                'observation*.required' => 'Observation is  required.',
+
+                'observation.required' => 'Observation is required.',
             ];
+
 
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -279,7 +289,7 @@ class DetectorInspectionController extends Controller
 
 
             $inspection = $this->detector->store();
-            $inspection_type = DETECTOR_INSPECTION;
+            $inspection_type = FIRE_MODULAR_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->detector_details->store($id);
@@ -289,30 +299,30 @@ class DetectorInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Detector Inspection",
+                    'message' => "Fire Associate create the Fire Modular Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/detector-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Detector Inspection';
+            $title = 'Fire Associate create the Fire Modular Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Fire Modular Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -323,7 +333,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -331,12 +341,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -345,13 +354,12 @@ class DetectorInspectionController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = DETECTOR_INSPECTION;
+            $inspection_type = FIRE_MODULAR_INSPECTION;
             $inspection = $this->detector->selectOne($id);
             $inspection_details = $this->detector_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, FIRE_MODULAR_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
-
 
             $data = array(
                 'inspection' => $inspection,
@@ -360,13 +368,11 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-
-            dd($data);
-            return view('inspection.fire.detector_inspection.view', $data);
+            return view('inspection.fire.fire_modular_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -375,12 +381,12 @@ class DetectorInspectionController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = DETECTOR_INSPECTION;
+            $inspection_type = FIRE_MODULAR_INSPECTION;
 
             $inspection = $this->detector->selectOne($id);
             $inspection_details = $this->detector_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, FIRE_MODULAR_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
 
@@ -391,11 +397,11 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.detector_inspection.approve', $data);
+            return view('inspection.fire.fire_modular_inspection.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -405,21 +411,21 @@ class DetectorInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->detector->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Detector Inspeciton Approved Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id));
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 2,
@@ -440,9 +446,9 @@ class DetectorInspectionController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/capa');
+            $url = admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Detector Inspection',
+                'fire_type' => 'Fire Modular Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -452,7 +458,7 @@ class DetectorInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -461,12 +467,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -476,12 +481,12 @@ class DetectorInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->detector->capaSubmit($id);
             $inspection_details = $this->detector->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -493,7 +498,7 @@ class DetectorInspectionController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -501,7 +506,7 @@ class DetectorInspectionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id) . '/ehs');
             $details = array(
                 'fire_type' => 'Safety Gallery Inspection',
                 'email' => $email_id,
@@ -513,7 +518,7 @@ class DetectorInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -522,11 +527,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -537,23 +542,23 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -576,7 +581,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Fire Modular Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -587,7 +592,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -596,11 +601,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -611,23 +616,23 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -650,7 +655,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Fire Modular Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -661,7 +666,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -670,11 +675,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -685,20 +690,20 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'detector Inspeciton Approved Successfully!';
-                $web_link =   admin_url('fire/detector-inspection/view/' . encryptId($inspection_details->id));
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 1,
@@ -720,7 +725,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Fire Modular Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -731,7 +736,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => FIRE_MODULAR_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -740,11 +745,11 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -781,7 +786,7 @@ class DetectorInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Detector Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire Modular Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -789,7 +794,7 @@ class DetectorInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -814,7 +819,7 @@ class DetectorInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Detector Inspection",
+                'pagetitle' => "Fire Modular Inspection",
             );
 
             $property = [
@@ -834,12 +839,12 @@ class DetectorInspectionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Detector Inspection.pdf";
+            $filename = "Fire Modular Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 
@@ -849,7 +854,7 @@ class DetectorInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, FIRE_MODULAR_INSPECTION);
                 $forklift_details = $this->detector->selectOne($id);
                 $inspection = $this->detector_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
@@ -858,7 +863,7 @@ class DetectorInspectionController extends Controller
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'document_no' => $document_no,
-                    'pagetitle' => "Detector Inspection",
+                    'pagetitle' => "Fire Modular Inspection",
                     'inspection' => $inspection,
                 ];
             }
@@ -875,17 +880,17 @@ class DetectorInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.detector_inspection.viewPdf', $data);
+            $html = view('inspection.fire.fire_modular_inspection.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            $filename = "Fire Modular Inspection.pdf";
+            return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
     }
 }

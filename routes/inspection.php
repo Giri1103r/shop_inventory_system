@@ -53,8 +53,8 @@ use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
+use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -113,9 +113,6 @@ Route::group(['prefix' => 'inspection/master/'], function () {
         Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
         Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
         Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
-
-
-        
     });
 });
 
@@ -725,6 +722,24 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
         Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
     });
+
+    Route::group(['prefix' => 'fire-modular-inspection/checklist/'], function () {
+        Route::GET('list', [FireModularInspectionController::class, 'Index']);
+        Route::POST('list', [FireModularInspectionController::class, 'Index']);
+        Route::GET('add', [FireModularInspectionController::class, 'Add']);
+        Route::POST('add/submit', [FireModularInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [FireModularInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [FireModularInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [FireModularInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [FireModularInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [FireModularInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [FireModularInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [FireModularInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [FireModularInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [FireModularInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [FireModularInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [FireModularInspectionController::class, 'GetDepartment']);
+    });
 });
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
@@ -891,10 +906,4 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::post('unique', [CurrentNewExtCodeDialingController::class, 'UniqueCheck']);
     Route::post('delete', [CurrentNewExtCodeDialingController::class, 'Delete']);
     Route::post('status', [CurrentNewExtCodeDialingController::class, 'StatusChange']);
-
-
-
-
-
-
 });

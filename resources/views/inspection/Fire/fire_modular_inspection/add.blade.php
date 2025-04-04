@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection Add')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
+@section('title', 'Fire Modular Inspection Add')
+@section('pageurl', admin_url('fire/fire-modular-inspection/checklist/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/fire-modular-inspection/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -27,8 +28,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('fire/detector-inspection/add/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/fire-modular-inspection/checklist/add/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -62,7 +63,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{old('inspection_date')}}">
+                                                        class="form-control" value="{{ old('inspection_date') }}">
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -176,13 +177,13 @@
                                                 @endif
                                             </div>
                                             <input type="hidden" name="document_reference_id"
-                                            value="{{ encryptId($document_no->id) }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire Modular Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -234,104 +235,90 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
-                                                        <select name="detector_type[1]" id="detector_type[1]"
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                        <select name="location[1]" id="location"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Detector Type</option>
-                                                            @foreach ($detector_types as $detector_type)
-                                                                <option value="{{ encryptId($detector_type->id) }}"
-                                                                    {{ old('detector_type.1') == encryptId($detector_type->id) ? 'selected' : '' }}>
-                                                                    {{ $detector_type->detector_type }}</option>
+                                                            <option value="">Select {{ __('inspection.location') }}
+                                                            </option>
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ encryptId($location->id) }}"
+                                                                    {{ old('location') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                    {{ $location->location_name }}</option>
                                                             @endforeach
                                                         </select>
+                                                        @error('location.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
-                                                    @error('detector_type.1')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
                                                 </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
-                                                        <select name="physical_condition[1]" id="physical_condition[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Physical Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}"
-                                                                {{ old('physical_condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
-                                                                Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}"
-                                                                {{ old('physical_condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
-                                                                Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}"
-                                                                {{ old('physical_condition.1') == encryptId(POOR) ? 'selected' : '' }}>
-                                                                Poor</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.types_of_equipment') }}</label>
+                                                        <input type="text" name="types_of_equipment[1]"
+                                                            id = "types_of_equipment" class="form-control"
+                                                            value="{{ old('types_of_equipment') }}">
                                                     </div>
-                                                    @error('physical_condition.1')
+                                                    @error('types_of_equipment.1')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <select name="cable_condition[1]" id="cable_condition[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Cable Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}"
-                                                                {{ old('cable_condition.1') == encryptId(GOOD) ? 'selected' : '' }}>
-                                                                Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}"
-                                                                {{ old('cable_condition.1') == encryptId(FAIR) ? 'selected' : '' }}>
-                                                                Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}"
-                                                                {{ old('cable_condition.1') == encryptId(POOR) ? 'selected' : '' }}>
-                                                                Poor</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.capacity_of_equipment') }}</label>
+                                                        <input type="text" name="capacity_of_equipment[1]"
+                                                            id = "capacity_of_equipment" class="form-control"
+                                                            value="{{ old('capacity_of_equipment') }}">
                                                     </div>
-                                                    @error('cable_condition.1')
+                                                    @error('capacity_of_equipment.1')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <select name="response_indicator[1]" id="response_indicator[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Response Indicator</option>
-                                                            <option value="{{ encryptId(WORKING) }}"
-                                                                {{ old('response_indicator.1') == encryptId(WORKING) ? 'selected' : '' }}>
-                                                                Working</option>
-                                                            <option value="{{ encryptId(NOTWORKING) }}"
-                                                                {{ old('response_indicator.1') == encryptId(NOTWORKING) ? 'selected' : '' }}>
-                                                                Not Working
-                                                            </option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.working_temperature') }}</label>
+                                                        <input type="text" name="working_temperature[1]"
+                                                            id = "working_temperature" class="form-control"
+                                                            value="{{ old('working_temperature') }}">
                                                     </div>
-                                                    @error('response_indicator.1')
+                                                    @error('working_temperature.1')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <select name="working_status[1]" id="working_status[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Working Status</option>
-                                                            <option value="{{ encryptId(OPERATIONAL) }}"
-                                                                {{ old('working_status.1') == encryptId(OPERATIONAL) ? 'selected' : '' }}>
-                                                                Operational
-                                                            </option>
-                                                            <option value="{{ encryptId(NONOPERATIONAL) }}"
-                                                                {{ old('working_status.1') == encryptId(NONOPERATIONAL) ? 'selected' : '' }}>
-                                                                Non-Operational</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.sprinkler_head') }}</label>
+                                                        <input type="text" name="sprinkler_head[1]"
+                                                            id = "sprinkler_head" class="form-control"
+                                                            value="{{ old('sprinkler_head') }}">
                                                     </div>
-                                                    @error('working_status.1')
+                                                    @error('sprinkler_head.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.neck_ring') }}</label>
+                                                        <input type="text" name="neck_ring[1]" id = "neck_ring"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                    </div>
+                                                    @error('neck_ring')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
+                                                        <input type="text" name="cylinder_pressure[1]"
+                                                            id = "cylinder_pressure" class="form-control"
+                                                            value="{{ old('cylinder_pressure') }}">
+                                                    </div>
+                                                    @error('cylinder_pressure.1')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -354,7 +341,7 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Observation</h4>
+                                                    <h4 class="text-white">Fire Modular Inspection Observation</h4>
                                                 </div>
 
                                                 {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -478,19 +465,25 @@
                         forklift_type: {
                             required: true,
                         },
-                        "physical_condition[1]": {
+                        "sprinkler_head[1]": {
                             required: true,
                         },
-                        "cable_condition[1]": {
+                        "neck_ring[1]": {
                             required: true,
                         },
-                        "response_indicator[1]": {
+                        "cylinder_pressure[1]": {
                             required: true,
                         },
-                        "working_status[1]": {
+                        "working_temperature[1]": {
                             required: true,
                         },
-                        "detector_type[1]": {
+                        "capacity_of_equipment[1]": {
+                            required: true,
+                        },
+                        "types_of_equipment[1]": {
+                            required: true,
+                        },
+                        "location[1]": {
                             required: true,
                         },
                         "department[1]": {
@@ -546,23 +539,26 @@
                         unit_id: {
                             required: "Unit is required",
                         },
-                        'detector_type[1]': {
-                            required: "Please Select the Detector Type",
+                        'location[1]': {
+                            required: "Please Select the Location",
                         },
-                        "physical_condition[1]": {
-                            required: "Please Enter the Physical Condition",
+                        "types_of_equipment[1]": {
+                            required: "Please Enter the Types Of Equipment",
                         },
-                        "cable_condition[1]": {
-                            required: "Please Enter the Cable Condition",
+                        "capacity_of_equipment[1]": {
+                            required: "Please Enter the Capacity Of Equipment",
                         },
-                        "response_indicator[1]": {
-                            required: "Please Enter the Response Indicator",
+                        "working_temperature[1]": {
+                            required: "Please Enter the Working Temperature",
                         },
-                        "department[1]": {
-                            required: "Please Select The Department",
+                        "sprinkler_head[1]": {
+                            required: "Please Enter the Sprinkler Head",
                         },
-                        "working_status[1]": {
-                            required: "Please Select the Working Status",
+                        "neck_ring[1]": {
+                            required: "Please Enter the Neck Ring",
+                        },
+                        "cylinder_pressure[1]": {
+                            required: "Please Enter the Cylinder Pressure",
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
@@ -621,8 +617,8 @@
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection CheckList Reached',
-                            text: 'You can only add up to 200 Detector Inspection CheckList.',
+                            title: 'Maximum Fire Modular Inspection CheckList Reached',
+                            text: 'You can only add up to 200 Fire Modular Inspection CheckList.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -633,7 +629,7 @@
                     var newFormSet = `
                         <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                    <h4 class="text-white">Fire Modular Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end gap-0 m-2">
@@ -664,70 +660,90 @@
                                                             id = "resource_code" class="form-control">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
+                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
-                                                        <select name="detector_type[${form_set_count}]" id="detector_type[${form_set_count}]"
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                        <select name="location[${form_set_count}]" id="location"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Detector Type</option>
-                                                            @foreach ($detector_types as $detector_type)
-                                                                <option value="{{ encryptId($detector_type->id) }}">
-                                                                    {{ $detector_type->detector_type }}</option>
+                                                            <option value="">Select {{ __('inspection.location') }}
+                                                            </option>
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ encryptId($location->id) }}"
+                                                                    {{ old('location') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                    {{ $location->location_name }}</option>
                                                             @endforeach
                                                         </select>
+                                                        @error('location.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
+                                                </div>
+                                                 <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.types_of_equipment') }}</label>
+                                                        <input type="text" name="types_of_equipment[${form_set_count}]" id = "types_of_equipment"
+                                                            class="form-control" value="{{ old('types_of_equipment') }}">
+                                                    </div>
+                                                    @error('types_of_equipment.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
-                                                        <select name="physical_condition[${form_set_count}]" id="physical_condition[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Physical Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.capacity_of_equipment') }}</label>
+                                                        <input type="text" name="capacity_of_equipment[${form_set_count}]" id = "capacity_of_equipment"
+                                                            class="form-control" value="{{ old('capacity_of_equipment') }}">
                                                     </div>
+                                                    @error('capacity_of_equipment.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
-                                               <div class="col-md-4 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <select name="cable_condition[${form_set_count}]" id="cable_condition[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Cable Condition</option>
-                                                            <option value="{{ encryptId(GOOD) }}">Good</option>
-                                                            <option value="{{ encryptId(FAIR) }}">Fair</option>
-                                                            <option value="{{ encryptId(POOR) }}">Poor</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.working_temperature') }}</label>
+                                                        <input type="text" name="working_temperature[${form_set_count}]" id = "working_temperature"
+                                                            class="form-control" value="{{ old('working_temperature') }}">
                                                     </div>
+                                                    @error('working_temperature.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
-                                                 <div class="col-md-4 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <select name="response_indicator[${form_set_count}]" id="response_indicator[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Response Indicator</option>
-                                                            <option value="{{ encryptId(WORKING) }}">Working</option>
-                                                            <option value="{{ encryptId(NOTWORKING) }}">Not Working</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.sprinkler_head') }}</label>
+                                                        <input type="text" name="sprinkler_head[${form_set_count}]" id = "sprinkler_head"
+                                                            class="form-control" value="{{ old('sprinkler_head') }}">
                                                     </div>
+                                                    @error('sprinkler_head.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
-
-                                                 <div class="col-md-4 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <select name="working_status[${form_set_count}]" id="working_status[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Working Status</option>
-                                                            <option value="{{ encryptId(OPERATIONAL) }}">Operational</option>
-                                                            <option value="{{ encryptId(NONOPERATIONAL) }}">Non-Operational</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.neck_ring') }}</label>
+                                                        <input type="text" name="neck_ring[${form_set_count}]" id = "neck_ring"
+                                                            class="form-control" value="{{ old('next_due') }}">
                                                     </div>
+                                                    @error('neck_ring')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.cylinder_pressure') }}</label>
+                                                        <input type="text" name="cylinder_pressure[${form_set_count}]" id = "cylinder_pressure"
+                                                            class="form-control" value="{{ old('cylinder_pressure') }}">
+                                                    </div>
+                                                    @error('cylinder_pressure.1')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
 
                                                 <div class="col-md-12 mb-2">
@@ -760,40 +776,61 @@
                         required: true,
                         uniqueItemCode: true,
                         messages: {
-                            required: 'Please add the resource code',
+                            required: 'Please Enter the resource code',
+                        }
+                    });
+                    $("input[name='sprinkler_head[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        uniqueItemCode: true,
+                        messages: {
+                            required: 'Please Enter the Sprinkler Head',
+                        }
+                    });
+                    $("input[name='neck_ring[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        uniqueItemCode: true,
+                        messages: {
+                            required: 'Please Enter the Neck Ring',
+                        }
+                    });
+                    $("input[name='cylinder_pressure[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        uniqueItemCode: true,
+                        messages: {
+                            required: 'Please Enter the Cylinder Pressure',
                         }
                     });
 
-                    $("select[name='physical_condition[" + form_set_count + "]']").rules('add', {
+                    $("input[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Physical Condition',
+                            required: 'Please Enter the Location',
                         }
                     });
 
-                    $("select[name='cable_condition[" + form_set_count + "]']").rules('add', {
+                    $("input[name='types_of_equipment[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Enter the Type Of Equipment',
                         }
                     });
-                    $("select[name='resource_indicator[" + form_set_count + "]']").rules('add', {
+                    $("input[name='capacity_of_equipment[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Enter the Capacity of Equipment',
                         }
                     });
-                    $("select[name='working_status[" + form_set_count + "]']").rules('add', {
+                    $("input[name='working_temperature[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Cable Condition',
+                            required: 'Please Enter the Working Temperature',
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add the remarks',
+                            required: 'Please Enter the Remarks',
                         }
                     });
 
@@ -810,8 +847,8 @@
                     if (currentFormSets >= maxObsSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection Observation Limit Reached',
-                            text: 'You can only add up to 5 Detector Inspection Observation.',
+                            title: 'Maximum Fire Modular Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Fire Modular Inspection Observation.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -820,7 +857,7 @@
                     var newObsSet = `
                         <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Observation</h4>
+                                                    <h4 class="text-white">Fire Modular Inspection Observation</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -857,7 +894,7 @@
             function GetDepartment(selectElement) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ admin_url('fire/detector-inspection/get/department') }}",
+                    url: "{{ admin_url('fire/fire-modular-inspection/checklist/get/department') }}",
                     success: function(response) {
                         if (response.length > 0) {
                             let options = `<option value="">Select Department</option>`;
@@ -877,10 +914,12 @@
 
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
-                    $(this).find('select[name^="physical_condition"]').attr('name', 'physical_condition[' + idx + ']');
-                    $(this).find('select[name^="cable_condition"]').attr('name', 'cable_condition[' + idx + ']');
-                    $(this).find('select[name^="response_indicator"]').attr('name', 'response_indicator[' + idx + ']');
-                    $(this).find('select[name^="working_status"]').attr('name', 'working_status[' + idx + ']');
+                    $(this).find('input[name^="types_of_equipment"]').attr('name', 'types_of_equipment[' + idx + ']');
+                    $(this).find('input[name^="capacity_of_equipment"]').attr('name', 'capacity_of_equipment[' + idx + ']');
+                    $(this).find('input[name^="working_temperature"]').attr('name', 'working_temperature[' + idx + ']');
+                    $(this).find('input[name^="sprinkler_head"]').attr('name', 'sprinkler_head[' + idx + ']');
+                    $(this).find('input[name^="neck_ring"]').attr('name', 'neck_ring[' + idx + ']');
+                    $(this).find('input[name^="cylinder_pressure"]').attr('name', 'cylinder_pressure[' + idx + ']');
                     $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
@@ -895,7 +934,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum One CheckList Required',
-                        text: 'At least One Detector Inspection Checklist is required.',
+                        text: 'At least One Fire Modular Inspection Checklist is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;

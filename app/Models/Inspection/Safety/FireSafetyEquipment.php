@@ -165,7 +165,7 @@ class FireSafetyEquipment extends Model
                 'created_by' => Auth::id(),
             );
             $result =  $this->EquipmentUniqueCheck($data['equipment_id']);
-            if($result){
+            if ($result) {
                 $this->create($data);
             }
         }
@@ -224,10 +224,7 @@ class FireSafetyEquipment extends Model
         return  $query->get();
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('inspection_safety_equipment'));
-    }
+
 
 
     public function statuschange($id)
@@ -258,7 +255,7 @@ class FireSafetyEquipment extends Model
     }
     public function EquipmentUniqueCheck($equipment_name)
     {
-        $unique =  $this->where('equipment_id',  $equipment_name)->get();
+        $unique =  $this->where('equipment_id',  $equipment_name)->where('status', '1')->get();
         if (count($unique) > 0) {
             return false;
         }
@@ -269,11 +266,17 @@ class FireSafetyEquipment extends Model
     {
         $unique =  $this->where('resource_code',  $data['category_name'])
             ->where('id', '!=', ($data['id']))
+            ->where('status', '1')
             ->get();
 
         if (count($unique) > 0) {
             return false;
         }
         return true;
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_equipment'));
     }
 }
