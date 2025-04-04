@@ -73,12 +73,6 @@ class SandBucketInspection extends Model
             });
         }
 
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_sand_bucket.location', 'LIKE', '%' . decryptId($request->location) . '%');
-        }
-        if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_sand_bucket.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
-        }
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_fire_sand_bucket.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }

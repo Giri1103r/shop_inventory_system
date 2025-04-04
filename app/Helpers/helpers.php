@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\OhcSignature;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -1903,10 +1904,11 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
+           
             $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
                 ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
-                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
-                ->join('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
+                ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+                ->leftJoin('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
                 ->where('inspection_master_checklist_type.id', $id)
 
                 ->get([
@@ -1919,6 +1921,7 @@ if (!function_exists('getMonth')) {
                     'inspection_master_checklist_sub_type_data_name.name as checklist_name',
                     'inspection_master_checklist_option.type',
                 ]);
+                
             $data = $data->groupBy('subcategory_name');
 
             if ($data) {
@@ -2395,6 +2398,10 @@ if (!function_exists('getMonth')) {
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
+
+                case HOSE_BOX_INSPECTION:
+                    return 'HBI-000001';
+                    break;
             }
         }
     }
@@ -2478,6 +2485,147 @@ if (!function_exists('getMonth')) {
         function getExtinguisherTypeName($id)
         {
             $data = FireExtinguisherType::where('id', $id)->first();
+            if ($data) {
+                return $data->name;
+            }
+            return null;
+        }
+    }
+
+
+    // Get Fire Signature
+    if (!function_exists('GetFireSignature')) {
+        function GetFireSignature($userid, $id, $type)
+        {
+            switch ($type) {
+                case HOOTER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOOTER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case MONTHLY_FIRE_PUMP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case FIRE_EXTINGUISHER_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_EXTINGUISHER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case ISOLATION_VALVE_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', ISOLATION_VALVE_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case FIRE_ALARM_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_ALARM_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case FIRE_PA_SYSTEM_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_PA_SYSTEM_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case HOSE_BOX_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOSE_BOX_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+            }
+        }
+    }
+
+    // Get OHC Signature
+    if (!function_exists('GetOHCSignature')) {
+        function GetOHCSignature($userid, $id, $type)
+        {
+            switch ($type) {
+                case OHC_TYPE_FLOOR_STRETCHER:
+                    $name = FloorStretcherFiles::where('emp_id', $userid)->where('inspection_id', $id)->where('type', OHC_TYPE_FLOOR_STRETCHER)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+            }
+        }
+    }
+
+    // Get Hose Type Name Name
+    if (!function_exists('getHoseTypeName')) {
+        function getHoseTypeName($id)
+        {
+            $data = HoseBoxType::where('id', $id)->first();
             if ($data) {
                 return $data->name;
             }

@@ -182,59 +182,15 @@ class AuditAssessmentController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        try {
-            $id = decryptId($id);
-            $checklist_subtype = $this->checklist_subtype->selectOne($id);
-            $checklist_sub_type =   $this->checklist_subtype->find($id);
-            $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
-            $data = array(
-                'checklist_sub_type' => $checklist_sub_type,
-                'checklist_types' => $checklist_types,
-            );
-            return view('inspection.inspection_audit.auditAssessment.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
-        }
-    }
 
-    public function update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $rules = [
-                'category_id' => 'required',
-                'subcategory_name' => 'required',
-            ];
-            $messages = [
-                'category_id.required' => 'Please enter Category',
-                'subcategory_name.requred' => 'Please enter Sub category name',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            $this->checklist_subtype->updates($id);
-
-
-            Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('audit/assessment/list'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('audit/assessment/list'));
-        }
-    }
 
     public function statusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_subtype->statuschange($id);
+            $this->audit_assessment->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => '6S Audit Assessment status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

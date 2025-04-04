@@ -37,23 +37,23 @@ class AuditAssessment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit_assessment.*','masters_employee.emp_name')->leftjoin('masters_employee','masters_employee.id','=','inspection_audit_assessment.floor_executive');
+        $query = $this->select('inspection_audit_assessment.*', 'masters_employee.emp_name')->leftjoin('masters_employee', 'masters_employee.id', '=', 'inspection_audit_assessment.floor_executive');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('floor_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('audit_id LIKE "%' . $search . '%"');
             });
         }
 
-        // if (isset($request->category_name) && $request->category_name) {
-        //     $query = $query->where('inspection_audit_assessment.category_name', 'LIKE', '%' . $request->category_name . '%');
-        // }
-        // if (isset($request->category_id) && $request->category_id) {
-        //     $query = $query->where('inspection_audit_assessment.category_id', 'LIKE', '%' . $request->category_id . '%');
-        // }
+        if (isset($request->audit_id) && $request->audit_id) {
+            $query = $query->where('inspection_audit_assessment.audit_id', 'LIKE', '%' . $request->audit_id . '%');
+        }
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_audit_assessment.status', decryptId($request->status));
+        }
         $query->orderBy('id', 'desc');
 
         $data_count = $query;

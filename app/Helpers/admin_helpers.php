@@ -40,6 +40,9 @@ use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\environment\Environment;
 use App\Models\Inspection\Fire\Fire;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\Fire\DailyFireHouseInspection;
+use App\Models\Inspection\audit\InterUnitAudit;
+use App\Models\Inspection\Fire\FirePreNocInspection;
 
 /*
  * Menu bar start
@@ -327,6 +330,21 @@ if (!function_exists('getsequence')) {
                 $count = SafetyPettyChecklist::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'SPLB-' . getautogen($count);
+                break;
+            case 'DailyfireHouse':
+                $count = DailyFireHouseInspection::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DAILY-FIRE-HOUSE-' . getautogen($count);
+                break;
+            case 'InterUnitAudit':
+                $count = InterUnitAudit::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'INTER-UNIT-MONTHLY-AUDIT-' . getautogen($count);
+                break;
+            case 'FirePreNoc':
+                $count = FirePreNocInspection::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FIRE-PRENOC-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

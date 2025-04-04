@@ -31,7 +31,6 @@ class FireSafetyEquipmentController extends Controller
         $this->equipment = new Equipment();
         $this->safety_equipment_details = new FireSafetyEquipmentDetails();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -45,20 +44,20 @@ class FireSafetyEquipmentController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                            if ($row->equipment_status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
+                            } else if ($row->equipment_status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/fire-safety-equipment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                    </a>';
+                            $btn = '<a href="' . admin_url('safety/fire-safety-equipment/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            //         $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            //     <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                            // </a>';
                             return $btn;
                         })
                         ->addColumn('created_date', function ($row) {
@@ -67,23 +66,36 @@ class FireSafetyEquipmentController extends Controller
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
                         })
+                        ->addColumn('standard_norms', function ($row) {
+                            if ($row->status == STANDARD) {
+                                $text = "<span  data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Standard</span>";
+                            } else if ($row->status == NORMS) {
+                                $text = "<span data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>Norms</span>";
+                            }
+                            return $text;
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date', 'standard_norms'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = array();
+        $equipment = $this->equipment->get();
+
+        $data = array(
+            'equipment' => $equipment,
+        );
         return view('inspection.Safety.safety_equipment.list', $data);
     }
 
@@ -154,9 +166,6 @@ class FireSafetyEquipmentController extends Controller
             }
 
             $fire_safety_equipment_store = $this->safety_equipment->store();
-            $fire_safety_id = $fire_safety_equipment_store->id;
-            $inspection_details = $this->safety_equipment->selectOne($fire_safety_id);
-            $fire_safety_equipment_details = $this->safety_equipment_details->store($fire_safety_id);
             Session::flash('success', 'Equipment Name is Added Successfully');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         } catch (Exception $ex) {
@@ -182,17 +191,16 @@ class FireSafetyEquipmentController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->safety_equipment->selectOne($id);
-            $inspection = $this->safety_equipment_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
-                'inspection' => $inspection,
-                'inspection_details' => $inspection_details,
+                'details' => $inspection_details,
                 'document_no' => $document_no,
             );
 
             return view('inspection.Safety.safety_equipment.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
@@ -339,4 +347,39 @@ class FireSafetyEquipmentController extends Controller
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
     }
+
+    public function StatusChange(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+
+            $this->safety_equipment->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('Equipment Status is changed')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+        }
+    }
+
+    public function UniqueCheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $item_code  = $request->item_code;
+            $equipment_name = decryptId($request->equipment_name);
+            $isUnique = $this->safety_equipment->UniqueCheck($item_code, $equipment_name);
+            return response()->json($isUnique);
+        }
+    }
+    public function Equipmentunique(Request $request)
+    {
+        if ($request->ajax()) {
+            $equipment_name = decryptId($request->equipment_name);
+            $isUnique = $this->safety_equipment->EquipmentUniqueCheck($equipment_name);
+            return response()->json($isUnique);
+        }
+    }
+
+
 }

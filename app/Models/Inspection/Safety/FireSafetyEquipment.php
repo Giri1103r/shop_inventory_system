@@ -14,6 +14,15 @@ class FireSafetyEquipment extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'standard_norms',
+        'equipment_id',
+        'item_code',
+        'equipment_category',
+        'measurement_unit',
+        'minimum_order_level',
+        'economic_order_quantity',
+        'observation_status',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -33,38 +42,46 @@ class FireSafetyEquipment extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-            'inspection_safety_ohs_report.*',
+            'inspection_safety_equipment.*',
             'inspection_static_docno.*',
-            'inspection_safety_ohs_report.id as inspection_id'
+            'inspection_safety_master_equipment.*',
+            'inspection_safety_equipment.id as inspection_id',
+            'inspection_safety_equipment.status as equipment_status',
         )
-        ->leftJoin(
-            'inspection_static_docno',
-            'inspection_safety_ohs_report.document_reference_id',
-            '=',
-            'inspection_static_docno.id'
-        );
-        
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_safety_equipment.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            )->leftJoin(
+                'inspection_safety_master_equipment',
+                'inspection_safety_equipment.equipment_id',
+                '=',
+                'inspection_safety_master_equipment.id'
+            );
+
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('equipment_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('item_code LIKE "%' . $search . '%"');
             });
         }
 
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_equipment.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->equipment_name) && $request->equipment_name) {
+            $query = $query->where('inspection_safety_equipment.equipment_id', 'LIKE', '%' . decryptId($request->equipment_name) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->item_code) && $request->item_code) {
+            $query = $query->where('inspection_safety_equipment.item_code', '=', ($request->item_code));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_equipment.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->standard_norms) && $request->standard_norms) {
+            $query = $query->where('inspection_safety_equipment.standard_norms', 'LIKE', '%' . decryptId($request->standard_norms) . '%');
         }
 
         if (isset($request->status) && $request->status) {
@@ -121,12 +138,37 @@ class FireSafetyEquipment extends Model
     {
         $request = request();
 
-        $data = array(
-            'document_reference_id' => decryptId($request->document_reference_id),
-            'created_by' => Auth::id(),
-        );
+        $equipment_name = $request->equipment_name;
+        $item_code = $request->item_code;
+        $standard_norms = $request->standard_norms;
+        $equipment_category = $request->equipment_category;
+        $unit_of_measurement = $request->unit_of_measurement;
+        $minimum_order_value = $request->minimum_order_value;
+        $economic_order_quantity = $request->economic_order_quantity;
+        $observation_status = ($request->observation_status);
+        $remarks = $request->remarks;
 
-        return $this->create($data);
+
+
+        foreach ($item_code as $index => $item_code_value) {
+            $data = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'equipment_id' => decryptId($equipment_name[$index]),
+                'item_code' => $item_code_value,
+                'standard_norms' => decryptId($standard_norms[$index]),
+                'equipment_category' => ($equipment_category[$index]),
+                'measurement_unit' => $unit_of_measurement[$index],
+                'economic_order_quantity' => $economic_order_quantity[$index],
+                'minimum_order_level' => $minimum_order_value[$index],
+                'observation_status' => decryptId($observation_status[$index]),
+                'remark' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $result =  $this->EquipmentUniqueCheck($data['equipment_id']);
+            if($result){
+                $this->create($data);
+            }
+        }
     }
 
     public function selectOne($id)
@@ -138,24 +180,40 @@ class FireSafetyEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_equipment.*');
+        $query = $this->select(
+            'inspection_safety_equipment.*',
+            'inspection_static_docno.*',
+            'inspection_safety_master_equipment.*',
+            'inspection_safety_equipment.id as inspection_id'
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_safety_equipment.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            )->leftJoin(
+                'inspection_safety_master_equipment',
+                'inspection_safety_equipment.equipment_id',
+                '=',
+                'inspection_safety_master_equipment.id'
+            );
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('equipment_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('item_code LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_safety_equipment.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->equipment_name) && $request->equipment_name) {
+            $query = $query->where('inspection_safety_equipment.equipment_id', 'LIKE', '%' . decryptId($request->equipment_name) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->item_code) && $request->item_code) {
+            $query = $query->where('inspection_safety_equipment.item_code', '=', ($request->item_code));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_safety_equipment.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->standard_norms) && $request->standard_norms) {
+            $query = $query->where('inspection_safety_equipment.standard_norms', 'LIKE', '%' . decryptId($request->standard_norms) . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -169,5 +227,53 @@ class FireSafetyEquipment extends Model
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_safety_equipment'));
+    }
+
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function UniqueCheck($item_code, $equipment_name)
+    {
+        $unique =  $this->where('equipment_id',  $equipment_name)->where('item_code', $item_code)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+    public function EquipmentUniqueCheck($equipment_name)
+    {
+        $unique =  $this->where('equipment_id',  $equipment_name)->get();
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function ExistuniqueCheck($data)
+    {
+        $unique =  $this->where('resource_code',  $data['category_name'])
+            ->where('id', '!=', ($data['id']))
+            ->get();
+
+        if (count($unique) > 0) {
+            return false;
+        }
+        return true;
     }
 }

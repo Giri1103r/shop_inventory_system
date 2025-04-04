@@ -212,4 +212,10 @@ return [
     'qualtiy_quantity_sand' => 'Select Quality and Quantity of Sand',
     'paint_condition' => 'Select the Paint Condition',
     'fire_bucket_condition' => 'Select the Fire Bucket Condition',
+
+    // Hose Box Inspection
+    'hose_box_inspection' => 'Hose Box Inspection',
+    'branch_quantity' => 'Branch Quantity',
+    'hose_box_key' => 'Hose Box Key',
+    'hose_types' => 'Hose Box Types',
 ];
