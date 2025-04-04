@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'First Aider Location PDF')
+@section('title', 'Cartridge Type Fire Extinguisher Inspection Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -25,35 +25,29 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{getUnitname($value->unit_id)  }}
+                            {{ displaydateformat($value->inspection_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department_id) }}
+                            {{ displaydateformat($value->next_due) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->location_id }}
+                            {{ $value->location_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->station_master}}
+                            {{ $value->shift }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->station_number}}
+                            {{ $value->unit_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->first_aid_box_no}}
+                            {{ $value->frequency_name }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                            {{ $status }}
+                        <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
+                            {{ getInspectionStatus($value->inspection_status); }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>

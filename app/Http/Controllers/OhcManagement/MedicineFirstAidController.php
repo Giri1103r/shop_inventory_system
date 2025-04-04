@@ -255,6 +255,31 @@ class MedicineFirstAidController extends Controller
             $user_medicine_first_aid = $this->user_medicine_first_aid->selectOne($id);
             $medicine_first_aid = $this->medicine_first_aid->selectOne($id);
 
+            $deletedPages = json_decode($request->deletedPage, true);
+
+            if (!empty($deletedPages)) {
+                foreach ($deletedPages as $encryptedId) {
+                    $medicineIds = decryptId($encryptedId);
+
+                    $medicine_first_aid_medicine = $this->medicine_first_aid->firstdata($medicineIds);
+
+                    $this->inventory->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
+                        ->decrement('total_first_aid', $medicine_first_aid_medicine->quantity);
+
+                    $this->inventory->where('unit_id', $user_medicine_first_aid->unit_id)
+                        ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
+                        ->increment('balance', $medicine_first_aid_medicine->quantity);
+
+                    $update_data = $this->medicine_first_aid
+                        ->where('id', $medicineIds)->where('reference_id', $id)
+                        ->update([
+                            'status' => 0,
+                            'trash'  => 'Yes'
+                        ]);
+                }
+            }
+
             foreach ($request->medicine_id as $index => $medicine_id) {
                 $medicineRecord = $medicine_first_aid->where('medicine_id', $medicine_id)->where('reference_id', $id)->first();
 
@@ -292,9 +317,6 @@ class MedicineFirstAidController extends Controller
                         ->decrement('balance', $difference);
                 }
             }
-
-
-
 
             $this->user_medicine_first_aid->updates($id);
             $this->medicine_first_aid->updates($id, $user_medicine_first_aid);

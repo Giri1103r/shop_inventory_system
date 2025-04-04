@@ -33,16 +33,6 @@
                                             <input type="text" name="issue_date" id="issue_date"
                                                 class="form-control">
                                         </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -66,7 +56,6 @@
                                         <th>Document Number</th>
                                         <th>Issue Date</th>
                                         <th>Revision & Data</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -92,12 +81,10 @@
 
         var fromDatepicker = flatpickr("#issue_date", {
             dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
         var fromDatepicker = flatpickr("#revision_date", {
             dateFormat: "d-m-Y",
-            // minDate: new Date(),
         });
 
     });
@@ -137,7 +124,6 @@
                     d.document_number = $('#document_number').val();
                     d.issue_date = $('#issue_date').val();
                     d.revision_date = $('#revision_date').val();
-                    d.status = $('#status').val();
 
                 },
                 error: function(xhr, error, code) {
@@ -164,10 +150,6 @@
                 {
                     data: 'revision_date',
                     name: 'revision_date'
-                },
-                {
-                    data: 'status',
-                    name: 'status'
                 },
                 {
                     data: 'created_date',

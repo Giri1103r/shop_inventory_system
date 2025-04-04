@@ -24,16 +24,15 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ $value->date_of_inspection }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_data }}
+                            {{ getShift($value->shift) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

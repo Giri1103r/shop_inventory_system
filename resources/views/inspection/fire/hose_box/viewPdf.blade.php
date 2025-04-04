@@ -184,7 +184,7 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($forklift_details->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ DisplayDateformat($forklift_details->created_at) }}</td>
         </tr>
     </table>
 
@@ -200,84 +200,80 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <table style="width: 100%; border-collapse: collapse; border: 2px solid black; font-family: Arial, sans-serif;">
         <tr>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
-                SR.NO</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
-                LOCATION OF ISV</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                RESOURCE CODE</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                SIZE OF ISV (MM)</th>
-            <th colspan="6"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
-                ITEMS</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                REMARKS</th>
+            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
+                title="DATE OF INSPECTION">DATE OF INSPECTION :- {{DisplayDateformat($forklift_details->date_of_inspection)}}</td>
+            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
+                LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
+            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="SHIFT">SHIFT :-  {{ getShiftName($forklift_details->shift) }}
+            </td>
         </tr>
         <tr>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OPEN</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS CLOSE</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                WHEEL OPERATION</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                STATUS OF ISV</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                LEAKAGE (Y/N)</th>
-            <th
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
-                VALVE TYPE</th>
+            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="NEXT DUE ON">
+                NEXT DUE ON :- {{DisplayDateformat($forklift_details->next_due)}}</td>
+            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT :- {{ getUnitname($forklift_details->unit) }}
+            </td>
+            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
+                FREQUENCY :- {{ getUnitname($forklift_details->frequency) }}</td>
         </tr>
 
+        <tr>
+            <td colspan="10"
+                style="border: 2px solid black; padding: 8px; font-weight: bold; background-color: #f9f9f9; text-align: center;"
+                title="Check Items">CHECK ITEMS</td>
+        </tr>
+
+        <!-- Header Row -->
+        <tr style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
+            <td style="border: 2px solid black; padding: 8px;" title="Serial Number">SR NO.</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Location">LOCATION</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">HOSE BOX NO.</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">TYPE OF HOSE</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Quantity">QUANTITY</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Branch">BRANCH</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">HOSE BOX KEY</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Condition">CONDITION</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Approach">APPROACH</td>
+            <td style="border: 2px solid black; padding: 8px;" title="Remarks">REMARK</td>
+        </tr>
+
+        <!-- Data Loop -->
         @foreach ($inspection as $details)
             <tr>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->location_isv }}
+                <td style="border: 2px solid black; padding: 8px;" title="Serial Number">{{ $details->sr_no }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Location">
+                    {{ getLocationName($details->location) }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">{{ $details->hose_box_no }}
                 </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->resource_code }}
+                <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">
+                    {{ getHoseTypeName($details->hose_types) }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Quantity">{{ $details->quantity }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Branch">{{ $details->branch_quantity }}
                 </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->size_isv }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->open == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->close == OPEN ? 'Opened' : 'Closed' }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->wheel_operation == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->isv_status == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    {{ $details->leakage == YES ? __('inspection.yes') : __('inspection.no') }}
-                </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                    @if ($details->type == GATE)
-                        {{ __('inspection.GATE') }}
-                    @elseif ($details->type == BALL)
-                        {{ __('inspection.BALL') }}
-                    @elseif ($details->type == BUTTERFLY)
-                        {{ __('inspection.BUTTERFLY') }}
+                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">
+                    @if ($details->hose_box_key == PRESENT)
+                        <p>Present</p>
+                    @else
+                        <p>Missing</p>
                     @endif
                 </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Condition">
+                    @if ($details->condition == GOOD)
+                        <p>Present</p>
+                    @elseif ($details->condition == FAIR)
+                        <p>Fair</p>
+                    @else
+                        <p>Poor</p>
+                    @endif
+                </td>
+                <td style="border: 2px solid black; padding: 8px;" title="Approach">{{ $details->approach }}</td>
+                <td style="border: 2px solid black; padding: 8px;" title="Remarks">{{ $details->remarks }}</td>
             </tr>
         @endforeach
     </table>
+
+
 
 
 
@@ -300,12 +296,12 @@
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
             @endif
+
             @if (isset($forklift_details->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($forklift_details->created_at) }}
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
                     </td>
                 </tr>
             @endif
@@ -320,6 +316,7 @@
                     </tr>
                 @endif
             @endif
+
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
@@ -334,6 +331,21 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $forklift_details->remarks }}
+                </tr>
+            @endif
+            @php
+                $getSafetySignature = GetFireSignature(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    HOSE_BOX_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
                 </tr>
             @endif
         </table>
@@ -370,6 +382,21 @@
                     {{ $forklift_details->capa_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetFireSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    HOSE_BOX_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -399,13 +426,27 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b>
-                </td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->capa_ehs_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetFireSignature(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    HOSE_BOX_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -436,13 +477,27 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b>
-                </td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_one_manager_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetFireSignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    HOSE_BOX_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif
@@ -479,13 +534,27 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b>
-                </td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_two_manager_remarks }}
                 </td>
             </tr>
+            @php
+                $getSafetySignature = GetFireSignature(
+                    $forklift_details->l2_manager_verified_by,
+                    $forklift_details->id,
+                    HOSE_BOX_INSPECTION,
+                );
+            @endphp
+            @if (isset($forklift_details->verified_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
+                            alt="" style="height: 60px; width:60px;"></td>
+                </tr>
+            @endif
         </table>
         <br>
     @endif

@@ -50,9 +50,10 @@ class MedicineRequisition extends Model
         $request = request();
 
         foreach ($request->medicine_id as $index => $medicine) {
+            $decryptedMedicineId = decryptId($medicine);
             $update_data = [
                 'req_id' => $id,
-                'medicine_id' => ($medicine),
+                'medicine_id' => ($decryptedMedicineId),
                 'quantity' => $request->quantity[$index],
                 'available_quantity' => $request->available_quantity[$index],
                 'remarks' => $request->remarks[$index],
@@ -62,7 +63,7 @@ class MedicineRequisition extends Model
 
 
             $existingRecord = self::where('req_id', $id)
-                ->where('medicine_id', $medicine)->where('trash', 'NO')
+                ->where('medicine_id', $decryptedMedicineId)->where('trash', 'NO')
                 ->first();
 
             if ($existingRecord) {

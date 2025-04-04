@@ -120,7 +120,7 @@
                                                                             </option>
 
                                                                             @foreach ($medicine as $list)
-                                                                                <option value="{{ $list->medicine_id }}"
+                                                                                <option value="{{ encryptId($list->medicine_id) }}"
                                                                                     @if ($requisition->medicine_id == $list->medicine_id) selected @endif>
                                                                                     {{ getMedicinename($list->medicine_id) }}
                                                                                 </option>
@@ -171,6 +171,10 @@
 
 
                                                                 </td>
+
+                                                                <input type="hidden" name="deletedPage" id="deletedPage"
+                                                                    value="[]">
+
                                                             </tr>
                                                         @endforeach
 
@@ -259,6 +263,8 @@
 
         // delete the row
 
+        let deletedPages = [];
+
         $(document).on('click', '.delete-row', function(event) {
             event.preventDefault();
 
@@ -266,54 +272,38 @@
             var rowId = row.find("input[name='encryptid']").val();
             var totalRows = $(".medicinedetails").length;
 
-            if (totalRows <= 1) {
+            if (totalRows > 1) {
                 Swal.fire({
-                    title: 'Cannot delete!',
-                    text: 'At least one row is required.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-            if (rowId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
+                    title: "Are you sure?",
+                    text: "Do you want to delete this medicine from the list?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('ohc/medicine-requisition/delete') }}/" +
-                                rowId,
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'POST',
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove();
-                                    Swal.fire('Deleted!', response.msg, 'success');
-                                } else {
-                                    Swal.fire('Error!', response.msg, 'error');
-                                }
-                            },
-                            error: function() {
-                                Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.',
-                                    'error');
-                            }
-                        });
+
+                        deletedPages.push(rowId);
+
+
+                        $('#deletedPage').val(JSON.stringify(deletedPages));
+
+
+                        row.remove();
+
+                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
                     }
                 });
             } else {
-                $(this).closest("tr").remove();
+                Swal.fire({
+                    title: "Warning!",
+                    text: "At least one row must remain!",
+                    icon: "error",
+                });
             }
         });
+
+
 
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
@@ -355,7 +345,7 @@
                         <select name="medicine_id[${rowcount}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
-                                <option value="{{ $list->medicine_id }}">{{ getMedicinename($list->medicine_id) }}</option>
+                                <option value="{{ encryptId($list->medicine_id) }}">{{ getMedicinename($list->medicine_id) }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -380,12 +370,26 @@
                     </div>
                 </td>
                 <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded deleted-row" style="width: 30px; height: 30px;">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </td>
-            </tr>`;
 
+            </tr>`;
+                    $(document).on("click", ".deleted-row", function() {
+                        var rowCount = $('#medicine-tbody tr').length;
+
+                        if (rowCount > 1) {
+                            $(this).closest("tr").remove();
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Warning',
+                                text: 'At least one row is required.',
+                                confirmButtonColor: '#3085d6'
+                            });
+                        }
+                    });
                     $('#medicine-tbody').append(newRow);
 
                     $('select[name="medicine_id[' + rowcount + ']"]').select2({
@@ -446,7 +450,7 @@
                 } else {
                     if (selectedMedicineId) {
                         $.ajax({
-                            url: "{{ admin_url('ohc/medicine-first-aid/editquantity') }}/" +
+                            url: "{{ admin_url('ohc/medicine-requisition/quantity') }}/" +
                                 selectedMedicineId,
                             type: 'get',
                             dataType: 'json',

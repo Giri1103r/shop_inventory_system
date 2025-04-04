@@ -195,8 +195,8 @@ class MedicineIssuanceController extends Controller
 
                 $user_medicine_issuance = $this->user_medicine_issuance->store();
                 $medicine_issuance = $this->medicine_issuance->store($user_medicine_issuance);
-                $user_medicine_issuance_unit = $this->user_medicine_issuance->unitstore();
-                $medicine_issuance_unit = $this->medicine_issuance->unitstore($user_medicine_issuance_unit);
+                $user_medicine_issuance_unit = $this->creatorlog->store($user_medicine_issuance);
+                $medicine_issuance_unit = $this->medicinelog->store($user_medicine_issuance_unit);
 
                 foreach ($medicine_issuance as $medicine) {
 
@@ -220,7 +220,7 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
                         ->increment('balance', $issuedQuantity);
-                        $this->inventory
+                    $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
                         ->increment('total_received', $issuedQuantity);
@@ -322,11 +322,13 @@ class MedicineIssuanceController extends Controller
                 $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
                 // issue store
                 $user_medicine_issuance = $this->user_medicine_issuance->issuestore($user_medicine_requisition);
-                $user_medicine_issuance_unit = $this->user_medicine_issuance->unitissuestore($user_medicine_requisition);
+
                 $medicineissuance =  $user_medicine_issuance->id;
 
                 $issuance =  $this->medicine_issuance->store($user_medicine_issuance);
-                $issuance_unit =  $this->medicine_issuance->unitstore($user_medicine_issuance_unit);
+                $user_medicine_issuance_unit = $this->creatorlog->store($user_medicine_issuance);
+                $medicine_issuance_unit = $this->medicinelog->store($user_medicine_issuance_unit);
+
 
                 $medicinedata =  $this->medicine_issuance->where('reference_id', $medicineissuance)->get();
                 // requisition status update
@@ -437,10 +439,57 @@ class MedicineIssuanceController extends Controller
 
             try {
 
-
                 $user_medicine_issuance = $this->user_medicine_issuance->selectOne($id);
                 $medicine_issuance = $this->medicine_issuance->selectOne($id);
+                $creatorlog =  $this->creatorlog->selectOne($id);
+                $deletedPages = json_decode($request->deletedPage, true);
+                $deletedMedicine = json_decode($request->deletedMedicine, true);
 
+
+                if (!empty($deletedPages)) {
+                    foreach ($deletedPages as $encryptedId) {
+                        $medicineIds = decryptId($encryptedId);
+
+                        $medicine_issuance = $this->medicine_issuance->firstdata($medicineIds);
+
+                        $this->inventory->where('unit_id', 1)
+                            ->where('medicine_id', $medicine_issuance->medicine_id)
+                            ->decrement('total_issue', $medicine_issuance->quantity);
+
+                        $this->inventory->where('unit_id', 1)
+                            ->where('medicine_id', $medicine_issuance->medicine_id)
+                            ->increment('balance', $medicine_issuance->quantity);
+
+                        $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                            ->where('medicine_id', $medicine_issuance->medicine_id)
+                            ->decrement('total_received', $medicine_issuance->quantity);
+
+                        $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
+                            ->where('medicine_id', $medicine_issuance->medicine_id)
+                            ->decrement('balance', $medicine_issuance->quantity);
+
+                        $update_data = $this->medicine_issuance
+                            ->where('id', $medicineIds)->where('reference_id', $id)
+                            ->update([
+                                'status' => 0,
+                                'trash'  => 'Yes'
+                            ]);
+                    }
+                }
+
+                if (!empty($deletedMedicine)) {
+
+                    foreach ($deletedMedicine as $encryptedMedicineId) {
+                        $medicineDatas =($encryptedMedicineId);
+
+                        $update_data = $this->medicinelog
+                            ->where('medicine_id', $medicineDatas)->where('creator_id', $creatorlog->id)
+                            ->update([
+                                'status' => 0,
+                                'trash'  => 'Yes'
+                            ]);
+                    }
+                }
                 foreach ($request->medicine_id as $index => $medicine_id) {
                     $medicine_record = $medicine_issuance->where('medicine_id', $medicine_id)->first();
 
@@ -461,7 +510,7 @@ class MedicineIssuanceController extends Controller
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', $user_medicine_issuance->unit_id)
                                 ->decrement('balance', $difference);
-                                $this->inventory
+                            $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', 1)
                                 ->decrement('total_issue', $difference);
@@ -482,7 +531,7 @@ class MedicineIssuanceController extends Controller
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', $user_medicine_issuance->unit_id)
                                 ->increment('balance', $difference);
-                                $this->inventory
+                            $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', 1)
                                 ->increment('total_issue', $difference);
@@ -524,6 +573,11 @@ class MedicineIssuanceController extends Controller
 
                 $this->user_medicine_issuance->updates($id);
                 $updatedMedicines = $this->medicine_issuance->updates($id);
+
+                $this->creatorlog->updates($id);
+                $creatorlog =  $this->creatorlog->selectOne($id);
+
+                $updatedMedicines = $this->medicinelog->updates($creatorlog);
                 $mailsubject = 'Medicine Issuing to Other Unit';
                 $user_role = ROLE_EHS_OFFICER;
 
@@ -610,39 +664,10 @@ class MedicineIssuanceController extends Controller
             ['available_quantity' => $availableQuantity->balance]
         );
     }
-    public function delete(Request $request, $id)
+   
+
+    public function import()
     {
-        try {
-            $ids = decryptId($id);
-
-            $data =    $this->medicine_issuance->firstdata($ids);
-
-            $referenceId =   $data->reference_id;
-            $user_medicine_issuance = $this->user_medicine_issuance->selectOne($referenceId);
-            $this->inventory->where('unit_id', 1)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('total_issue', $data->quantity);
-
-            $this->inventory->where('unit_id', 1)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('balance', $data->quantity);
-
-            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('total_purchase', $data->quantity);
-
-            $this->inventory->where('unit_id', $user_medicine_issuance->unit_id)
-                ->where('medicine_id', $data->medicine_id)
-                ->decrement('balance', $data->quantity);
-            $this->medicine_issuance->deleterecord($ids);
-            return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
-        }
-    }
-
-    public function import(){
         return view('ohcmanagement.medicine_issuance.import');
     }
 
@@ -711,7 +736,7 @@ class MedicineIssuanceController extends Controller
 
 
                 // dispatch(new ImportIssuancejob($details, $medicnieissuance));
-                   dispatch((new ImportIssuancejob($details,$medicnieissuance))->onQueue('medicine_issuance'));
+                dispatch((new ImportIssuancejob($details, $medicnieissuance))->onQueue('medicine_issuance'));
             }
 
             $insert_data['log_id'] = $insert_id;

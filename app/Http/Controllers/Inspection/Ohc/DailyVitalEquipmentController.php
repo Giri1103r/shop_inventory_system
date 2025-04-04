@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Inspection\Ohc;
 
-use App\Http\Controllers\Controller;
+use Exception;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Yajra\DataTables\Facades\DataTables;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
-use App\Models\Inspection\Ohc\DailyVitalEquipment;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
-use Exception;
-use App\Models\Master\Unit;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\DailyVitalEquipment;
 
 class DailyVitalEquipmentController extends Controller
 {
@@ -21,6 +22,7 @@ class DailyVitalEquipmentController extends Controller
     private $unit;
     private $shift;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -28,6 +30,7 @@ class DailyVitalEquipmentController extends Controller
         $this->unit = new Unit();
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
+        $this->document_reference = new InspectionStaticDocno();
     }
     public function Index(Request $request)
     {
@@ -66,8 +69,12 @@ class DailyVitalEquipmentController extends Controller
                 }
             }
         }
-
-        $data = array();
+        $shifts = $this->shift->getShiftname();
+        $unit = $this->unit->getUnit();
+        $data = [
+            'shifts' => $shifts,
+            'units' => $unit,
+        ];
         return view('inspection.inspection_ohc.daily_vital_equipment.list', $data);
     }
 
@@ -79,16 +86,17 @@ class DailyVitalEquipmentController extends Controller
             $getoption = string_to_array($options->type);
             $shifts = $this->shift->getShiftname();
             $unit = $this->unit->getUnit();
+            $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
 
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'getoption' => $getoption,
                 'shifts' => $shifts,
                 'units' => $unit,
+                'document_no' => $document_no,
             );
             return view('inspection.inspection_ohc.daily_vital_equipment.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -117,12 +125,15 @@ class DailyVitalEquipmentController extends Controller
         try {
             $id = decryptId($request->id);
             $daily_vital = $this->daily_vital->selectOne($id);
+
+            $document_no = $this->document_reference->selectOne($daily_vital->document_reference_id);
+
             $data = [
                 'daily_vital' => $daily_vital,
+                'document_no' => $document_no,
             ];
             return view('inspection.inspection_ohc.daily_vital_equipment.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -142,9 +153,9 @@ class DailyVitalEquipmentController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.shifts') ,
+                __('inspection.unit') ,
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -154,9 +165,9 @@ class DailyVitalEquipmentController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
+                $export[] =  $data->date_of_inspection;
+                $export[] =  getShift($data->shift);
+                $export[] =  getUnitname($data->unit);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -169,7 +180,6 @@ class DailyVitalEquipmentController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -187,9 +197,9 @@ class DailyVitalEquipmentController extends Controller
             }
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                __('inspection.inspection_date') ,
+                __('inspection.shifts') ,
+                __('inspection.unit') ,
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -233,9 +243,11 @@ class DailyVitalEquipmentController extends Controller
 
             if (Auth::check()) {
                 $daily_vital = $this->daily_vital->selectOne($id);
+                $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
 
                 $data = [
                     'daily_vital' => $daily_vital,
+                    'document_no' => $document_no,
                     'pagetitle' => "OHC Daily Vital Equipment",
                 ];
             }

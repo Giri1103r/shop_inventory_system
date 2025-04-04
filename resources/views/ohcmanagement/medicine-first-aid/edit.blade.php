@@ -63,8 +63,8 @@
                                                         @endforeach
                                                     </select>
                                                     @error('department_id')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -159,7 +159,8 @@
                                                                             class="require">Quantity</label>
                                                                         <input type="text"
                                                                             name="quantity[{{ $key }}]"
-                                                                            id="quantity" placeholder="Enter the quantity"
+                                                                            id="quantity"
+                                                                            placeholder="Enter the quantity"
                                                                             value="{{ $issuance->quantity }}"
                                                                             class="form-control">
                                                                         <span id="quantity-error" style=" display:none;"
@@ -178,6 +179,8 @@
 
 
                                                                 </td>
+                                                                <input type="hidden" name="deletedPage" id="deletedPage"
+                                                                    value="[]">
                                                             </tr>
                                                         @endforeach
 
@@ -215,59 +218,44 @@
 
         //     });
         // });
+        let deletedPages = [];
+
+
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevents form submission
+            event.preventDefault();
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
             var totalRows = $(".medicinedetails").length;
 
-            if (totalRows <= 1) {
+            if (totalRows > 1) {
                 Swal.fire({
-                    title: 'Cannot delete!',
-                    text: 'At least one row is required.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-
-            if (rowId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
+                    title: "Are you sure?",
+                    text: "Do you want to delete this medicine from the list?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('ohc/medicine-first-aid/delete') }}/" + rowId,
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'POST',
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove();
-                                    Swal.fire('Deleted!', response.msg, 'success');
-                                } else {
-                                    Swal.fire('Error!', response.msg, 'error');
-                                }
-                            },
-                            error: function() {
-                                Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.', 'error'
-                                    );
-                            }
-                        });
+
+                        deletedPages.push(rowId);
+
+
+                        $('#deletedPage').val(JSON.stringify(deletedPages));
+
+
+                        row.remove();
+
+                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
                     }
                 });
             } else {
-                row.remove();
+                Swal.fire({
+                    title: "Warning!",
+                    text: "At least one row must remain!",
+                    icon: "error",
+                });
             }
         });
 
@@ -380,12 +368,25 @@
                 </td>
 
                 <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded deleted-row" style="width: 30px; height: 30px;">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </td>
             </tr>`;
+                $(document).on("click", ".deleted-row", function() {
+                    var rowCount = $('#medicine-tbody tr').length;
 
+                    if (rowCount > 1) {
+                        $(this).closest("tr").remove();
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: 'At least one row is required.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                });
                 $('#medicine-tbody').append(newRow);
 
 

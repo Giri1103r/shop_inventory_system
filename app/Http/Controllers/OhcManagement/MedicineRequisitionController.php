@@ -112,12 +112,12 @@ class MedicineRequisitionController extends Controller
                         })
                         ->editColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
+                            if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
+                            }
+                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            // }
+                            }
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
@@ -300,6 +300,7 @@ class MedicineRequisitionController extends Controller
                 'request_date' => 'required',
 
             ];
+
             $messages = [
                 'department_id.required' => 'Please select a Deparment.',
                 'unit_id.required' => 'Please select a unit.',
@@ -313,7 +314,24 @@ class MedicineRequisitionController extends Controller
             try {
 
                 $user_medicine_requisition = $this->user_medicine_requisition->updates($id);
+
+
+                $deletedPages = json_decode($request->deletedPage, true);
+
+                if (!empty($deletedPages)) {
+                    foreach ($deletedPages as $encryptedId) {
+                        $medicineIds = decryptId($encryptedId);
+
+                        $update_data = $this->medicine_requisition
+                            ->where('id', $medicineIds)->where('req_id',$id)
+                            ->update([
+                                'status' => 0,
+                                'trash'  => 'Yes'
+                            ]);
+                    }
+                }
                 $this->medicine_requisition->updates($id);
+
 
                 $mailsubject = 'Paramedics Request the Medicine';
                 $user_role = ROLE_EHS_HEAD;
