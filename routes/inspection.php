@@ -711,79 +711,79 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('unique', [FirePreNocController::class, 'Uniquecheck']);
         Route::get('employeeName', [FirePreNocController::class, 'employeename']);
     });
-        Route::group(['prefix' => 'pa-system-inspection'], function () {
-            Route::GET('list', [PASystemInspectionController::class, 'Index']);
-            Route::POST('list', [PASystemInspectionController::class, 'Index']);
-            Route::GET('add', [PASystemInspectionController::class, 'Add']);
-            Route::POST('add/submit', [PASystemInspectionController::class, 'Store']);
-            Route::GET('view/{id}', [PASystemInspectionController::class, 'View']);
-            Route::GET('verification/{id}/{employee_type}', [PASystemInspectionController::class, 'approvals']);
-            Route::POST('ehsofficer/verify/submit', [PASystemInspectionController::class, 'EHSOfficerSubmit']);
-            Route::POST('capa/submit', [PASystemInspectionController::class, 'CAPASubmit']);
-            Route::POST('capa/reverify/submit', [PASystemInspectionController::class, 'CAPAVerifySubmit']);
-            Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
-            Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
-            Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
-            Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
-            Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
-            Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
-        });
-
-        Route::group(['prefix' => 'fire-extinguisher/co2/'], function () {
-            Route::GET('list', [CoTypeFireExtinguisherController::class, 'Index']);
-            Route::POST('list', [CoTypeFireExtinguisherController::class, 'Index']);
-            Route::GET('add', [CoTypeFireExtinguisherController::class, 'Add']);
-            Route::POST('add/submit', [CoTypeFireExtinguisherController::class, 'Store']);
-            Route::GET('view/{id}', [CoTypeFireExtinguisherController::class, 'View']);
-            Route::GET('verification/{id}/{employee_type}', [CoTypeFireExtinguisherController::class, 'approvals']);
-            Route::POST('ehsofficer/verify/submit', [CoTypeFireExtinguisherController::class, 'EHSOfficerSubmit']);
-            Route::POST('capa/submit', [CoTypeFireExtinguisherController::class, 'CAPASubmit']);
-            Route::POST('capa/reverify/submit', [CoTypeFireExtinguisherController::class, 'CAPAVerifySubmit']);
-            Route::POST('level-one/verify/submit', [CoTypeFireExtinguisherController::class, 'levelOneManagerSubmit']);
-            Route::POST('level-two/verify/submit', [CoTypeFireExtinguisherController::class, 'levelTwoManagerSubmit']);
-            Route::GET('exportViewPdf/{id}', [CoTypeFireExtinguisherController::class, 'ExportViewPDF']);
-            Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
-            Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
-            Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
-        });
-
-        Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
-            Route::GET('list', [SandBucketInspectionController::class, 'Index']);
-            Route::POST('list', [SandBucketInspectionController::class, 'Index']);
-            Route::GET('add', [SandBucketInspectionController::class, 'Add']);
-            Route::POST('add/submit', [SandBucketInspectionController::class, 'Store']);
-            Route::GET('view/{id}', [SandBucketInspectionController::class, 'View']);
-            Route::GET('verification/{id}/{employee_type}', [SandBucketInspectionController::class, 'approvals']);
-            Route::POST('ehsofficer/verify/submit', [SandBucketInspectionController::class, 'EHSOfficerSubmit']);
-            Route::POST('capa/submit', [SandBucketInspectionController::class, 'CAPASubmit']);
-            Route::POST('capa/reverify/submit', [SandBucketInspectionController::class, 'CAPAVerifySubmit']);
-            Route::POST('level-one/verify/submit', [SandBucketInspectionController::class, 'levelOneManagerSubmit']);
-            Route::POST('level-two/verify/submit', [SandBucketInspectionController::class, 'levelTwoManagerSubmit']);
-            Route::GET('exportViewPdf/{id}', [SandBucketInspectionController::class, 'ExportViewPDF']);
-            Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
-            Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
-            Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
-        });
-
-        Route::group(['prefix' => 'hose-box-inspection'], function () {
-            Route::GET('list', [HoseBoxController::class, 'Index']);
-            Route::POST('list', [HoseBoxController::class, 'Index']);
-            Route::GET('add', [HoseBoxController::class, 'Add']);
-            Route::POST('add/submit', [HoseBoxController::class, 'Store']);
-            Route::GET('view/{id}', [HoseBoxController::class, 'View']);
-            Route::GET('verification/{id}/{employee_type}', [HoseBoxController::class, 'approvals']);
-            Route::POST('ehsofficer/verify/submit', [HoseBoxController::class, 'EHSOfficerSubmit']);
-            Route::POST('capa/submit', [HoseBoxController::class, 'CAPASubmit']);
-            Route::POST('capa/reverify/submit', [HoseBoxController::class, 'CAPAVerifySubmit']);
-            Route::POST('level-one/verify/submit', [HoseBoxController::class, 'levelOneManagerSubmit']);
-            Route::POST('level-two/verify/submit', [HoseBoxController::class, 'levelTwoManagerSubmit']);
-            Route::GET('exportViewPdf/{id}', [HoseBoxController::class, 'ExportViewPDF']);
-            Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
-            Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
-        });
+    Route::group(['prefix' => 'pa-system-inspection'], function () {
+        Route::GET('list', [PASystemInspectionController::class, 'Index']);
+        Route::POST('list', [PASystemInspectionController::class, 'Index']);
+        Route::GET('add', [PASystemInspectionController::class, 'Add']);
+        Route::POST('add/submit', [PASystemInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [PASystemInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [PASystemInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [PASystemInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [PASystemInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [PASystemInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
+        Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
     });
 
-    
+    Route::group(['prefix' => 'fire-extinguisher/co2/'], function () {
+        Route::GET('list', [CoTypeFireExtinguisherController::class, 'Index']);
+        Route::POST('list', [CoTypeFireExtinguisherController::class, 'Index']);
+        Route::GET('add', [CoTypeFireExtinguisherController::class, 'Add']);
+        Route::POST('add/submit', [CoTypeFireExtinguisherController::class, 'Store']);
+        Route::GET('view/{id}', [CoTypeFireExtinguisherController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [CoTypeFireExtinguisherController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [CoTypeFireExtinguisherController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [CoTypeFireExtinguisherController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [CoTypeFireExtinguisherController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [CoTypeFireExtinguisherController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [CoTypeFireExtinguisherController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [CoTypeFireExtinguisherController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
+        Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
+        Route::GET('list', [SandBucketInspectionController::class, 'Index']);
+        Route::POST('list', [SandBucketInspectionController::class, 'Index']);
+        Route::GET('add', [SandBucketInspectionController::class, 'Add']);
+        Route::POST('add/submit', [SandBucketInspectionController::class, 'Store']);
+        Route::GET('view/{id}', [SandBucketInspectionController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [SandBucketInspectionController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [SandBucketInspectionController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [SandBucketInspectionController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [SandBucketInspectionController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [SandBucketInspectionController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [SandBucketInspectionController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [SandBucketInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
+        Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'hose-box-inspection'], function () {
+        Route::GET('list', [HoseBoxController::class, 'Index']);
+        Route::POST('list', [HoseBoxController::class, 'Index']);
+        Route::GET('add', [HoseBoxController::class, 'Add']);
+        Route::POST('add/submit', [HoseBoxController::class, 'Store']);
+        Route::GET('view/{id}', [HoseBoxController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HoseBoxController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HoseBoxController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HoseBoxController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HoseBoxController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HoseBoxController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HoseBoxController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HoseBoxController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
+    });
+});
+
+
 
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
