@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Http\Controllers\Inspection\Fire\HoseBoxController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
@@ -14,21 +15,29 @@ use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
 use App\Http\Controllers\Inspection\Fire\SprinklarSystemController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
-use App\Http\Controllers\Inspection\Audit\Master\TaskMasterController;
-use App\Http\Controllers\Inspection\Audit\MonthlyAuditPlanController;
-use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Inspection\Ohc\WeeklyFirstAidBoxController;
+use App\Http\Controllers\Inspection\Audit\MonthlyAuditPlanController;
+use App\Http\Controllers\Inspection\Audit\Master\TaskMasterController;
+use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
+use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
 use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Ohc\MonthlyMedicineStoreController;
+use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
+use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
+use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
+use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
+use App\Http\Controllers\Inspection\Fire\CoTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
+use App\Http\Controllers\Inspection\Fire\FireMockDrillInspectionController;
+use App\Http\Controllers\Inspection\Ohc\CurrentNewExtCodeDialingController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
@@ -39,19 +48,11 @@ use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
+use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
-use App\Http\Controllers\Inspection\Fire\FireMockDrillInspectionController;
+use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
-use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
-use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
-use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
-use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
-use App\Http\Controllers\Inspection\Fire\CoTypeFireExtinguisherController;
-use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
-use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
-use App\Http\Controllers\Inspection\Ohc\CurrentNewExtCodeDialingController;
-use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 
 
@@ -382,7 +383,9 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+        Route::post('Equipmentunique', [FireSafetyEquipmentController::class, 'Equipmentunique']);
         Route::POST('/status', [FireSafetyEquipmentController::class, 'StatusChange']);
+        Route::POST('/unique', [FireSafetyEquipmentController::class, 'UniqueCheck']);
     });
 
     Route::group(['prefix' => 'safety-walk-observation/'], function () {
@@ -703,6 +706,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'hose-box-inspection'], function () {
+        Route::GET('list', [HoseBoxController::class, 'Index']);
+        Route::POST('list', [HoseBoxController::class, 'Index']);
+        Route::GET('add', [HoseBoxController::class, 'Add']);
+        Route::POST('add/submit', [HoseBoxController::class, 'Store']);
+        Route::GET('view/{id}', [HoseBoxController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HoseBoxController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HoseBoxController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HoseBoxController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HoseBoxController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HoseBoxController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HoseBoxController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HoseBoxController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
     });
 });
 

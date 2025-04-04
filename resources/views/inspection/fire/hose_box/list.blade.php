@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Equipment List')
-@section('pageurl', admin_url('safety/fire-safety-equipment/list'))
+@section('title', 'Hose Box Inspection')
+@section('pageurl', admin_url('fire/hose-box-inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('safety/fire-safety-equipment/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/hose-box-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -26,35 +26,68 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.equipment_name') }}</label>
-                                                <select name="equipment_name" id="equipment_name"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Equipment</option>
-                                                    @foreach ($equipment as $equipment)
-                                                        <option value="{{ encryptId($equipment->id) }}">
-                                                            {{ $equipment->equipment_name }}</option>
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.item_code') }}</label>
-                                                <input type="text" name="item_code" id = "item_code"
-                                                    class="form-control">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">{{ __('inspection.standard_norms') }}</label>
-                                                <select name="standard_norms" id="standard_norms"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Standard/Norms</option>
-                                                    <option value="{{ encryptId(STANDARD) }}">
-                                                        STANDARD</option>
-                                                    <option value="{{ encryptId(NORMS) }}">
-                                                        NORMS</option>
+                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Frequency</option>
+                                                    @foreach ($frequency as $frequency)
+                                                        <option value="{{ encryptId($frequency->id) }}">
+                                                            {{ $frequency->frequency_name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -62,12 +95,19 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('0') }}">InActive</option>
-
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -90,11 +130,14 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.equipment_name') }}</th>
-                                        <th>{{ __('inspection.item_code') }}</th>
-                                        <th>{{ __('inspection.standard_norms') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -113,10 +156,6 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
-            });
-
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
             });
 
             $(function() {
@@ -145,17 +184,19 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('safety/fire-safety-equipment/list') }}",
+                        url: "{{ admin_url('fire/hose-box-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.equipment_name = $('#equipment_name').val();
-                            d.item_code = $('#item_code').val();
-                            d.standard_norms = $('#standard_norms').val();
-                            d.status = $('#status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.next_due = $('#next_due').val();
+                            d.location = $('#location').val();
+                            d.shift = $('#shift').val();
+                            d.unit = $('#unit').val();
+                            d.frequency = $('#frequency').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -171,20 +212,32 @@
                         },
 
                         {
-                            data: 'equipment_name',
-                            name: 'equipment_name',
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection',
                         },
                         {
-                            data: 'item_code',
-                            name: 'item_code',
+                            data: 'next_due',
+                            name: 'next_due',
                         },
                         {
-                            data: 'standard_norms',
-                            name: 'standard_norms',
+                            data: 'location_name',
+                            name: 'location_name',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'shift',
+                            name: 'shift',
+                        },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'frequency_name',
+                            name: 'frequency_name',
+                        },
+                        {
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',
@@ -215,20 +268,26 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
-                                        item_code = $('#item_code').val();
-                                        standard_norms = $('#standard_norms').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/fire-safety-equipment/export/pdf') }}" +
+                                            "{{ admin_url('fire/hose-box-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
-                                            '&item_code=' + item_code +
-                                            '&standard_norms=' + standard_norms +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                                 {
@@ -236,19 +295,25 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        equipment_name = $('#equipment_name').val();
-                                        item_code = $('#item_code').val();
-                                        standard_norms = $('#standard_norms').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/fire-safety-equipment/export/excel') }}" +
+                                            "{{ admin_url('fire/hose-box-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&equipment_name=' + equipment_name +
-                                            '&item_code=' + item_code +
-                                            '&standard_norms=' + standard_norms +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]
@@ -309,7 +374,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/status') }}",
+                                url: "{{ admin_url('fire/hose-box-inspection/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -377,7 +442,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/delete') }}",
+                                url: "{{ admin_url('fire/hose-box-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

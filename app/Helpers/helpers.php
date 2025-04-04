@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\OhcSignature;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -2395,6 +2396,10 @@ if (!function_exists('getMonth')) {
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
+
+                case HOSE_BOX_INSPECTION:
+                    return 'HBI-000001';
+                    break;
             }
         }
     }
@@ -2574,7 +2579,20 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
-                
+
+                case HOSE_BOX_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOSE_BOX_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -2596,8 +2614,20 @@ if (!function_exists('getMonth')) {
                         return $name->signature_upload;
                     } else {
                         return $name->file_path;
-                    }                
+                    }
             }
+        }
+    }
+
+    // Get Hose Type Name Name
+    if (!function_exists('getHoseTypeName')) {
+        function getHoseTypeName($id)
+        {
+            $data = HoseBoxType::where('id', $id)->first();
+            if ($data) {
+                return $data->name;
+            }
+            return null;
         }
     }
 }
