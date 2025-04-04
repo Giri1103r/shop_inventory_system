@@ -218,4 +218,12 @@ return [
     'branch_quantity' => 'Branch Quantity',
     'hose_box_key' => 'Hose Box Key',
     'hose_types' => 'Hose Box Types',
+
+    // Hose Reel Inspection
+    'length' => 'Hose Reel Length',
+    'nozzle' => 'Nozzle Condition',
+    'hose' => 'Hose Condition',
+    'flow' => 'Flow Test',
+    'fail' => 'Fail',
+    'pass' => 'Pass',
 ];

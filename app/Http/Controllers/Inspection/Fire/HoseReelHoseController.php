@@ -21,15 +21,15 @@ use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Fire\HoseBoxInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Fire\HoseBoxInspectionDetails;
+use App\Models\Inspection\Fire\HoseReelHoseDetails;
+use App\Models\Inspection\Fire\HoseReelHoseInspection;
 
-class HoseBoxController extends Controller
+class HoseReelHoseController extends Controller
 {
-    private $hose_box;
-    private $hose_box_details;
+    private $hose_reel;
+    private $hose_reel_details;
     private $shift;
     private $location;
     private $unit;
@@ -40,12 +40,12 @@ class HoseBoxController extends Controller
     private $statusLog;
     private $checklist_follow;
     private $document_reference;
-    private $hose_box_type;
+    private $hose_reel_type;
 
     public function __construct()
     {
-        $this->hose_box = new HoseBoxInspection();
-        $this->hose_box_details = new HoseBoxInspectionDetails();
+        $this->hose_reel = new HoseReelHoseInspection();
+        $this->hose_reel_details = new HoseReelHoseDetails();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -56,7 +56,7 @@ class HoseBoxController extends Controller
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
-        $this->hose_box_type = new HoseBoxType();
+        $this->hose_reel_type = new HoseBoxType();
     }
 
     public function Index(Request $request)
@@ -64,7 +64,7 @@ class HoseBoxController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->hose_box->list();
+                    $data =  $this->hose_reel->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -124,23 +124,23 @@ class HoseBoxController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/hose-box-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/hose-reel-hose-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/hose-box-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -169,7 +169,7 @@ class HoseBoxController extends Controller
             'frequency' => $frequency,
             'shifts' => $shifts,
         );
-        return view('inspection.fire.hose_box.list', $data);
+        return view('inspection.fire.hose_reel.list', $data);
     }
 
     public function Add(Request $request)
@@ -179,25 +179,25 @@ class HoseBoxController extends Controller
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
-            $department = $this->department->getdepartment();
-            $document_no = $this->document_reference->selectUsingName('HoseBoxInspection');
-            $types = $this->hose_box_type->getTypes();
+            $departments = $this->department->getdepartment();
+            $document_no = $this->document_reference->selectUsingName('HoseReelHoseInspection');
+            $types = $this->hose_reel_type->getTypes();
 
             $data = array(
                 'locations' => $location,
                 'units' => $unit,
                 'frequency' => $frequency,
                 'shifts' => $shifts,
-                'department' => $department,
+                'departments' => $departments,
                 'document_no' => $document_no,
                 'types' => $types,
             );
 
-            return view('inspection.fire.hose_box.add', $data);
+            return view('inspection.fire.hose_reel.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -223,7 +223,7 @@ class HoseBoxController extends Controller
 
     public function Store(Request $request)
     {
-        try {   
+        try {
 
             $rules = [
                 'inspection_date' => 'required',
@@ -232,20 +232,18 @@ class HoseBoxController extends Controller
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-            
+
                 'sr_no.*' => 'required',
+                'department.*' => 'required',
                 'location.*' => 'required',
-                'hose_box_no.*' => 'required',
-                'hose_types.*' => 'required',
-                'quantity.*' => 'required',
-                'branch_quantity.*' => 'required',
-                'hose_box_key.*' => 'required',
-                'condition.*' => 'required',
+                'length.*' => 'required',
+                'nozzle.*' => 'required',
+                'hose.*' => 'required',
+                'flow.*' => 'required',
                 'approach.*' => 'required',
-                'observation.*' => 'required',
                 'remarks.*' => 'required',
             ];
-            
+
             $messages = [
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
@@ -253,20 +251,19 @@ class HoseBoxController extends Controller
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
                 'frequency_id.required' => 'Frequency is required',
-            
+
                 'sr_no.*.required' => 'Serial number is required',
-                'location.*.required' => 'Hose box location is required',
-                'hose_box_no.*.required' => 'Hose Box No is required',
-                'hose_types.*.required' => 'Hose Type is required',
-                'quantity.*.required' => 'Quantity is required',
-                'branch_quantity.*.required' => 'Branch Quantity is required',
-                'hose_box_key.*.required' => 'Status of Hose Box Key is required',
-                'condition.*.required' => 'Condition of Hose Box is required',
+                'department.*.required' => 'Department is required',
+                'location.*.required' => 'Location is required',
+                'length.*.required' => 'Length is required',
+                'nozzle.*.required' => 'Condition of the nozzle is required',
+                'hose.*.required' => 'Condition of the hose is required',
+                'flow.*.required' => 'Status of flow test is required',
                 'approach.*.required' => 'Approach field is required',
-                'observation.*.required' => 'Observation is required',
                 'remarks.*.required' => 'Remarks are required',
             ];
-            
+
+
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -274,16 +271,16 @@ class HoseBoxController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $inspection = $this->hose_box->store();
-            $inspection_type = HOSE_BOX_INSPECTION;
+            $inspection = $this->hose_reel->store();
+            $inspection_type = HOSE_REEL_INSPECTION;
             $id = $inspection->id;
 
-            $inspection_details = $this->hose_box_details->store($id);
+            $inspection_details = $this->hose_reel_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -294,23 +291,23 @@ class HoseBoxController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Hose Box Inspection",
+                    'message' => "Fire Associate create the Hose Reel Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/hose-box-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/hose-reel-hose-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Hose Box Inspection';
+            $title = 'Fire Associate create the Hose Reel Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Hose Box Inspection',
+                    'fire_type' => 'Hose Reel Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -321,7 +318,7 @@ class HoseBoxController extends Controller
             }
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -329,11 +326,11 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -342,12 +339,12 @@ class HoseBoxController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = HOSE_BOX_INSPECTION;
+            $inspection_type = HOSE_REEL_INSPECTION;
 
-            $inspection = $this->hose_box->selectOne($id);
-            $inspection_details = $this->hose_box_details->GetDetails($inspection->id);
+            $inspection = $this->hose_reel->selectOne($id);
+            $inspection_details = $this->hose_reel_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, HOSE_BOX_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, HOSE_REEL_INSPECTION);
 
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
@@ -358,11 +355,11 @@ class HoseBoxController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.hose_box.view', $data);
+            return view('inspection.fire.hose_reel.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -371,12 +368,12 @@ class HoseBoxController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = HOSE_BOX_INSPECTION;
+            $inspection_type = HOSE_REEL_INSPECTION;
 
-            $inspection = $this->hose_box->selectOne($id);
-            $inspection_details = $this->hose_box_details->GetDetails($inspection->id);
+            $inspection = $this->hose_reel->selectOne($id);
+            $inspection_details = $this->hose_reel_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, HOSE_BOX_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, HOSE_REEL_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
@@ -386,11 +383,11 @@ class HoseBoxController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.hose_box.approve', $data);
+            return view('inspection.fire.hose_reel.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -399,16 +396,16 @@ class HoseBoxController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->hose_box->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
-            $inspection_details = $this->hose_box->selectOne($id);
+            $inspection_updates = $this->hose_reel->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(HOSE_REEL_INSPECTION);
+            $inspection_details = $this->hose_reel->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Hose Box Inspection Approved Successfully';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id));
+                $message = 'Hose Reel Inspection Approved Successfully';
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
@@ -435,9 +432,9 @@ class HoseBoxController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/capa');
+            $url = admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Hose Box Inspection',
+                'fire_type' => 'Hose Reel Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -447,7 +444,7 @@ class HoseBoxController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -456,12 +453,12 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -469,9 +466,9 @@ class HoseBoxController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $hose_box_inspection = $this->hose_box->capaSubmit($id);
-            $inspection_details = $this->hose_box->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
+            $hose_reel_inspection = $this->hose_reel->capaSubmit($id);
+            $inspection_details = $this->hose_reel->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(HOSE_REEL_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -488,7 +485,7 @@ class HoseBoxController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -496,9 +493,9 @@ class HoseBoxController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Hose Box Inspection',
+                'fire_type' => 'Hose Reel Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -508,7 +505,7 @@ class HoseBoxController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -517,11 +514,11 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -531,19 +528,19 @@ class HoseBoxController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $hose_box_inspection = $this->hose_box->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
-            $inspection_details = $this->hose_box->selectOne($id);
+            $hose_reel_inspection = $this->hose_reel->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_REEL_INSPECTION);
+            $inspection_details = $this->hose_reel->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
@@ -571,7 +568,7 @@ class HoseBoxController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hose Box Inspection',
+                    'fire_type' => 'Hose Reel Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -582,7 +579,7 @@ class HoseBoxController extends Controller
             }
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -591,11 +588,11 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -605,19 +602,19 @@ class HoseBoxController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $hose_box_inspection = $this->hose_box->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
-            $inspection_details = $this->hose_box->selectOne($id);
+            $hose_reel_inspection = $this->hose_reel->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_REEL_INSPECTION);
+            $inspection_details = $this->hose_reel->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
@@ -645,7 +642,7 @@ class HoseBoxController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hose Box Inspection',
+                    'fire_type' => 'Hose Reel Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -656,7 +653,7 @@ class HoseBoxController extends Controller
             }
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -665,11 +662,11 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -679,17 +676,17 @@ class HoseBoxController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $hose_box_inspection = $this->hose_box->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
-            $inspection_details = $this->hose_box->selectOne($id);
+            $hose_reel_inspection = $this->hose_reel->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_REEL_INSPECTION);
+            $inspection_details = $this->hose_reel->selectOne($id);
             if ($status == 1) {
-                $message = 'Hose Box Inspection Approved Successfully!';
-                $web_link =   admin_url('fire/hose-box-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'Hose Reel Inspection Approved Successfully!';
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
@@ -715,7 +712,7 @@ class HoseBoxController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Hose Box Inspection',
+                    'fire_type' => 'Hose Reel Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -726,7 +723,7 @@ class HoseBoxController extends Controller
             }
 
             $insert_array = [
-                'type' => HOSE_BOX_INSPECTION,
+                'type' => HOSE_REEL_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -735,18 +732,18 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->hose_box->exportdata();
+            $allData = $this->hose_reel->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -776,7 +773,7 @@ class HoseBoxController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Hose Box Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Hose Reel Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -784,7 +781,7 @@ class HoseBoxController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -792,7 +789,7 @@ class HoseBoxController extends Controller
     {
         try {
 
-            $allData = $this->hose_box->exportdata();
+            $allData = $this->hose_reel->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -809,7 +806,7 @@ class HoseBoxController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Hose Box Inspection",
+                'pagetitle' => "Hose Reel Inspection",
             );
 
             $property = [
@@ -829,12 +826,12 @@ class HoseBoxController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Hose Box Inspection.pdf";
+            $filename = "Hose Reel Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 
@@ -844,15 +841,15 @@ class HoseBoxController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,HOSE_BOX_INSPECTION);
-                $forklift_details = $this->hose_box->selectOne($id);
-                $inspection = $this->hose_box_details->GetDetails($forklift_details->id);
+                $status_log = $this->statusLog->selectOne($id, HOSE_REEL_INSPECTION);
+                $forklift_details = $this->hose_reel->selectOne($id);
+                $inspection = $this->hose_reel_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Hose Box Inspection",
+                    'pagetitle' => "Hose Reel Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
                 ];
@@ -870,16 +867,16 @@ class HoseBoxController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.hose_box.viewPdf',$data);
+            $html = view('inspection.fire.hose_reel.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Hose Box Inspection.pdf";
+            $filename = "Hose Reel Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/hose-box-inspection/list'));
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
 }

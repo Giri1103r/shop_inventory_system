@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hose Box Inspection | KARAM</title>
+    <title>Hose Reel Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Hose Box Inspection </td>
+                    Hose Reel Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Hose Box Inspection
+                    Hose Reel Inspection
                 </td>
             </tr>
         </table>
@@ -195,83 +195,88 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Hose Box Inspection Details
+                    Hose Reel Inspection Details
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; border: 2px solid black; font-family: Arial, sans-serif;">
-        <tr>
-            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
-                title="DATE OF INSPECTION">DATE OF INSPECTION :- {{DisplayDateformat($forklift_details->date_of_inspection)}}</td>
-            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
-                LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
-            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="SHIFT">SHIFT :-  {{ getShiftName($forklift_details->shift) }}
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="NEXT DUE ON">
-                NEXT DUE ON :- {{DisplayDateformat($forklift_details->next_due)}}</td>
-            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT :- {{ getUnitname($forklift_details->unit) }}
-            </td>
-            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
-                FREQUENCY :- {{ getUnitname($forklift_details->frequency) }}</td>
-        </tr>
-
-        <tr>
-            <td colspan="10"
-                style="border: 2px solid black; padding: 8px; font-weight: bold; background-color: #f9f9f9; text-align: center;"
-                title="Check Items">CHECK ITEMS</td>
-        </tr>
-
-        <!-- Header Row -->
-        <tr style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
-            <td style="border: 2px solid black; padding: 8px;" title="Serial Number">SR NO.</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Location">LOCATION</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">HOSE BOX NO.</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">TYPE OF HOSE</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Quantity">QUANTITY</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Branch">BRANCH</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">HOSE BOX KEY</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Condition">CONDITION</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Approach">APPROACH</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Remarks">REMARK</td>
-        </tr>
-
-        <!-- Data Loop -->
-        @foreach ($inspection as $details)
+    <table
+        style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; border: 1px solid black;">
+        <thead>
             <tr>
-                <td style="border: 2px solid black; padding: 8px;" title="Serial Number">{{ $details->sr_no }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Location">
-                    {{ getLocationName($details->location) }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">{{ $details->hose_box_no }}
+                <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
+                    title="DATE OF INSPECTION">DATE OF INSPECTION :-
+                    {{ DisplayDateformat($forklift_details->date_of_inspection) }}</td>
+                <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
+                    LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
+                <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
+                    SHIFT :- {{ getShiftName($forklift_details->shift) }}
                 </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">
-                    {{ getHoseTypeName($details->hose_types) }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Quantity">{{ $details->quantity }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Branch">{{ $details->branch_quantity }}
-                </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">
-                    @if ($details->hose_box_key == PRESENT)
-                        <p>Present</p>
-                    @else
-                        <p>Missing</p>
-                    @endif
-                </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Condition">
-                    @if ($details->condition == GOOD)
-                        <p>Present</p>
-                    @elseif ($details->condition == FAIR)
-                        <p>Fair</p>
-                    @else
-                        <p>Poor</p>
-                    @endif
-                </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Approach">{{ $details->approach }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Remarks">{{ $details->remarks }}</td>
             </tr>
-        @endforeach
+            <tr>
+                <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
+                    title="NEXT DUE ON">
+                    NEXT DUE ON :- {{ DisplayDateformat($forklift_details->next_due) }}</td>
+                <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT
+                    :- {{ getUnitname($forklift_details->unit) }}
+                </td>
+                <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
+                    FREQUENCY :- {{ getFrequencyname($forklift_details->frequency) }}</td>
+            </tr>
+            <tr>
+                <th rowspan="2" title="sr_no" style="border: 1px solid black; padding: 5px;">SR. NO.</th>
+                <th rowspan="2" title="department" style="border: 1px solid black; padding: 5px;">DEPARTMENT</th>
+                <th rowspan="2" title="location" style="border: 1px solid black; padding: 5px;">LOCATION</th>
+                <th rowspan="2" title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th>
+                <th colspan="4" style="border: 1px solid black; padding: 5px;">CHECK ITEMS</th>
+                <th rowspan="2" title="approach" style="border: 1px solid black; padding: 5px;">APPROACH</th>
+                <th rowspan="2" title="remarks" style="border: 1px solid black; padding: 5px;">REMARKS</th>
+            </tr>
+            <tr>
+                <th title="nozzle" style="border: 1px solid black; padding: 5px;">NOZZLE CONDITION</th>
+                <th title="hose" style="border: 1px solid black; padding: 5px;">HOSE CONDITION</th>
+                <th title="flow" style="border: 1px solid black; padding: 5px;">FLOW TEST</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($inspection as $details)
+                <tr>
+                    <td style="border: 1px solid black; padding: 5px;">{{ $details->sr_no }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ getDeptName($details->department) }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ getLocationName($details->location) }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ $details->length }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        @if ($details->nozzle == GOOD)
+                            <p>Present</p>
+                        @elseif ($details->nozzle == FAIR)
+                            <p>Fair</p>
+                        @else
+                            <p>Poor</p>
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        @if ($details->hose == GOOD)
+                            <p>Present</p>
+                        @elseif ($details->hose == FAIR)
+                            <p>Fair</p>
+                        @else
+                            <p>Poor</p>
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        @if ($details->flow == PASS)
+                            <p>Pass</p>
+                        @else
+                            <p>Fail</p>
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ $details->remarks }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ $details->remarks }}</td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
+
 
 
 
@@ -337,7 +342,7 @@
                 $getSafetySignature = GetFireSignature(
                     $forklift_details->verified_by,
                     $forklift_details->id,
-                    HOSE_BOX_INSPECTION,
+                    HOSE_REEL_INSPECTION,
                 );
             @endphp
             @if (isset($forklift_details->verified_by))
@@ -386,7 +391,7 @@
                 $getSafetySignature = GetFireSignature(
                     $forklift_details->created_by,
                     $forklift_details->id,
-                    HOSE_BOX_INSPECTION,
+                    HOSE_REEL_INSPECTION,
                 );
             @endphp
             @if (isset($forklift_details->verified_by))
@@ -436,7 +441,7 @@
                 $getSafetySignature = GetFireSignature(
                     $forklift_details->verified_by,
                     $forklift_details->id,
-                    HOSE_BOX_INSPECTION,
+                    HOSE_REEL_INSPECTION,
                 );
             @endphp
             @if (isset($forklift_details->verified_by))
@@ -487,7 +492,7 @@
                 $getSafetySignature = GetFireSignature(
                     $forklift_details->l1_manager_verified_by,
                     $forklift_details->id,
-                    HOSE_BOX_INSPECTION,
+                    HOSE_REEL_INSPECTION,
                 );
             @endphp
             @if (isset($forklift_details->verified_by))
@@ -544,7 +549,7 @@
                 $getSafetySignature = GetFireSignature(
                     $forklift_details->l2_manager_verified_by,
                     $forklift_details->id,
-                    HOSE_BOX_INSPECTION,
+                    HOSE_REEL_INSPECTION,
                 );
             @endphp
             @if (isset($forklift_details->verified_by))

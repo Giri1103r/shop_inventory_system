@@ -6,6 +6,7 @@ use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Fire\HoseBoxController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
+use App\Http\Controllers\Inspection\Fire\HoseReelHoseController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
@@ -724,6 +725,23 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('exportViewPdf/{id}', [HoseBoxController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
         Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
+    });
+
+    Route::group(['prefix' => 'hose-reel-hose-inspection'], function () {
+        Route::GET('list', [HoseReelHoseController::class, 'Index']);
+        Route::POST('list', [HoseReelHoseController::class, 'Index']);
+        Route::GET('add', [HoseReelHoseController::class, 'Add']);
+        Route::POST('add/submit', [HoseReelHoseController::class, 'Store']);
+        Route::GET('view/{id}', [HoseReelHoseController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HoseReelHoseController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HoseReelHoseController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HoseReelHoseController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HoseReelHoseController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HoseReelHoseController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HoseReelHoseController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HoseReelHoseController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [HoseReelHoseController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [HoseReelHoseController::class, 'ExportPDF']);
     });
 });
 
