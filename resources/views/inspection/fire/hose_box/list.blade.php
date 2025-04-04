@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
+@section('title', 'Hose Box Inspection')
+@section('pageurl', admin_url('fire/hose-box-inspection/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/hose-box-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -81,8 +81,8 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency"
-                                                    class=" form-control single-select" style="width: 100%">
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Frequency</option>
                                                     @foreach ($frequency as $frequency)
                                                         <option value="{{ encryptId($frequency->id) }}">
@@ -156,15 +156,6 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
-
-                flatpickr("#inspection_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
-                });
-
             });
 
             $(function() {
@@ -193,7 +184,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/detector-inspection/list') }}",
+                        url: "{{ admin_url('fire/hose-box-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -206,7 +197,6 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
-                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -289,7 +279,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/hose-box-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
@@ -298,7 +288,6 @@
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
                                             '&inspection_status=' + inspection_status
-
                                     }
                                 },
                                 {
@@ -316,7 +305,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/hose-box-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
@@ -385,7 +374,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/status') }}",
+                                url: "{{ admin_url('fire/hose-box-inspection/list/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -453,7 +442,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/delete') }}",
+                                url: "{{ admin_url('fire/hose-box-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

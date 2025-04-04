@@ -6,9 +6,9 @@ use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
-class IsolationValve extends Model
+class HoseBoxInspection extends Model
 {
-    protected $table = 'inspection_fire_isolation_valve';
+    protected $table = 'inspection_fire_hose_box';
 
     protected $fillable = [
         'id',
@@ -50,11 +50,11 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_isolation_valve.id as inspection_id')
-            ->leftJoin('masters_location', 'inspection_fire_isolation_valve.location', '=', 'masters_location.id')
-            ->leftJoin('inspection_shift_option', 'inspection_fire_isolation_valve.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin('masters_unit', 'inspection_fire_isolation_valve.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_fire_isolation_valve.frequency', '=', 'inspection_frequency_option.id');
+        $query = $this->select('inspection_fire_hose_box.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hose_box.id as inspection_id')
+            ->leftJoin('masters_location', 'inspection_fire_hose_box.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_hose_box.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_hose_box.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_hose_box.frequency', '=', 'inspection_frequency_option.id');
 
 
         $org_total =  $query;
@@ -74,33 +74,33 @@ class IsolationValve extends Model
         }
 
         if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_isolation_valve.location', 'LIKE', '%' . decryptId($request->location) . '%');
+            $query = $query->where('inspection_fire_hose_box.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_isolation_valve.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_fire_hose_box.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_fire_isolation_valve.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_fire_hose_box.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_fire_isolation_valve.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+            $query = $query->where('inspection_fire_hose_box.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
         if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_isolation_valve.location', 'LIKE', '%' . decryptId($request->location) . '%');
+            $query = $query->where('inspection_fire_hose_box.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_isolation_valve.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_fire_hose_box.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_isolation_valve.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+            $query = $query->where('inspection_fire_hose_box.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
-            $query = $query->where('inspection_fire_isolation_valve.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+            $query = $query->where('inspection_fire_hose_box.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
 
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_hose_box.inspection_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -108,16 +108,16 @@ class IsolationValve extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "inspection_status":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.inspection_status', $columnorder);
+                    $query = $query->orderBy('inspection_fire_hose_box.inspection_status', $columnorder);
                     break;
                 case "created_by":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_fire_hose_box.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('inspection_fire_isolation_valve.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_fire_hose_box.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('inspection_fire_isolation_valve.id', 'DESC');
+                    $query = $query->orderBy('inspection_fire_hose_box.id', 'DESC');
                     break;
             }
         }
@@ -164,7 +164,7 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*');
+        $query = $this->select('inspection_fire_hose_box.*');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -175,17 +175,17 @@ class IsolationValve extends Model
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_isolation_valve.document_number', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_hose_box.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_isolation_valve.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_fire_hose_box.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_isolation_valve.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_hose_box.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_hose_box.inspection_status', decryptId($request->inspection_status));
         }
         $query->orderBy('id', 'DESC');
 
@@ -302,6 +302,6 @@ class IsolationValve extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('inspection_fire_isolation_valve'));
+        static::addGlobalScope(new TrashScope('inspection_fire_hose_box'));
     }
 }

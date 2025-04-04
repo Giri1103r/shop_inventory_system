@@ -118,17 +118,12 @@ class MSDSController extends Controller
             try {
                $msds = $this->msdsDetails->store();
 
-               $msdsId = $msds->id;
-
-               $this->signature->signatureStrore(MSDS_INSPECTION,$msdsId);
-
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
@@ -152,7 +147,6 @@ class MSDSController extends Controller
             }
             return view('inspection.msds.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -289,7 +283,6 @@ class MSDSController extends Controller
             $filename = "MSDS Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

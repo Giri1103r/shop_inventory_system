@@ -15,20 +15,21 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Fire\HoseBoxInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Fire\SprinklarSystemInspection;
-use App\Models\Inspection\Fire\SprinklarSystemInspectionDetails;
-use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Fire\HoseBoxInspectionDetails;
 
-class SprinklarSystemController extends Controller
+class HoseBoxController extends Controller
 {
-    private $sprinklar_system;
-    private $sprinklar_system_details;
+    private $hose_box;
+    private $hose_box_details;
     private $shift;
     private $location;
     private $unit;
@@ -39,11 +40,12 @@ class SprinklarSystemController extends Controller
     private $statusLog;
     private $checklist_follow;
     private $document_reference;
+    private $hose_box_type;
 
     public function __construct()
     {
-        $this->sprinklar_system = new SprinklarSystemInspection();
-        $this->sprinklar_system_details = new SprinklarSystemInspectionDetails();
+        $this->hose_box = new HoseBoxInspection();
+        $this->hose_box_details = new HoseBoxInspectionDetails();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -54,6 +56,7 @@ class SprinklarSystemController extends Controller
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
+        $this->hose_box_type = new HoseBoxType();
     }
 
     public function Index(Request $request)
@@ -61,7 +64,7 @@ class SprinklarSystemController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->sprinklar_system->list();
+                    $data =  $this->hose_box->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -121,23 +124,23 @@ class SprinklarSystemController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/sprinkler-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/hose-box-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-box-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hose-box-inspectiony/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/sprinkler-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/hose-box-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -166,7 +169,7 @@ class SprinklarSystemController extends Controller
             'frequency' => $frequency,
             'shifts' => $shifts,
         );
-        return view('inspection.fire.sprinklar_system.list', $data);
+        return view('inspection.fire.hose_box.list', $data);
     }
 
     public function Add(Request $request)
@@ -177,7 +180,8 @@ class SprinklarSystemController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
-            $document_no = $this->document_reference->selectUsingName('SprinklerInspection');
+            $document_no = $this->document_reference->selectUsingName('HoseBoxInspection');
+            $types = $this->hose_box_type->getTypes();
 
             $data = array(
                 'locations' => $location,
@@ -186,13 +190,14 @@ class SprinklarSystemController extends Controller
                 'shifts' => $shifts,
                 'department' => $department,
                 'document_no' => $document_no,
+                'types' => $types,
             );
 
-            return view('inspection.fire.sprinklar_system.add', $data);
+            return view('inspection.fire.hose_box.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -218,51 +223,50 @@ class SprinklarSystemController extends Controller
 
     public function Store(Request $request)
     {
-        try {
+        try {   
 
             $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
+            
                 'sr_no.*' => 'required',
-                'department.*' => 'required',
+                'location.*' => 'required',
+                'hose_box_no.*' => 'required',
+                'hose_types.*' => 'required',
                 'quantity.*' => 'required',
-                'resource_code.*' => 'required',
-                'water_leakage.*' => 'required',
-                'painting.*' => 'required',
-                'qbd.*' => 'required',
-                'condition_of_flow_meter.*' => 'required',
-                'main_isolation.*' => 'required',
-                'drain_condition.*' => 'required',
+                'branch_quantity.*' => 'required',
+                'hose_box_key.*' => 'required',
+                'condition.*' => 'required',
+                'approach.*' => 'required',
                 'observation.*' => 'required',
                 'remarks.*' => 'required',
             ];
-
+            
             $messages = [
-                'issue_date.required' => 'Issue Date is required',
-                'rev_date.required' => 'Revision Data is required',
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
                 'shift_id.required' => 'Shift is required',
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
-                'department.*.required' => 'Department is required',
+                'frequency_id.required' => 'Frequency is required',
+            
+                'sr_no.*.required' => 'Serial number is required',
+                'location.*.required' => 'Hose box location is required',
+                'hose_box_no.*.required' => 'Hose Box No is required',
+                'hose_types.*.required' => 'Hose Type is required',
                 'quantity.*.required' => 'Quantity is required',
-                'resource_code.*.required' => 'Resource Code is required',
-                'water_leakage.*.required' => 'Status of Water Leakage is required',
-                'painting.*.required' => 'Status Of Painting is required',
-                'qbd.*.required' => 'Quality By Design Condition is required',
-                'condition_of_flow_meter.*.required' => 'Condition of flow meter Status is required',
-                'main_isolation.*.required' => 'Main Isolation Valve Status is required',
-                'drain_condition.*.required' => 'Drain Isolation Valve Status is required',
-                'observation.required' => 'Observation is required',
-                'remarks.*.required' => 'Remarks is required',
+                'branch_quantity.*.required' => 'Branch Quantity is required',
+                'hose_box_key.*.required' => 'Status of Hose Box Key is required',
+                'condition.*.required' => 'Condition of Hose Box is required',
+                'approach.*.required' => 'Approach field is required',
+                'observation.*.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks are required',
             ];
+            
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -270,11 +274,11 @@ class SprinklarSystemController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $inspection = $this->sprinklar_system->store();
-            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
+            $inspection = $this->hose_box->store();
+            $inspection_type = HOSE_BOX_INSPECTION;
             $id = $inspection->id;
 
-            $inspection_details = $this->sprinklar_system_details->store($id);
+            $inspection_details = $this->hose_box_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
@@ -290,23 +294,23 @@ class SprinklarSystemController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Sprinklar System Inspection",
+                    'message' => "Fire Associate create the Hose Box Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/sprinkler-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/hose-box-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Sprinklar System Inspection';
+            $title = 'Fire Associate create the Hose Box Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/sprinkler-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Sprinklar System Inspection',
+                    'fire_type' => 'Hose Box Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -317,7 +321,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -325,12 +329,11 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -339,13 +342,14 @@ class SprinklarSystemController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
+            $inspection_type = HOSE_BOX_INSPECTION;
 
-            $inspection = $this->sprinklar_system->selectOne($id);
-            $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
+            $inspection = $this->hose_box->selectOne($id);
+            $inspection_details = $this->hose_box_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
-            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $status_log = $this->statusLog->selectOne($id, HOSE_BOX_INSPECTION);
+
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
@@ -354,11 +358,11 @@ class SprinklarSystemController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.sprinklar_system.view', $data);
+            return view('inspection.fire.hose_box.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -367,13 +371,13 @@ class SprinklarSystemController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
+            $inspection_type = HOSE_BOX_INSPECTION;
 
-            $inspection = $this->sprinklar_system->selectOne($id);
-            $inspection_details = $this->sprinklar_system_details->GetDetails($inspection->id);
+            $inspection = $this->hose_box->selectOne($id);
+            $inspection_details = $this->hose_box_details->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, SPRINKLAR_SYSTEM_INSPECTION);
-            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $status_log = $this->statusLog->selectOne($id, HOSE_BOX_INSPECTION);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
                 'inspection' => $inspection,
@@ -382,11 +386,11 @@ class SprinklarSystemController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.sprinklar_system.approve', $data);
+            return view('inspection.fire.hose_box.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -395,16 +399,16 @@ class SprinklarSystemController extends Controller
 
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->sprinklar_system->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
-            $inspection_details = $this->sprinklar_system->selectOne($id);
+            $inspection_updates = $this->hose_box->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
+            $inspection_details = $this->hose_box->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Sprinklar System Inspection Approved Successfully';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id));
+                $message = 'Hose Box Inspection Approved Successfully';
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
@@ -431,9 +435,9 @@ class SprinklarSystemController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/sprinkler-inspection/verification/' . encryptId($id) . '/capa');
+            $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Sprinklar System Inspection',
+                'fire_type' => 'Hose Box Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -443,7 +447,7 @@ class SprinklarSystemController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -452,12 +456,12 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -465,9 +469,9 @@ class SprinklarSystemController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $sprinklar_system_inspection = $this->sprinklar_system->capaSubmit($id);
-            $inspection_details = $this->sprinklar_system->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
+            $hose_box_inspection = $this->hose_box->capaSubmit($id);
+            $inspection_details = $this->hose_box->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -484,7 +488,7 @@ class SprinklarSystemController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -492,9 +496,9 @@ class SprinklarSystemController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/sprinkler-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Sprinklar System Inspection',
+                'fire_type' => 'Hose Box Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -504,7 +508,7 @@ class SprinklarSystemController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -513,11 +517,11 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -527,19 +531,19 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $sprinklar_system_inspection = $this->sprinklar_system->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
-            $inspection_details = $this->sprinklar_system->selectOne($id);
+            $hose_box_inspection = $this->hose_box->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
+            $inspection_details = $this->hose_box->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
@@ -567,7 +571,7 @@ class SprinklarSystemController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Sprinklar System Inspection',
+                    'fire_type' => 'Hose Box Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -578,7 +582,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -587,11 +591,11 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -601,19 +605,19 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $sprinklar_system_inspection = $this->sprinklar_system->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
-            $inspection_details = $this->sprinklar_system->selectOne($id);
+            $hose_box_inspection = $this->hose_box->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
+            $inspection_details = $this->hose_box->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
@@ -641,7 +645,7 @@ class SprinklarSystemController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Sprinklar System Inspection',
+                    'fire_type' => 'Hose Box Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -652,7 +656,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -661,11 +665,11 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -675,17 +679,17 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $sprinklar_system_inspection = $this->sprinklar_system->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SPRINKLAR_SYSTEM_INSPECTION);
-            $inspection_details = $this->sprinklar_system->selectOne($id);
+            $hose_box_inspection = $this->hose_box->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HOSE_BOX_INSPECTION);
+            $inspection_details = $this->hose_box->selectOne($id);
             if ($status == 1) {
-                $message = 'Sprinklar System Inspection Approved Successfully!';
-                $web_link =   admin_url('fire/sprinkler-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'Hose Box Inspection Approved Successfully!';
+                $web_link =   admin_url('fire/hose-box-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/sprinkler-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
@@ -711,7 +715,7 @@ class SprinklarSystemController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Sprinklar System Inspection',
+                    'fire_type' => 'Hose Box Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -722,7 +726,7 @@ class SprinklarSystemController extends Controller
             }
 
             $insert_array = [
-                'type' => SPRINKLAR_SYSTEM_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -731,18 +735,18 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->sprinklar_system->exportdata();
+            $allData = $this->hose_box->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -772,7 +776,7 @@ class SprinklarSystemController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Sprinklar System Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Hose Box Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -780,7 +784,7 @@ class SprinklarSystemController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -788,7 +792,7 @@ class SprinklarSystemController extends Controller
     {
         try {
 
-            $allData = $this->sprinklar_system->exportdata();
+            $allData = $this->hose_box->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -805,7 +809,7 @@ class SprinklarSystemController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Sprinklar System Inspection",
+                'pagetitle' => "Hose Box Inspection",
             );
 
             $property = [
@@ -825,12 +829,12 @@ class SprinklarSystemController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Sprinklar System Inspection Inspection.pdf";
+            $filename = "Hose Box Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 
@@ -840,14 +844,15 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,SPRINKLAR_SYSTEM_INSPECTION);
-                $forklift_details = $this->sprinklar_system->selectOne($id);
-                $inspection = $this->sprinklar_system_details->GetDetails($forklift_details->id);
+                $status_log = $this->statusLog->selectOne($id,HOSE_BOX_INSPECTION);
+                $forklift_details = $this->hose_box->selectOne($id);
+                $inspection = $this->hose_box_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
-                    'pagetitle' => "Sprinklar System Inspection",
+                    'pagetitle' => "Hose Box Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
                 ];
@@ -865,16 +870,16 @@ class SprinklarSystemController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.sprinklar_system.viewPdf',$data);
+            $html = view('inspection.fire.hose_box.viewPdf',$data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Sprinklar System Inspection.pdf";
+            $filename = "Hose Box Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            return redirect(admin_url('fire/hose-box-inspection/list'));
         }
     }
 }
