@@ -710,6 +710,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('status', [FirePreNocController::class, 'statusChange']);
         Route::post('unique', [FirePreNocController::class, 'Uniquecheck']);
         Route::get('employeeName', [FirePreNocController::class, 'employeename']);
+    });
         Route::group(['prefix' => 'pa-system-inspection'], function () {
             Route::GET('list', [PASystemInspectionController::class, 'Index']);
             Route::POST('list', [PASystemInspectionController::class, 'Index']);
@@ -781,7 +782,9 @@ Route::group(['prefix' => 'fire/'], function () {
             Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
         });
     });
-});
+
+    
+
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('list', [FloorStretcherController::class, 'Index']);
