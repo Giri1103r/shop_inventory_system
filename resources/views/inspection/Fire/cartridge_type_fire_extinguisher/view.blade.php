@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Co2 Type Fire Extinguisher Inspection View')
-@section('pageurl', admin_url('fire/fire-extinguisher/co2/list'))
+@section('title', 'Cartridge Type Fire Extinguisher Inspection View')
+@section('pageurl', admin_url('fire/fire-extinguisher/cartridge/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/fire-extinguisher/co2/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -116,10 +116,10 @@
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
-                                        
+
                                         @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -135,7 +135,7 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Observation</h4>
+                                                <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Observation</h4>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -155,7 +155,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2 col-12">
-                                                    <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Checklist</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -245,12 +245,12 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.discharge_horn') }}</label>
+                                                            class="form-label require">Wheel</label>
                                                         <div class="view_data">
-                                                            @if ($details->discharge_horn == FUNCTIONAL)
-                                                                {{ __('inspection.functional') }}
-                                                            @elseif($details->discharge_horn == NON_FUNCTIONAL)
-                                                                {{ __('inspection.non_functional') }}
+                                                            @if ($details->wheel == FUNCTIONAL)
+                                                            FUNCTIONAL
+                                                            @elseif($details->wheel == NON_FUNCTIONAL)
+                                                            NON_FUNCTIONAL
                                                             @endif
                                                         </div>
                                                     </div>
@@ -259,9 +259,23 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Weight of CO2 in FE</label>
+                                                            class="form-label require">Handle</label>
                                                         <div class="view_data">
-                                                           {{ $details->weight_of_co2_in_fe }}
+                                                            @if ($details->handle == GOOD)
+                                                            GOOD
+                                                            @elseif($details->handle == DAMAGED)
+                                                            DAMAGED
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Weight of Cartridge</label>
+                                                        <div class="view_data">
+                                                           {{ $details->weight_of_cartidge }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -327,7 +341,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                        CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
@@ -366,7 +380,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                            CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -429,7 +443,7 @@
                                                 $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                    CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -482,7 +496,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -534,7 +548,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -585,7 +599,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -612,7 +626,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

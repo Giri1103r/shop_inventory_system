@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>CO2 Type Fire Extinguisher Inspection | KARAM</title>
+    <title>Cartridge Type Fire Extinguisher Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    CO2 Type Fire Extinguisher Inspection </td>
+                    Cartridge Type Fire Extinguisher Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    CO2 Type Fire Extinguisher Inspection
+                    Cartridge Type Fire Extinguisher Inspection
                 </td>
             </tr>
         </table>
@@ -239,13 +239,13 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    CO2 Type Fire Extinguisher Inspection Details
+                    Cartridge Type Fire Extinguisher Inspection Details
                 </td>
             </tr>
         </table>
     </div>
     <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
-        <thead>
+        {{-- <thead>
             <tr>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
@@ -257,20 +257,45 @@
             </tr>
             <tr>
                 <th colspan="3" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
-                <th colspan="5" style="border: 1px solid black; padding: 8px;">CONDITION</th>
+                <th colspan="3" style="border: 1px solid black; padding: 8px;">CONDITION</th>
             </tr>
             <tr>
                 <th style="border: 1px solid black; padding: 8px;">TYPE</th>
                 <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
                 <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
                 <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
-                <th style="border: 1px solid black; padding: 8px;">DISCHARGE HORN</th>
-                <th style="border: 1px solid black; padding: 8px;">WEIGHT OF CO2 IN FE</th>
+                <th style="border: 1px solid black; padding: 8px;">HANDLE</th>
+                <th style="border: 1px solid black; padding: 8px;">WHEEL</th>
+                <th style="border: 1px solid black; padding: 8px;">WEIGHT OF CARTRIDGE</th>
                 <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
                 <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
             </tr>
+        </thead> --}}
+        <thead>
+            <tr>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+                <th colspan="9" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
+            </tr>
+            <tr>
+                <th colspan="3" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
+                <th colspan="3" style="border: 1px solid black; padding: 8px;">CONDITION</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">WEIGHT OF CARTRIDGE</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">APPROACH</th>
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
+                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
+                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
+                <th style="border: 1px solid black; padding: 8px;">HANDLE</th>
+                <th style="border: 1px solid black; padding: 8px;">WHEEL</th>
+            </tr>
         </thead>
-
 
         <tbody>
             @foreach ($inspection as $details)
@@ -299,14 +324,21 @@
                         @endif
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        @if ($details->discharge_horn == FUNCTIONAL)
+                        @if ($details->handle == GOOD)
+                            GOOD
+                        @elseif($details->handle == DAMAGED)
+                            DAMAGED
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->wheel == FUNCTIONAL)
                             {{ __('inspection.functional') }}
-                        @elseif($details->discharge_horn == NON_FUNCTIONAL)
+                        @elseif($details->wheel == NON_FUNCTIONAL)
                             {{ __('inspection.non_functional') }}
                         @endif
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $details->weight_of_co2_in_fe }}
+                        {{ $details->weight_of_cartidge }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         @if ($details->safety_pin == PRESENT)
@@ -325,17 +357,17 @@
             $prepared_by_signature = GetFireSignature(
                 $forklift_details->created_by,
                 $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
             );
             $verified_by_signature = GetFireSignature(
                 $forklift_details->updated_by,
                 $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
             );
             $verified_by_signature = GetFireSignature(
                 $forklift_details->approved_by,
                 $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
+                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
             );
         @endphp
         <tr>
@@ -345,7 +377,7 @@
                     style="height: 50px;">
                 <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
             </td>
-            <td colspan="4"
+            <td colspan="5"
                 style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                 @if ($forklift_details->updated_by != null)
                     <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
