@@ -26,14 +26,16 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->document_number }}
+                            {{ getCategoryname($value->category) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ isset($value->ohs_compliance_index) ? $value->ohs_compliance_index : '' }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_date }}
+                            {{ getFrequencyname($value->frequency) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ isset($value->scope) ? $value->scope : '' }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

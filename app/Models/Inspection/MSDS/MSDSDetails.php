@@ -104,7 +104,7 @@ class MSDSDetails extends Model
 
         }
 
-        return $this->create($insert_array);
+        return $insertedData;
     }
 
     public function selectOne($id)
