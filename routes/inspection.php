@@ -379,6 +379,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+        Route::POST('/status', [FireSafetyEquipmentController::class, 'StatusChange']);
     });
 
     Route::group(['prefix' => 'safety-walk-observation/'], function () {
@@ -850,6 +851,7 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
 });
+
 
 
 Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
