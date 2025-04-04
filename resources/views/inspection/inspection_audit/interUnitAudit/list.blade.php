@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', '6S Audit Assessment')
-@section('pageurl', admin_url('audit/assessment/list'))
+@section('title', 'Inter Unit Monthly Audit')
+@section('pageurl', admin_url('audit/audit/inter-unit-audit/checklist/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('audit/assessment/add') }}">Add</x-button-add>
+                                href="{{ admin_url('audit/inter-unit-audit/checklist/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -60,8 +60,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{__('Audit ID')}}</th>
                                         <th>{{__('Date of Audit')}}</th>
-                                        <th>{{__('Shop Floor')}}</th>
-                                        <th>{{__('Floor Executive')}}</th>
+                                        <th>{{__('Name of Safety Officer')}}</th>
+                                        <th>{{__('Unit')}}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -111,7 +111,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('audit/assessment/list') }}",
+                        url: "{{ admin_url('audit/inter-unit-audit/checklist/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -144,12 +144,12 @@
                             name: 'audit_date'
                         },
                         {
-                            data: 'floor_name',
-                            name: 'floor_name'
+                            data: 'safety_officer',
+                            name: 'safety_officer'
                         },
                         {
-                            data: 'emp_name',
-                            name: 'emp_name'
+                            data: 'unit_name',
+                            name: 'unit_name'
                         },
                         {
                             data: 'status',
@@ -190,7 +190,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
+                                            "{{ admin_url('audit/inter-unit-audit/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -206,7 +206,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/excel') }}" +
+                                            "{{ admin_url('audit/inter-unit-audit/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -245,12 +245,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate 6S Audit Assessment') }}';
+                        var title = '{{ __('Do You want to In-Activate Inter Unit Monthly Audit') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate 6S Audit Assessment') }}';
+                        var title = '{{ __('Do You want to Activate Inter Unit Monthly Audit') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -270,7 +270,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/status') }}",
+                                url: "{{ admin_url('audit/inter-unit-audit/checklist/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -338,7 +338,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/delete') }}",
+                                url: "{{ admin_url('audit/inter-unit-audit/checklist/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

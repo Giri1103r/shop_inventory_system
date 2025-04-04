@@ -50,6 +50,9 @@ use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;
 use App\Http\Controllers\Inspection\Fire\DetectorInspectionController;
 use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
+use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
+use App\Http\Controllers\Inspection\Fire\FirePreNocController;
+use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
 
 
 Route::group(['prefix' => 'inspection/master/'], function () {
@@ -168,7 +171,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
         Route::post('delete', [TaskMasterController::class, 'Delete']);
         Route::post('status', [TaskMasterController::class, 'StatusChange']);
-
     });
 
     Route::group(['prefix' => 'monthly-audit/audit-plan/'], function () {
@@ -180,9 +182,26 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('export/excel', [MonthlyAuditPlanController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
         Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
-
     });
 
+    Route::group(['prefix' => 'inter-unit-audit/checklist/'], function () {
+        Route::get('list', [InterUnitAuditController::class, 'index']);
+        Route::post('list', [InterUnitAuditController::class, 'index']);
+        Route::get('add', [InterUnitAuditController::class, 'add']);
+        Route::post('add/submit', [InterUnitAuditController::class, 'store']);
+        Route::get('edit/{id}', [InterUnitAuditController::class, 'edit']);
+        Route::post('edit/submit', [InterUnitAuditController::class, 'update']);
+        Route::get('view/{id}', [InterUnitAuditController::class, 'view']);
+        Route::post('delete', [InterUnitAuditController::class, 'delete']);
+        Route::get('export/excel', [InterUnitAuditController::class, 'exportExcel']);
+        Route::get('export/pdf', [InterUnitAuditController::class, 'exportPdf']);
+        Route::get('sample_download', [InterUnitAuditController::class, 'DownloadSample']);
+        Route::get('import', [InterUnitAuditController::class, 'import']);
+        Route::post('import/Submit', [InterUnitAuditController::class, 'importSubmit']);
+        Route::post('status', [InterUnitAuditController::class, 'statusChange']);
+        Route::post('unique', [InterUnitAuditController::class, 'Uniquecheck']);
+        Route::get('employeeName', [InterUnitAuditController::class, 'employeename']);
+    });
 });
 
 
@@ -645,6 +664,44 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [DetectorInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [DetectorInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [DetectorInspectionController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'daily-fire-pump-house-inspection/'], function () {
+        Route::get('list', [FirePumpHouseController::class, 'index']);
+        Route::post('list', [FirePumpHouseController::class, 'index']);
+        Route::get('add', [FirePumpHouseController::class, 'add']);
+        Route::post('add/submit', [FirePumpHouseController::class, 'store']);
+        Route::get('edit/{id}', [FirePumpHouseController::class, 'edit']);
+        Route::post('edit/submit', [FirePumpHouseController::class, 'update']);
+        Route::get('view/{id}', [FirePumpHouseController::class, 'view']);
+        Route::post('delete', [FirePumpHouseController::class, 'delete']);
+        Route::get('export/excel', [FirePumpHouseController::class, 'exportExcel']);
+        Route::get('export/pdf', [FirePumpHouseController::class, 'exportPdf']);
+        Route::get('sample_download', [FirePumpHouseController::class, 'DownloadSample']);
+        Route::get('import', [FirePumpHouseController::class, 'import']);
+        Route::post('import/Submit', [FirePumpHouseController::class, 'importSubmit']);
+        Route::post('status', [FirePumpHouseController::class, 'statusChange']);
+        Route::post('unique', [FirePumpHouseController::class, 'Uniquecheck']);
+        Route::get('employeeName', [FirePumpHouseController::class, 'employeename']);
+    });
+
+    Route::group(['prefix' => 'pre-noc/checklist/'], function () {
+        Route::get('list', [FirePreNocController::class, 'index']);
+        Route::post('list', [FirePreNocController::class, 'index']);
+        Route::get('add', [FirePreNocController::class, 'add']);
+        Route::post('add/submit', [FirePreNocController::class, 'store']);
+        Route::get('edit/{id}', [FirePreNocController::class, 'edit']);
+        Route::post('edit/submit', [FirePreNocController::class, 'update']);
+        Route::get('view/{id}', [FirePreNocController::class, 'view']);
+        Route::post('delete', [FirePreNocController::class, 'delete']);
+        Route::get('export/excel', [FirePreNocController::class, 'exportExcel']);
+        Route::get('export/pdf', [FirePreNocController::class, 'exportPdf']);
+        Route::get('sample_download', [FirePreNocController::class, 'DownloadSample']);
+        Route::get('import', [FirePreNocController::class, 'import']);
+        Route::post('import/Submit', [FirePreNocController::class, 'importSubmit']);
+        Route::post('status', [FirePreNocController::class, 'statusChange']);
+        Route::post('unique', [FirePreNocController::class, 'Uniquecheck']);
+        Route::get('employeeName', [FirePreNocController::class, 'employeename']);
     });
 });
 

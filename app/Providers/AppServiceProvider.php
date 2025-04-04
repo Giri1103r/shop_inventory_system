@@ -361,6 +361,9 @@ class AppServiceProvider extends ServiceProvider
         defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', 5);
         defined('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
         defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT', 7);
+        defined('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST') or define('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST', 8);
+        defined('INTER_UNIT_AUDIT_CHECKLIST') or define('INTER_UNIT_AUDIT_CHECKLIST', 9);
+        defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 10);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);
@@ -373,6 +376,7 @@ class AppServiceProvider extends ServiceProvider
         defined('SPRINKLAR_SYSTEM_INSPECTION') or define('SPRINKLAR_SYSTEM_INSPECTION', 7);
         defined('DETECTOR_INSPECTION') or define('DETECTOR_INSPECTION', 11);
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
+        defined('DAILY_FIRE_PUMP') or define('DAILY_FIRE_PUMP', 13);
 
         // OPTIONS
         defined('YES') or define('YES', 1);

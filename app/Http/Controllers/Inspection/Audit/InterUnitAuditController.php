@@ -12,29 +12,31 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\audit\InterUnitAudit;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Master\Unit;
 
-class AuditAssessmentController extends Controller
+class InterUnitAuditController extends Controller
 {
 
     private $checklist_type;
     private $checklist_subtype;
     private $checklist_subtypedata;
     private $checklist_subtypename;
-    private $audit_assessment;
+    private $inter_unit_audit;
     private $upload_log;
     private $checklist_option;
     private $shift;
+    private $unit;
 
     public function __construct()
     {
-        $this->audit_assessment = new AuditAssessment();
+        $this->inter_unit_audit = new InterUnitAudit();
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
         $this->checklist_option = new ChecklistOptionType();
@@ -42,6 +44,7 @@ class AuditAssessmentController extends Controller
         $this->checklist_subtypename = new ChecklistSubTypeDataName();
         $this->checklist_subtypedata = new ChecklistSubTypeData();
         $this->shift = new Shift();
+        $this->unit = new Unit();
     }
 
     public function index(Request $request)
@@ -49,7 +52,7 @@ class AuditAssessmentController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =    $this->audit_assessment->list();
+                    $data =    $this->inter_unit_audit->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -72,7 +75,7 @@ class AuditAssessmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('audit/inter-unit-audit/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
@@ -96,49 +99,28 @@ class AuditAssessmentController extends Controller
             'checklist_types' => $checklist_types,
 
         );
-        return view('inspection.inspection_audit.auditAssessment.list', $data);
+        return view('inspection.inspection_audit.interUnitAudit.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
-            $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
-            $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
-            $options =  getoption(CHECKLIST_AUDIT_ASSESSMENT);
+            $unit  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+            $checklist_details = getCheckListQuestion(INTER_UNIT_AUDIT_CHECKLIST);
+            $options =  getoption(INTER_UNIT_AUDIT_CHECKLIST);
             $getoption = string_to_array($options->type);
             $data = array(
                 'checklist_types' => $checklist_types,
-                'shift' => $shift,
+                'unit' => $unit,
                 'checklist_details' => $checklist_details,
                 'getoption' => $getoption,
             );
-            return view('inspection.inspection_audit.auditAssessment.add', $data);
+            return view('inspection.inspection_audit.interUnitAudit.add', $data);
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
         }
-    }
-
-    public function employeename(Request $request)
-    {
-        $name = $request->input('search');
-
-        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->orWhere('emp_id', 'like', '%' . $name . '%')
-            ->where('status', 1)
-            ->limit(10)
-            ->get();
-
-
-        return response()->json(
-            $employees->map(function ($employee) {
-                return [
-                    'id' => encryptId($employee->id),
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-                ];
-            })
-        );
     }
     public function store(Request $request)
     {
@@ -146,7 +128,7 @@ class AuditAssessmentController extends Controller
         try {
             try {
 
-                $this->audit_assessment->store();
+                $this->inter_unit_audit->store();
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
@@ -156,10 +138,10 @@ class AuditAssessmentController extends Controller
                 Session::flash('error', __('common.message_error'));
             }
 
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('audit/inter-unit-audit/checklist/list'));
         } catch (Exception $ex) {
             Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('audit/inter-unit-audit/checklist/list'));
         }
     }
     public function view($id)
@@ -167,18 +149,18 @@ class AuditAssessmentController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-                $audit_assessment =   $this->audit_assessment->selectOne($id);
+                $inter_unit_audit =   $this->inter_unit_audit->selectOne($id);
 
 
                 $data = array(
-                    'audit_assessment' => $audit_assessment,
+                    'inter_unit_audit' => $inter_unit_audit,
                 );
             }
-            return view('inspection.inspection_audit.auditAssessment.view', $data);
+            return view('inspection.inspection_audit.interUnitAudit.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('audit/assessment/list'));
+            return redirect(admin_url('audit/inter-unit-audit/checklist/list'));
         }
     }
 
@@ -188,9 +170,9 @@ class AuditAssessmentController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $this->audit_assessment->statuschange($id);
+            $this->inter_unit_audit->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => '6S Audit Assessment status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Inter Unit Monthly Audit status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -273,7 +255,7 @@ class AuditAssessmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.inspection_audit.auditAssessment.pdf', $data);
+            $view = view('inspection.inspection_audit.interUnitAudit.pdf', $data);
             $html = $view->render();
 
 
