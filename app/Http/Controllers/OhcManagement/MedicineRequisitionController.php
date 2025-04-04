@@ -115,9 +115,9 @@ class MedicineRequisitionController extends Controller
                             // if (CheckUserPermission('view')) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
-                            if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
+                            // if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
                             $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // }
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }

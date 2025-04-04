@@ -155,7 +155,6 @@ class MedicineIssuanceController extends Controller
 
             $medicine = $this->inventory->getstockdata();
             $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
-            // dd(   $user_medicine_requisition);
             $medicine_requisition = $this->medicine_requisition->selectOne($id);
 
             $data = array(
@@ -216,10 +215,7 @@ class MedicineIssuanceController extends Controller
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id', 1)
                         ->increment('total_issue', $issuedQuantity);
-                    // $this->inventory
-                    //     ->where('medicine_id', $medicine_id)
-                    //     ->where('unit_id',  $unitId)
-                    //     ->increment('total_purchase', $issuedQuantity);
+
                     $this->inventory
                         ->where('medicine_id', $medicine_id)
                         ->where('unit_id',  $unitId)
@@ -229,11 +225,6 @@ class MedicineIssuanceController extends Controller
                         ->where('unit_id',  $unitId)
                         ->increment('total_received', $issuedQuantity);
                 }
-                // $creatorlog =  $this->creatorlog->store($user_medicine_issuance , $data );
-                $this->medicinelog->store($user_medicine_issuance, $user_medicine_issuance);
-                // medicine log
-
-
 
                 // Notification and Email
                 $id =  $user_medicine_issuance->id;
@@ -413,7 +404,7 @@ class MedicineIssuanceController extends Controller
                 'user_medicine_issuance' => $user_medicine_issuance,
                 'medicine_issuance' => $medicine_issuance
             );
-            // dd($data );
+
             return view('ohcmanagement.medicine_issuance.edit', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -427,7 +418,7 @@ class MedicineIssuanceController extends Controller
         try {
             $id = decryptId($request->id);
 
-            // Validation rules
+
             $rules = [
                 'unit_id' => 'required',
                 'department_id' => 'required',
@@ -554,7 +545,7 @@ class MedicineIssuanceController extends Controller
                     }
                 }
 
-                // Prepare and send web notification
+
                 $notificationData = [
                     'notification_type' => 4,
                     'module_type' => 1,

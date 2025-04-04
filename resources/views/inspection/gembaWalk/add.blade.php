@@ -128,7 +128,9 @@
                                                         More</button>
                                                 </div>
                                                 <div id="gemba_walk_checklist">
+                                                    
                                                     <div class="row gemba_walk_checklist_add " data-index="0">
+
                                                         <div class="row">
                                                             <div class=" col-md-4 form-group form-input">
                                                                 <label class="form-label">Sr. No</label>

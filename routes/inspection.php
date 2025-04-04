@@ -154,6 +154,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
         Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
+        Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
 
     Route::group(['prefix' => 'master/task/'], function () {
@@ -379,6 +380,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [FireSafetyEquipmentController::class, 'exportExcel']);
         Route::get('export/pdf', [FireSafetyEquipmentController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [FireSafetyEquipmentController::class, 'exportViewPdf']);
+        Route::POST('/status', [FireSafetyEquipmentController::class, 'StatusChange']);
     });
 
     Route::group(['prefix' => 'safety-walk-observation/'], function () {
@@ -852,7 +854,24 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
 });
 
 
+
 Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::get('list', [CurrentNewExtCodeDialingController::class, 'Index']);
+    Route::post('list', [CurrentNewExtCodeDialingController::class, 'Index']);
     Route::get('add', [CurrentNewExtCodeDialingController::class, 'add']);
+    Route::post('add/submit', [CurrentNewExtCodeDialingController::class, 'store']);
+    Route::get('view/{id}', [CurrentNewExtCodeDialingController::class, 'View']);
+    Route::get('edit/{id}', [CurrentNewExtCodeDialingController::class, 'edit']);
+    Route::post('edit/submit', [CurrentNewExtCodeDialingController::class, 'update']);
+    Route::get('export/pdf', [CurrentNewExtCodeDialingController::class, 'ExportPDF']);
+    Route::get('export/excel', [CurrentNewExtCodeDialingController::class, 'ExportExcel']);
+    Route::post('unique', [CurrentNewExtCodeDialingController::class, 'UniqueCheck']);
+    Route::post('delete', [CurrentNewExtCodeDialingController::class, 'Delete']);
+    Route::post('status', [CurrentNewExtCodeDialingController::class, 'StatusChange']);
+
+
+
+
+
+
 });

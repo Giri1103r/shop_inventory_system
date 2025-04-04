@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Discard medicine Pdf')
+@section('title', 'Current New Code Dailing')
 @section('content')
 
     <div style="width:100%;">
@@ -24,29 +24,27 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getMedicineName($value->medicine_id) }}
+                            {{ $value->unit_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->quantity) }}
+                            {{ $value->department_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->remarks) }}
+                            {{ $value->emp_name}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->discard_date) }}
+                            {{ $value->number}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDiscardStatus($value->approve_status) }}
+                            @php
+                                $status = $value->status == 1 ? 'Active' : 'In-Active';
+                            @endphp
+                            {{ $status }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->approved_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}

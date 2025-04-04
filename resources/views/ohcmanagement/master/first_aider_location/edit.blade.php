@@ -49,6 +49,9 @@
                                                                 {{ $unit->unit_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('unit_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -64,6 +67,9 @@
                                                                 {{ $department->department_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('department_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -72,6 +78,9 @@
                                                     <input type="text" name="location_id" id="location_id"
                                                         value="{{ $firstaidlocation->location_id }}" class="form-control"
                                                         placeholder="Location Name">
+                                                    @error('location_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -86,6 +95,9 @@
                                                                 {{ $firstaidlocation->station_master }}</option>
                                                         @endif
                                                     </select>
+                                                    @error('station_master')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -94,6 +106,9 @@
                                                     <input type="text" name="station_number" id="station_number"
                                                         value="{{ $firstaidlocation->station_number }}"
                                                         class="form-control" placeholder="Station Number">
+                                                    @error('station_number')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -102,6 +117,9 @@
                                                     <input type="text" name="first_aid_box_no" id="first_aid_box_no"
                                                         value="{{ $firstaidlocation->first_aid_box_no }}"
                                                         class="form-control" placeholder="First Aid Box Number">
+                                                    @error('first_aid_box_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 

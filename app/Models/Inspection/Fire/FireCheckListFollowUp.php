@@ -16,9 +16,7 @@ class FireCheckListFollowUp extends Model
         'inspection_category',
         'inspection_type',
         'inspection_id',
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -132,19 +130,11 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
 
+
         $data = array(
             'inspection_type' => $inspection_type,
-            'inspeciton_id' => $inspection_id,
-            'doc_no' => $request->doc_no,
-            'issue_date' => $request->issue_date,
-            'revision_data' => $request->rev_date,
-            'date_of_inspection' => $request->inspection_date,
-            'location' => decryptId($request->location_id),
-            'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
-            'observation' => $request->observation,
-            'unit' => decryptId($request->unit_id),
-            'frequency' => decryptId($request->frequency_id),
+            'inspection_id' => $inspection_id,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
