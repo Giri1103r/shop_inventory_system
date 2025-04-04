@@ -33,7 +33,7 @@ class OhcDashboardController extends Controller
                 $unit_id = $user->unit_id;
             }
 
-            if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+
                 // dd( $unit_id);
                 $masterLink = [
                     [
@@ -131,7 +131,7 @@ class OhcDashboardController extends Controller
                     'medicines' => $medicines,
                     'unit' => $unit,
                 ];
-            }
+
 
 
                 return view('ohcmanagement.dashboard.dashboard', $data);
@@ -151,7 +151,7 @@ class OhcDashboardController extends Controller
                 $unit_id = decryptId($request->unit_id);
             }
 
-            if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+
 
                 $masterLink = [
                     [
@@ -249,7 +249,7 @@ class OhcDashboardController extends Controller
                     'medicines' => $medicines,
                     'unit' => $unit,
                 ];
-            }
+           
 
 
                 return response()->json($data);

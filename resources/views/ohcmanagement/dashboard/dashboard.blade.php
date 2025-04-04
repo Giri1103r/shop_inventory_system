@@ -54,12 +54,13 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end p-2 me-2">
-                <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
+            @if (checkUserRole(ROLE_SUPERADMIN) || checkUserRole(ROLE_EHS_HEAD))
+                <div class="d-flex justify-content-end p-2 me-2">
+                    <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
+
+                </div>
 
 
-
-            </div>
 
             <div id="search" class="collapse">
                 <form action="{{ admin_url('ohc/dashboard') }}" method="GET" id="formsearch">
@@ -91,6 +92,7 @@
                 </form>
                 <hr>
             </div>
+            @endif
             <div class="card view_card">
 
                 <div class="card-body">
