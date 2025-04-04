@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\OhcSignature;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -2601,6 +2602,18 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
             }
+        }
+    }
+
+    // Get Hose Type Name Name
+    if (!function_exists('getHoseTypeName')) {
+        function getHoseTypeName($id)
+        {
+            $data = HoseBoxType::where('id', $id)->first();
+            if ($data) {
+                return $data->name;
+            }
+            return null;
         }
     }
 }

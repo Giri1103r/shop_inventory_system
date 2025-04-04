@@ -19,8 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('fire/hose-box-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/hose-box-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -160,6 +159,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
+
                                                         <div class="view_data">
                                                             {{ $details->sr_no }}
                                                         </div>
@@ -169,119 +169,91 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location_isv') }}</label>
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->location_isv }}
+                                                            {{ getLocationName($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                            class="form-label require">{{ __('inspection.hose_box_inspection') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->resource_code }}
+                                                            {{ $details->hose_box_no }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.size_isv') }}</label>
+                                                            class="form-label require">{{ __('inspection.hose_types') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->size_isv }}
+                                                            {{ getHoseTypeName($details->hose_types) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.isv_status') }}</label>
+                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->isv_status == FUNCTIONAL)
-                                                                {{ __('inspection.functional') }}
-                                                            @elseif($details->isv_status == NON_FUNCTIONAL)
-                                                                {{ __('inspection.non_functional') }}
-                                                            @endif
+                                                            {{ $details->quantity }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.wheel_operation') }}</label>
-                                                        <div class="view_data">
-                                                            @if ($details->wheel_operation == FUNCTIONAL)
-                                                                {{ __('inspection.functional') }}
-                                                            @elseif($details->wheel_operation == NON_FUNCTIONAL)
-                                                                {{ __('inspection.non_functional') }}
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.leakage') }}</label>
 
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.branch_quantity') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->wheel_operation == YES)
-                                                                {{ __('inspection.yes') }}
-                                                            @elseif($details->wheel_operation == NO)
-                                                                {{ __('inspection.no') }}
-                                                            @endif
+                                                            {{ $details->branch_quantity }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.valve_type') }}</label>
-                                                        <div class="view_data">
-                                                            @if ($details->type == GATE)
-                                                                {{ __('inspection.GATE') }}
-                                                            @elseif($details->type == BALL)
-                                                                {{ __('inspection.BALL') }}
-                                                            @elseif($details->type == BUTTERFLY)
-                                                                {{ __('inspection.BUTTERFLY') }}
-                                                            @endif
-                                                        </div>
+                                                            class="form-label require">{{ __('inspection.hose_box_key') }}</label>
+                                                        @if ($details->hose_box_key == PRESENT)
+                                                            <p>Present</p>
+                                                        @else
+                                                            <p>Missing</p>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.open') }}</label>
+                                                            class="form-label require">{{ __('inspection.condition') }}</label>
+                                                        @if ($details->condition == GOOD)
+                                                            <p>Present</p>
+                                                        @elseif ($details->condition == FAIR)
+                                                            <p>Fair</p>
+                                                        @else
+                                                            <p>Poor</p>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.approach') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->open == OPEN)
-                                                                Opened
-                                                            @elseif($details->open == CLOSE)
-                                                                Closed
-                                                            @endif
+                                                            {{ $details->approach }}
                                                         </div>
 
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.close') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->close == OPEN)
-                                                                    Opened
-                                                                @elseif($details->close == CLOSE)
-                                                                    Closed
-                                                                @endif
-                                                            </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-8 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->remarks }}
-                                                            </div>
+                                                        <div class="view_data">
+                                                            {{ $details->remarks }}
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
