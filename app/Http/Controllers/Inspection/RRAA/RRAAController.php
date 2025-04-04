@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers\Inspection\RRAA;
 
-use App\Http\Controllers\Controller;
-use App\Mail\Inspection\RRAA\RRAAEmail;
-use App\Models\Inspection\Master\Frequency;
-use Illuminate\Http\Request;
-use App\Models\Inspection\RRAA\RRAADetails;
-use App\Models\Inspection\RRAA\RRAACheckList;
 use Exception;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Master\Work;
+use Illuminate\Http\Request;
+use App\Models\Master\Employee;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Inspection\RRAA\RRAAEmail;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Master\Employee;
-use App\Models\Master\Work;
-use App\Models\Inspection\Master\ChecklistType;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\RRAA\RRAADetails;
+use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\RRAA\RRAAStatusLog;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Admin\AdminController;
+use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
 class RRAAController extends Controller
@@ -33,6 +34,7 @@ class RRAAController extends Controller
     private $category;
     private $statusLog;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -44,6 +46,7 @@ class RRAAController extends Controller
         $this->category = new ChecklistType();
         $this->statusLog = new RRAAStatusLog();
         $this->signature = new RRAASignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -78,13 +81,20 @@ class RRAAController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = [];
+        $frequency = $this->frequency->getFrequency();
+        $category = $this->category->getAll();
+
+        $data = [
+            'frequency' => $frequency,
+            'category' => $category,
+        ];
 
         return view('inspection.rraa.list', $data);
     }
@@ -94,10 +104,12 @@ class RRAAController extends Controller
         try {
             $frequency = $this->frequency->getFrequency();
             $category = $this->category->getAll();
+            $document_no = $this->document_reference->selectUsingName('RRAA');
 
             $data = [
                 'frequency' => $frequency,
                 'category' => $category,
+                'document_no' => $document_no,
             ];
             return view('inspection.rraa.add', $data);
         } catch (Exception $ex) {
@@ -109,9 +121,6 @@ class RRAAController extends Controller
     {
         try {
             $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
                 'serial_number' => 'required',
                 'category' => 'required',
                 'ohs_compliance_index' => 'required',
@@ -123,9 +132,6 @@ class RRAAController extends Controller
                 'remark' => 'required',
             ];
             $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
                 'serial_number.required' => __('Serial Number is required'),
                 'category.required' => __('category is required'),
                 'ohs_compliance_index.required' => __('OHS Compliance Index is required'),
@@ -144,17 +150,16 @@ class RRAAController extends Controller
 
             try {
 
-                $rraa = $this->rraa_details->store();
-                $rraa_id = $rraa->id;
-                $this->rraa_checkList->store($rraa_id);
-                $this->signature->signatureStore(RRAA_INSPECTION,$rraa->id);
+                $this->rraa_details->store();
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
@@ -186,15 +191,11 @@ class RRAAController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $rraa_details = $this->rraa_details->find($id);
-                $rraa_checkList = $this->rraa_checkList->selectOne($id);
-                $status_log = $this->statusLog->selectOne($id);
-                $inspection_details = $this->rraa_details->selectOne($id);
+                $document_no = $this->document_reference->selectOne($rraa_details->document_reference_id);
 
                 $data = array(
                     'rraa_details' => $rraa_details,
-                    'rraa_checkList' => $rraa_checkList  ?? [],
-                    'status_log' => $status_log,
-                    'inspection_details' => $inspection_details,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.rraa.view', $data);
@@ -216,9 +217,10 @@ class RRAAController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Category',
+                'OHC Compliance Index',
+                'Frequency',
+                'Scope',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -228,9 +230,10 @@ class RRAAController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->document_number;
-                $export[] =  $data->issue_date;
-                $export[] =  $data->revision_date;
+                $export[] =  getCategoryname($data->category);
+                $export[] =  $data->ohs_compliance_index;
+                $export[] =  getFrequencyname($data->frequency);
+                $export[] =  $data->scope;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -262,9 +265,10 @@ class RRAAController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Category',
+                'OHC Compliance Index',
+                'Frequency',
+                'Scope',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -309,15 +313,11 @@ class RRAAController extends Controller
 
             if (Auth::check()) {
                 $rraa_details = $this->rraa_details->find($id);
-                $rraa_checkList = $this->rraa_checkList->selectOne($id);
-                $status_log = $this->statusLog->selectOne($id);
-                $inspection_details = $this->rraa_details->selectOne($id);
+                $document_no = $this->document_reference->selectUsingName('RRAA');
 
                 $data = array(
                     'rraa_details' => $rraa_details,
-                    'rraa_checkList' => $rraa_checkList  ?? [],
-                    'status_log' => $status_log,
-                    'inspection_details' => $inspection_details,
+                    'document_no' => $document_no,
                     'pagetitle' => "RRAA Details",
                 );
             }
@@ -328,7 +328,6 @@ class RRAAController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
