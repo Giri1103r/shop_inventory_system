@@ -58,6 +58,8 @@ use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmen
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Inspection\Fire\MonthlyPhysicalInspectionController;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -643,6 +645,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/excel', [CertifiedFireFighterController::class, 'exportExcel']);
         Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
+    });
+    Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
+        Route::get('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::post('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::get('add', [MonthlyPhysicalInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyPhysicalInspectionController::class, 'store']);
+        Route::get('view/{id}', [MonthlyPhysicalInspectionController::class, 'view']);
+        Route::post('delete', [MonthlyPhysicalInspectionController::class, 'delete']);
+        Route::get('export/excel', [MonthlyPhysicalInspectionController::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyPhysicalInspectionController::class, 'exportPdf']);
+        Route::post('status', [MonthlyPhysicalInspectionController::class, 'statusChange']);
     });
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
         Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
