@@ -349,6 +349,7 @@ class FirstAidLocationController extends Controller
                 'Location',
                 'Station Master',
                 'Station Number',
+                'First Aid Box Number',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -364,6 +365,7 @@ class FirstAidLocationController extends Controller
                 $export[] = $data->location_id;
                 $export[] =  $data->station_master;
                 $export[] =  $data->station_number;
+                $export[] =  $data->first_aid_box_no;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -404,6 +406,7 @@ class FirstAidLocationController extends Controller
                 'Location',
                 'Station Master',
                 'Station Number',
+                'First Aid Box Number',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),

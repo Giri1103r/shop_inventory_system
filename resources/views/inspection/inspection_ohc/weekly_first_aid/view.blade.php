@@ -35,7 +35,7 @@
                                             <label
                                                 class="form-label view_label">Documnet Number</label>
                                             <div class="view_data">
-                                                {{ isset($inspection_details->doc_no) ? $inspection_details->doc_no : '' }}
+                                                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                             </div>
                                         </div>
 
@@ -46,7 +46,7 @@
                                                 <label
                                                     class="form-label require">Issue Date</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->issue_date) }}
+                                                    {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -55,7 +55,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Revision Date</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->revision_date }}
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
@@ -63,7 +63,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require"> Date of Inspection   </label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->revision_date }}
+                                                    {{ Displaydateformat($inspection_details->date_of_inspection) }}
                                                 </div>
                                             </div>
                                         </div>

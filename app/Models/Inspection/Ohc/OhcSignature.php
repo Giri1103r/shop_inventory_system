@@ -112,7 +112,7 @@ class OhcSignature extends Model
                     'created_by' => Auth::id(),
                 ];
 
-                $data =    $this->create($insert_array);
+                return $this->create($insert_array);
             }
         } catch (Exception $ex) {
             dd($ex);

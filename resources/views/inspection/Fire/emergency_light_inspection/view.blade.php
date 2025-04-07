@@ -116,7 +116,7 @@
                                             $signature = GetSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                EMERGENCY_LIGHT_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))

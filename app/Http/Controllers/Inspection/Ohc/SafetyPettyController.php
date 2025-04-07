@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers\Inspection\Ohc;
 
-use App\Http\Controllers\Controller;
-use App\Models\Master\Employee;
-use App\Models\Master\Unit;
-use Illuminate\Http\Request;
 use Exception;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\User;
+use App\Models\Master\Unit;
+use App\Models\Master\Work;
+use Illuminate\Http\Request;
+use App\Models\Master\Employee;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Master\Work;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Ohc\OhcSignature;
-use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\SafetyPettyDetails;
-use App\Models\User;
-use Illuminate\Support\Facades\Response;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 
 class SafetyPettyController extends Controller
 {
@@ -28,6 +29,7 @@ class SafetyPettyController extends Controller
     private $unit;
     private $signature;
     private $user;
+    private $document_reference;
 
     public function __construct()
     {
@@ -38,6 +40,7 @@ class SafetyPettyController extends Controller
         $this->unit = new Unit();
         $this->signature = new OhcSignature();
         $this->user = new User();
+        $this->document_reference = new InspectionStaticDocno();
 
     }
 
@@ -99,9 +102,11 @@ class SafetyPettyController extends Controller
         try {
             $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
             $unit = $this->unit->getunit();
+            $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
 
             $data = [
                 'unit' => $unit,
+                'document_no' => $document_no,
             ];
             return view('inspection.inspection_ohc.safety_petty.add', $data);
         } catch (Exception $ex) {
@@ -177,12 +182,13 @@ class SafetyPettyController extends Controller
 
     public function view(Request $request)
     {
-       
+
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
                 $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectOne($sfty_petty_details->document_reference_id);
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
@@ -191,14 +197,15 @@ class SafetyPettyController extends Controller
                 $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
 
                 $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
-                
+
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
                     'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
+                    'document_no' => $document_no,
                 );
-              
+
             }
             return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
@@ -333,6 +340,7 @@ class SafetyPettyController extends Controller
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
                 $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
@@ -347,6 +355,7 @@ class SafetyPettyController extends Controller
                     'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
+                    'document_no' => $document_no,
                     'pagetitle' => "Safety Petty Logbook Details",
                 ];
             }

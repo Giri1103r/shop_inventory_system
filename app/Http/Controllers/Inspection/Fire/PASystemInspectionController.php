@@ -236,7 +236,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -364,7 +364,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -425,7 +425,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'Fire PA System Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -497,7 +497,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -571,7 +571,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -642,7 +642,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

@@ -343,8 +343,7 @@ class DiscardController extends Controller
                         'created_by' => Auth::id(),
                     ];
                     notificationSave($notificationData);
-                    $count = $this->unit->getUnitcount();
-                    $this->inventory->store($details, $count);
+                  
                 } else {
                     $mailsubject =  'Medicine Name Has Been Rejected';
                     $details['mail_subject'] =   $mailsubject;

@@ -341,6 +341,7 @@ class AppServiceProvider extends ServiceProvider
         defined('GOOD') or define('GOOD', 1);
         defined('FAIR') or define('FAIR', 2);
         defined('POOR') or define('POOR', 3);
+        defined('DAMAGED') or define('DAMAGED', 4);
 
 
         //Quantiy
@@ -386,6 +387,11 @@ class AppServiceProvider extends ServiceProvider
         defined('DAILY_FIRE_PUMP') or define('DAILY_FIRE_PUMP', 19);
         defined('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION', 13);
         defined('HOSE_BOX_INSPECTION') or define('HOSE_BOX_INSPECTION',9);
+        defined('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION', 15);
+        defined('HOSE_REEL_INSPECTION') or define('HOSE_REEL_INSPECTION',10);
+        defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION',23);
+        defined('HYDRANT_RISER') or define('HYDRANT_RISER', 4);
+
 
         // OPTIONS
         defined('YES') or define('YES', 1);
@@ -431,6 +437,9 @@ class AppServiceProvider extends ServiceProvider
         defined('SAFETY') or define('SAFETY',3);
         defined('MIS') or define('MIS',4);
 
+        // Pass or Fail
+        defined('PASS')  or define('PASS',1);
+        defined('FAIL')  or define('FAIL',2);
 
 
 

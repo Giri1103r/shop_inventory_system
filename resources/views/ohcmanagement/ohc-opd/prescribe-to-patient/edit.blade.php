@@ -39,7 +39,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label"> Is OutSide Worker</label><br>
+                                                    <label class="form-label" for="is_outside_worker"> Is OutSide Worker</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1"
                                                         {{ $opdpatient->is_outside_employee == 1 ? 'checked' : '' }}>
@@ -190,13 +190,13 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Cheif Complaint</label>
+                                                    <label class="form-label require" for="cheif_complaint">Cheif Complaint</label>
                                                     <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control">{{ $opdpatient->cheif_complaint }}"</textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Vital Checkup</label><br>
+                                                    <label class="form-label" for="vital_checkup">Vital Checkup</label><br>
                                                     <input type="checkbox" id="vital_checkup" name="vital_checkup"
                                                         value="1"
                                                         {{ $opdpatient->vital_checkup == 1 ? 'checked' : '' }}>
@@ -230,7 +230,7 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">First Aid Treatment</label><br>
+                                                    <label class="form-label" for="first_aid_treatment">First Aid Treatment</label><br>
                                                     <input type="checkbox" id="first_aid_treatment"
                                                         name="first_aid_treatment" value="1"
                                                         {{ $opdpatient->first_aid_treatment == 1 ? 'checked' : '' }}>
@@ -337,6 +337,8 @@
                                                                             </div>
 
                                                                         </td>
+                                                                        <input type="hidden" name="deletedPage"
+                                                                            id="deletedPage" value="[]">
                                                                     </tr>
                                                                 @endforeach
                                                             </tbody>
@@ -346,7 +348,7 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Is Reffered</label><br>
+                                                    <label class="form-label" for="is_reffered">Is Reffered</label><br>
                                                     <input type="checkbox" id="is_reffered" name="is_reffered"
                                                         value="1"{{ $opdpatient->is_refered == 1 ? 'checked' : '' }}>
                                                 </div>
@@ -357,7 +359,7 @@
                                                         <label for="hospital_name" class="form-label require">Hospital
                                                             Name</label>
 
-                                                            <select name="hospital_name" id="hospital_name"
+                                                        <select name="hospital_name" id="hospital_name"
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the Hospital Name</option>
                                                             @foreach ($hospital as $list)
@@ -488,8 +490,8 @@
 
 @stop
 @push('script')
-<script>
-     $(function() {
+    <script>
+        $(function() {
             $.validator.addMethod(
                 "regex",
                 function(value, element, regex) {
@@ -788,7 +790,7 @@
                 },
             });
         });
-</script>
+    </script>
     <script>
         // company name
 
@@ -1138,67 +1140,51 @@
             }
         });
 
-        // delete the add more row
+
+
+
+        // deleted Rows
+
+        let deletedPages = [];
 
 
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
 
-            var row = $(this).closest("tr"); // Ensure it selects the correct row
-            var rowId = row.find("input[name='encryptid']").val(); // Get the encrypted ID
-            var totalRows = $("#medicine-tbody tr").length; // Count total rows
+            var row = $(this).closest(".medicinedetails");
+            var rowId = row.find("input[name='encryptid']").val();
+            var totalRows = $(".medicinedetails").length;
 
-            // Prevent deletion if only one row is left
-            if (totalRows <= 1) {
+            if (totalRows > 1) {
                 Swal.fire({
-                    title: 'Cannot delete!',
-                    text: 'At least one row is required.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-
-            // If row ID exists, proceed with AJAX delete
-            if (rowId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
+                    title: "Are you sure?",
+                    text: "Do you want to delete this medicine from the list?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('ohc/prescribe-to-patient/delete') }}/" + rowId,
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'DELETE', // Use DELETE method
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove(); // Remove row after successful deletion
-                                    Swal.fire('Deleted!', response.msg, 'success');
-                                } else {
-                                    Swal.fire('Error!', response.msg, 'error');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                Swal.fire('Error!', 'Something went wrong: ' + xhr.responseText,
-                                    'error');
-                            }
-                        });
+
+                        deletedPages.push(rowId);
+
+
+                        $('#deletedPage').val(JSON.stringify(deletedPages));
+
+
+                        row.remove();
+
+                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
                     }
                 });
             } else {
-                // If no rowId (new row), remove without AJAX
-                row.remove();
+                Swal.fire({
+                    title: "Warning!",
+                    text: "At least one row must remain!",
+                    icon: "error",
+                });
             }
         });
-
 
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
@@ -1270,12 +1256,25 @@
                     </div>
                 </td>
                 <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded deleted-row" style="width: 30px; height: 30px;">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </td>
             </tr>`;
+                $(document).on("click", ".deleted-row", function() {
+                    var rowCount = $('#medicine-tbody tr').length;
 
+                    if (rowCount > 1) {
+                        $(this).closest("tr").remove();
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Warning',
+                            text: 'At least one row is required.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                });
                 $('#medicine-tbody').append(newRow);
 
 
@@ -1285,7 +1284,7 @@
                 });
 
 
-           $('select[name="medicine_id[' + rowcount + ']"]').rules('add', {
+                $('select[name="medicine_id[' + rowcount + ']"]').rules('add', {
                     required: true,
                     messages: {
                         required: 'This Medicine name is required'
@@ -1367,7 +1366,5 @@
 
         });
         // validation
-
-
     </script>
 @endpush

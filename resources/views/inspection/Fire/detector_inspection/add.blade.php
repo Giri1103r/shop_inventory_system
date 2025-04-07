@@ -235,7 +235,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.detector_type') }}</label>
-                                                        <select name="detector_type[1]" id="detector_type"
+                                                        <select name="detector_type[1]" id="detector_type[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Detector Type</option>
                                                             @foreach ($detector_types as $detector_type)
@@ -254,7 +254,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.physical_condition') }}</label>
-                                                        <select name="physical_condition[1]" id="physical_condition"
+                                                        <select name="physical_condition[1]" id="physical_condition[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Physical Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}"
@@ -276,7 +276,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <select name="cable_condition[1]" id="cable_condition"
+                                                        <select name="cable_condition[1]" id="cable_condition[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Cable Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}"
@@ -298,7 +298,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <select name="response_indicator[1]" id="response_indicator"
+                                                        <select name="response_indicator[1]" id="response_indicator[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Response Indicator</option>
                                                             <option value="{{ encryptId(WORKING) }}"
@@ -319,7 +319,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <select name="working_status[1]" id="working_status"
+                                                        <select name="working_status[1]" id="working_status[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Working Status</option>
                                                             <option value="{{ encryptId(OPERATIONAL) }}"
@@ -682,7 +682,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.detector_type') }}</label>
-                                                        <select name="detector_type[${form_set_count}]" id="detector_type"
+                                                        <select name="detector_type[${form_set_count}]" id="detector_type[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Detector Type</option>
                                                             @foreach ($detector_types as $detector_type)
@@ -696,7 +696,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.physical_condition') }}</label>
-                                                        <select name="physical_condition[${form_set_count}]" id="physical_condition"
+                                                        <select name="physical_condition[${form_set_count}]" id="physical_condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Physical Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}">Good</option>
@@ -709,7 +709,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.cable_condition') }}</label>
-                                                        <select name="cable_condition[${form_set_count}]" id="cable_condition"
+                                                        <select name="cable_condition[${form_set_count}]" id="cable_condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Cable Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}">Good</option>
@@ -722,7 +722,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.response_indicator') }}</label>
-                                                        <select name="response_indicator[${form_set_count}]" id="response_indicator"
+                                                        <select name="response_indicator[${form_set_count}]" id="response_indicator[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Response Indicator</option>
                                                             <option value="{{ encryptId(WORKING) }}">Working</option>
@@ -735,7 +735,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <select name="working_status[${form_set_count}]" id="working_status"
+                                                        <select name="working_status[${form_set_count}]" id="working_status[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Working Status</option>
                                                             <option value="{{ encryptId(OPERATIONAL) }}">Operational</option>

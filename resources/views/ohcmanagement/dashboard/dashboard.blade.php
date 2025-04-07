@@ -54,7 +54,45 @@
                     </div>
                 </div>
             </div>
+            @if (checkUserRole(ROLE_SUPERADMIN) || checkUserRole(ROLE_EHS_HEAD))
+                <div class="d-flex justify-content-end p-2 me-2">
+                    <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
 
+                </div>
+
+
+
+            <div id="search" class="collapse">
+                <form action="{{ admin_url('ohc/dashboard') }}" method="GET" id="formsearch">
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
+
+
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label ">Unit</label>
+                                        <select name="unit_id" id="unit_id" class="form-control single-select"
+                                            style="width: 100%">
+                                            <option value="">Select the unit</option>
+                                            @foreach ($unit as $list)
+                                                <option value="{{ encryptId($list->id) }}">
+                                                    {{ $list->unit_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <x-button-search></x-button-search>
+                                    <x-button-reset></x-button-reset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+            </div>
+            @endif
             <div class="card view_card">
 
                 <div class="card-body">
@@ -79,7 +117,7 @@
                                             <p class="mb-1" style="color:black;">
                                                 {{ isset($masterLink[0]['name']) ? $masterLink[0]['name'] : '' }}
                                             </p>
-                                            <h4 class="mb-0">
+                                            <h4 class="mb-0 medicine-requisition">
                                                 {{ isset($masterLink[0]['count']) ? $masterLink[0]['count'] : 0 }}
                                             </h4>
                                         </div>
@@ -89,7 +127,6 @@
                         </div>
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -120,7 +157,6 @@
 
                         <div class="col-xl-3  col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(to left, #cd9cf2 0%, #f6f3ff 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -153,7 +189,6 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(to right, #FFC796 0%, #FF6B95 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -171,7 +206,7 @@
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
                                                 {{ isset($masterLink[3]['name']) ? $masterLink[3]['name'] : '' }}</p>
-                                            <h4 class="mb-0">
+                                            <h4 class="mb-0 medicine-issuance">
                                                 {{ isset($masterLink[3]['count']) ? $masterLink[3]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
@@ -190,7 +225,6 @@
                         <h4>Unit Wise OPD Details</h4>
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(to right, #a3f0dc 0%, #83aeee 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -200,7 +234,7 @@
                                             <p class="mb-1" style="color:black;">
                                                 {{ isset($masterLink[4]['name']) ? $masterLink[4]['name'] : '' }}
                                             </p>
-                                            <h4 class="mb-0">
+                                            <h4 class="mb-0 medicine-issuance">
                                                 {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }}
                                             </h4>
                                         </div>
@@ -214,7 +248,6 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #d2f8bc 0%, #c3cfe2 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -238,7 +271,6 @@
 
                         <div class="col-xl-3  col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(to left, #d9ecee 0%, #7fdbf1 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -260,7 +292,6 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(to right, #e2757e 0%, #f1b1c4 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -292,7 +323,6 @@
                         <h4>OHC Details</h4>
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #007BFF, #cfeeee);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -314,7 +344,7 @@
                                             <p class="mb-1" style="color:black;">
                                                 {{ isset($masterLink[8]['name']) ? $masterLink[8]['name'] : '' }}
                                             </p>
-                                            <h4 class="mb-0">
+                                            <h4 class="mb-0 today-opd">
                                                 {{ isset($masterLink[8]['count']) ? $masterLink[8]['count'] : 0 }}
                                             </h4>
                                         </div>
@@ -325,7 +355,6 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #ec94cf, #c2daf3);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -349,7 +378,7 @@
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
                                                 {{ isset($masterLink[9]['name']) ? $masterLink[9]['name'] : '' }}</p>
-                                            <h4 class="mb-0">
+                                            <h4 class="mb-0 today-issue">
                                                 {{ isset($masterLink[9]['count']) ? $masterLink[9]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
@@ -390,7 +419,6 @@
 
                         <div class="col-xl-3 col-lg-6 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
-
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
                                 <div class="card-body p-4"
                                     style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
@@ -411,9 +439,9 @@
                                         </span>
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[11]['name']) ? $masterLink[11]['name'] : '' }}</p>
-                                            <h4 class="mb-0">
-                                                {{ isset($masterLink[11]['count']) ? $masterLink[11]['count'] : 0 }}</h4>
+                                                {{ isset($masterLink[10]['name']) ? $masterLink[10]['name'] : '' }}</p>
+                                            <h4 class="mb-0 certified-first-aider">
+                                                {{ isset($masterLink[10]['count']) ? $masterLink[10]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -429,7 +457,7 @@
                 <div class="card-body">
                     <h4 class="card-title text-dark mb-3">Medicine Status</h4>
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-bordered" id="medicine-table">
 
 
                             <thead class="bg-secondary" style="color: #ffff">
@@ -476,53 +504,83 @@
     </script>
 
     <script>
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     var opdCounts = [
-        //         {{ isset($masterLink[4]['count']) ? $masterLink[4]['count'] : 0 }},
-        //         {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }},
-        //         {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }},
-        //         {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}
-        //     ];
+        $(document).ready(function() {
+            $('#searchform').click(function() {
+                let unitId = $('#unit_id').val();
 
-        //     opdCounts.forEach((count, index) => {
-        //         var options = {
-        //             chart: {
-        //                 type: 'bar',
-        //                 height: 50,
-        //                 width: 70,
-        //                 sparkline: { enabled: true }
-        //             },
-        //             plotOptions: {
-        //                 bar: {
-        //                     columnWidth: '50%',
-        //                     borderRadius: 4
-        //                 }
-        //             },
-        //             series: [{
-        //                 name: 'OPD Count',
-        //                 data: [count]
-        //             }],
-        //             colors: ['#FF5733'],
-        //             fill: {
-        //                 type: 'gradient',
-        //                 gradient: {
-        //                     shade: 'light',
-        //                     type: 'vertical',
-        //                     gradientToColors: ['#FFC300'],
-        //                     stops: [0, 100]
-        //                 }
-        //             },
-        //             xaxis: {
-        //                 categories: ['Unit OPD'],
-        //                 labels: { show: false }
-        //             },
-        //             yaxis: { show: false }
-        //         };
+                $.ajax({
+                    url: "{{ admin_url('ohc/dashboard/medicine-requisition') }}",
+                    method: "GET",
+                    data: {
+                        unit_id: unitId
+                    },
+                    beforeSend: function() {
+                        $('#searchform').prop('disabled', true).text('Searching...');
+                    },
+                    success: function(response) {
 
-        //         var chart = new ApexCharts(document.querySelector(`#chart${index + 1}`), options);
-        //         chart.render();
-        //     });
-        // });
+                        if (response.masterLink && response.masterLink.length > 0) {
+                            $('.medicine-requisition').text(response.masterLink[0].count);
+                            $('.medicine-issuance').text(response.masterLink[3].count);
+                            $('.today-opd').text(response.masterLink[8].count);
+                            $('.today-issue').text(response.masterLink[9].count);
+                            $('.certified-first-aider').text(response.masterLink[10].count);
+                        }
+
+                        let medicines = response.medicines;
+                        let tbodyHtml = '';
+
+                        if (medicines && medicines.length > 0) {
+                            medicines.forEach(medicine => {
+                                let badgeClass = 'bg-danger';
+
+                                if (medicine.balance > 50) {
+                                    badgeClass = 'bg-success';
+                                } else if (medicine.balance > 10) {
+                                    badgeClass = 'bg-warning text-dark';
+                                }
+
+                                tbodyHtml += `
+                                        <tr>
+                                            <td>${medicine.medicine}</td>
+                                            <td>
+                                                <span class="badge ${badgeClass} px-3 py-2">
+                                                    ${medicine.balance}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    `;
+                            });
+                        } else {
+                            tbodyHtml = `<tr><td colspan="2">No data found</td></tr>`;
+                        }
+
+
+                        $('#medicine-table tbody').html(tbodyHtml);
+                        console.log(response);
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                        alert('An error occurred while fetching data.');
+                    },
+                    complete: function() {
+                        $('#searchform').prop('disabled', false).text('Search');
+                    }
+                });
+            });
+        });
+
+
+
+
+
+
+        $('#resetform').on('click', function(e) {
+            e.preventDefault();
+            $('#unit_id').val('');
+
+
+        });
 
         document.addEventListener("DOMContentLoaded", function() {
             var opdCounts = [

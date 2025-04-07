@@ -14,6 +14,7 @@ class WeeklyAmbulance extends Model
 
     protected $fillable = [
         'checklist',
+        'document_reference_id',
         'doc_no',
         'issue_date',
         'revision_date',
@@ -57,6 +58,20 @@ class WeeklyAmbulance extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*');
+
+        $query = $this->select(
+            'inspection_ohc_weekly_ambulance_inspection_checklist.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.status as ambulance_inspection_status',
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
 
         // dd($query);
         $org_total =  $query;
@@ -139,13 +154,11 @@ class WeeklyAmbulance extends Model
 
         $insert_array = [
             'checklist' => json_encode($responses),
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
             'shift' => decryptId($request->shift),
             'location' => decryptId($request->location_id),
+            'document_reference_id' => decryptId($request->document_reference_id),
             'unit' => decryptId($request->unit_id),
             'next_due' => DBdateformat($request->next_due_on),
-            'revision_date' => $request->review_date,
             'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'approve_status'=>WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),

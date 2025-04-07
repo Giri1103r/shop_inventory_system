@@ -10,6 +10,7 @@ use App\Mail\PpeRequestEhsRejectEmail;
 use App\Mail\PpeRequestHodApprovalEmail;
 use App\Mail\PpeRequestRequestorEmail;
 use App\Mail\PpeRequestStoremanagerEmail;
+use App\Models\Master\Employee;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeType;
 use App\Models\Statuslog;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\PpeStockinventory;
+use App\Models\Master\Work;
 use Illuminate\Support\Str;
 
 class PperequestController extends BaseController
@@ -205,12 +207,30 @@ class PperequestController extends BaseController
                         file_put_contents(public_path($file_path), $image_data);
                     }
                 }
+                if ($request->request_for == 1) {
 
+                    $employee = Employee::where('emp_id', $request->emp_id)
+                        ->select('unit', 'department', 'company')
+                        ->first();
+
+                    $unit = $employee->unit;
+                    $department = $employee->department;
+                } elseif ($request->request_for == 2) {
+                    $work = Work::where('emp_id', $request->emp_id)
+                        ->select('unit', 'department', 'company')
+                        ->first();
+
+                    $unit = $work->unit;
+                    $department = $work->department;
+                } else {
+                    $unit = Auth::user()->unit_id;
+                    $department = Auth::user()->department_id;
+                }
                 $insert_array = array(
                     'emp_id' => $request->emp_id,
                     'emp_name' => $request->emp_name,
-                    'department' => $request->department_id,
-                    'unit_id' => Auth::user()->unit_id,
+                    'department' => $department,
+                    'unit_id' => $unit,
                     'request_for' => $request->request_for,
                     'item_code' => $request->item_code,
                     'ppe_type' => $request->ppe_type_id,
@@ -284,7 +304,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            report($ex);
+        report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -296,7 +316,7 @@ class PperequestController extends BaseController
                 $id = $request->id;
 
                 $details = $this->pperequest->selectOne($id);
-                $empId= $details->emp_id;
+                $empId = $details->emp_id;
                 $statusLogs = $this->ppestatus->statuslog_api($id);
                 $previoushistory = $this->pperequest->getuserdata($empId);
 
@@ -323,27 +343,26 @@ class PperequestController extends BaseController
                             'created_at' => Displaydateformat($value->created_at),
                         ];
                         $ppestatuslog[] = [
-                            'from_status' =>'HOD Approval Pending',
+                            'from_status' => 'HOD Approval Pending',
                             'to_status' => '-',
-                            'remarks' =>'-',
+                            'remarks' => '-',
                             'created_by' => '-',
                             'created_at' => '-',
                         ];
                         $ppestatuslog[] = [
                             'from_status' => 'EHS Offcer Approval Pending',
                             'to_status' => '-',
-                            'remarks' =>'-',
+                            'remarks' => '-',
                             'created_by' => '-',
                             'created_at' => '-',
                         ];
                         $ppestatuslog[] = [
                             'from_status' => 'Store manager Issue Pending',
                             'to_status' => '-',
-                            'remarks' =>'-',
+                            'remarks' => '-',
                             'created_by' => '-',
                             'created_at' => '-',
                         ];
-
                     }
                 }
 
@@ -351,7 +370,7 @@ class PperequestController extends BaseController
                 if (!empty($previoushistory)) {
                     foreach ($previoushistory as $value) {
                         $history[] = [
-                            'emp_name' =>$value->emp_name,
+                            'emp_name' => $value->emp_name,
                             'emp_id' => $value->emp_id,
                             'created_at' => Displaydateformat($value->created_at),
                             'approve_status' => $statusLabels[$value->approve_status] ?? 'Unknown',
@@ -371,8 +390,8 @@ class PperequestController extends BaseController
                     'remarks' => $details->employee_reason ?? $details->employee_remarks,
                     'created_by' => getusername($details->created_by),
                     'created_at' => Displaydateformat($details->created_at),
-                    'status_log' => $ppestatuslog ,
-                    'previous_history'=> $history
+                    'status_log' => $ppestatuslog,
+                    'previous_history' => $history
                 ];
 
                 return $this->sendResponse($success, 'PPE Request Details');
