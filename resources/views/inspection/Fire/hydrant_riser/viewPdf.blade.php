@@ -263,15 +263,81 @@
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->lugs }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->rubber_washer }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->check_nut }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->spindle_wheel }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->blank_cap }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->female_coupling }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->lever }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location_check_id) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->hydrant_no }}</td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->lugs_id == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Present</span>
+                    @elseif ($details->lugs_id == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Missing</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->rubber_washer == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Intact</span>
+                    @elseif ($details->rubber_washer == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Damaged</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->check_nut == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Present</span>
+                    @elseif ($details->check_nut == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Missing</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->spindle_wheel == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Functional</span>
+                    @elseif ($details->spindle_wheel == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Non-Functional</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->blank_cap == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Present</span>
+                    @elseif ($details->blank_cap == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Missing</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->female_coupling == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Present</span>
+                    @elseif ($details->female_coupling == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Missing</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
+
+
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    @if ($details->lever == 1)
+                        <span style="color: green; font-weight: bold;">&#10004; Functional</span>
+                    @elseif ($details->lever == 0)
+                        <span style="color: red; font-weight: bold;">&#10060; Non-Functional</span>
+                    @else
+                        <span style="color: gray; font-weight: bold;">N/A</span>
+                    @endif
+                </td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>

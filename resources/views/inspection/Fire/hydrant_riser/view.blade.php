@@ -247,7 +247,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">Blank Cap</label>
+                                                            class="form-label require">Female Coupling</label>
                                                         <div class="view_data">
                                                             {{ $details->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}
 
