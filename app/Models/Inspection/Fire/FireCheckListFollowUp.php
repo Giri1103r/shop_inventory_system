@@ -4,7 +4,7 @@ namespace App\Models\Inspection\Fire;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Inspection\InspectionStaticDocno;
 class FireCheckListFollowUp extends Model
 {
     protected $table = 'inspection_fire_checklist_follow';
@@ -16,13 +16,9 @@ class FireCheckListFollowUp extends Model
         'inspection_category',
         'inspection_type',
         'inspection_id',
+        'observation_id',
         'document_reference_id',
         'date_of_inspection',
-        'location',
-        'shift',
-        'next_due',
-        'observation',
-        'frequency',
         'checked_by',
         'verified_by',
         'approved_by',
@@ -126,18 +122,17 @@ class FireCheckListFollowUp extends Model
         return $datas;
     }
 
-    public function store($inspection_type, $inspection_id)
+    public function store()
     {
         $request = request();
-
-
         $data = array(
-            'inspection_type' => $inspection_type,
-            'inspection_id' => $inspection_id,
+            'inspection_type' => decryptId($request->inspection_type),
+            'inspection_id' => decryptId($request->inspection_id),
+            'observation_id' => $request->observation_id,
             'document_reference_id' => decryptId($request->document_reference_id),
+            'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
-            'checked_by' => Auth::id(),
         );
 
         return $this->create($data);

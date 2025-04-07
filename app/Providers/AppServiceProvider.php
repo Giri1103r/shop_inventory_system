@@ -390,6 +390,8 @@ class AppServiceProvider extends ServiceProvider
         defined('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION', 15);
         defined('HOSE_REEL_INSPECTION') or define('HOSE_REEL_INSPECTION',10);
         defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION',23);
+        defined('HYDRANT_RISER') or define('HYDRANT_RISER', 4);
+
 
         // OPTIONS
         defined('YES') or define('YES', 1);

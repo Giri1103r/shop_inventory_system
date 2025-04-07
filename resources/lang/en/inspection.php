@@ -95,6 +95,17 @@ return [
     'checked_obs' => 'Required Inspections',
     'condition_of_hooter' => 'Condition Of The Hooter',
 
+    // Emergency Light Inspection
+
+    'emergency_light_number' => 'Emergency Of Light',
+    'condition_of_light' => 'Condition Of Light',
+    'power_supply' => 'Power Supply',
+    'type_of_light' => 'Type Of light',
+    'light_condition' => 'Light Condition',
+    'swith_condition' => 'Switch Condition',
+    'status' => 'Status',
+    
+
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
     'equipment_category' => 'Equipment Category',
@@ -226,10 +237,12 @@ return [
     'flow' => 'Flow Test',
     'fail' => 'Fail',
     'pass' => 'Pass',
+
     //Fire Modular Inspection
     'types_of_equipment' => 'Types Of Equipment',
     'capacity_of_equipment' => 'Capacity Of Equipment',
     'working_temperature' => 'Working Temperature',
     'sprinkler_head' => 'Sprinkler Head',
     'neck_ring' => 'Neck Rink',
+    'date_of_closure' => 'Date of Closure'
 ];

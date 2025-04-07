@@ -98,7 +98,7 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.add',$data);
 
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
     

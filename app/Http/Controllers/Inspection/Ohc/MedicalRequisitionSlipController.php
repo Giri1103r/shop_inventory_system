@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\Safety\SignatureUpload;
-
+use App\Models\Inspection\InspectionStaticDocno;
 
 class MedicalRequisitionSlipController extends Controller
 {
@@ -39,7 +39,7 @@ class MedicalRequisitionSlipController extends Controller
     private $inspection_ohc_status_log;
     private $signature;
     private $inventory;
-
+    private $document_reference;
 
     private $location;
     public function __construct()
@@ -55,7 +55,7 @@ class MedicalRequisitionSlipController extends Controller
         $this->user = new User();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
         $this->signature = new OhcSignature();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->medicine_requisition_floor_details = new MedicineRequistionSlipfloordetails();
     }
     public function Index(Request $request)
@@ -150,9 +150,11 @@ class MedicalRequisitionSlipController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $location = $this->location->getLocationname();
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
+                'medicine' => $medicine,
                 'medicine' => $medicine,
                 'signature_upload' => $signature_upload,
 

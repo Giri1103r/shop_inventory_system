@@ -28,12 +28,12 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Models\Inspection\InspectionStaticDocno;
 class OccupationHealthInspectionController extends Controller
 {
 
 
-
+    private $document_reference;
         private $OhcDetails;
         private $user;
         private $occupation_inspection;
@@ -60,6 +60,7 @@ class OccupationHealthInspectionController extends Controller
             $this->occupation_inspection = new OccupationHealthInspection();
             $this->user = new User();
             $this->frequency = new Frequency();
+            $this->document_reference = new InspectionStaticDocno();
             $this->signature = new OhcSignature();
             $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
         }
@@ -177,11 +178,13 @@ class OccupationHealthInspectionController extends Controller
             $getoption = string_to_array($options->type);
             $location = $this->location->getLocationname();
             $signature_upload = $this->user->getSignature();
+            $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'checklist_details' =>  $checklist_details,
                 'location' => $location,
+                'getoption' => $getoption,
                 'getoption' => $getoption,
                 'signature_upload' => $signature_upload,
 

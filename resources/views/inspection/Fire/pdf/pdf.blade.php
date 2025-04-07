@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Hooter Inspection Pdf')
+@section('title', 'Hydrant And Riser Inspection Pdf')
 @section('content')
 
     <div style="width:100%;">
@@ -26,14 +26,21 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no }}
+                            {{ displaydateformat($value->date_of_inspection) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ displaydateformat($value->next_due) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_data }}
+                            {{ getLocationname($value->location); }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->shift; }}
+                        </td> <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit); }}
+                        </td> <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getFrequencyname($value->frequency); }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid; text-align: center;'>
                             {{ getInspectionStatus($value->inspection_status); }}

@@ -77,8 +77,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
+                                        <th>{{ __('inspection.shift') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
                                         <th>Rev.Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>

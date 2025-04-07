@@ -43,6 +43,7 @@ use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\Fire\DailyFireHouseInspection;
 use App\Models\Inspection\audit\InterUnitAudit;
 use App\Models\Inspection\Fire\FirePreNocInspection;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 
 /*
  * Menu bar start
@@ -345,6 +346,11 @@ if (!function_exists('getsequence')) {
                 $count = FirePreNocInspection::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'FIRE-PRENOC-' . getautogen($count);
+                break;
+            case 'Observation':
+                $count = FireCheckListFollowUp::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'OBSERVATION-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -82,5 +83,10 @@ class SafetyWalkObservationDetails extends Model
             return $lastMonth;
         }
         return false;
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_walk_observation_details'));
     }
 }

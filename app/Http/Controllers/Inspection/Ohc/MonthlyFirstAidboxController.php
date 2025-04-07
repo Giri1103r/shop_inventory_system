@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Models\Inspection\InspectionStaticDocno;
 class MonthlyFirstAidboxController extends Controller
 {
 
@@ -50,6 +50,7 @@ class MonthlyFirstAidboxController extends Controller
     private $location;
     private $inspection_ohc_status_log;
     private $monthly_first_aid_audit_checklist;
+    private $document_reference;
     public function __construct()
     {
 
@@ -64,6 +65,7 @@ class MonthlyFirstAidboxController extends Controller
         $this->frequency = new Frequency();
         $this->signature = new OhcSignature();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
+        $this->document_reference = new InspectionStaticDocno();
     }
     public function Index(Request $request)
     {
@@ -141,11 +143,13 @@ class MonthlyFirstAidboxController extends Controller
             $frequency = $this->frequency->getFrequency();
             $location = $this->location->getLocationname();
             $signature_upload = $this->user->getSignature();
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'frequency' => $frequency,
                 'location' => $location,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
 
             );

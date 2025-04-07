@@ -81,8 +81,8 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency"
-                                                    class=" form-control single-select" style="width: 100%">
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Frequency</option>
                                                     @foreach ($frequency as $frequency)
                                                         <option value="{{ encryptId($frequency->id) }}">

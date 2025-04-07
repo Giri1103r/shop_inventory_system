@@ -26,14 +26,22 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                                class="form-label ">First Aid Box No</label>
+                                            <input type="text" name="first_aid_box_no" id="first_aid_box_no"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($shift as $list)
+                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3">
@@ -64,6 +72,20 @@
                                                 </select>
                                             </div>
                                         </div>
+
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">First Aider Name</label>
+                                                <select name="first_aider" id="first_aider"
+                                                    class="form-control single-select" style="width: 100%">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($First_aid as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->certifier_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                        
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -85,10 +107,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
+                                        <th>First Aid Box Number</th>
+                                        <th>Shift</th>
                                         <th>Location</th>
                                         <th>Unit</th>
+                                        <th>First Aider Name</th>
                                         <th>Created By</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -173,11 +196,11 @@
                         .attr('content')
                     },
                     data: function(d) {
-                        d.doc_no = $('#document_number').val();
-                        d.issue_date = $('#issue_date').val();
+                        d.first_aid_box_no = $('#first_aid_box_no').val();
+                        d.shift = $('#shift').val();
                         d.location = $('#location_id').val();
                         d.unit = $('#unit_id').val();
-                        d.status = $('#status').val();
+                        d.first_aider = $('#first_aider').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -192,12 +215,12 @@
                         searchable: true,
                     },
                     {
-                        data: 'doc_no',
-                        name: 'doc_no'
+                        data: 'first_aid_box_no',
+                        name: 'first_aid_box_no'
                     },
                     {
-                        data: 'issue_date',
-                        name: 'issue_date'
+                        data: 'shift',
+                        name: 'shift'
                     },
                     {
                         data: 'location_name',
@@ -206,6 +229,10 @@
                     {
                         data: 'unit_name',
                         name: 'unit_name'
+                    },
+                    {
+                        data: 'certifier_name',
+                        name: 'certifier_name'
                     },
                     {
                         data: 'created_by',

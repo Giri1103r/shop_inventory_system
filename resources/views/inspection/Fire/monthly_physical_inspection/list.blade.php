@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly OHC Store Medicine Inspection Checklist')
-@section('pageurl', admin_url('ohc/monthly-medicine-store/inspection/list'))
+@section('title', 'Fire Equipment Monthly Phsyical Inspection')
+@section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -13,7 +13,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/monthly-medicine-store/inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/equipment-monthly-physical-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -29,23 +29,40 @@
                                                     class="form-control inspection_date">
                                             </div>
                                         </div>
-
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                <input type="text" name="next_due" id = "next_due"
-                                                    class="form-control next_due">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location_id" id="location_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}"
+                                                            {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('location_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}"
+                                                            {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            @error('unit_id')
+                                                <div class="error">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -68,8 +85,8 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.inspection_date') }}</th>
-                                        <th>{{ __('inspection.next_due') }}</th>
-                                        <th>{{ __('Inspection Status') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -125,7 +142,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list') }}",
+                        url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -133,7 +150,8 @@
                         },
                         data: function(d) {
                             d.inspection_date = $('#inspection_date').val();
-                            d.next_due = $('#next_due').val();
+                            d.location_id = $('#location_id').val();
+                            d.unit_id = $('#unit_id').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -149,16 +167,16 @@
                         },
 
                         {
-                            data: 'inspection_date',
-                            name: 'inspection_date',
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection',
                         },
                         {
-                            data: 'next_due',
-                            name: 'next_due',
+                            data: 'location_name',
+                            name: 'location_name',
                         },
                         {
-                            data: 'inspection_status',
-                            name: 'inspection_status',
+                            data: 'unit_name',
+                            name: 'unit_name',
                         },
                         {
                             data: 'action',
@@ -190,16 +208,18 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
-                                        next_due = $('#next_due').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/monthly-medicine-store/inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/equipment-monthly-physical-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id
                                     }
                                 },
                                 {
@@ -208,14 +228,17 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
-                                        next_due = $('#next_due').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/monthly-medicine-store/inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/equipment-monthly-physical-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id
                                     }
                                 },
                             ]
@@ -276,7 +299,7 @@
 
                 //         if (result.value) {
                 //             $.ajax({
-                //                 url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list/status') }}",
+                //                 url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list/status') }}",
                 //                 type: 'post',
 
                 //                 data: {
@@ -343,7 +366,7 @@
                     }).then((result) => {
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/monthly-medicine-store/inspection/list/delete') }}",
+                                url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

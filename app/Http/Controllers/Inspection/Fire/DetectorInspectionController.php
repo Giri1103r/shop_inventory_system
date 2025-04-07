@@ -246,7 +246,7 @@ class DetectorInspectionController extends Controller
                 'response_indicator.*' => 'required',
                 'working_status.*' => 'required',
                 'remarks.*' => 'required',
-                'observation' => 'required',
+                // 'observation' => 'required',
             ];
 
             $messages = [
@@ -266,7 +266,8 @@ class DetectorInspectionController extends Controller
                 'response_indicator.*.required' => 'Response Indicator is required.',
                 'working_status.*.required' => 'Working Status is required.',
                 'remarks.*.required' => 'Remarks are required.',
-                'observation*.required' => 'Observation is  required.',
+                // 'observation*.required' => 'Observation is  required.',
+                // 'observation_needed*.required' => 'Observation is  required.',
             ];
 
 
@@ -284,7 +285,7 @@ class DetectorInspectionController extends Controller
 
             $inspection_details = $this->detector_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -292,7 +293,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -331,7 +332,12 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/detector-inspection/list'));
+
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/'.encryptId($inspection_type).'/'.encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/detector-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -352,7 +358,6 @@ class DetectorInspectionController extends Controller
             $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
-
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
@@ -360,8 +365,6 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-
-            dd($data);
             return view('inspection.fire.detector_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -422,7 +425,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -484,7 +487,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -556,7 +559,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -630,7 +633,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -701,7 +704,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -880,7 +883,7 @@ class DetectorInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

@@ -24,7 +24,7 @@ use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use Illuminate\Support\Facades\Mail;
 use Spatie\SimpleExcel\SimpleExcelWriter;
-
+use App\Models\Inspection\InspectionStaticDocno;
 class MedicalRequisitionSlipSecurityGateController extends Controller
 {
 
@@ -38,7 +38,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
     private $medicine_requisition_fdo_details;
     private $signature;
     private $inspection_ohc_status_log;
-
+    private $document_reference;
     private $location;
     public function __construct()
     {
@@ -53,7 +53,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         $this->user = new User();
         $this->signature = new OhcSignature();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->medicine_requisition_fdo_details = new MedicineRequistionSlipfdodetails();
     }
 
@@ -149,10 +149,12 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $location = $this->location->getLocationname();
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
 
             );

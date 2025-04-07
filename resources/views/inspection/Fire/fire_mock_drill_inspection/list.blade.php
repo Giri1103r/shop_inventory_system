@@ -159,8 +159,8 @@
                             name: 'issue_date',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'rev_dt',
+                            name: 'rev_dt',
                         },
                         {
                             data: 'inspection_status',
