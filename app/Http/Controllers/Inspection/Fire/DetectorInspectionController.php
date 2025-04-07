@@ -361,7 +361,6 @@ class DetectorInspectionController extends Controller
                 'document_no' => $document_no,
             );
 
-            dd($data);
             return view('inspection.fire.detector_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);

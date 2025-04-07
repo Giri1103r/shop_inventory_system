@@ -82,25 +82,11 @@
                                         @endif
                                     </div>
                                     <hr>
-                                    <div class="form-observation">
-                                        <div class="row mt-4 form-obs">
-                                            <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Fire Extinguisher Inspection Observation</h4>
-                                            </div>
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation }}
-                                                    </div>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    @dd($inspection_details);
 
+
+
+                                    {{-- @dd($inspection_details); --}}
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
@@ -112,7 +98,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->sr_no }}
+                                                            {{ $loop->iteration }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -202,7 +188,7 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                                <div class="col-md-8 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.observation_status') }}</label>

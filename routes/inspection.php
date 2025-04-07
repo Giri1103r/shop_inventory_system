@@ -658,7 +658,9 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/excel', [MonthlyPhysicalInspectionController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyPhysicalInspectionController::class, 'exportPdf']);
         Route::post('status', [MonthlyPhysicalInspectionController::class, 'statusChange']);
+        Route::GET('exportViewPdf/{id}', [MonthlyPhysicalInspectionController::class, 'ExportViewPDF']);
     });
+    
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
         Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
         Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
@@ -813,8 +815,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CartridgeTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CartridgeTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CartridgeTypeFireExtinguisherController::class, 'GetDepartment']);
-
-});
+    });
 
     Route::group(['prefix' => 'hose-reel-hose-inspection'], function () {
         Route::GET('list', [HoseReelHoseController::class, 'Index']);

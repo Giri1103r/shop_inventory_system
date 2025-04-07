@@ -50,6 +50,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2663,6 +2664,22 @@ if (!function_exists('getMonth')) {
                 return $data->name;
             }
             return null;
+        }
+    }
+
+
+    if (!function_exists('getMonthlyInspectionEquipmentname')) {
+
+        function getMonthlyInspectionEquipmentname($userid)
+        {
+
+            $equipment_name = MonthlyPhysicalEquipmentList::select('equipment_name')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($equipment_name == null) {
+                return '';
+            } else {
+                return $equipment_name->equipment_name;
+            }
         }
     }
 }

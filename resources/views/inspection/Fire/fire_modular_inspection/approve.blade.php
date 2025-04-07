@@ -355,30 +355,30 @@
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
                                         <div class="row mb-2">
-                                            @if (isset($inspection_details->verified_by))
+                                            @if (isset($inspection->verified_by))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($inspection_details->verified_by) }}
+                                                            {{ getUserName($inspection->verified_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetSignature(
-                                                        $inspection_details->verified_by,
+                                                        $inspection->verified_by,
                                                         $inspection->id,
                                                         HOOTER_INSPECTION,
                                                     );
                                                 @endphp
                                             @endif
-                                            @if (isset($inspection_details->created_at))
+                                            @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                            {{ Displaydateformat($inspection->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
