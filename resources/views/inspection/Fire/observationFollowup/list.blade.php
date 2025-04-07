@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Daily Fire Pump House Inspection')
-@section('pageurl', admin_url('fire/daily-fire-pump-house-inspection/list'))
+@section('title', 'Fire Pre Noc Checklist')
+@section('pageurl', admin_url('fire/pre-noc/checklist/list'))
 
 
 @section('content')
@@ -14,8 +14,8 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('fire/daily-fire-pump-house-inspection/add') }}">Add</x-button-add>
+                            {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('fire/pre-noc/checklist/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -58,10 +58,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Inspection Id</th>
+                                        <th>Observation Id</th>
                                         <th>Date of Inspection</th>
-                                        <th>Unit</th>
-                                        <th>Shift</th>
+                                        <th>Approve Status </th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -111,7 +110,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/daily-fire-pump-house-inspection/list') }}",
+                        url: "{{ admin_url('fire/checklist-observation/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -136,21 +135,19 @@
                         },
 
                         {
-                            data: 'inspection_id',
-                            name: 'inspection_id'
+                            data: 'observation_id',
+                            name: 'observation_id'
                         },
                         {
                             data: 'date_of_inspection',
                             name: 'date_of_inspection'
                         },
+                       
                         {
-                            data: 'unit_name',
-                            name: 'unit_name'
+                            data: 'inspection_status',
+                            name: 'inspection_status'
                         },
-                        {
-                            data: 'shift',
-                            name: 'shift'
-                        },
+                       
                         {
                             data: 'status',
                             name: 'status'
@@ -245,12 +242,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Daily Fire Pump House Inspection checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Daily Fire Pump House Inspection checklist') }}';
+                        var title = '{{ __('Do You want to Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -270,7 +267,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/daily-fire-pump-house-inspection/status') }}",
+                                url: "{{ admin_url('fire/pre-noc/checklist/status') }}",
                                 type: 'post',
 
                                 data: {

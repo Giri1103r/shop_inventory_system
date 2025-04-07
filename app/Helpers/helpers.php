@@ -50,6 +50,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 
 if (!function_exists('get_encryptVal')) {
@@ -1420,6 +1421,15 @@ if (!function_exists('getMonth')) {
         function getAnalysisCount()
         {
             $data = AuditAnalysis::get()->count();
+            return $data;
+        }
+    }
+
+    if (!function_exists('getObservation')) {
+
+        function getObservation()
+        {
+            $data = FireCheckListFollowUp::get()->count();
             return $data;
         }
     }
