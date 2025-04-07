@@ -29,6 +29,13 @@ use App\Models\Inspection\Fire\Master\FireStatus;
 use App\Models\Inspection\Fire\Master\LightType;
 use App\Models\Inspection\Fire\Master\PowerSuply;
 use App\Models\Inspection\Fire\Master\Status;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class EmergencyLightInspectionController extends Controller
 {
@@ -47,7 +54,8 @@ class EmergencyLightInspectionController extends Controller
     private $ligth_type;
     private $condition_light;
     private $checklist_follow;
-    public function __construct(){
+    public function __construct()
+    {
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -149,6 +157,9 @@ class EmergencyLightInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
+                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                   <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -228,12 +239,12 @@ class EmergencyLightInspectionController extends Controller
             $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
             $id = $inspection->id;
 
-            $inspection_details = $this->emergency_light_details->store($id);
+            $emergency_light_details = $this->emergency_light_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -281,7 +292,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('flash', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -307,7 +318,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -345,7 +356,7 @@ class EmergencyLightInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->emergency_light->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload( EMERGENCY_LIGHT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $inspection_details = $this->emergency_light->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully';
@@ -416,7 +427,7 @@ class EmergencyLightInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->emergency_light->capaSubmit($id);
             $inspection_details = $this->emergency_light->selectOne($id);
-            $signature_update = $this->signature->signatureUpload( EMERGENCY_LIGHT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -477,7 +488,7 @@ class EmergencyLightInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->emergency_light->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload( EMERGENCY_LIGHT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $inspection_details = $this->emergency_light->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -551,7 +562,7 @@ class EmergencyLightInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->emergency_light->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload( EMERGENCY_LIGHT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $inspection_details = $this->emergency_light->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -625,7 +636,7 @@ class EmergencyLightInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->emergency_light->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload( EMERGENCY_LIGHT_INSPECTION);
+            $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $inspection_details = $this->emergency_light->selectOne($id);
             if ($status == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully!';
@@ -688,50 +699,226 @@ class EmergencyLightInspectionController extends Controller
         }
     }
 
+
+
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->emergency_light->exportdata();
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $this->emergency_light->selectOne($id);
+
+            $emergency_light_details = $this->emergency_light_details->selectOne($id);
+
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            // Title
+            $sheet->mergeCells("C1:J3");
+            $sheet->setCellValue("C1", "EMERGENCY LIGHT INSPECTION CHECKLIST\nPN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF0000']]
+            ]);
 
-            $i = 1;
-            foreach ($allData as $data) {
+            // Document metadata
+            $sheet->mergeCells("K1:L1")->setCellValue("K1", "Doc. No.");
+            $sheet->mergeCells("K2:L2")->setCellValue("K2", "Issue Dt.");
+            $sheet->mergeCells("K3:L3")->setCellValue("K3", "Rev. & Dt.");
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+            $sheet->setCellValue("M1", $data->doc_no);
+            $sheet->setCellValue("M2", $data->issue_date);
+            $sheet->setCellValue("M3", $data->revision_date);
+
+            $sheet->getStyle("C1:M3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getColumnDimension('K')->setWidth(15);
+            $sheet->getColumnDimension('M')->setWidth(20);
+
+            // Inspection info row
+
+            $date_of_inspection = Displaydateformat($data->date_of_inspection);
+            $location = getLocationname($data->location);
+            $shift = getShift($data->shift);
+
+
+            $sheet->mergeCells("A4:C4")->setCellValue("A4", "DATE OF INSPECTION :-");
+            $sheet->setCellValue("D4", $date_of_inspection);
+
+            $sheet->mergeCells("F4:H4")->setCellValue("F4", "LOCATION :-");
+            $sheet->setCellValue("I4", $location);
+
+            $sheet->mergeCells("K4:L4")->setCellValue("K4", "SHIFT :-");
+            $sheet->setCellValue("M4", $shift);
+
+            $sheet->getStyle("A4:M4")->applyFromArray([
+                'borders' => [
+                    'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                    'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            $nextDue = Displaydateformat($data->next_due);
+            $unitName = getUnitname($data->unit);
+            $frequency = getFrequency($data->frequency);
+
+            // Now set them to the cells
+            // NEXT DUE
+            $sheet->mergeCells("A5:C5")->setCellValue("A5", "NEXT DUE ON :-");
+            $sheet->mergeCells("D5:D5")->setCellValue("D5", $nextDue);
+
+            // UNIT
+            $sheet->mergeCells("E5:F5")->setCellValue("E5", "UNIT :-");
+            $sheet->mergeCells("G5:I5")->setCellValue("G5", $unitName);
+
+            // FREQUENCY
+            $sheet->mergeCells("J5:K5")->setCellValue("J5", "FREQUENCY :-");
+            $sheet->mergeCells("L5:M5")->setCellValue("L5", $frequency);
+            $sheet->getStyle("A5:M5")->applyFromArray([
+                'borders' => [
+                    'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                    'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            // Table headers
+            $sheet->mergeCells("A6:A8")->setCellValue("A6", "SERIAL NO");
+
+            $sheet->mergeCells("B6:B8")->setCellValue("B6", "DEPARTMENT");
+            $sheet->mergeCells("C6:C8")->setCellValue("C6", "LOCATION");
+            $sheet->mergeCells("D6:D8")->setCellValue("D6", "EMERGENCY LIGHT NUMBER");
+
+            $sheet->mergeCells("E6:K6")->setCellValue("E6", "CHECK ITEMS");
+            $sheet->mergeCells("E7:G7")->setCellValue("E7", "DESCRIPTION");
+            $sheet->mergeCells("H7:K7")->setCellValue("H7", "CONDITION OF LIGHT");
+
+            $sheet->setCellValue("E8", "TYPE");
+            $sheet->setCellValue("F8", "CAPACITY (VOLTS)");
+            $sheet->setCellValue("G8", "QUANTITY");
+            $sheet->setCellValue("H8", "LIGHT CONDITION");
+            $sheet->setCellValue("I8", "SWITCH CONDITION");
+            $sheet->setCellValue("J8", "POWER SUPPLY");
+            $sheet->setCellValue("K8", "STATUS");
+
+            $sheet->mergeCells("L6:M8")->setCellValue("L6", "REMARKS");
+
+            $row = 9; 
+
+            foreach ($emergency_light_details as $index => $detail) {
+                $sheet->setCellValue("A$row", $detail->sr_no ?? '');
+                $sheet->setCellValue("B$row", getDepartment($detail->department) ?? '');
+                $sheet->setCellValue("C$row", $detail->location ?? '');
+                $sheet->setCellValue("D$row", $detail->emergency_of_light ?? '');
+
+                // Description
+                $sheet->setCellValue("E$row", GetTypeofLight($detail->type_of_light) ?? '');
+                $sheet->setCellValue("F$row", $detail->capacity ?? '');
+                $sheet->setCellValue("G$row", $detail->quantity ?? '');
+
+                // Condition of light
+                $sheet->setCellValue("H$row", $detail->light_condition ?? '');
+                switch ($detail->light_condition) {
+                    case 1:
+                        $lightConditionText = 'Good';
+                        break;
+                    case 2:
+                        $lightConditionText = 'Fair';
+                        break;
+                    case 3:
+                        $lightConditionText = 'Poor';
+                        break;
+                    default:
+                        $lightConditionText = '';
+                }
+
+                $sheet->setCellValue("H$row", $lightConditionText);
+                switch ($detail->switch_condition) {
+                    case 1:
+                        $switchConditionText = 'Good';
+                        break;
+                    case 2:
+                        $switchConditionText = 'Fair';
+                        break;
+                    case 3:
+                        $switchConditionText = 'Poor';
+                        break;
+                    default:
+                        $switchConditionText = '';
+                }
+
+                $sheet->setCellValue("I$row", $switchConditionText);
+                $sheet->setCellValue("J$row", GetPowerSuply($detail->power_supply) ?? '');
+                $sheet->setCellValue("K$row", getFireLightInspectionStatus($detail->fire_status) ?? '');
+
+                $sheet->setCellValue("L$row", $detail->remarks ?? '');
+
+                // Optionally merge L and M columns if needed
+                $sheet->mergeCells("L$row:M$row");
+
+                // Optional: Apply border or alignment styling to each row
+                $sheet->getStyle("A$row:M$row")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                        'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
+
+                $row++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
+
+            foreach (["A6:D8", "E6:K6", "E7:K7", "E8:K8", "L6:M8"] as $range) {
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+
+            $fileName = 'emergency_light_inspection_' . date('Ymd_His') . '.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
     }
+
 
     public function ExportPdf(Request $request)
     {
@@ -813,7 +1000,7 @@ class EmergencyLightInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.emergency_light_inspection.viewPdf',$data);
+            $html = view('inspection.fire.emergency_light_inspection.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

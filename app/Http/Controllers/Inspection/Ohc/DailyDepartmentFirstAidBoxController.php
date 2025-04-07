@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidbox as OhcDailyDepartmentFirstAidbox;
 use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidboxEmail;
+use App\Models\Inspection\InspectionStaticDocno;
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -41,7 +42,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
     private $certified_First_aid;
     private $inspection_ohc_status_log;
     private $signature;
-
+    private $document_reference;
     private $inventory;
 
 
@@ -58,7 +59,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         $this->First_aid = new FirstAidLocation();
         $this->certified_First_aid = new CertifiedFirstAider();
         $this->signature = new OhcSignature();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->daily_department_first_aid_box = new DailyDepartmentFirstAidBox();
         $this->inventory = new Inventory();
         $this->user = new User();
@@ -152,12 +153,13 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $First_aid = $this->certified_First_aid->getFirsaid();
-
+            $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
             $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
                 'First_aid' => $First_aid,
 

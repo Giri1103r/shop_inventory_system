@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Models\Inspection\InspectionStaticDocno;
 class FirstAiderlistController extends Controller
 {
 
@@ -34,7 +34,7 @@ class FirstAiderlistController extends Controller
     private $first_aider;
     private $first_aider_details;
     private $employee;
-
+    private $document_reference;
     private $inventory;
 
 
@@ -51,7 +51,7 @@ class FirstAiderlistController extends Controller
         $this->inventory = new Inventory();
         $this->user = new User();
         $this->employee = new Employee();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->first_aider_details = new FirstAiderListDetails();
     }
     public function Index(Request $request)
@@ -107,10 +107,12 @@ class FirstAiderlistController extends Controller
         try {
             $unit = $this->unit->getunit();
             $employee = $this->employee->getEmployeefulldata();
+            $document_no = $this->document_reference->selectUsingName('FirstAiderList');
 
             $data = array(
                 'unit' => $unit,
                 'employee' => $employee,
+                'document_no' => $document_no,
 
 
 
@@ -318,7 +320,7 @@ class FirstAiderlistController extends Controller
         $employees = Employee::where('unit', $unit_id)
             ->where('department', $department_id)
             ->get();
-    
+
         if ($employees->isNotEmpty()) {
             return response()->json([
                 'employee' => $employees->map(function ($employee) {
@@ -334,7 +336,7 @@ class FirstAiderlistController extends Controller
             ], 404);
         }
     }
-    
+
 
     public function employeedetails(Request $request)
     {
