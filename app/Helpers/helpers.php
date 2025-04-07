@@ -2283,6 +2283,65 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetTypeofLight')) {
+
+        function GetTypeofLight($id)
+        {
+
+            $type = DB::table('inspection_fire_master_type_of_light')->where('id', $id)->where('trash', 'NO')->first();
+
+            if ($type == null) {
+                return false;
+            } else {
+                return $type->type;
+            }
+        }
+    }
+
+    if (!function_exists('GetConditionofLight')) {
+
+        function GetConditionofLight($id)
+        {
+
+            $condition = DB::table('inspection_fire_master_condition_of_light')->where('id', $id)->where('trash', 'NO')->first();
+
+            if ($condition == null) {
+                return false;
+            } else {
+                return $condition->condition;
+            }
+        }
+    }
+
+    if (!function_exists('GetPowerSuply')) {
+
+        function GetPowerSuply($id)
+        {
+
+            $name = DB::table('inspection_fire_master_power_supply')->where('id', $id)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return false;
+            } else {
+                return $name->name;
+            }
+        }
+    }
+    if (!function_exists('getFireLightInspectionStatus')) {
+
+        function getFireLightInspectionStatus($id)
+        {
+
+            $name = DB::table('inspection_fire_master_status')->where('id', $id)->where('trash', 'NO')->first();
+
+            if ($name == null) {
+                return false;
+            } else {
+                return $name->name;
+            }
+        }
+    }
+
     // Monthly Eye Wash Sequence
     if (!function_exists('MEWSequence')) {
         function MEWSequence()

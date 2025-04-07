@@ -1,6 +1,7 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', 'Hydrent Riser Inspection')
+@section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
+
 
 
 @section('content')
@@ -11,11 +12,11 @@
                 <div class="card">
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2">
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/hydrant-riser-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -23,26 +24,79 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <input type="text" name="inspection_date" id = "inspection_date"
+                                                    class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due" class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Frequency</option>
+                                                    @foreach ($frequency as $frequency)
+                                                        <option value="{{ encryptId($frequency->id) }}">
+                                                            {{ $frequency->frequency_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
@@ -77,19 +131,20 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.shift') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
                                         <th>{{ __('inspection.location') }}</th>
-                                        <th>Rev.Date</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -102,10 +157,17 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                flatpickr("#inspection_date", {
+                    dateFormat: "d-m-Y",
+                });
+                flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                    minDate: new Date(),
+                });
+
             });
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -132,17 +194,20 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}",
+                        url: "{{ admin_url('fire/hydrant-riser-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.inspection_date = $('#inspection_date').val();
+                            d.next_due = $('#next_due').val();
+                            d.location = $('#location').val();
+                            d.shift = $('#shift').val();
+                            d.unit = $('#unit').val();
+                            d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -158,24 +223,32 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'document_no'
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'next_due',
+                            name: 'next_due',
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'location_name',
+                            name: 'location_name',
                         },
                         {
-                            data: 'approve_status',
-                            name: 'approve_status'
+                            data: 'shift',
+                            name: 'shift',
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'frequency_name',
+                            name: 'frequency_name',
+                        },
+                        {
+                            data: 'inspection_status',
+                            name: 'inspection_status',
                         },
                         {
                             data: 'action',
@@ -206,20 +279,27 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
+                                            "{{ admin_url('fire/hydrant-riser-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
+                                            '&inspection_status=' + inspection_status
+
                                     }
                                 },
                                 {
@@ -227,19 +307,25 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        inspection_date = $('#inspection_date').val();
+                                        next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        shift = $('#shift').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
+                                            "{{ admin_url('fire/hydrant-riser-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&inspection_date=' + inspection_date +
+                                            '&next_due=' + next_due +
+                                            '&location=' + location +
+                                            '&shift=' + shift +
+                                            '&unit=' + unit +
+                                            '&frequency=' + frequency +
+                                            '&inspection_status=' + inspection_status
                                     }
                                 },
                             ]
@@ -275,14 +361,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title =
-                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title =
-                            '{{ __('Do You want to In-Activate Weekly Ambulance Inspection Checklist') }}';
+                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -302,7 +386,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/status') }}",
+                                url: "{{ admin_url('fire/hydrant-riser-inspection/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -370,7 +454,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('inspection/master/checklist-type/delete') }}",
+                                url: "{{ admin_url('fire/hydrant-riser-inspection/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

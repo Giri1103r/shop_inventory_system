@@ -1,6 +1,7 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection View')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
+@section('title', 'Hydrant and Riser View')
+@section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
+
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -19,7 +20,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -116,7 +117,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                HYDRANT_RISER,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -154,7 +155,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2 col-12">
-                                                    <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                    <h4 class="text-white">Hydrant And Riser Inspection Checklist</h4>
                                                 </div>
 
                                                 <!-- SR No -->
@@ -172,31 +173,106 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->resource_code }}
+                                                            {{ getLocationname($details->location_check_id) }}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Department -->
+                                               
+
+                                                <!-- Hydrant No  -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                            class="form-label require">Hydrant No</label>
                                                         <div class="view_data">
-                                                            {{ GetDeptName($details->department) }}
+                                                            {{ $details->hydrant_no }}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Detector Type -->
+                                                 <!-- Lugs -->
+                                                 <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Lugs</label>
+                                                        <div class="view_data">
+                                                            {{ $details->lugs_id == '1' ? 'Present' : 'Missing' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.detector_type') }}</label>
+                                                            class="form-label require">Rubber Washer</label>
                                                         <div class="view_data">
-                                                            {{ getDetectorName($details->detector_type) }}
+                                                            {{ $details->rubber_washer == '1' ? 'Intact' : 'Damaged' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Check Nut</label>
+                                                        <div class="view_data">
+                                                            {{ $details->check_nut == '1' ? 'Present' : 'Missing' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Spindle Wheel</label>
+                                                        <div class="view_data">
+                                                            {{ $details->spindle_wheel == '1' ? 'Functional' : 'Non-Functional' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Blank Cap</label>
+                                                        <div class="view_data">
+                                                            {{ $details->blank_cap == '1' ? 'Present' : 'Missing' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Female Coupling</label>
+                                                        <div class="view_data">
+                                                            {{ $details->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Lever</label>
+                                                        <div class="view_data">
+                                                            {{ $details->lever == '1' ? 'Functional' : 'Non-Functional' }}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">Flow Test</label>
+                                                        <div class="view_data">
+                                                            {{ $details->flow_test }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -218,44 +294,28 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Cable Condition -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.cable_condition') }}</label>
+                                                            class="form-label require">Condition of ISV</label>
                                                         <div class="view_data">
-                                                            @if ($details->cable_condition == GOOD)
-                                                                <p>Good</p>
-                                                            @elseif ($details->cable_condition == FAIR)
-                                                                <p>Fair</p>
-                                                            @else
-                                                                <p>Poor</p>
-                                                            @endif
+                                                            {{ $details->condition_of_ivs == '1' ? 'Functional' : 'Non-Functional' }}
+
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Response Indicator -->
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.response_indicator') }}</label>
+                                                            class="form-label require">Approach</label>
                                                         <div class="view_data">
-                                                            {{ $details->response_indicator == '1' ? 'WORKING' : 'NOT WORKING' }}
+                                                            {{ $details->approach }}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <!-- Working Status -->
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.working_status') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->working_status == '1' ? 'OPERATIONAL' : 'NON OPERATIONAL' }}
-                                                        </div>
-                                                    </div>
-                                                </div>
 
                                                 <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
@@ -297,7 +357,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        DETECTOR_INSPECTION,
+                                                        HYDRANT_RISER,
                                                     );
                                                 @endphp
                                             @endif
@@ -336,7 +396,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            DETECTOR_INSPECTION,
+                                                            HYDRANT_RISER,
                                                         );
                                                     @endphp
                                                 @endif
@@ -399,7 +459,7 @@
                                                 $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    DETECTOR_INSPECTION,
+                                                    HYDRANT_RISER,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -452,7 +512,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                HYDRANT_RISER,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -504,7 +564,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                HYDRANT_RISER,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -555,7 +615,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                HYDRANT_RISER,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -582,7 +642,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                DETECTOR_INSPECTION,
+                                                HYDRANT_RISER,
                                             );
                                         @endphp
                                         @if (isset($signature))

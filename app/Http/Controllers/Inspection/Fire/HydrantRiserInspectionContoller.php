@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Inspection\Fire;
 
+
 use Exception;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
@@ -25,9 +26,13 @@ use App\Models\Inspection\Fire\DetectorInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\DetectorInspectionDetails;
+use App\Models\Inspection\Fire\HydrantRiserInspection;
+use App\Models\Inspection\Fire\HydrantRiserInspectionDetails;
 
-class DetectorInspectionController extends Controller
+class HydrantRiserInspectionContoller extends Controller
 {
+    private $hydrant;
+    private $hydrant_checklist;
     private $detector;
     private $detector_details;
     private $shift;
@@ -44,6 +49,8 @@ class DetectorInspectionController extends Controller
 
     public function __construct()
     {
+        $this->hydrant = new HydrantRiserInspection();
+        $this->hydrant_checklist = new HydrantRiserInspectionDetails();
         $this->detector = new DetectorInspection();
         $this->detector_details = new DetectorInspectionDetails();
         $this->department = new Department();
@@ -57,6 +64,7 @@ class DetectorInspectionController extends Controller
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
         $this->detector_type = new DetectorType();
+
     }
 
     public function Index(Request $request)
@@ -64,7 +72,7 @@ class DetectorInspectionController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->detector->list();
+                    $data =  $this->hydrant->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -127,23 +135,23 @@ class DetectorInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/detector-inspection/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/hydrant-riser-inspection/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/detector-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/detector-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -172,7 +180,7 @@ class DetectorInspectionController extends Controller
             'frequency' => $frequency,
             'shifts' => $shifts,
         );
-        return view('inspection.fire.detector_inspection.list', $data);
+        return view('inspection.fire.hydrant_riser.list', $data);
     }
 
     public function Add(Request $request)
@@ -183,7 +191,7 @@ class DetectorInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
-            $document_no = $this->document_reference->selectUsingName('DetectorInspection');
+            $document_no = $this->document_reference->selectUsingName('HydrantAndRiser');
             $detector_type = $this->detector_type->getDetectorType();
 
             $data = array(
@@ -195,12 +203,13 @@ class DetectorInspectionController extends Controller
                 'document_no' => $document_no,
                 'detector_types' => $detector_type,
             );
+            // dd($data);
 
-            return view('inspection.fire.detector_inspection.add', $data);
+            return view('inspection.fire.hydrant_riser.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
@@ -227,92 +236,105 @@ class DetectorInspectionController extends Controller
     public function Store(Request $request)
     {
         try {
-
-
             $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-                'department.*' => 'required',
-                'resource_code.*' => 'required',
-                'detector_type.*' => 'required',
+            
+                'location_check_id.*' => 'required',
+                'hydrant_no.*' => 'required',
+                'lugs.*' => 'required',
+                'rubber_washer.*' => 'required',
+                'check_nut.*' => 'required',
+                'spindle_wheel.*' => 'required',
+                'blank_cap.*' => 'required',
+                'female_coupling.*' => 'required',
+                'lever.*' => 'required',
+                'flow_test.*' => 'required',
                 'physical_condition.*' => 'required',
-                'cable_condition.*' => 'required',
-                'response_indicator.*' => 'required',
-                'working_status.*' => 'required',
+                'condition_of_ivs.*' => 'required',
+                'approach.*' => 'required',
                 'remarks.*' => 'required',
+            
                 'observation' => 'required',
+                'device_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
-
+            
             $messages = [
-                'issue_date.required' => 'Issue Date is required.',
-                'rev_date.required' => 'Revision Date is required.',
+                
                 'inspection_date.required' => 'Inspection Date is required.',
                 'location_id.required' => 'Location is required.',
                 'shift_id.required' => 'Shift is required.',
-                'frequency_id.required' => 'Frequency is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
-                'department.*.required' => 'Department is required.',
-                'resource_code.*.required' => 'Resource Code is required.',
-                'detector_type.*.required' => 'Detector Type is required.',
+                'frequency_id.required' => 'Frequency is required.',
+            
+                'location_check_id.*.required' => 'Location Check is required.',
+                'hydrant_no.*.required' => 'Hydrant No is required.',
+                'lugs.*.required' => 'Lugs value is required.',
+                'rubber_washer.*.required' => 'Rubber Washer value is required.',
+                'check_nut.*.required' => 'Check Nut value is required.',
+                'spindle_wheel.*.required' => 'Spindle Wheel value is required.',
+                'blank_cap.*.required' => 'Blank Cap value is required.',
+                'female_coupling.*.required' => 'Female Coupling value is required.',
+                'lever.*.required' => 'Lever value is required.',
+                'flow_test.*.required' => 'Flow Test result is required.',
                 'physical_condition.*.required' => 'Physical Condition is required.',
-                'cable_condition.*.required' => 'Cable Condition is required.',
-                'response_indicator.*.required' => 'Response Indicator is required.',
-                'working_status.*.required' => 'Working Status is required.',
+                'condition_of_ivs.*.required' => 'Condition of IVs is required.',
+                'approach.*.required' => 'Approach value is required.',
                 'remarks.*.required' => 'Remarks are required.',
-                'observation*.required' => 'Observation is  required.',
+            
+                'observation.required' => 'Observation is required.',
+                'device_image.image' => 'The uploaded file must be an image.',
+                'device_image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg.',
+                'device_image.max' => 'The image size must not exceed 2 MB.',
             ];
-
-
+            
             $validator = Validator::make($request->all(), $rules, $messages);
-
+            
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+            
 
-
-
-            $inspection = $this->detector->store();
-            $inspection_type = DETECTOR_INSPECTION;
+            $inspection = $this->hydrant->store();
+            $inspection_type = HYDRANT_RISER;
             $id = $inspection->id;
 
-            $inspection_details = $this->detector_details->store($id);
+            $inspection_details = $this->hydrant_checklist->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Detector Inspection",
+                    'message' => "Fire Associate create the Hydrant and Riser Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/detector-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/hydrant-riser-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Detector Inspection';
+            $title = 'Fire Associate create the Hydrant and Riser Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Hydrant and Riser Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -323,7 +345,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -331,25 +353,26 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function View(Request $request)
     {
+        // dd(11);
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = DETECTOR_INSPECTION;
-            $inspection = $this->detector->selectOne($id);
-            $inspection_details = $this->detector_details->GetDetails($inspection->id);
+            $inspection_type = HYDRANT_RISER;
+            $inspection = $this->hydrant->selectOne($id);
+            $inspection_details = $this->hydrant_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, HYDRANT_RISER);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $data = array(
@@ -359,11 +382,12 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.detector_inspection.view', $data);
+            return view('inspection.fire.hydrant_riser.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
@@ -372,12 +396,12 @@ class DetectorInspectionController extends Controller
         try {
 
             $id = decryptId($request->id);
-            $inspection_type = DETECTOR_INSPECTION;
+            $inspection_type = HYDRANT_RISER;
 
-            $inspection = $this->detector->selectOne($id);
-            $inspection_details = $this->detector_details->GetDetails($inspection->id);
+            $inspection = $this->hydrant->selectOne($id);
+            $inspection_details = $this->hydrant_checklist->GetDetails($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, HYDRANT_RISER);
             $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
 
@@ -388,35 +412,34 @@ class DetectorInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            return view('inspection.fire.detector_inspection.approve', $data);
+            return view('inspection.fire.hydrant_riser.approve', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function EHSOfficerSubmit(Request $request)
     {
-
         try {
             $id = decryptId($request->id);
-            $inspection_updates = $this->detector->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
-            $inspection_details = $this->detector->selectOne($id);
+            $inspection_updates = $this->hydrant->EHSOfficerUpdate($id);
+            $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
+            $inspection_details = $this->hydrant->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Detector Inspeciton Approved Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id));
+                $message = 'HYDRANT AND RISER Inspeciton Approved Successfully';    
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = WAITING_FOR_CAPA_ACTION;
             }
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -437,9 +460,10 @@ class DetectorInspectionController extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/capa');
+            // dd($email_id);
+            $url = admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'Detector Inspection',
+                'fire_type' => 'HYDRANT AND RISER',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -449,7 +473,7 @@ class DetectorInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
@@ -458,27 +482,28 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function CAPASubmit(Request $request)
     {
+
         try {
             $id = decryptId($request->id);
-            $safety_gallery_inspection = $this->detector->capaSubmit($id);
-            $inspection_details = $this->detector->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            $hydrant_inspection = $this->hydrant->capaSubmit($id);
+            $inspection_details = $this->hydrant->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -490,7 +515,7 @@ class DetectorInspectionController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
+                'web_link' =>  admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id)) . '/ehsVerify',
                 'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
@@ -498,9 +523,9 @@ class DetectorInspectionController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Detector Inspection',
+                'fire_type' => 'HYDRANT AND RISER Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -510,7 +535,7 @@ class DetectorInspectionController extends Controller
             Mail::to($email_id)->queue(new FireInspection($details));
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_ACTION,
                 'to_status' => WAITING_FOR_CAPA_VERIFICATION,
@@ -519,38 +544,39 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function CAPAVerifySubmit(Request $request)
     {
+        // dd($request);
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
-            $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
-            $inspection_details = $this->detector->selectOne($id);
+            $safety_gallery_inspection = $this->hydrant->capaVerifySubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
+            $inspection_details = $this->hydrant->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -573,7 +599,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'HYDRANT AND RISER',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -584,7 +610,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_CAPA_VERIFICATION,
                 'to_status' => $to_status,
@@ -593,38 +619,39 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function levelOneManagerSubmit(Request $request)
     {
+        // dd($request->all());
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
-            $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
-            $inspection_details = $this->detector->selectOne($id);
+            $safety_gallery_inspection = $this->hydrant->levelOneManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
+            $inspection_details = $this->hydrant->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/level-two-manager');
                 $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -637,7 +664,9 @@ class DetectorInspectionController extends Controller
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($users),
+                // 'assigned_user' => array_to_string($users),
+                'assigned_user' => array_to_string((array)$users),
+
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
@@ -647,7 +676,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'HYDRANT AND RISER',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -658,7 +687,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L1_VERIFICATION,
                 'to_status' => $to_status,
@@ -667,35 +696,36 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function levelTwoManagerSubmit(Request $request)
     {
+        // dd($request->all());
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
-            $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
-            $inspection_details = $this->detector->selectOne($id);
+            $safety_gallery_inspection = $this->hydrant->levelTwoManagerSubmit($id, $status, $remarks);
+            $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
+            $inspection_details = $this->hydrant->selectOne($id);
             if ($status == 1) {
-                $message = 'detector Inspeciton Approved Successfully!';
-                $web_link =   admin_url('fire/detector-inspection/view/' . encryptId($inspection_details->id));
+                $message = 'HYDRANT AND RISER Inspeciton Approved Successfully!';
+                $web_link =   admin_url('fire/hydrant-riser-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
-                $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -717,7 +747,7 @@ class DetectorInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Detector Inspection',
+                    'fire_type' => 'Hydrant And Riser',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -728,7 +758,7 @@ class DetectorInspectionController extends Controller
             }
 
             $insert_array = [
-                'type' => DETECTOR_INSPECTION,
+                'type' => HYDRANT_RISER,
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_L2_VERIFICATION,
                 'to_status' => $to_status,
@@ -737,27 +767,31 @@ class DetectorInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->detector->exportdata();
+            $allData = $this->hydrant->exportdata();
+            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Date of Inspection',
+                'Next Due Date',
+                'Location',
+                'Shift',
+                'Unit',
+                'Frequency',
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -768,9 +802,12 @@ class DetectorInspectionController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
+                $export[] =  Displaydateformat($data->date_of_inspection);
+                $export[] =  Displaydateformat($data->next_due);
+                $export[] = getLocationname($data->location);
+                $export[] = $data->shift;
+                $export[] = getUnitname($data->unit);
+                $export[] = getFrequencyname($data->frequency);
                 $export[] =  getInspectionStatus($data->inspection_status);;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -778,7 +815,7 @@ class DetectorInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Detector Inspection.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Hydrant and Riser Inspection.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -786,7 +823,7 @@ class DetectorInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
@@ -794,15 +831,18 @@ class DetectorInspectionController extends Controller
     {
         try {
 
-            $allData = $this->detector->exportdata();
+            $allData = $this->hydrant->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Date of Inspection',
+                'Next Due Date',
+                'Location',
+                'Shift',
+                'Unit',
+                'Frequency',
                 __("inspection.inspection_status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -811,7 +851,7 @@ class DetectorInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Detector Inspection",
+                'pagetitle' => "Hydrant and Riser Inspection",
             );
 
             $property = [
@@ -831,12 +871,13 @@ class DetectorInspectionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Detector Inspection.pdf";
+            $filename = "Hydrant And Riser Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 
@@ -846,18 +887,19 @@ class DetectorInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
-                $forklift_details = $this->detector->selectOne($id);
-                $inspection = $this->detector_details->GetDetails($forklift_details->id);
+                $status_log = $this->statusLog->selectOne($id, HYDRANT_RISER);
+                $forklift_details = $this->hydrant->selectOne($id);
+                $inspection = $this->hydrant_checklist->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'document_no' => $document_no,
-                    'pagetitle' => "Detector Inspection",
+                    'pagetitle' => "Hydrant And Riser Inspection",
                     'inspection' => $inspection,
                 ];
+                // dd($data);
             }
 
             $property = [
@@ -872,17 +914,17 @@ class DetectorInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.detector_inspection.viewPdf', $data);
+            $html = view('inspection.fire.hydrant_riser.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Detector Inspection.pdf";
+            $filename = "Hydrant And Riser Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('fire/detector-inspection/list'));
+            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         }
     }
 }

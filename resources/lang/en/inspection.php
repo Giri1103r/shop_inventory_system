@@ -95,6 +95,17 @@ return [
     'checked_obs' => 'Required Inspections',
     'condition_of_hooter' => 'Condition Of The Hooter',
 
+    // Emergency Light Inspection
+
+    'emergency_light_number' => 'Emergency Of Light',
+    'condition_of_light' => 'Condition Of Light',
+    'power_supply' => 'Power Supply',
+    'type_of_light' => 'Type Of light',
+    'light_condition' => 'Light Condition',
+    'swith_condition' => 'Switch Condition',
+    'status' => 'Status',
+    
+
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
     'equipment_category' => 'Equipment Category',

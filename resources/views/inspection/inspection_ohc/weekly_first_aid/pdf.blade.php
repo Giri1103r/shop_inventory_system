@@ -24,23 +24,31 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no}}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->issue_date) }}
 
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($value->location) }}
+                            {{ $value->first_aid_box_no}}
+                        </td>
 
-                        </td><td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getShift($value->shift_id) }}</td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getLocationname($value->location) }}</td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ getUnitname($value->unit) }}
 
                         </td>
+
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getFirstAider($value->first_aider) }}
+
+                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->created_at) }}
                         </td>
