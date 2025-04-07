@@ -505,7 +505,6 @@
                         },
                         device_image: {
                             required: true,
-                            extension: "jpg",
                             filesize: 2097152
                         },
                         observation: {
@@ -572,7 +571,6 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
                             filesize: "Image must be under 2MB."
                         },
                         observation: {

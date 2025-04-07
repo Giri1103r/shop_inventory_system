@@ -14,6 +14,7 @@ class FireMockDrillInspection extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'date_of_closure',
         'inspection_date',
         'inspection_status',
         'checked_by',
@@ -172,6 +173,7 @@ class FireMockDrillInspection extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -248,6 +250,7 @@ class FireMockDrillInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
