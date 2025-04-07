@@ -24,17 +24,6 @@
                         <td style='padding: 7px;border: 0.5px solid;text-align:center'>
                             {{ $i }}
                         </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->doc_no) }}
-                        </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->revision_date) }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->next_due) }}
                         </td>
@@ -53,7 +42,7 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getInspectionStatus($value->approve_status) }}
                         </td>
-                     
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}
                         </td>

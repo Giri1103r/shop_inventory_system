@@ -56,19 +56,19 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($weekAmbualance->doc_no) ? $weekAmbualance->doc_no : '' }}
+                                            {{ isset( $document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Review date</label>
                                         <div class="view_data">
-                                            {{ isset($weekAmbualance->revision_date) ? $weekAmbualance->revision_date : '' }}
+                                            {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issued Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($weekAmbualance->issue_date) ? $weekAmbualance->issue_date : '') }}
+                                            {{ DisplaydateFormat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

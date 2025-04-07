@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
+use App\Models\Master\Employee;
 use App\Models\Master\PpeExemption;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeType;
+use App\Models\Master\Work;
 use App\Models\Ppemanagement\PpeFiles;
 use App\Models\Statuslog;
 use App\Models\User;
@@ -168,12 +170,35 @@ class PpeExemptionController extends BaseController
                 if ($validator->fails()) {
                     return $this->sendError('Validation Error', $validator->errors(), 422);
                 }
+
+                if ($request->request_for == 1) {
+
+                    $employee = Employee::where('emp_id', $request->emp_id)
+                        ->select('unit', 'department', 'company')
+                        ->first();
+
+                    $unit = $employee->unit ?? null;
+                    $department = $employee->department ;
+                    $company = $employee->company ?? null;
+                } elseif ($request->request_for == 2) {
+                    $work = Work::where('emp_id', $request->emp_id)
+                        ->select('unit', 'department', 'company')
+                        ->first();
+
+                    $unit = $work->unit ?? null;
+                    $department = $work->department ;
+                    $company = $work->company ?? null;
+                } else {
+                    $unit = Auth::user()->unit_id;
+                    $department = Auth::user()->department_id;
+                    $company = Auth::user()->company_id;
+                }
                 $insert_array = [
                     'emp_id' => $request->emp_id,
                     'emp_name' => $request->emp_name,
-                    'department' =>  $request->department,
-                    'unit' => Auth::user()->unit_id,
-                    'company' => Auth::user()->company_id,
+                    'department' => $department,
+                    'unit' => $unit,
+                    'company' =>  $company ,
                     'request_for' => $request->request_for,
                     'from_date' => DBdateformat($request->from_date),
                     'to_date' => DBdateformat($request->to_date),

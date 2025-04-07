@@ -531,6 +531,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [EmergencyLightInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [EmergencyLightInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [EmergencyLightInspectionController::class, 'ExportViewPDF']);
+        Route::GET('exportViewExcel/{id}', [EmergencyLightInspectionController::class, 'ExportExcel']);
         Route::GET('export/excel', [EmergencyLightInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [EmergencyLightInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [EmergencyLightInspectionController::class, 'GetDepartment']);

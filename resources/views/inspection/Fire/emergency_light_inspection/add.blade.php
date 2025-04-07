@@ -136,23 +136,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -192,7 +176,10 @@
                                                         <select name="department[1]" id="department"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
-
+                                                            @foreach ($department as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->department_name }}</option>
+                                                        @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -200,7 +187,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="number" name="location[1]" id = "location"
+                                                        <input type="text" name="location[1]" id = "location"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -338,7 +325,23 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 form-group form-input mb-2">
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                            @else
+                                                <div class="form-input col-md-12 mb-2">
+                                                    <label class="form-label require">Signature</label>
+                                                    <input type="file" name="signature_image"
+                                                        id="signature_upload" class="form-control form-control-sm"
+                                                        accept="image/*" placeholder="Enter the image">
+                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                    <div id="signature_upload" class="text-danger"></div>
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
@@ -423,6 +426,9 @@
                         "check_items[1]": {
                             required: true,
                         },
+                        "location[1]": {
+                            required: true,
+                        },
                         "quantity[1]": {
                             required: true,
                         },
@@ -444,6 +450,30 @@
                             required: true,
                         },
                         signature_image: {
+                            required: true,
+                        },
+                        "capacity[1]": {
+                            required: true,
+                        },
+                        "emergency_light_number[1]": {
+                            required: true,
+                        },
+                        "condition_of_light[1]": {
+                            required: true,
+                        },
+                        "type_of_light[1]": {
+                            required: true,
+                        },
+                        "power_supply[1]": {
+                            required: true,
+                        },
+                        "swith_condition[1]": {
+                            required: true,
+                        },
+                        "light_condition[1]": {
+                            required: true,
+                        },
+                        "status[1]": {
                             required: true,
                         },
 
@@ -487,8 +517,11 @@
                         "department[1]": {
                             required: "Please Select The Department",
                         },
+                        "location[1]": {
+                            required: "Please Enter the Location",
+                        },
                         "capacity[1]": {
-                            required: "Please add the capacit",
+                            required: "Please add the capacity",
                         },
                         "emergency_light_number[1]": {
                             required: "Please add the emergency of the light",
@@ -614,7 +647,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="number" name="location[${form_set_count}]" id = "location"
+                                                        <input type="text" name="location[${form_set_count}]" id = "location"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -806,7 +839,7 @@
                         }
                     });
 
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
+                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please add the capacity',
