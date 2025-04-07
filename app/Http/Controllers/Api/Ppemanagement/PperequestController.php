@@ -300,8 +300,6 @@ class PperequestController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'PPE Request Created successfully');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
         dd($ex);
