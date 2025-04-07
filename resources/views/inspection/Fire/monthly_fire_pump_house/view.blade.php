@@ -95,7 +95,7 @@
                                         </div>
                                     </div>
                                     @php
-                                        $signature = GetSignature(
+                                        $signature = GetFireSignature(
                                             $inspection_details->created_by,
                                             $inspection_details->id,
                                             MONTHLY_FIRE_PUMP,
@@ -190,7 +190,7 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSignature(
+                                                        $signature = GetFireSignature(
                                                             $inspection_details->verified_by,
                                                             $inspection_details->id,
                                                             MONTHLY_FIRE_PUMP,
@@ -229,7 +229,7 @@
                                                             </div>
                                                         </div>
                                                         @php
-                                                            $signature = GetSignature(
+                                                            $signature = GetFireSignature(
                                                                 $inspection_details->approved_by,
                                                                 $inspection_details->id,
                                                                 MONTHLY_FIRE_PUMP,
@@ -293,7 +293,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetFireSignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
                                                         MONTHLY_FIRE_PUMP,
@@ -346,7 +346,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection_details->verified_by,
                                                     $inspection_details->id,
                                                     MONTHLY_FIRE_PUMP,
@@ -398,7 +398,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
                                                     MONTHLY_FIRE_PUMP,
@@ -449,7 +449,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
                                                     MONTHLY_FIRE_PUMP,
@@ -477,7 +477,7 @@
                                                 </div>
                                             @endif
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection_details->approved_by,
                                                     $inspection_details->id,
                                                     MONTHLY_FIRE_PUMP,
