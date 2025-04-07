@@ -30,15 +30,11 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->pack }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->hsn }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->threshold_limit}}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->expiry_date)}}
-                        </td>
+                       
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->remarks}}
                         </td>

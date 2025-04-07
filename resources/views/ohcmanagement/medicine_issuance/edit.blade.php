@@ -174,6 +174,10 @@
 
 
                                                                 </td>
+                                                                <input type="hidden" name="deletedPage" id="deletedPage"
+                                                                    value="[]">
+                                                                <input type="hidden" name="deletedMedicine"
+                                                                    id="deletedMedicine" value="[]">
                                                             </tr>
                                                         @endforeach
 
@@ -204,61 +208,105 @@
 
 @push('script')
     <script>
+        // $(document).on('click', '.delete-row', function(event) {
+        //     event.preventDefault();
+
+        //     var row = $(this).closest(".medicinedetails");
+        //     var rowId = row.find("input[name='encryptid']").val();
+        //     var totalRows = $(".medicinedetails").length;
+
+        //     if (totalRows <= 1) {
+        //         Swal.fire({
+        //             title: 'Cannot delete!',
+        //             text: 'At least one row is required.',
+        //             icon: 'warning',
+        //             confirmButtonText: 'OK'
+        //         });
+        //         return;
+        //     }
+        //     if (rowId) {
+        //         Swal.fire({
+        //             title: 'Are you sure?',
+        //             text: 'Do you want to delete this record?',
+        //             icon: 'warning',
+        //             showCancelButton: true,
+        //             confirmButtonText: 'Yes, delete it!',
+        //             cancelButtonText: 'No, keep it'
+        //         }).then((result) => {
+        //             if (result.isConfirmed) {
+        //                 $.ajax({
+        //                     url: "{{ url('ohc/medicine-issuance/delete') }}/" +
+        //                         rowId,
+        //                     type: 'POST',
+        //                     data: {
+        //                         _token: '{{ csrf_token() }}',
+        //                         _method: 'POST',
+        //                         id: rowId
+        //                     },
+        //                     success: function(response) {
+        //                         if (response.status === 'success') {
+        //                             row.remove();
+        //                             Swal.fire('Deleted!', response.msg, 'success');
+        //                         } else {
+        //                             Swal.fire('Error!', response.msg, 'error');
+        //                         }
+        //                     },
+        //                     error: function() {
+        //                         Swal.fire('Error!',
+        //                             'Something went wrong. Please try again later.',
+        //                             'error');
+        //                     }
+        //                 });
+        //             }
+        //         });
+        //     } else {
+        //         $(this).closest("tr").remove();
+        //     }
+        // });
+
+
+        let deletedPages = [];
+        let deletedMedicine = [];
+
         $(document).on('click', '.delete-row', function(event) {
             event.preventDefault();
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
             var totalRows = $(".medicinedetails").length;
+            var MedicineId = row.find("select[name^='medicine_id']").val(); // Fix selector for dynamic keys
 
-            if (totalRows <= 1) {
+            if (totalRows > 1) {
                 Swal.fire({
-                    title: 'Cannot delete!',
-                    text: 'At least one row is required.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                return;
-            }
-            if (rowId) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: 'Do you want to delete this record?',
-                    icon: 'warning',
+                    title: "Are you sure?",
+                    text: "Do you want to delete this medicine from the list?",
+                    icon: "warning",
                     showCancelButton: true,
-                    confirmButtonText: 'Yes, delete it!',
-                    cancelButtonText: 'No, keep it'
+                    confirmButtonText: "Yes, delete it!",
+                    cancelButtonText: "No, cancel!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ url('ohc/medicine-issuance/delete') }}/" +
-                                rowId,
-                            type: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                _method: 'POST',
-                                id: rowId
-                            },
-                            success: function(response) {
-                                if (response.status === 'success') {
-                                    row.remove();
-                                    Swal.fire('Deleted!', response.msg, 'success');
-                                } else {
-                                    Swal.fire('Error!', response.msg, 'error');
-                                }
-                            },
-                            error: function() {
-                                Swal.fire('Error!',
-                                    'Something went wrong. Please try again later.',
-                                    'error');
-                            }
-                        });
+
+                        deletedPages.push(rowId);
+                        deletedMedicine.push(MedicineId);
+
+                        $('#deletedPage').val(JSON.stringify(deletedPages));
+                        $('#deletedMedicine').val(JSON.stringify(deletedMedicine)); // ✅ Corrected line
+
+                        row.remove();
+
+                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
                     }
                 });
             } else {
-                $(this).closest("tr").remove();
+                Swal.fire({
+                    title: "Warning!",
+                    text: "At least one row must remain!",
+                    icon: "error",
+                });
             }
         });
+
 
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
@@ -320,12 +368,25 @@
                 </td>
 
                 <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded deleted-row" style="width: 30px; height: 30px;">
                         <i class="fa-solid fa-trash"></i>
                     </div>
                 </td>
             </tr>`;
+                    $(document).on("click", ".deleted-row", function() {
+                        var rowCount = $('#medicine-tbody tr').length;
 
+                        if (rowCount > 1) {
+                            $(this).closest("tr").remove();
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Warning',
+                                text: 'At least one row is required.',
+                                confirmButtonColor: '#3085d6'
+                            });
+                        }
+                    });
                     $('#medicine-tbody').append(newRow);
 
                     $('select[name="medicine_id[' + rowcount + ']"]').select2({
@@ -427,88 +488,88 @@
 
 
         $(document).ready(function() {
-                // Initialize validation
-                $('#MedicineRequisitionForm').validate({
-                    rules: {
-                        unit_id: {
-                            required: true,
-                        },
-                        department_id: {
-                            required: true,
-                        },
-                        issue_date: {
-                            required: true,
-                        }
+            // Initialize validation
+            $('#MedicineRequisitionForm').validate({
+                rules: {
+                    unit_id: {
+                        required: true,
                     },
+                    department_id: {
+                        required: true,
+                    },
+                    issue_date: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    unit_id: {
+                        required: "Please select the Unit name.",
+                    },
+                    department_id: {
+                        required: "Please select the Department Name.",
+                    },
+                    issue_date: {
+                        required: "Please select the request date.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+
+            // Attach validation rules dynamically
+            $('#medicine-tbody').find('.medicinedetails').each(function(index, element) {
+                $(element).find('select.medicine').rules("add", {
+                    required: true,
                     messages: {
-                        unit_id: {
-                            required: "Please select the Unit name.",
-                        },
-                        department_id: {
-                            required: "Please select the Department Name.",
-                        },
-                        issue_date: {
-                            required: "Please select the request date.",
-                        }
-                    },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
+                        required: "Medicine Name is required",
                     }
                 });
 
-                // Attach validation rules dynamically
-                $('#medicine-tbody').find('.medicinedetails').each(function(index, element) {
-                    $(element).find('select.medicine').rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Medicine Name is required",
-                        }
-                    });
-
-                    $(element).find('input[name^="quantity"]').rules("add", {
-                        required: true,
-                        digits: true,
-                        min: 1,
-                        messages: {
-                            required: "Quantity is required",
-                            digits: "Quantity should be numeric",
-                            min: "Quantity must be at least 1",
-                        }
-                    });
-
-                    $(element).find('input[name^="remarks"]').rules("add", {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                        messages: {
-                            required: "Remarks are required",
-                            minlength: "Minimum 3 characters required",
-                            maxlength: "Remarks should not exceed 600 characters",
-                        }
-                    });
+                $(element).find('input[name^="quantity"]').rules("add", {
+                    required: true,
+                    digits: true,
+                    min: 1,
+                    messages: {
+                        required: "Quantity is required",
+                        digits: "Quantity should be numeric",
+                        min: "Quantity must be at least 1",
+                    }
                 });
 
-
-                $(document).on('change keyup', 'select.medicine, input[name^="quantity"], input[name^="remarks"]',
-                    function() {
-                        let $field = $(this);
-                        $field.valid();
-
-
-                        let $error = $field.siblings('.error');
-                        if ($error.length > 1) {
-                            $error.not(':first').remove();
-                        }
-                    });
-
+                $(element).find('input[name^="remarks"]').rules("add", {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 600,
+                    messages: {
+                        required: "Remarks are required",
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Remarks should not exceed 600 characters",
+                    }
+                });
             });
+
+
+            $(document).on('change keyup', 'select.medicine, input[name^="quantity"], input[name^="remarks"]',
+                function() {
+                    let $field = $(this);
+                    $field.valid();
+
+
+                    let $error = $field.siblings('.error');
+                    if ($error.length > 1) {
+                        $error.not(':first').remove();
+                    }
+                });
+
+        });
     </script>
 @endpush

@@ -109,9 +109,15 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Expire Date</label>
-                                                    <input type="text" name="expire_date" id="expire_date"
-                                                        value={{ displaydateformat($medicine_receiving->expire_date) }}
-                                                        class="form-control">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="expire_date" id="expire_date"
+                                                            value={{ displaydateformat($medicine_receiving->expire_date) }}
+                                                            class="form-control">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('expire_date')
                                                         <div class="text-danger">{{ $message }}</div>
                                                     @enderror

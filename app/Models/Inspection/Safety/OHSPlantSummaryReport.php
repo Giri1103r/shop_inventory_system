@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -180,5 +181,10 @@ class OHSPlantSummaryReport extends Model
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_ohs_report'));
     }
 }

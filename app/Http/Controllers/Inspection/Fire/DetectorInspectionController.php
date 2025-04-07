@@ -292,7 +292,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -419,7 +419,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -481,7 +481,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -500,7 +500,7 @@ class DetectorInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Safety Gallery Inspection',
+                'fire_type' => 'Detector Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -553,7 +553,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -627,7 +627,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -698,7 +698,7 @@ class DetectorInspectionController extends Controller
             $mailsubject = 'DETECTOR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

@@ -127,6 +127,28 @@ class MedicineIssuance extends Model
         return $data;
     }
 
+    // public function firstdata($medicineIds)
+    // {
+
+    //     $data = $this->select(
+    //         'ohc_management_medicine_issuance.*'
+    //     )->where('id', $medicineIds)->where('trash', 'NO')
+    //         ->get();
+
+    //     return $data;
+    // }
+
+    // public function deletedmedicineid($id)
+    // {
+
+    //     $data = $this->select(
+    //         'ohc_management_medicine_issuance.*'
+    //     )->where('id', $id)->where('trash', 'NO')
+    //         ->first();
+
+    //     return $data;
+    // }
+
 
 
     public function getissuedDate($selectedYear, $selectedMonth, $ids)
@@ -140,7 +162,7 @@ class MedicineIssuance extends Model
             ->get();
 
             return $data;
-            
+
     }
 
     public function getYearlyissuedDate($selectedYear, $ids)

@@ -6,6 +6,7 @@ use App\Http\Controllers\Inspection\RRAA\RRAAController;
 use App\Http\Controllers\Inspection\Fire\HoseBoxController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
+use App\Http\Controllers\Inspection\Fire\HoseReelHoseController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
@@ -53,12 +54,14 @@ use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
+use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -645,6 +648,17 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
     });
+    Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
+        Route::get('list', [MonthlyPhysicalInspection::class, 'index']);
+        Route::post('list', [MonthlyPhysicalInspection::class, 'index']);
+        Route::get('add', [MonthlyPhysicalInspection::class, 'add']);
+        Route::post('add/submit', [MonthlyPhysicalInspection::class, 'store']);
+        Route::get('view/{id}', [MonthlyPhysicalInspection::class, 'view']);
+        Route::post('delete', [MonthlyPhysicalInspection::class, 'delete']);
+        Route::get('export/excel', [MonthlyPhysicalInspection::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyPhysicalInspection::class, 'exportPdf']);
+        Route::post('status', [MonthlyPhysicalInspection::class, 'statusChange']);
+    });
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
         Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
         Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
@@ -783,6 +797,41 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
     });
 
+    Route::group(['prefix' => 'fire-extinguisher/cartridge/'], function () {
+        Route::GET('list', [CartridgeTypeFireExtinguisherController::class, 'Index']);
+        Route::POST('list', [CartridgeTypeFireExtinguisherController::class, 'Index']);
+        Route::GET('add', [CartridgeTypeFireExtinguisherController::class, 'Add']);
+        Route::POST('add/submit', [CartridgeTypeFireExtinguisherController::class, 'Store']);
+        Route::GET('view/{id}', [CartridgeTypeFireExtinguisherController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [CartridgeTypeFireExtinguisherController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [CartridgeTypeFireExtinguisherController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [CartridgeTypeFireExtinguisherController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [CartridgeTypeFireExtinguisherController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [CartridgeTypeFireExtinguisherController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [CartridgeTypeFireExtinguisherController::class, 'ExportPDF']);
+        Route::GET('get/department', [CartridgeTypeFireExtinguisherController::class, 'GetDepartment']);
+
+});
+
+    Route::group(['prefix' => 'hose-reel-hose-inspection'], function () {
+        Route::GET('list', [HoseReelHoseController::class, 'Index']);
+        Route::POST('list', [HoseReelHoseController::class, 'Index']);
+        Route::GET('add', [HoseReelHoseController::class, 'Add']);
+        Route::POST('add/submit', [HoseReelHoseController::class, 'Store']);
+        Route::GET('view/{id}', [HoseReelHoseController::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HoseReelHoseController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HoseReelHoseController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HoseReelHoseController::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HoseReelHoseController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HoseReelHoseController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HoseReelHoseController::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HoseReelHoseController::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [HoseReelHoseController::class, 'ExportExcel']);
+        Route::GET('export/pdf', [HoseReelHoseController::class, 'ExportPDF']);
+    });
     Route::group(['prefix' => 'fire-modular-inspection/checklist/'], function () {
         Route::GET('list', [FireModularInspectionController::class, 'Index']);
         Route::POST('list', [FireModularInspectionController::class, 'Index']);

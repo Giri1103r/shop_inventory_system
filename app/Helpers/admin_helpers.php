@@ -389,56 +389,56 @@ if (!function_exists('gettotalCount')) {
 }
 
 if (!function_exists('getohctotalCount')) {
-
-    function getohctotalCount($type)
+    function getohctotalCount($type, $unit_id = null)
     {
 
         switch ($type) {
 
-
+            case 'requisition':
+                $count = UserMedicineRequisition::where('status', 1)
+                    ->where('unit_id', $unit_id)
+                    ->where('approve_status', STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING);
+                break;
             case 'medicine':
-                $count = Medicine::where('status', 1)->count();
+                $count = Medicine::where('status', 1);
                 break;
             case 'medicineReceiving':
-                $count = MedicineReceiving::where('approved_date', Carbon::today())->count();
+                $count = MedicineReceiving::whereDate('approved_date', Carbon::today());
                 break;
             case 'usermedicineissuance':
-                $count = UserMedicineIssuance::count();
+                $count = UserMedicineIssuance::where('unit_id', $unit_id)->Where('status',1);
                 break;
             case 'prescribetopatient1':
-                $count = PrescribetoPatient::where('unit_id', 1)
-                    ->count();
+                $count = PrescribetoPatient::where('unit_id', 1);
                 break;
             case 'prescribetopatient2':
-                $count = PrescribetoPatient::where('unit_id', 2)
-                    ->count();
+                $count = PrescribetoPatient::where('unit_id', 2);
                 break;
             case 'prescribetopatient3':
-                $count = PrescribetoPatient::where('unit_id', 3)
-                    ->count();
+                $count = PrescribetoPatient::where('unit_id', 3);
                 break;
             case 'prescribetopatient4':
-                $count = PrescribetoPatient::where('unit_id', 4)
-                    ->count();
+                $count = PrescribetoPatient::where('unit_id', 4);
                 break;
             case 'prescribetopatient':
-                $count = PrescribetoPatient::where('created_at', Carbon::today())->count();
+                $count = PrescribetoPatient::whereDate('created_at', Carbon::today())->where('unit_id', $unit_id);
                 break;
             case 'medicineissuance':
-                $count = UserMedicineIssuance::where('created_at', Carbon::today())->count();
+                $count = UserMedicineIssuance::whereDate('created_at', Carbon::today())->where('unit_id', $unit_id)->Where('status',1);
                 break;
             case 'certifiedFirstAider':
-                $count = User::where('role', ROLE_CERTIFIED_FIRST_AIDER)->where('status',1)->count();
+                $count = User::where('role', ROLE_CERTIFIED_FIRST_AIDER)->where('status', 1)->where('unit_id', $unit_id);
                 break;
-
             default:
-                $count = 0;
-                break;
+                return 0;
         }
 
-        return $count;
+        return $count->count();
     }
 }
+
+
+
 if (!function_exists('getYearArray')) {
     function getYearArray($startYear = null)
     {
