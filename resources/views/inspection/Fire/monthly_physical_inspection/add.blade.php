@@ -1,6 +1,6 @@
     @extends('admin.layouts.admin')
     @section('title', 'Medicine Store Inspection Checklist')
-    @section('pageurl', admin_url('ohc/monthly-medicine-store/inspection/list'))
+    @section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
     @section('content')
         <div class="clearfix"></div>
         <div class="page-titles">
@@ -20,7 +20,7 @@
                                 <div class="card-header">
                                     <div class="align-back-btc">
                                         <x-button-back
-                                            href="{{ admin_url('ohc/monthly-medicine-store/inspection/list') }}"></x-button-back>
+                                            href="{{ admin_url('fire/equipment-monthly-physical-inspection/list') }}"></x-button-back>
                                     </div>
                                 </div>
 
@@ -28,7 +28,7 @@
 
                                     <div class="basic-form mx-3">
                                         <form method="POST" id="safetygalleryAdd"
-                                            action="{{ admin_url('ohc/monthly-medicine-store/inspection/add/submit') }}"
+                                            action="{{ admin_url('fire/equipment-monthly-physical-inspection/add/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
                                             @csrf
 
@@ -97,8 +97,8 @@
                                                 <div class="row justify-content-between">
                                                     <div class="form-input col-md-4 mb-2">
                                                         <label class="form-label require">Image - 1
-                                                            </label>
-                                                        <input type="file" name="equipment[{{ $index }}][image]"
+                                                        </label>
+                                                        <input type="file" name="equipment[{{ $index + 1 }}][1]"
                                                             id="signature_upload_{{ $index }}"
                                                             class="form-control form-control-sm" accept="image/*"
                                                             placeholder="Upload {{ $equipment->name }} image">
@@ -109,8 +109,7 @@
 
                                                     <div class="form-input col-md-4 mb-2">
                                                         <label class="form-label require">Image - 2</label>
-                                                        <input type="file"
-                                                            name="equipment[{{ $index }}][signature_image]"
+                                                        <input type="file" name="equipment[{{ $index + 1 }}][2]"
                                                             id="signature_upload_signature_{{ $index }}"
                                                             class="form-control form-control-sm" accept="image/*"
                                                             placeholder="Upload signature for {{ $equipment->name }}">
@@ -140,8 +139,6 @@
                                                     @endif
                                                 </div>
                                             </div> --}}
-
-
 
                                             <div class="submit-button m-2" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>

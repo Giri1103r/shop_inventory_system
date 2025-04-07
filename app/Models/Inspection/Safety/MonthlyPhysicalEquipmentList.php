@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 
 class MonthlyPhysicalEquipmentList extends Model
@@ -25,4 +26,11 @@ class MonthlyPhysicalEquipmentList extends Model
     {
         return $this->get();
     }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_fire_equipment_inspection_list'));
+    }
+
+
 }

@@ -132,7 +132,7 @@ class GembaWalkController extends Controller
             $shift = $this->shift->getShiftname();
             $data = array(
                 'shift' => $shift,
-                
+
             );
 
             return view('inspection.gembaWalk.list',$data);
@@ -160,7 +160,7 @@ class GembaWalkController extends Controller
                 'employeeList' => $employeeList,
                 'document_no' => $document_no,
                 'shift' => $shift,
-                
+
             );
             return view('inspection.gembaWalk.add', $data);
         } catch (Exception $ex) {
@@ -249,7 +249,7 @@ class GembaWalkController extends Controller
 
             $notificationData = array(
                 'notification_type' => 9,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -298,9 +298,9 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-                
-                
-                
+
+
+
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
@@ -310,8 +310,8 @@ class GembaWalkController extends Controller
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
                     'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details,
                     'document_no' => $document_no,
-                    
-                    
+
+
                 );
             }
             return view('inspection.gembaWalk.view', $data);
@@ -422,7 +422,7 @@ class GembaWalkController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 9,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -494,7 +494,7 @@ class GembaWalkController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 9,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -624,7 +624,7 @@ class GembaWalkController extends Controller
 
             $notificationData = array(
                 'notification_type' => 9,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -758,7 +758,7 @@ class GembaWalkController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 9,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -829,7 +829,7 @@ class GembaWalkController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 9,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,

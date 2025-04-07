@@ -124,6 +124,8 @@ class MonthlyPhysicalInspectionController extends Controller
     {
         try {
 
+            dd($request->all());
+
             $rules = [
                 'issue_date' => 'required',
                 'equipment_name.*' => 'required',
@@ -171,6 +173,7 @@ class MonthlyPhysicalInspectionController extends Controller
             Session::flash('success', 'Equipment Name is Added Successfully');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));

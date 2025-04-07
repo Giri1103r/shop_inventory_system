@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use Carbon\Carbon;
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -188,5 +189,10 @@ class ForkLiftInspection extends Model
             ];
         }
         $this->where('id', $id)->update($update_array);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_forklift_inspection'));
     }
 }
