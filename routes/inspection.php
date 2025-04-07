@@ -58,6 +58,7 @@ use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmen
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -798,6 +799,24 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [FireModularInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [FireModularInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [FireModularInspectionController::class, 'GetDepartment']);
+    });
+
+    Route::group(['prefix' => 'hydrant-riser-inspection/'], function () {
+        Route::GET('list', [HydrantRiserInspectionContoller::class, 'Index']);
+        Route::POST('list', [HydrantRiserInspectionContoller::class, 'Index']);
+        Route::GET('add', [HydrantRiserInspectionContoller::class, 'Add']);
+        Route::POST('add/submit', [HydrantRiserInspectionContoller::class, 'Store']);
+        Route::GET('view/{id}', [HydrantRiserInspectionContoller::class, 'View']);
+        Route::GET('verification/{id}/{employee_type}', [HydrantRiserInspectionContoller::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [HydrantRiserInspectionContoller::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [HydrantRiserInspectionContoller::class, 'CAPASubmit']);
+        Route::POST('capa/reverify/submit', [HydrantRiserInspectionContoller::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [HydrantRiserInspectionContoller::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [HydrantRiserInspectionContoller::class, 'levelTwoManagerSubmit']);
+        Route::GET('exportViewPdf/{id}', [HydrantRiserInspectionContoller::class, 'ExportViewPDF']);
+        Route::GET('export/excel', [HydrantRiserInspectionContoller::class, 'ExportExcel']);
+        Route::GET('export/pdf', [HydrantRiserInspectionContoller::class, 'ExportPDF']);
+        Route::GET('get/department', [HydrantRiserInspectionContoller::class, 'GetDepartment']);
     });
 });
 
