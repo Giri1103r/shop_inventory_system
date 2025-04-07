@@ -57,7 +57,7 @@ use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmen
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
-
+use App\Http\Controllers\Inspection\Fire\ChecklistObservationFollowupController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -781,10 +781,26 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
         Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
     });
+
+    Route::group(['prefix' => 'checklist-observation/'], function () {
+        Route::get('list', [ChecklistObservationFollowupController::class, 'index']);
+        Route::post('list', [ChecklistObservationFollowupController::class, 'index']);
+        Route::get('add/{inspection_type}/{inspection_id}', [ChecklistObservationFollowupController::class, 'add']);
+        Route::post('add/submit', [ChecklistObservationFollowupController::class, 'store']);
+        Route::get('edit/{id}', [ChecklistObservationFollowupController::class, 'edit']);
+        Route::post('edit/submit', [ChecklistObservationFollowupController::class, 'update']);
+        Route::get('view/{id}', [ChecklistObservationFollowupController::class, 'view']);
+        Route::post('delete', [ChecklistObservationFollowupController::class, 'delete']);
+        Route::get('export/excel', [ChecklistObservationFollowupController::class, 'exportExcel']);
+        Route::get('export/pdf', [ChecklistObservationFollowupController::class, 'exportPdf']);
+        Route::get('sample_download', [ChecklistObservationFollowupController::class, 'DownloadSample']);
+        Route::get('import', [ChecklistObservationFollowupController::class, 'import']);
+        Route::post('import/Submit', [ChecklistObservationFollowupController::class, 'importSubmit']);
+        Route::post('status', [ChecklistObservationFollowupController::class, 'statusChange']);
+        Route::post('unique', [ChecklistObservationFollowupController::class, 'Uniquecheck']);
+        Route::get('employeeName', [ChecklistObservationFollowupController::class, 'employeename']);
+    });
 });
-
-
-
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('list', [FloorStretcherController::class, 'Index']);

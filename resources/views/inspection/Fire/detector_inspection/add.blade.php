@@ -62,7 +62,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{old('inspection_date')}}">
+                                                        class="form-control" value="{{ old('inspection_date') }}">
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -176,7 +176,7 @@
                                                 @endif
                                             </div>
                                             <input type="hidden" name="document_reference_id"
-                                            value="{{ encryptId($document_no->id) }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -377,10 +377,24 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
 
+                                                        <!-- Radio Buttons for Observation Needed -->
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(1)}}"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(2)}}"> No
+                                                            </label>
+                                                        </div>
+
+                                                        <!-- Observation Textarea -->
+                                                        {{-- <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea> --}}
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
 

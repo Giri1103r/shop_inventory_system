@@ -140,17 +140,17 @@
                             name: 'inspection_id'
                         },
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
+                            data: 'document_no',
+                            name: 'document_no'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'issuedate',
+                            name: 'issuedate'
                         },
                        
                         {
-                            data: 'rev_dt',
-                            name: 'rev_dt'
+                            data: 'rev_date',
+                            name: 'rev_date'
                         },
                        
                         {

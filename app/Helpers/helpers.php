@@ -50,6 +50,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1423,6 +1424,15 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getObservation')) {
+
+        function getObservation()
+        {
+            $data = FireCheckListFollowUp::get()->count();
+            return $data;
+        }
+    }
+
     if (!function_exists('getSPLBCount')) {
 
         function getSPLBCount()
@@ -1904,7 +1914,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {
-           
+
             $data = ChecklistType::join('inspection_master_checklist_subtype', 'inspection_master_checklist_type.id', '=', 'inspection_master_checklist_subtype.category_id')
                 ->join('inspection_master_checklist_sub_type_data', 'inspection_master_checklist_subtype.id', '=', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id')
                 ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
@@ -1921,7 +1931,7 @@ if (!function_exists('getMonth')) {
                     'inspection_master_checklist_sub_type_data_name.name as checklist_name',
                     'inspection_master_checklist_option.type',
                 ]);
-                
+
             $data = $data->groupBy('subcategory_name');
 
             if ($data) {

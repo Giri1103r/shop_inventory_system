@@ -33,7 +33,8 @@
                                         action="{{ admin_url('fire/daily-fire-pump-house-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-
+                                        <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($staticDocno->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
