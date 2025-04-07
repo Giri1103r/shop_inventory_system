@@ -3,16 +3,20 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 use App\Http\Controllers\Inspection\Fire\HoseBoxController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
+use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
 use App\Http\Controllers\Inspection\Fire\HoseReelHoseController;
+use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidRecordController;
 use App\Http\Controllers\Inspection\Ohc\FloorStretcherController;
 use App\Http\Controllers\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Inspection\Ohc\Master\FirstAidController;
+use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Inspection\Fire\SprinklarSystemController;
 use App\Http\Controllers\Inspection\Master\ChecklistTypeController;
 use App\Http\Controllers\Inspection\Audit\AuditAssessmentController;
@@ -34,6 +38,8 @@ use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
+use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
+use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
 use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Fire\CoTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
@@ -42,6 +48,7 @@ use App\Http\Controllers\Inspection\Ohc\CurrentNewExtCodeDialingController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
+use App\Http\Controllers\Inspection\Fire\MonthlyPhysicalInspectionController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
@@ -51,17 +58,11 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
-use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController;
-use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
-use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
-use App\Http\Controllers\Inspection\Fire\FirePreNocController;
-use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
-use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
-use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -650,15 +651,16 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
     });
     Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
-        Route::get('list', [MonthlyPhysicalInspection::class, 'index']);
-        Route::post('list', [MonthlyPhysicalInspection::class, 'index']);
-        Route::get('add', [MonthlyPhysicalInspection::class, 'add']);
-        Route::post('add/submit', [MonthlyPhysicalInspection::class, 'store']);
-        Route::get('view/{id}', [MonthlyPhysicalInspection::class, 'view']);
-        Route::post('delete', [MonthlyPhysicalInspection::class, 'delete']);
-        Route::get('export/excel', [MonthlyPhysicalInspection::class, 'exportExcel']);
-        Route::get('export/pdf', [MonthlyPhysicalInspection::class, 'exportPdf']);
-        Route::post('status', [MonthlyPhysicalInspection::class, 'statusChange']);
+        Route::get('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::post('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::get('add', [MonthlyPhysicalInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyPhysicalInspectionController::class, 'store']);
+        Route::get('view/{id}', [MonthlyPhysicalInspectionController::class, 'view']);
+        Route::post('delete', [MonthlyPhysicalInspectionController::class, 'delete']);
+        Route::get('export/excel', [MonthlyPhysicalInspectionController::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyPhysicalInspectionController::class, 'exportPdf']);
+        Route::post('status', [MonthlyPhysicalInspectionController::class, 'statusChange']);
+        Route::GET('exportViewPdf/{id}', [MonthlyPhysicalInspectionController::class, 'ExportViewPDF']);
     });
 
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
