@@ -184,7 +184,7 @@
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
                                                             class="form-control"
-                                                            value="{{ FireSequence(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}"
+                                                            value="{{ FireSequence(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}"
                                                             readonly>
                                                     </div>
                                                 </div>
@@ -640,7 +640,7 @@
                                     <label
                                         class="form-label require">{{ __('inspection.sr_no') }}</label>
                                     <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                        class="form-control" value="{{ FireSequence(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
+                                        class="form-control" value="{{ FireSequence(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
                                 </div>
                             </div>
 

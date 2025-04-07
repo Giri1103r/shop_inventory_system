@@ -26,20 +26,17 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->document_number }}
+                            {{ getUsername($value->employee_name) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ $value->employee_code }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->revision_date }}
+                            {{ getDepartment($value->department) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            @php
-                                $status = $value->status == 1 ? 'Active' : 'In-Active';
-                            @endphp
-                             {{ $status }}
+                            {{ getUnitname($value->unit) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getusername($value->created_by) }}

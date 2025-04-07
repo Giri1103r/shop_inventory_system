@@ -245,32 +245,6 @@
         </table>
     </div>
     <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
-        {{-- <thead>
-            <tr>
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
-                <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
-            </tr>
-            <tr>
-                <th colspan="3" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
-                <th colspan="3" style="border: 1px solid black; padding: 8px;">CONDITION</th>
-            </tr>
-            <tr>
-                <th style="border: 1px solid black; padding: 8px;">TYPE</th>
-                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
-                <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
-                <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
-                <th style="border: 1px solid black; padding: 8px;">HANDLE</th>
-                <th style="border: 1px solid black; padding: 8px;">WHEEL</th>
-                <th style="border: 1px solid black; padding: 8px;">WEIGHT OF CARTRIDGE</th>
-                <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
-                <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
-            </tr>
-        </thead> --}}
         <thead>
             <tr>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>

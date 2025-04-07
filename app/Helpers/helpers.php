@@ -50,6 +50,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Ohc\SafetyPettyDetails;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1427,7 +1428,7 @@ if (!function_exists('getMonth')) {
 
         function getSPLBCount()
         {
-            $data = SafetyPettyChecklist::get()->count();
+            $data = SafetyPettyDetails::get()->count();
             return $data;
         }
     }
@@ -2396,6 +2397,10 @@ if (!function_exists('getMonth')) {
                     break;
 
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    return 'CTFE-000001';
+                    break;
+
+                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
 
