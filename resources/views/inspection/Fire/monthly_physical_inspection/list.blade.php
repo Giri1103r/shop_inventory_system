@@ -1,8 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection View')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
-
-
+@section('title', 'Monthly OHC Store Medicine Inspection Checklist')
+@section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -15,7 +13,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/equipment-monthly-physical-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -28,86 +26,25 @@
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                 <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                <input type="text" name="next_due" id = "next_due" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
-                                                <select name="location" id="location" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select {{ __('inspection.location') }}
-                                                    </option>
-                                                    @foreach ($locations as $location)
-                                                        <option value="{{ encryptId($location->id) }}">
-                                                            {{ $location->location_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
-                                                <select name="shift" id="shift" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Shift</option>
-                                                    @foreach ($shifts as $shift)
-                                                        <option value="{{ encryptId($shift->id) }}">
-                                                            {{ $shift->shift }}</option>
-                                                    @endforeach
-                                                </select>
+                                                    class="form-control inspection_date">
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                <select name="unit" id="unit" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Unit</option>
-                                                    @foreach ($units as $unit)
-                                                        <option value="{{ encryptId($unit->id) }}">
-                                                            {{ $unit->unit_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Frequency</option>
-                                                    @foreach ($frequency as $frequency)
-                                                        <option value="{{ encryptId($frequency->id) }}">
-                                                            {{ $frequency->frequency_name }}</option>
-                                                    @endforeach
-                                                </select>
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <input type="text" name="next_due" id = "next_due"
+                                                    class="form-control next_due">
                                             </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status"
-                                                class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
-                                                </option>
-                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{ encryptId('6') }}">CLOSED</option>
-                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
-                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
-                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -132,12 +69,8 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.next_due') }}</th>
-                                        <th>{{ __('inspection.location') }}</th>
-                                        <th>{{ __('inspection.shifts') }}</th>
-                                        <th>{{ __('inspection.unit') }}</th>
-                                        <th>{{ __('inspection.frequency') }}</th>
-                                        <th>{{ __('common.status') }}</th>
-                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
+                                        <th>{{ __('Inspection Status') }}</th>
+                                        <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -157,12 +90,11 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
 
-                flatpickr("#inspection_date", {
+                flatpickr(".inspection_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#next_due", {
+                flatpickr(".next_due", {
                     dateFormat: "d-m-Y",
-                    minDate: new Date(),
                 });
 
             });
@@ -193,7 +125,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/detector-inspection/list') }}",
+                        url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -202,11 +134,6 @@
                         data: function(d) {
                             d.inspection_date = $('#inspection_date').val();
                             d.next_due = $('#next_due').val();
-                            d.location = $('#location').val();
-                            d.shift = $('#shift').val();
-                            d.unit = $('#unit').val();
-                            d.frequency = $('#frequency').val();
-                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -222,28 +149,12 @@
                         },
 
                         {
-                            data: 'date_of_inspection',
-                            name: 'date_of_inspection',
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
                             data: 'next_due',
                             name: 'next_due',
-                        },
-                        {
-                            data: 'location_name',
-                            name: 'location_name',
-                        },
-                        {
-                            data: 'shift',
-                            name: 'shift',
-                        },
-                        {
-                            data: 'unit_name',
-                            name: 'unit_name',
-                        },
-                        {
-                            data: 'frequency_name',
-                            name: 'frequency_name',
                         },
                         {
                             data: 'inspection_status',
@@ -280,25 +191,15 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
-                                        shift = $('#shift').val();
-                                        unit = $('#unit').val();
-                                        frequency = $('#frequency').val();
-                                        inspection_status = $('#inspection_status').val();
+
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/equipment-monthly-physical-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due +
-                                            '&location=' + location +
-                                            '&shift=' + shift +
-                                            '&unit=' + unit +
-                                            '&frequency=' + frequency +
-                                            '&inspection_status=' + inspection_status
-
+                                            '&next_due=' + next_due
                                     }
                                 },
                                 {
@@ -308,23 +209,13 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
-                                        shift = $('#shift').val();
-                                        unit = $('#unit').val();
-                                        frequency = $('#frequency').val();
-                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/equipment-monthly-physical-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due +
-                                            '&location=' + location +
-                                            '&shift=' + shift +
-                                            '&unit=' + unit +
-                                            '&frequency=' + frequency +
-                                            '&inspection_status=' + inspection_status
+                                            '&next_due=' + next_due
                                     }
                                 },
                             ]
@@ -356,75 +247,75 @@
                 });
 
                 /* Status Change */
-                $(document).on('click', '.statusChange', function() {
-                    var id = $(this).data('id');
-                    var types = $(this).data('type');
-                    if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
-                        var text = '{{ __('common.inactive') }}';
-                        var btncolor = '#dc3545'
+                // $(document).on('click', '.statusChange', function() {
+                //     var id = $(this).data('id');
+                //     var types = $(this).data('type');
+                //     if (types == 1) {
+                //         var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                //         var text = '{{ __('common.inactive') }}';
+                //         var btncolor = '#dc3545'
 
-                    } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
-                        var text = '{{ __('common.active') }}';
-                        var btncolor = '#7ddc35'
-                    }
+                //     } else {
+                //         var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                //         var text = '{{ __('common.active') }}';
+                //         var btncolor = '#7ddc35'
+                //     }
 
-                    Swal.fire({
-                        title: title,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: text,
-                        confirmButtonColor: btncolor,
-                        customClass: {
-                            confirmButton: 'btn-skew',
-                            cancelButton: 'btn-skew'
-                        },
-                    }).then((result) => {
+                //     Swal.fire({
+                //         title: title,
+                //         icon: 'warning',
+                //         showCancelButton: true,
+                //         confirmButtonText: text,
+                //         confirmButtonColor: btncolor,
+                //         customClass: {
+                //             confirmButton: 'btn-skew',
+                //             cancelButton: 'btn-skew'
+                //         },
+                //     }).then((result) => {
 
 
-                        if (result.value) {
-                            $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/status') }}",
-                                type: 'post',
+                //         if (result.value) {
+                //             $.ajax({
+                //                 url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list/status') }}",
+                //                 type: 'post',
 
-                                data: {
-                                    id: id,
-                                    types: types
-                                },
-                                success: function(response) {
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-right',
-                                        showConfirmButton: false,
-                                        timer: 3000,
-                                        timerProgressBar: true,
-                                        didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
-                                        }
-                                    });
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: response.msg
-                                    });
-                                    table.draw();
-                                },
-                                error: function(data) {
-                                    $.notify(data.responseJSON.msg, "error");
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Something went wrong', '', 'info');
-                        }
-                    })
+                //                 data: {
+                //                     id: id,
+                //                     types: types
+                //                 },
+                //                 success: function(response) {
+                //                     const Toast = Swal.mixin({
+                //                         toast: true,
+                //                         position: 'top-right',
+                //                         showConfirmButton: false,
+                //                         timer: 3000,
+                //                         timerProgressBar: true,
+                //                         didOpen: (toast) => {
+                //                             toast.addEventListener(
+                //                                 'mouseenter',
+                //                                 Swal.stopTimer)
+                //                             toast.addEventListener(
+                //                                 'mouseleave',
+                //                                 Swal.resumeTimer
+                //                             )
+                //                         }
+                //                     });
+                //                     Toast.fire({
+                //                         icon: 'success',
+                //                         title: response.msg
+                //                     });
+                //                     table.draw();
+                //                 },
+                //                 error: function(data) {
+                //                     $.notify(data.responseJSON.msg, "error");
+                //                 }
+                //             });
+                //         } else if (result.isDenied) {
+                //             Swal.fire('Something went wrong', '', 'info');
+                //         }
+                //     })
 
-                });
+                // });
 
 
                 /* Delete Record */
@@ -450,10 +341,9 @@
                             cancelButton: 'btn-skew'
                         },
                     }).then((result) => {
-
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/delete') }}",
+                                url: "{{ admin_url('fire/equipment-monthly-physical-inspection/list/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

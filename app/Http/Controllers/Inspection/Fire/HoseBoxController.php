@@ -223,7 +223,7 @@ class HoseBoxController extends Controller
 
     public function Store(Request $request)
     {
-        try {   
+        try {
 
             $rules = [
                 'inspection_date' => 'required',
@@ -232,7 +232,7 @@ class HoseBoxController extends Controller
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-            
+
                 'sr_no.*' => 'required',
                 'location.*' => 'required',
                 'hose_box_no.*' => 'required',
@@ -245,7 +245,7 @@ class HoseBoxController extends Controller
                 'observation.*' => 'required',
                 'remarks.*' => 'required',
             ];
-            
+
             $messages = [
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
@@ -253,7 +253,7 @@ class HoseBoxController extends Controller
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
                 'frequency_id.required' => 'Frequency is required',
-            
+
                 'sr_no.*.required' => 'Serial number is required',
                 'location.*.required' => 'Hose box location is required',
                 'hose_box_no.*.required' => 'Hose Box No is required',
@@ -266,7 +266,7 @@ class HoseBoxController extends Controller
                 'observation.*.required' => 'Observation is required',
                 'remarks.*.required' => 'Remarks are required',
             ];
-            
+
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -290,7 +290,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -417,7 +417,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -479,7 +479,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'Fire Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -551,7 +551,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -625,7 +625,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -696,7 +696,7 @@ class HoseBoxController extends Controller
             $mailsubject = 'FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

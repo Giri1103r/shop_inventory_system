@@ -302,7 +302,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -428,7 +428,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -489,7 +489,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -561,7 +561,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -635,7 +635,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -706,7 +706,7 @@ class FireModularInspectionController extends Controller
             $mailsubject = 'FIRE MODULAR INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -885,7 +885,7 @@ class FireModularInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Fire Modular Inspection.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

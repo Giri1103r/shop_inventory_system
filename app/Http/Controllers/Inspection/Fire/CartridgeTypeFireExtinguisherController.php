@@ -300,7 +300,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -429,7 +429,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -490,7 +490,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -562,7 +562,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -636,7 +636,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -707,7 +707,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

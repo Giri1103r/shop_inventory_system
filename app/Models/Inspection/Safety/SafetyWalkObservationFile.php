@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -64,4 +65,10 @@ class SafetyWalkObservationFile extends Model
             }
         }
     }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_walk_observation_files'));
+    }
 }
+

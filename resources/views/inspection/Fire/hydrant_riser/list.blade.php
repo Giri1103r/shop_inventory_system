@@ -1,6 +1,7 @@
 @extends('admin.layouts.admin')
-@section('title', 'Detector Inspection View')
-@section('pageurl', admin_url('fire/detector-inspection/list'))
+@section('title', 'Hydrent Riser Inspection')
+@section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
+
 
 
 @section('content')
@@ -15,7 +16,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
+                            href="{{ admin_url('fire/hydrant-riser-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -193,7 +194,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/detector-inspection/list') }}",
+                        url: "{{ admin_url('fire/hydrant-riser-inspection/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -289,7 +290,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/hydrant-riser-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
@@ -316,7 +317,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/detector-inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/hydrant-riser-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
@@ -385,7 +386,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/status') }}",
+                                url: "{{ admin_url('fire/hydrant-riser-inspection/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -453,7 +454,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/detector-inspection/list/delete') }}",
+                                url: "{{ admin_url('fire/hydrant-riser-inspection/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
