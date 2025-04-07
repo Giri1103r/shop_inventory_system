@@ -236,57 +236,69 @@ class HydrantRiserInspectionContoller extends Controller
     public function Store(Request $request)
     {
         try {
-            // dd($request->all());
-
-
-            // $rules = [
-            //     'issue_date' => 'required',
-            //     'rev_date' => 'required',
-            //     'inspection_date' => 'required',
-            //     'location_id' => 'required',
-            //     'shift_id' => 'required',
-            //     'next_due' => 'required',
-            //     'unit_id' => 'required',
-            //     'frequency_id' => 'required',
-            //     'department.*' => 'required',
-            //     'resource_code.*' => 'required',
-            //     'detector_type.*' => 'required',
-            //     'physical_condition.*' => 'required',
-            //     'cable_condition.*' => 'required',
-            //     'response_indicator.*' => 'required',
-            //     'working_status.*' => 'required',
-            //     'remarks.*' => 'required',
-            //     'observation' => 'required',
-            // ];
-
-            // $messages = [
-            //     'issue_date.required' => 'Issue Date is required.',
-            //     'rev_date.required' => 'Revision Date is required.',
-            //     'inspection_date.required' => 'Inspection Date is required.',
-            //     'location_id.required' => 'Location is required.',
-            //     'shift_id.required' => 'Shift is required.',
-            //     'frequency_id.required' => 'Frequency is required.',
-            //     'next_due.required' => 'Next Due Date is required.',
-            //     'unit_id.required' => 'Unit is required.',
-            //     'department.*.required' => 'Department is required.',
-            //     'resource_code.*.required' => 'Resource Code is required.',
-            //     'detector_type.*.required' => 'Detector Type is required.',
-            //     'physical_condition.*.required' => 'Physical Condition is required.',
-            //     'cable_condition.*.required' => 'Cable Condition is required.',
-            //     'response_indicator.*.required' => 'Response Indicator is required.',
-            //     'working_status.*.required' => 'Working Status is required.',
-            //     'remarks.*.required' => 'Remarks are required.',
-            //     'observation*.required' => 'Observation is  required.',
-            // ];
-
-
-            // $validator = Validator::make($request->all(), $rules, $messages);
-
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
-
-
+            $rules = [
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+            
+                'location_check_id.*' => 'required',
+                'hydrant_no.*' => 'required',
+                'lugs.*' => 'required',
+                'rubber_washer.*' => 'required',
+                'check_nut.*' => 'required',
+                'spindle_wheel.*' => 'required',
+                'blank_cap.*' => 'required',
+                'female_coupling.*' => 'required',
+                'lever.*' => 'required',
+                'flow_test.*' => 'required',
+                'physical_condition.*' => 'required',
+                'condition_of_ivs.*' => 'required',
+                'approach.*' => 'required',
+                'remarks.*' => 'required',
+            
+                'observation' => 'required',
+                'device_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ];
+            
+            $messages = [
+                
+                'inspection_date.required' => 'Inspection Date is required.',
+                'location_id.required' => 'Location is required.',
+                'shift_id.required' => 'Shift is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'unit_id.required' => 'Unit is required.',
+                'frequency_id.required' => 'Frequency is required.',
+            
+                'location_check_id.*.required' => 'Location Check is required.',
+                'hydrant_no.*.required' => 'Hydrant No is required.',
+                'lugs.*.required' => 'Lugs value is required.',
+                'rubber_washer.*.required' => 'Rubber Washer value is required.',
+                'check_nut.*.required' => 'Check Nut value is required.',
+                'spindle_wheel.*.required' => 'Spindle Wheel value is required.',
+                'blank_cap.*.required' => 'Blank Cap value is required.',
+                'female_coupling.*.required' => 'Female Coupling value is required.',
+                'lever.*.required' => 'Lever value is required.',
+                'flow_test.*.required' => 'Flow Test result is required.',
+                'physical_condition.*.required' => 'Physical Condition is required.',
+                'condition_of_ivs.*.required' => 'Condition of IVs is required.',
+                'approach.*.required' => 'Approach value is required.',
+                'remarks.*.required' => 'Remarks are required.',
+            
+                'observation.required' => 'Observation is required.',
+                'device_image.image' => 'The uploaded file must be an image.',
+                'device_image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg.',
+                'device_image.max' => 'The image size must not exceed 2 MB.',
+            ];
+            
+            $validator = Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            
 
             $inspection = $this->hydrant->store();
             $inspection_type = HYDRANT_RISER;
@@ -302,7 +314,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -430,7 +442,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -494,7 +506,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -567,7 +579,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -642,7 +654,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -716,7 +728,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mailsubject = 'HYDRANT AND RISER';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

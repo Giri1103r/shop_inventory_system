@@ -33,6 +33,10 @@
                                     action="{{ admin_url('ohc/first-aid-box/weekly-inspection/add/submit') }}">
                                     @csrf
 
+
+                                    <input type="hidden" name="document_reference_id"
+                                    value="{{ $document_no->id }}">
+                                    
                                     <div class="basic-form">
 
                                         <div class="row">
@@ -40,7 +44,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control">
+                                                        class="form-control" value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -49,7 +53,7 @@
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off">
+                                                            class="form-control"autocomplete="off" value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -61,8 +65,8 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
+                                                        <input type="text" 
+                                                            name="review_date" id="review_date" class="form-control" value="{{ $document_no->rev_dt }}" readonly
                                                             autocomplete="off" readonly>
 
                                                         <div class="input-group-addon input-group-text">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\Inspection\Ohc\OhcSignature;
@@ -29,6 +30,7 @@ class WeeklyFirstAidBoxController extends Controller
     private $medicine;
     private $weekly_first_aid;
     private $signature;
+    private $document_reference;
     private $user;
 
 
@@ -41,6 +43,7 @@ class WeeklyFirstAidBoxController extends Controller
         $this->medicine = new FirstAidEquipment();
         $this->weekly_first_aid = new WeeklyFirstAidBox();
         $this->signature = new OhcSignature();
+        $this->document_reference = new InspectionStaticDocno();
         $this->user = new User();
     }
 
@@ -50,6 +53,7 @@ class WeeklyFirstAidBoxController extends Controller
             if ($request->ajax()) {
                 try {
                     $data = $this->weekly_first_aid->list();
+                    // dd($data);
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -98,9 +102,15 @@ class WeeklyFirstAidBoxController extends Controller
         }
         $location = $this->location->getLocationname();
         $unit = $this->unit->getunit();
+        $shift = $this->shift->getShiftname();
+        $First_aid = $this->certified_First_aid->getFirsaid();
+
         $data = array(
             'location' => $location,
-            'unit' => $unit
+            'unit' => $unit,
+            'shift' => $shift,
+            'First_aid' => $First_aid,
+
         );
 
         return view('inspection.inspection_ohc.weekly_first_aid.list', $data);
@@ -115,12 +125,15 @@ class WeeklyFirstAidBoxController extends Controller
             $First_aid = $this->certified_First_aid->getFirsaid();
             $medicines = $this->medicine->getFirstAidData();
             $location = $this->location->getLocationname();
+            $document_no = $this->document_reference->selectUsingName('WeeklyFirstAidBoxInspectionChecklist');
+
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'First_aid' => $First_aid,
                 'location' => $location,
                 'medicines' => $medicines,
+                'document_no' => $document_no,
             );
 
             return view('inspection.inspection_ohc.weekly_first_aid.add', $data);
@@ -132,6 +145,7 @@ class WeeklyFirstAidBoxController extends Controller
 
     public function Store(Request $request)
     {
+        // dd($request->all());
         try {
 
             try {
@@ -163,12 +177,18 @@ class WeeklyFirstAidBoxController extends Controller
             $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
+
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
+                'document_no' => $document_no,
+
             );
+            // dd($data);
 
             return view('inspection.inspection_ohc.weekly_first_aid.view', $data);
         } catch (Exception $ex) {
@@ -189,12 +209,17 @@ class WeeklyFirstAidBoxController extends Controller
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_created_by = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
                 $inspection_data = json_decode($inspection_details->inspection_data, true);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
 
                 $data = array(
                     'inspection_details' => $inspection_details,
                     'inspection_created_by' => $inspection_created_by,
                     'inspection_data' => $inspection_data,
+                    'document_no' => $document_no,
+
                 );
+                // dd($data);
             }
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -231,10 +256,11 @@ class WeeklyFirstAidBoxController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document No',
-                'Issue Date',
+                'First Aid Box No',
+                'Shift',
                 'Location',
                 'Unit',
+                'First Aider Name',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -243,10 +269,11 @@ class WeeklyFirstAidBoxController extends Controller
             foreach ($allData as $data) {
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
+                $export[] =  $data->first_aid_box_no;
+                $export[] =  getShift($data->shift_id);
                 $export[] =  getLocationname($data->location);
                 $export[] =  getUnitname($data->unit);
+                $export[] =  getFirstAider($data->first_aider);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
                 $exportData[] = $export;
@@ -279,10 +306,11 @@ class WeeklyFirstAidBoxController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document No',
-                'Issue Date',
+                'First Aid Box No',
+                'Shift',
                 'Location',
                 'Unit',
+                'First Aider Name',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
