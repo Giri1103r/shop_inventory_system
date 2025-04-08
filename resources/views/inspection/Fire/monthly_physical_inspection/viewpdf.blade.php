@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Medicine Store Inspection| KARAM</title>
+    <title>Fire Equipment Monthly Phsyical Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly Medicine Store Inspection</td>
+                    Fire Equipment Monthly Phsyical Inspection</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                    Fire Equipment Monthly Phsyical Inspection
                 </td>
             </tr>
         </table>
@@ -161,14 +161,21 @@
             <td width="50%" style="padding:5px;"><b>Inspection Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_detail->inspection_date) ? $inspection_detail->inspection_date : '') }}
+                {{ Displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Next Date</b></td>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_detail->next_due) ? $inspection_detail->next_due : '') }}
+                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname($inspection_details->unit ? $inspection_details->unit : '') }}
             </td>
         </tr>
 
@@ -176,91 +183,91 @@
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($inspection_detail->created_by) ? $inspection_detail->created_by : '') }}</td>
+                {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_detail->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_details->created_at) }}</td>
         </tr>
     </table>
 
     <br>
+
 
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Medicine Store Inspection
+                    Fire Equipment Monthly Phsyical Inspection
                 </td>
             </tr>
         </table>
     </div>
 
 
-    <table style="width: 100%; border-collapse: collapse; padding: 5px;">
+    <table style="width: 100%; border-collapse: collapse; padding: 5px; margin-bottom: 20px;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                    Name Of Inspection</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Expiry Date</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Inspected By</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    {{ __('inspection.remarks') }}</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    {{ __('inspection.sr_no') }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Equipment Name
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    {{ __('inspection.status') }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    {{ __('inspection.remarks') }}
+                </th>
             </tr>
-
         </thead>
         <tbody>
             @foreach ($inspection_data as $medicines)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $loop->iteration }}</td>
+                        {{ $loop->iteration }}
+                    </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getMedicinename($medicines['medicine_id']) }}</td>
+                        {{ getMonthlyInspectionEquipmentname($medicines['id']) }}
+                    </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $medicines['available_quantity'] }}</td>
+                        {{ $medicines['status'] }}
+                    </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ Displaydateformat($medicines['expired_date']) }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getUsername($medicines['emp_id']) }}</td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $medicines['remarks'] }}</td>
+                        {{ $medicines['remarks'] }}
+                    </td>
                 </tr>
             @endforeach
-            <tr>
-                <td colspan="3"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by->requestor_file_path) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
-                </td>
-                <td colspan="3"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_detail->updated_by != null)
-                        <img src="{{ admin_url($inspection_updated_by->requestor_file_path) }}"
-                            alt="Verified By Signature" style="height: 50px;">
-                        <div>Verified By: {{ getUsername($inspection_detail->updated_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-            </tr>
-
         </tbody>
     </table>
+
+
+    @foreach ($images as $index => $image)
+        <div
+            style="width: 100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold; padding-top: 10px;">
+            {{ getMonthlyInspectionEquipmentname($index) }}
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <tr>
+                @foreach ($image as $key => $img)
+                    <td style="border: 1px solid black; text-align: center; padding: 5px; vertical-align: middle;">
+                        <img src="{{ admin_url($img->file_path) }}" alt="Verified By Signature"
+                            style="height: 50px; width: auto;">
+                    </td>
+
+                    @if ($key % 2 == 1)
+            </tr>
+            <tr>
+    @endif
+    @endforeach
+    </tr>
+    </table>
+    @endforeach
+
     <br>
 
 </body>

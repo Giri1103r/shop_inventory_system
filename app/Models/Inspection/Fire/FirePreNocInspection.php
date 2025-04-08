@@ -14,9 +14,7 @@ class FirePreNocInspection extends Model
     protected $fillable = [
         'id',
         'inspection_id',
-        'doc_no',
-        'issue_date',
-        'rev_dt',
+        'document_reference_id',
         'block_based_statement',
         'block',
         'checklist',
@@ -38,7 +36,7 @@ class FirePreNocInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pre_noc_checklist.*');
+        $query = $this->select('inspection_fire_pre_noc_checklist.*','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_pre_noc_checklist.document_reference_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -95,9 +93,7 @@ class FirePreNocInspection extends Model
         }
 
         $insert_array = [
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'rev_dt' => $request->rev_dt,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'block_based_statement' => $request->block_based_statement,
             'block' => $request->block,
             'checklist' => json_encode($structuredChecklist),
@@ -111,7 +107,9 @@ class FirePreNocInspection extends Model
 
     public function selectOne($id)
     {
-        $data =   $this->select('inspection_fire_pre_noc_checklist.*')->where('inspection_fire_pre_noc_checklist.id', $id)->first();
+        $data =   $this->select('inspection_fire_pre_noc_checklist.*','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')->where('inspection_fire_pre_noc_checklist.id', $id)
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_pre_noc_checklist.document_reference_id')
+            ->first();
         return $data;
     }
 

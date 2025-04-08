@@ -14,9 +14,7 @@ class DailyFireHouseInspection extends Model
     protected $fillable = [
         'id',
         'inspection_id',
-        'doc_no',
-        'issue_date',
-        'rev_dt',
+        'document_reference_id',
         'date_of_inspection',
         'unit_id',
         'shift_id',
@@ -41,7 +39,7 @@ class DailyFireHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id');
+        $query = $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_shift_option.shift')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_daily_fire_pump_checklist.shift_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -98,9 +96,7 @@ class DailyFireHouseInspection extends Model
         }
 
         $insert_array = [
-            'doc_no' => $request->doc_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'rev_dt' => $request->rev_dt,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'unit_id' => decryptId($request->unit_id),
             'shift_id' => decryptId($request->shift_id),
@@ -116,7 +112,12 @@ class DailyFireHouseInspection extends Model
 
     public function selectOne($id)
     {
-        $data =   $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_fire_signatureupload.file_path')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')->leftjoin('inspection_fire_signatureupload', 'inspection_daily_fire_pump_checklist.id', '=', 'inspection_fire_signatureupload.inspection_id')->where('inspection_fire_signatureupload.type', DAILY_FIRE_PUMP)->where('inspection_daily_fire_pump_checklist.id', $id)->first();
+        $data =   $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_fire_signatureupload.file_path','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')
+        ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')
+        ->leftjoin('inspection_fire_signatureupload', 'inspection_daily_fire_pump_checklist.id', '=', 'inspection_fire_signatureupload.inspection_id')
+        ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_daily_fire_pump_checklist.document_reference_id')
+        ->where('inspection_fire_signatureupload.type', DAILY_FIRE_PUMP)
+        ->where('inspection_daily_fire_pump_checklist.id', $id)->first();
         return $data;
     }
 

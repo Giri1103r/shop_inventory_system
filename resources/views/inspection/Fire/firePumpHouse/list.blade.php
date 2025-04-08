@@ -59,10 +59,9 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Inspection Id</th>
-                                        <th>Doc No.</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev. Date </th>
+                                        <th>Date of Inspection</th>
                                         <th>Unit</th>
+                                        <th>Shift</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -141,21 +140,16 @@
                             name: 'inspection_id'
                         },
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date'
-                        },
-                       
-                        {
-                            data: 'rev_dt',
-                            name: 'rev_dt'
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection'
                         },
                         {
                             data: 'unit_name',
                             name: 'unit_name'
+                        },
+                        {
+                            data: 'shift',
+                            name: 'shift'
                         },
                         {
                             data: 'status',

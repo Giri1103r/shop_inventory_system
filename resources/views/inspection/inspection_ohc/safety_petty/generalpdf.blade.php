@@ -160,20 +160,21 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_details->document_number) ? $sfty_petty_details->document_number : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($sfty_petty_details->issue_date) ? $sfty_petty_details->issue_date : '') }}
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -226,36 +227,36 @@
             $i = 1;
         @endphp
         <tbody>
-            <tr>
-                <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->serial_number) ? $sfty_petty_checklist->serial_number : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getUsername($sfty_petty_checklist->employee_name) }}</td>
-                <td style="border: 2px solid black; padding: 8px;"> {{ isset($sfty_petty_checklist->employee_code) ? $sfty_petty_checklist->employee_code : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($sfty_petty_checklist->department) }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($sfty_petty_checklist->unit) }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->date) ? $sfty_petty_checklist->date : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->amount) ? $sfty_petty_checklist->amount : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->description) ? $sfty_petty_checklist->description : '' }}</td>
-                <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if($signature_amount_givenby && $signature_amount_givenby->file_path)
-                        <img src="{{ admin_url($signature_amount_givenby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
-                        {{ getUsername($sfty_petty_checklist->amount_given_by) }}
-                    @else
-                        <div>N/A</div>
-                    @endif
-                </td>
-                <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if($signature_amount_receivedby && $signature_amount_receivedby->file_path)
-                        <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
-                        {{ getUsername($sfty_petty_checklist->amount_received_by) }}
-                    @else
-                        <div>N/A</div>
-                    @endif
-                </td>                
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_checklist->remark) ? $sfty_petty_checklist->remark : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($sfty_petty_checklist->created_by) ? $sfty_petty_checklist->created_by : '') }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($sfty_petty_checklist->created_at) }}</td>
-            </tr>
+                <tr>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->serial_number) ? $sfty_petty_details->serial_number : '' }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($sfty_petty_details->employee_name) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;"> {{ isset($sfty_petty_details->employee_code) ? $sfty_petty_details->employee_code : '' }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($sfty_petty_details->department) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($sfty_petty_details->unit) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->date) ? $sfty_petty_details->date : '' }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->amount) ? $sfty_petty_details->amount : '' }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->description) ? $sfty_petty_details->description : '' }}</td>
+                    <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                        @if($signature_amount_givenby && $signature_amount_givenby->file_path)
+                            <img src="{{ admin_url($signature_amount_givenby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                            {{ getUsername($sfty_petty_details->amount_given_by) }}
+                        @else
+                            <div>N/A</div>
+                        @endif
+                    </td>
+                    <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                        @if($signature_amount_receivedby && $signature_amount_receivedby->file_path)
+                            <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                            {{ getUsername($sfty_petty_details->amount_received_by) }}
+                        @else
+                            <div>N/A</div>
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->remark) ? $sfty_petty_details->remark : '' }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($sfty_petty_details->created_by) ? $sfty_petty_details->created_by : '') }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($sfty_petty_details->created_at) }}</td>
+                </tr>
         </tbody>
     </table>
 

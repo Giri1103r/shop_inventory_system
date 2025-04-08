@@ -77,9 +77,9 @@ class OccupationHealthInspectionController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
@@ -127,25 +127,25 @@ class OccupationHealthInspectionController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            $btn .=  '<a href="' . admin_url('ohc/inspection/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .=  '<a href="' . admin_url('ohc/inspection/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ($row->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->approve_status == WAITING_FOR_CAPA_ACTION || $row->approve_status == L2_MANAGER_REJECTED || $row->approve_status == EHS_OFFICER_REJECTED || $row->approve_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/inspection/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -158,12 +158,20 @@ class OccupationHealthInspectionController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
-
-        return view('inspection.inspection_ohc.occupational_heath_inspection.list');
+        $unit = $this->unit->getunit();
+        $shift = $this->shift->getShiftname();
+        $location = $this->location->getLocationname();
+        $data = array(
+            'unit' => $unit,
+            'shift' => $shift,
+            'location' => $location,
+        );
+        return view('inspection.inspection_ohc.occupational_heath_inspection.list',$data);
     }
 
 
@@ -185,7 +193,7 @@ class OccupationHealthInspectionController extends Controller
                 'checklist_details' =>  $checklist_details,
                 'location' => $location,
                 'getoption' => $getoption,
-                'getoption' => $getoption,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
 
             );
@@ -301,7 +309,7 @@ class OccupationHealthInspectionController extends Controller
 
                 $requestorsignature =  $occupational_health_center->created_by;
 
-
+                $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
                 $data = array(
                     'occupational_health_center' =>$occupational_health_center,
@@ -309,7 +317,8 @@ class OccupationHealthInspectionController extends Controller
                     'checklist_details' =>  $checklist_details, 'requestorsignature' => $requestor_signature,
                     'getoption' => $getoption,
                     'statuslog' => $statuslog,
-                    'signatureview'=> $requestor_signature
+                    'signatureview'=> $requestor_signature,
+                    'document_no'=> $document_no
                 );
             }
             return view('inspection.inspection_ohc.occupational_heath_inspection.view', $data);
@@ -333,13 +342,15 @@ class OccupationHealthInspectionController extends Controller
 
                 $type = OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST;
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
+                $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
 
                 $data = array(
                     'occupational_health_center' =>$occupational_health_center,
                     'inspectionCkeclist' => $inspectionCkeclist,
                     'checklist_details' =>  $checklist_details, 'requestorsignature' => $requestor_signature,
                     'getoption' => $getoption,
-                    'signatureview'=> $requestor_signature
+                    'signatureview'=> $requestor_signature,
+                    'document_no'=> $document_no
 
                 );
             }
@@ -763,11 +774,11 @@ class OccupationHealthInspectionController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
+                $export[] =  $data->rev_dt;
                 $export[] =  Displaydateformat($data->issue_date);
                 $export[] = Displaydateformat($data->next_due);
                 $export[] = Displaydateformat($data->date_of_inspection);
-                $export[] =  getShift($data->shift);
+                $export[] =  ($data->shift);
                 $export[] =  getLocationname($data->location);
                 $export[] =  getUnitname($data->unit);
                 $export[] =  getInspectionStatus($data->approve_status);;
@@ -868,6 +879,8 @@ class OccupationHealthInspectionController extends Controller
                 $checklist_details = getCheckListQuestion(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
                 $options =  getoption(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
+                $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
+
             }
             $data = [
                 'weeklyAmbulance' => $weeklyAmbulance,
@@ -875,6 +888,7 @@ class OccupationHealthInspectionController extends Controller
                 'inspectionCkeclist' => $inspectionCkeclist,
                 'checklist_details' =>  $checklist_details,
                 'getoption' => $getoption,
+                'document_no' => $document_no,
                 'pagetitle' => "Occupational Health Center Inspection Checklist",
             ];
 

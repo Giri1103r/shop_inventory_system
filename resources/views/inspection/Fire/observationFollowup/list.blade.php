@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aider List' )
-@section('pageurl', admin_url('ohc/first-aider/list'))
+@section('title', 'Fire Pre Noc Checklist')
+@section('pageurl', admin_url('fire/pre-noc/checklist/list'))
 
 
 @section('content')
@@ -13,10 +13,9 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/first-aider/add') }}">Add</x-button-add>
+                            {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('fire/pre-noc/checklist/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -25,15 +24,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="next_review_date"
-                                                class="form-label ">Next Review date</label>
-                                            <input type="text" name="next_review_date" id="next_review_date"
+                                            <label for="inspection_id" class="form-label ">Inspection Id</label>
+                                            <input type="text" name="inspection_id" id="inspection_id"
                                                 class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="last_updated_date"
-                                                class="form-label ">Last Updated Date</label>
-                                            <input type="text" name="last_updated_date" id="last_updated_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -65,10 +58,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Next Review Date</th>
-                                        <th>Last Updated Date</th>
+                                        <th>Observation Id</th>
+                                        <th>Date of Inspection</th>
+                                        <th>Approve Status </th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -76,7 +69,6 @@
                             </table>
                         </div>
                     </div>
-
 
                 </div>
             </div>
@@ -91,16 +83,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            var IssueDatepicker = flatpickr("#next_review_date", {
-                dateFormat: "d-m-Y",
 
-
-            });
-            var LastDatePickr = flatpickr("#last_updated_date", {
-                dateFormat: "d-m-Y",
-
-
-            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -127,17 +110,16 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('ohc/first-aider/list') }}",
+                        url: "{{ admin_url('fire/checklist-observation/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.next_review_date = $('#next_review_date').val();
-                            d.last_updated_date = $('#last_updated_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.inspection_id = $('#inspection_id').val();
                             d.status = $('#status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -153,20 +135,22 @@
                         },
 
                         {
-                            data: 'next_review_date',
-                            name: 'next_review_date'
+                            data: 'observation_id',
+                            name: 'observation_id'
                         },
                         {
-                            data: 'last_updated_date',
-                            name: 'last_updated_date'
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection'
                         },
+                       
                         {
                             data: 'inspection_status',
                             name: 'inspection_status'
                         },
+                       
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'action',
@@ -196,21 +180,16 @@
                                     extend: 'pdf',
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
-
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        next_review_date = $('#next_review_date').val();
-                                        last_updated_date = $('#last_updated_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#checklist').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aider/export/pdf') }}" +
+                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&next_review_date=' + next_review_date +
-                                            '&last_updated_date=' + last_updated_date +
-                                            '&rev_date=' + rev_date +
+                                            '&checklist=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -219,18 +198,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        next_review_date = $('#next_review_date').val();
-                                        last_updated_date = $('#last_updated_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#checklist').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aider/export/excel') }}" +
+                                            "{{ admin_url('audit/assessment/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&next_review_date=' + next_review_date+
-                                            '&last_updated_date=' + last_updated_date +
-                                            '&rev_date=' + rev_date +
+                                            '&checklist=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -267,12 +242,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate First Aider List') }}';
+                        var title = '{{ __('Do You want to In-Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate First Aider List') }}';
+                        var title = '{{ __('Do You want to Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -292,7 +267,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/first-aider/status') }}",
+                                url: "{{ admin_url('fire/pre-noc/checklist/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -330,6 +305,87 @@
                             Swal.fire('Something went wrong', '', 'info');
                         }
                     })
+
+                });
+
+
+                /* Delete Record */
+                $(document).on('click', '.recordDelete', function() {
+
+                    var id = $(this).data('id');
+                    var login_id = $(this).data('login_id');
+
+                    var title = '{{ __('Do You want to Delete Equipment checklist') }}';
+                    var text = '{{ __('common.delete') }}';
+                    var btncolor = '#dc3545'
+
+                    Swal.fire({
+                        title: title,
+                        icon: 'warning',
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: text,
+                        confirmButtonColor: btncolor,
+                        denyButtonColor: '#28a745',
+                        customClass: {
+                            confirmButton: 'btn-skew',
+                            cancelButton: 'btn-skew'
+                        },
+                    }).then((result) => {
+
+                        if (result.value) {
+                            $.ajax({
+                                url: "{{ admin_url('audit/assessment/delete') }}",
+                                type: 'post',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                        .attr('content')
+                                },
+                                data: {
+                                    id: id,
+                                    login_id: login_id
+                                },
+                                success: function(response) {
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-right',
+                                        showConfirmButton: false,
+                                        timer: 3000,
+                                        timerProgressBar: true,
+                                        didOpen: (toast) => {
+                                            toast.addEventListener(
+                                                'mouseenter',
+                                                Swal.stopTimer)
+                                            toast.addEventListener(
+                                                'mouseleave',
+                                                Swal.resumeTimer
+                                            )
+                                        }
+                                    });
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: response.msg
+                                    });
+                                    table.draw();
+                                },
+                                error: function(data) {
+                                    if (data.status === 406 && data.responseJSON.msg ===
+                                        'module_exits') {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        });
+                                    } else {
+                                        $.notify(data.responseJSON.msg, "error");
+                                    }
+                                }
+                            });
+                        } else if (result.isDenied) {
+                            Swal.fire('Something went wrong', '', 'info');
+                        }
+                    })
+
 
                 });
 

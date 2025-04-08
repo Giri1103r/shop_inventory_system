@@ -42,12 +42,12 @@ class SafetyPettyChecklist extends Model
         'trash' => 'NO'
     ];
 
-    public function store($sfty_petty_id)
+    public function store()
     {
         $request = request();
 
         $insert_array = array(
-            'safety_petty_logbook_details_id' => $sfty_petty_id,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'serial_number' =>$request->serial_number,
             'employee_name' => $request->emp_id,
             'employee_code' => $request->employee_code,
@@ -63,7 +63,7 @@ class SafetyPettyChecklist extends Model
         );
 
         $insertedData =  $this->create($insert_array);
-          
+
         return $insertedData;
     }
 

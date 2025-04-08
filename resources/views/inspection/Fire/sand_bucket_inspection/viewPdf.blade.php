@@ -239,16 +239,19 @@
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
         </tr>
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND STAND BUCKET NO.</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND BUCKET NO.</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND STAND
+                BUCKET NO.</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND
+                BUCKET NO.</th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">QUALITY AND QUANTITY OF SAND</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">QUALITY AND
+                QUANTITY OF SAND</th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">APPROACH</th>
         </tr>
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >FIRE BUCKET</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >FIRE BUCKET STAND</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" >PAINT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET STAND</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PAINT</th>
         </tr>
 
         @foreach ($inspection as $details)
@@ -256,7 +259,7 @@
                 <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ ($details->fire_bucket_no) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_no }}</td>
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->condition == 1)
                         <span style="color: green; font-weight: bold;">&#10004; Good</span>
@@ -341,6 +344,13 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
+                @php
+                    $verifier_signature = GetFireSignature(
+                        $forklift_details->created_by,
+                        $forklift_details->id,
+                        SAND_BUCKET_INSPECTION,
+                    );
+                @endphp
             @endif
             @if (isset($forklift_details->created_at))
                 <tr>
@@ -350,6 +360,13 @@
                     </td>
                 </tr>
             @endif
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($verifier_signature) }}" style="width:80px;" />
+                </td>
+            </tr>
             @if (isset($forklift_details->approved_by))
                 @if ($forklift_details->verified_by == $forklift_details->approved_by)
                     <tr>
@@ -360,6 +377,23 @@
                         </td>
                     </tr>
                 @endif
+
+                @php
+                    $approver_signature = GetFireSignature(
+                        $forklift_details->created_by,
+                        $forklift_details->id,
+                        SAND_BUCKET_INSPECTION,
+                    );
+                @endphp
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        <img src="{{ admin_url($approver_signature) }}" style="width:80px;" />
+                    </td>
+                </tr>
+
             @endif
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
@@ -411,6 +445,20 @@
                     {{ $forklift_details->capa_remarks }}
                 </td>
             </tr>
+            @php
+                $creator_signature = GetFireSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    SAND_BUCKET_INSPECTION,
+                );
+            @endphp
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($creator_signature) }}" style="width:80px;" />
+                </td>
+            </tr>
         </table>
         <br>
     @endif
@@ -444,6 +492,22 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->capa_ehs_remarks }}
+                </td>
+            </tr>
+
+            @php
+                $verifier_signature = GetFireSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    SAND_BUCKET_INSPECTION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($verifier_signature) }}" style="width:80px;" />
                 </td>
             </tr>
         </table>
@@ -480,6 +544,22 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_one_manager_remarks }}
+                </td>
+            </tr>
+
+            @php
+                $l1_manager_signature = GetFireSignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    SAND_BUCKET_INSPECTION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($l1_manager_signature) }}" style="width:80px;" />
                 </td>
             </tr>
         </table>
@@ -522,6 +602,22 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_two_manager_remarks }}
+                </td>
+            </tr>
+
+            @php
+                $l2_manager_signature = GetFireSignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    SAND_BUCKET_INSPECTION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($l2_manager_signature) }}" style="width:80px;" />
                 </td>
             </tr>
         </table>

@@ -46,19 +46,19 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_details->document_number) ? $sfty_petty_details->document_number : '' }}
+                                            {{ $document_no->doc_no }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_details->issue_date) ? $sfty_petty_details->issue_date : '' }}
+                                            {{ Displaydateformat($document_no->issue_date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_details->revision_date) ? $sfty_petty_details->revision_date : '' }}
+                                            {{ $document_no->rev_dt }}
                                         </div>
                                     </div>
 
@@ -88,57 +88,57 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.ser_no') }}</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->serial_number) ? $sfty_petty_checklist->serial_number : '' }}
+                                            {{ isset($sfty_petty_details->serial_number) ? $sfty_petty_details->serial_number : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Employee Name</label>
                                         <div class="view_data">
-                                            {{ getUsername($sfty_petty_checklist->employee_name) }}
+                                            {{ getUsername($sfty_petty_details->employee_name) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label
                                             class="form-label view_label">Employee Code</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->employee_code) ? $sfty_petty_checklist->employee_code : '' }}
+                                            {{ isset($sfty_petty_details->employee_code) ? $sfty_petty_details->employee_code : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label
                                             class="form-label view_label">Department</label>
                                         <div class="view_data">
-                                            {{ getDepartment($sfty_petty_checklist->department) }}
+                                            {{ getDepartment($sfty_petty_details->department) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUnitname($sfty_petty_checklist->unit) }}
+                                            {{ getUnitname($sfty_petty_details->unit) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->date) ? $sfty_petty_checklist->date : '' }}
+                                            {{ isset($sfty_petty_details->date) ? $sfty_petty_details->date : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->amount) ? $sfty_petty_checklist->amount : '' }}
+                                            {{ isset($sfty_petty_details->amount) ? $sfty_petty_details->amount : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Description</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->description) ? $sfty_petty_checklist->description : '' }}
+                                            {{ isset($sfty_petty_details->description) ? $sfty_petty_details->description : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Given By</label>
                                         <div class="view_data">
-                                            {{ getUsername($sfty_petty_checklist->amount_given_by) }}
+                                            {{ getUsername($sfty_petty_details->amount_given_by) }}
                                         </div>
                                     </div>
 
@@ -154,7 +154,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Received By</label>
                                         <div class="view_data">
-                                            {{ getUsername($sfty_petty_checklist->amount_received_by) }}
+                                            {{ getUsername($sfty_petty_details->amount_received_by) }}
                                         </div>
                                     </div>
                                     @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
@@ -168,21 +168,21 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">remark</label>
                                         <div class="view_data">
-                                            {{ isset($sfty_petty_checklist->remark) ? $sfty_petty_checklist->remark : '' }}
+                                            {{ isset($sfty_petty_details->remark) ? $sfty_petty_details->remark : '' }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($sfty_petty_checklist->created_by) ? $sfty_petty_checklist->created_by : '') }}
+                                            {{ getUsername(isset($details->created_by) ? $details->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($sfty_petty_checklist->created_at) ? $sfty_petty_checklist->created_at : '') }}
+                                            {{ displaydateformat(isset($details->created_at) ? $details->created_at : '') }}
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 

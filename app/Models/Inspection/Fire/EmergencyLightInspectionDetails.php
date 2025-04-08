@@ -48,7 +48,7 @@ class EmergencyLightInspectionDetails extends Model
         $emergency_light_number = $request->emergency_light_number;
         $power_supply = $request->power_supply;
         $light_condition = $request->light_condition;
-        $swith_condition = $request->swith_condition;
+        $switch_condition = $request->switch_condition;
         $status = $request->status;
         $remarks = $request->remarks;
 
@@ -60,8 +60,8 @@ class EmergencyLightInspectionDetails extends Model
                 'location' => $location[$index],
                 'quantity' => $quantity[$index],
                 'capacity' => $capacity[$index],
-                'swith_condition' => decryptId($swith_condition[$index]),
-                'emergency_of_light' => decryptId($emergency_light_number[$index]),
+                'switch_condition' => decryptId($switch_condition[$index]),
+                'emergency_of_light' => ($emergency_light_number[$index]),
                 'condition_of_light' => decryptId($condition_of_light[$index]),
                 'type_of_light' => decryptId($type_of_light[$index]),
                 'power_supply' => decryptId($power_supply[$index]),

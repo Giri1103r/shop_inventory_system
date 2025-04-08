@@ -29,7 +29,7 @@
                             {{ ($value->doc_no) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->revision_date) }}
+                            {{ Displaydateformat($value->rev_dt) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>

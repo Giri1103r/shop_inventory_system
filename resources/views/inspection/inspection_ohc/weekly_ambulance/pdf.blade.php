@@ -31,23 +31,23 @@
                             {{ displaydateformat($value->date_of_inspection) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getShift($value->shift) }}
+                            {{ $value->shift }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($value->location) }}
+                            {{ $value->location_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit) }}
+                            {{ $value->unit_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getInspectionStatus($value->approve_status) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->created_by) }}
+                            {{ getusername($value->inspection_created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
+                            {{ Displaydateformat($value->inspection_created_at) }}
                         </td>
                     </tr>
                     @php

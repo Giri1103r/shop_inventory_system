@@ -45,20 +45,20 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Doc. No</label>
                                         <div class="view_data">
-                                            {{ isset($fireNoc->document_no) ? $fireNoc->document_no : '' }}
+                                            {{ isset($fireNoc->doc_no) ? $fireNoc->doc_no : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issue Dt.</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($fireNoc->issuedate) }}
+                                            {{ displayDateformat($fireNoc->issue_date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Rev. & Dt.</label>
                                         <div class="view_data">
-                                            {{ $fireNoc->rev_date }}
+                                            {{ $fireNoc->rev_dt }}
                                         </div>
                                     </div>
 

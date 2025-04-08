@@ -14,8 +14,22 @@ class FireMockDrillInspection extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'date_of_closure',
         'inspection_date',
         'inspection_status',
+        'checked_by',
+        'verified_by',
+        'approved_by',
+        'description',
+        'remarks',
+        'inspection_status',
+        'capa_recomendation',
+        'capa_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'capa_ehs_remarks',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'created_by',
         'updated_by',
         'created_at',
@@ -40,9 +54,7 @@ class FireMockDrillInspection extends Model
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
         if (isset($request->issue_date) && $request->issue_date) {
             $query = $query->where('inspection_fire_mock_drill_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
@@ -127,9 +139,7 @@ class FireMockDrillInspection extends Model
             ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
 
         if (isset($request->document_number) && $request->document_number) {
@@ -163,6 +173,7 @@ class FireMockDrillInspection extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -239,6 +250,7 @@ class FireMockDrillInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
             ];
             $this->where('id', $id)->update($update_array);
         } else {

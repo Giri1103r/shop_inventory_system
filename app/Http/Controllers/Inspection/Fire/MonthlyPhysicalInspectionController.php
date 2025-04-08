@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Inspection\Fire;
 
 use Exception;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -13,8 +15,10 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\Master\Equipment;
 use App\Models\Inspection\Safety\FireSafetyEquipment;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 use App\Models\Inspection\Safety\FireSafetyEquipmentDetails;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 
 class MonthlyPhysicalInspectionController extends Controller
 {
@@ -23,15 +27,20 @@ class MonthlyPhysicalInspectionController extends Controller
     private $equipment;
     private $document_reference;
     private $equipment_list;
+    private $location;
+    private $unit;
+    private $monthly_inspection_file_upload;
 
 
     public function __construct()
     {
-        $this->safety_equipment = new FireSafetyEquipment();
+        $this->safety_equipment = new MonthlyPhysicalInspection();
         $this->equipment = new Equipment();
-        $this->safety_equipment_details = new FireSafetyEquipmentDetails();
         $this->document_reference = new InspectionStaticDocno();
         $this->equipment_list = new MonthlyPhysicalEquipmentList();
+        $this->location = new Location();
+        $this->unit = new Unit();
+        $this->monthly_inspection_file_upload = new MonthlyPhysicalInspectionFileUpload();
     }
 
     public function Index(Request $request)
@@ -55,17 +64,17 @@ class MonthlyPhysicalInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/fire-safety-equipment/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            //         $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                            //     <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                            // </a>';
+                            $btn = '<a href="' . admin_url('fire/equipment-monthly-physical-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('fire/equipment-monthly-physical-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                            </a>';
                             return $btn;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
                         })
                         ->addColumn('standard_norms', function ($row) {
                             if ($row->status == STANDARD) {
@@ -78,7 +87,7 @@ class MonthlyPhysicalInspectionController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date', 'standard_norms'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'standard_norms'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -93,9 +102,13 @@ class MonthlyPhysicalInspectionController extends Controller
         }
 
         $equipment = $this->equipment->get();
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
 
         $data = array(
             'equipment' => $equipment,
+            'locations' => $location,
+            'units' => $unit,
         );
         return view('inspection.fire.monthly_physical_inspection.list', $data);
     }
@@ -106,17 +119,22 @@ class MonthlyPhysicalInspectionController extends Controller
             $equipment = $this->equipment->get();
             $document_no = $this->document_reference->selectUsingName('FireEquipmentMonthlyPhysicalInspection');
             $equipment_list = $this->equipment_list->getEquipmentList();
+            $location = $this->location->getLocationName();
+            $unit = $this->unit->getUnit();
+
 
             $data = array(
                 'equipment' => $equipment,
                 'document_no' => $document_no,
                 'equipment_list' => $equipment_list,
+                'locations' => $location,
+                'units' => $unit,
             );
             return view('inspection.fire.monthly_physical_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -124,44 +142,24 @@ class MonthlyPhysicalInspectionController extends Controller
     {
         try {
 
-            dd($request->all());
 
             $rules = [
-                'issue_date' => 'required',
-                'equipment_name.*' => 'required',
-                'item_code.*' => 'required',
-                'standard_norms.*' => 'required',
-                'equipment_category.*' => 'required',
-                'unit_of_measurement.*' => 'required',
-                'minimum_order_value.*' => 'required',
-                'economic_order_quantity.*' => 'required',
-                'observation_status.*' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'unit_id' => 'required',
+                'status.*' => 'required',
                 'remarks.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+                'equipment.*' => 'required',
             ];
 
             $messages = [
-                'doc_no.required' => 'Document number is required.',
-                'issue_date.required' => 'Issue Date is required.',
-                'equipment_name.*.required' => 'Equipment Name is required.',
-                'item_code.*.required' => 'Item code  is required.',
-                'standard_norms.*.required' => 'Standard Norms is required.',
-                'equipment_category.*.required' => 'Equipment Category is required.',
-                'unit_of_measurement.*.required' => 'Unit of measurement is required.',
-                'minimum_order_value.*.required' => 'Minimum order value is required.',
-                'economic_order_quantity.*.required' => 'Economic Order Quantity is required.',
-                'observation_status.*.required' => 'Observation Status is required.',
-                'remarks.*.required' => 'Remarks is required.',
-                'signature_upload' => 'Signature is required.',
+                'inspection_date.required' => 'Inspection Date is required.',
+                'location_id.required' => 'Location is required.',
+                'unit_id.required' => 'Unit is required.',
+                'status.*.required' => 'Status is required.',
+                'remarks.*.required' => 'Remarks are required.',
+                'equipment.*.required' => 'Equipment is required.',
             ];
-
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -169,25 +167,16 @@ class MonthlyPhysicalInspectionController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $fire_safety_equipment_store = $this->safety_equipment->store();
+            $fire_safety_equipment = $this->safety_equipment->store();
+            $image_upload = $this->monthly_inspection_file_upload->store($fire_safety_equipment->id);
+
+
             Session::flash('success', 'Equipment Name is Added Successfully');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
-        }
-    }
-
-    public function GetEquipment(Request $request)
-    {
-        try {
-            $locations = $this->equipment->GetEquipment();
-            return response()->json($locations);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Please try again after sometimes'], 406);
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -196,19 +185,24 @@ class MonthlyPhysicalInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->safety_equipment->selectOne($id);
+            $images = $this->monthly_inspection_file_upload->GetFile($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $inspection_data = json_decode($inspection_details->inspected_data, true);
 
             $data = array(
-                'details' => $inspection_details,
+                'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
+                'images' => $images,
+                'inspection_data' => $inspection_data,
             );
+
+
 
             return view('inspection.fire.monthly_physical_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -246,7 +240,7 @@ class MonthlyPhysicalInspectionController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Safety Equipment Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire Equipment Monthly Physical Inspection Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -254,7 +248,7 @@ class MonthlyPhysicalInspectionController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -280,7 +274,7 @@ class MonthlyPhysicalInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Safety Equipment Details",
+                'pagetitle' => "Fire Equipment Monthly Physical Inspection Details",
             );
 
             $property = [
@@ -300,12 +294,12 @@ class MonthlyPhysicalInspectionController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Safety Equipment Details.pdf";
+            $filename = "Fire Equipment Monthly Physical Inspection Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -316,13 +310,15 @@ class MonthlyPhysicalInspectionController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $inspection_details = $this->safety_equipment->selectOne($id);
-                $inspection = $this->safety_equipment_details->GetDetails($inspection_details->id);
+                $images = $this->monthly_inspection_file_upload->GetFile($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+                $inspection_data = json_decode($inspection_details->inspected_data, true);
 
                 $data = [
                     'inspection_details' => $inspection_details,
-                    'inspection' => $inspection,
-                    'pagetitle' => "Safety Equipment List",
+                    'inspection_data' => $inspection_data,
+                    'images' => $images,
+                    'pagetitle' => "Fire Equipment Monthly Physical Inspection List",
                     'document_no' => $document_no,
                 ];
             }
@@ -343,13 +339,13 @@ class MonthlyPhysicalInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Safety Equipment List.pdf";
-            return $mpdf->Output($filename, 'i');
+            $filename = "Fire Equipment Monthly Physical Inspection List.pdf";
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('safety/fire-safety-equipment/list'));
+            return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }
     }
 
@@ -385,5 +381,4 @@ class MonthlyPhysicalInspectionController extends Controller
             return response()->json($isUnique);
         }
     }
-
 }

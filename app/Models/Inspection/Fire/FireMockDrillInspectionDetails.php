@@ -41,6 +41,7 @@ class FireMockDrillInspectionDetails extends Model
     {
         $request = request();
 
+        
 
         $observation = $request->observation;
         $date_of_observation = $request->date_of_observation;

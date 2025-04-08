@@ -15,9 +15,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
     protected $table = 'inspection_ohc_daily_department_first_aid_box_details';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
         'date_of_inspection',
         'first_aider',
         'first_aid_box_no',
@@ -52,7 +50,25 @@ class DailyDepartmentFirstAidBoxDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_daily_department_first_aid_box_details.*');
+
+
+        $query = $this->select(
+            'inspection_ohc_daily_department_first_aid_box_details.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_daily_department_first_aid_box_details.id as inspection_id',
+            'inspection_ohc_daily_department_first_aid_box_details.created_by as inspection_created_by',
+            'inspection_ohc_daily_department_first_aid_box_details.created_at as inspection_created_at',
+        )
+
+            ->leftJoin('masters_unit', 'inspection_ohc_daily_department_first_aid_box_details.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_department_first_aid_box_details.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_department', 'inspection_ohc_daily_department_first_aid_box_details.department', '=', 'masters_department.id')
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_daily_department_first_aid_box_details.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
@@ -60,32 +76,32 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
+            $query = $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_FLOOR_MANAGER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole) || in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
         }
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.unit', decryptId($request->unit_id));
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.issue_date',  DBdateformat($request->issue_date ));
+        if (isset($request->department_id) && $request->department_id) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.department', decryptId($request->department_id));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.shift', decryptId($request->shift));
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status) );
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -142,15 +158,14 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         $request = request();
 
         $insert_array = [
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
+
             'shift' => decryptId($request->shift),
             'location' => decryptId($request->location_id),
             'department' => decryptId($request->department_id),
             'unit' => decryptId($request->unit_id),
             'date' => !empty($request->date) ? DBdateformat($request->date) : null,
             'next_due' => !empty($request->next_due_on) ? DBdateformat($request->next_due_on) : null,
-            'revision_date' => $request->review_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'first_aid_box_no' => $request->first_aid_box_no,
             'first_aider' => decryptId($request->first_aider),
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
@@ -159,7 +174,6 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         ];
 
         return self::create($insert_array);
-
     }
 
     public function Selectone($id)
@@ -167,38 +181,69 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function safetyofficerapprovalupdate($id,$nextStatus){
-        return $this->where('id',$id)->update(['approved_by'=>Auth::id(),'approve_status'=>$nextStatus]);
+    public function safetyofficerapprovalupdate($id, $nextStatus)
+    {
+        return $this->where('id', $id)->update(['approved_by' => Auth::id(), 'approve_status' => $nextStatus]);
     }
 
-    public function floormanagerapprovalupdate($id,$nextStatus){
-        return $this->where('id',$id)->update(['verified_by'=>Auth::id(),'approve_status'=>$nextStatus]);
+    public function floormanagerapprovalupdate($id, $nextStatus)
+    {
+        return $this->where('id', $id)->update(['verified_by' => Auth::id(), 'approve_status' => $nextStatus]);
     }
 
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_daily_department_first_aid_box_details.*');
+
+
+        $query = $this->select(
+            'inspection_ohc_daily_department_first_aid_box_details.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_daily_department_first_aid_box_details.id as inspection_id',
+            'inspection_ohc_daily_department_first_aid_box_details.created_by as inspection_created_by',
+            'inspection_ohc_daily_department_first_aid_box_details.created_at as inspection_created_at',
+        )
+
+            ->leftJoin('masters_unit', 'inspection_ohc_daily_department_first_aid_box_details.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_department_first_aid_box_details.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_department', 'inspection_ohc_daily_department_first_aid_box_details.department', '=', 'masters_department.id')
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_daily_department_first_aid_box_details.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
+        if (isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
+            });
+        }
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         // dd($query);
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)|| in_array(ROLE_FLOOR_MANAGER, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_FLOOR_MANAGER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole) || in_array(ROLE_FLOOR_MANAGER, $userRole)) {
             $query->orderBy('inspection_ohc_daily_department_first_aid_box_details.id', 'DESC');
         } else {
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
         }
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.unit', decryptId($request->unit_id));
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.issue_date',  DBdateformat($request->issue_date));
+        if (isset($request->department_id) && $request->department_id) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.department', decryptId($request->department_id));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.revision_date',  $request->rev_date );
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.shift', decryptId($request->shift));
         }
+
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status) );
+            $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {

@@ -79,14 +79,23 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('unit', function ($row) {
+                            return getUnitname($row->unit);
+                        })
+                        ->addColumn('department', function ($row) {
+                            return getDepartment($row->department);
+                        })
+                        ->addColumn('shift', function ($row) {
+                            return getshift($row->shift);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -114,13 +123,13 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING)) {
-                                $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
@@ -139,8 +148,16 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 }
             }
         }
+        $unit = $this->unit->getunit();
+        $shift = $this->shift->getShiftname();
+        $data = array(
+            'unit' => $unit,
+            'shift' => $shift,
 
-        return view('inspection.inspection_ohc.daily_department_first_aid_box.list');
+
+
+        );
+        return view('inspection.inspection_ohc.daily_department_first_aid_box.list',$data);
     }
 
 
@@ -303,6 +320,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'daily_department_first_aid_box' => $daily_department_first_aid_box,
@@ -311,6 +330,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'floorapproversignatureview' => $floorapproversignatureview,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.daily_department_first_aid_box.view', $data);
@@ -349,6 +369,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'daily_department_first_aid_box' => $daily_department_first_aid_box,
@@ -357,6 +378,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'floorapproversignatureview' => $floorapproversignatureview,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.daily_department_first_aid_box.approval', $data);
@@ -395,7 +417,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
-
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
             }
             $data = [
                 'medicinerequisition' => $medicinerequisition,
@@ -405,6 +427,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 'floorapproversignatureview' => $floorapproversignatureview,
                 'signatureview' => $signatureview,
                 'floormanagersignature' => $floormanagersignature,
+                'document_no' => $document_no,
                 'pagetitle' => "Daily Department First Aid Box",
             ];
 
@@ -588,8 +611,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $export[] = ($data->first_aid_box_no);
                 $export[] = getFirstAider($data->first_aider);
                 $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
