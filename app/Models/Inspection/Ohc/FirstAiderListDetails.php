@@ -35,7 +35,7 @@ class FirstAiderListDetails extends Model
 
             $insert_array = [
                 'reference_id' =>   $first_aider->id,
-                'emp_id' => ($emp_id),
+                'emp_id' => decryptId($emp_id),
                 'designation_id' => $request->designation_id[$index],
                 'department_id' => decryptId($request->department_id[$index]),
                 'unit_id' => decryptId($request->unit_id[$index]),

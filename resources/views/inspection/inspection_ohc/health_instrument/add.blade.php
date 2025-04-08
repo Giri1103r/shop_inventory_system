@@ -35,21 +35,28 @@
                                     <div class="basic-form">
 
                                         <div class="row">
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Health Instrument Calibration ID</label>
+                                                    <input type="text" name="audit_id" id = "audit_id"
+                                                        class="form-control" readonly
+                                                        value="{{ getSequence('HealthInstrument') }}">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Document No </label>
                                                     <input type="text" name="document_no" id="document_no"
-                                                        class="form-control" placeholder=" Enter Document Number ">
+                                                        class="form-control"  value="{{ $document_no->doc_no }}" readonly placeholder=" Enter Document Number ">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
+                                                    <label for="rate" class="form-label">Issued
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="issue_date" id="issue_date"
+                                                        <input type="text" name="issue_date" id="issue_date" value="{{ displaydateformat($document_no->issue_date) }}" readonly
                                                             class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -63,9 +70,9 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
-                                                            autocomplete="off" readonly>
+                                                        <input type="text" 
+                                                            name="review_date" id="review_date" class="form-control"  value="{{ $document_no->rev_dt }}" readonly
+                                                            autocomplete="off" >
 
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -73,6 +80,24 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="unit_id" class="form-label">
+                                                        Unit</label>
+                                                    <select name="unit_id" id="unit_id_1"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+                                                        @foreach ($unitList as $unit)
+                                                            <option value="{{ encryptId($unit->id) }}">
+                                                                {{ $unit->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
 
                                         </div>
                                     </div>
@@ -92,12 +117,6 @@
                                         <div id="lesson_learned_block">
                                             <div class="row lesson_learned_row" style="margin-top: 20px;">
 
-                                                <div class="col-md-4 form-input">
-                                                    <label class="form-label">SR NO</label>
-                                                    <input type="text" class="form-control"
-                                                        name="health_instrument[1][sr_no]" id="sr_no_1" readonly
-                                                        value="HEALTH-0001">
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -125,20 +144,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label for="unit_id" class="form-label">
-                                                            Unit</label>
-                                                        <select name="health_instrument[1][unit_id]" id="unit_id_1"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Unit</option>
-                                                            @foreach ($unitList as $unit)
-                                                                <option value="{{ encryptId($unit->id) }}">
-                                                                    {{ $unit->unit_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                               
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -180,15 +186,19 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Calibration Freqeuncy</label>
-                                                        <input type="text"
-                                                            name="health_instrument[1][calibration_frequency]"
-                                                            id="calibration_frequency_1" class="form-control"
-                                                            placeholder="Enter Calibration Freqeuncy">
+                                                        <label class="form-label require">Frequency</label>
+                                                        <select name="health_instrument[1][frequency_id]" id="frequency_id[1]"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">Select the Frequency</option>
+                                                            @foreach ($frequency as $freq)
+                                                                <option value="{{ encryptId($freq->id) }}">
+                                                                    {{ $freq->frequency_name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Date of Calibration</label>
                                                         <input type="text"
@@ -198,9 +208,9 @@
                                                 </div>
 
 
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Due Date of Calibration</label>
+                                                        <label class="form-label">Next Due Date</label>
                                                         <input type="text"
                                                             name="health_instrument[1][due_date_of_calibration]"
                                                             id="due_date_of_calibration_1" class="form-control">
@@ -208,7 +218,7 @@
                                                 </div>
 
 
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Remark</label>
                                                         <textarea class="form-control" name="health_instrument[1][instrument_remarks]" id="instrument_remarks_1"></textarea>
@@ -218,7 +228,7 @@
 
                                                 <div class="col-md-2 text-right mt-2">
                                                     <button class="btn btn-danger removerowdata" type="button"
-                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+                                                        style="margin:10px;"><i class="fa fa-trash"></i> Remove</button>
 
                                                 </div>
 
@@ -329,8 +339,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("HEALTH-" + String(rowCount + 1).padStart(4,
-                    '0'));
+                
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
@@ -372,10 +381,7 @@
                     $(this).closest(".lesson_learned_row").remove();
                     updateRowIndexes();
 
-                    $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                        $(this).find("input[name*='[sr_no]']").val("HEALTH-" + String(index + 1)
-                            .padStart(4, '0'));
-                    });
+                 
                 } else {
                     Swal.fire({
                         icon: "error",

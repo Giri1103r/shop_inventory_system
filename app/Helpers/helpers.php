@@ -2031,12 +2031,15 @@ if (!function_exists('getMonth')) {
         function GetOHCSignature($userid, $id, $type)
         {
 
+
             $name = OhcSignature::where('emp_id', $userid)->where('ohc_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 $name = User::where('id', $userid)->first();
                 if ($name == null) {
                     return null;
                 }
+
+
                 return $name->signature_upload;
             } else {
                 return $name->file_path;
@@ -2072,6 +2075,20 @@ if (!function_exists('getMonth')) {
                     }
                 case HOOTER_INSPECTION:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', HOOTER_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
+                case EMERGENCY_LIGHT_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', EMERGENCY_LIGHT_INSPECTION)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {
@@ -2297,6 +2314,8 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+
     if (!function_exists('GetTypeofLight')) {
 
         function GetTypeofLight($id)
@@ -2407,6 +2426,24 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+
+    if (!function_exists('getLightCondition')) {
+        function getLightCondition($id)
+        {
+            if ($id == GOOD) {
+                return 'Good';
+            } else if ($id == FAIR) {
+                return 'Fair';
+            } else if ($id == POOR) {
+                return 'Poor';
+            } else if ($id == DAMAGED) {
+                return 'Damaged';
+            }
+
+            return 'Unknown';
+        }
+    }
+
 
     if (!function_exists('getObservationType')) {
         function getObservationType($type_id)

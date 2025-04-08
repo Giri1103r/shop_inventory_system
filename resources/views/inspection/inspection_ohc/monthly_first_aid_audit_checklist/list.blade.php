@@ -23,22 +23,7 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
+
 
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
@@ -87,9 +72,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                      
                                         <th>Shift</th>
                                         <th>Frequency</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -167,19 +150,6 @@
                             data: 'DT_RowIndex',
                             orderable: false,
                             searchable: true,
-                        },
-
-                        {
-                            data: 'doc_no',
-                            name: 'document_no'
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date'
-                        },
-                        {
-                            data: 'revision_date',
-                            name: 'revision_date'
                         },
                         {
                             data: 'shift',

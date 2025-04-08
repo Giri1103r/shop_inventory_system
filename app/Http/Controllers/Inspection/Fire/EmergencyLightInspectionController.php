@@ -29,6 +29,7 @@ use App\Models\Inspection\Fire\Master\FireStatus;
 use App\Models\Inspection\Fire\Master\LightType;
 use App\Models\Inspection\Fire\Master\PowerSuply;
 use App\Models\Inspection\Fire\Master\Status;
+use App\Models\Inspection\InspectionStaticDocno;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -54,6 +55,7 @@ class EmergencyLightInspectionController extends Controller
     private $ligth_type;
     private $condition_light;
     private $checklist_follow;
+    private $document_reference;
     public function __construct()
     {
         $this->department = new Department();
@@ -68,7 +70,7 @@ class EmergencyLightInspectionController extends Controller
         $this->fire_status = new FireStatus();
         $this->ligth_type = new LightType();
         $this->condition_light = new ConditionLight();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->emergency_light = new EmergencyLightInspection();
         $this->emergency_light_details = new EmergencyLightInspectionDetails();
@@ -85,9 +87,9 @@ class EmergencyLightInspectionController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -138,26 +140,26 @@ class EmergencyLightInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/emergency-light-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/emergency-light-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
-                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                 </a>';
                             return $btn;
@@ -174,8 +176,15 @@ class EmergencyLightInspectionController extends Controller
                 }
             }
         }
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+        $data = array(
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
 
-        $data = array();
+        );
         return view('inspection.fire.emergency_light_inspection.list', $data);
     }
     public function Add(Request $request)
@@ -190,7 +199,7 @@ class EmergencyLightInspectionController extends Controller
             $ligth_type = $this->ligth_type->gettypeoflight();
             $fire_status = $this->fire_status->getStatus();
             $power_supply = $this->power_supply->getPowersupply();
-
+            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $data = array(
                 'locations' => $location,
                 'units' => $unit,
@@ -201,11 +210,12 @@ class EmergencyLightInspectionController extends Controller
                 'lightType' => $ligth_type,
                 'fireStatus' => $fire_status,
                 'powerSupply' => $power_supply,
+                'document_no' => $document_no,
             );
 
             return view('inspection.fire.emergency_light_inspection.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -306,15 +316,16 @@ class EmergencyLightInspectionController extends Controller
             $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
 
             $inspection = $this->emergency_light->selectOne($id);
-            $inspection_details = $this->emergency_light_details->GetDetails($inspection->id);
+            $inspection_details = $this->emergency_light_details->selectOne($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id,  EMERGENCY_LIGHT_INSPECTION);
-
+            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
                 'status_log' => $status_log,
+                'document_no' => $document_no,
             );
             return view('inspection.fire.emergency_light_inspection.view', $data);
         } catch (Exception $ex) {
@@ -330,9 +341,9 @@ class EmergencyLightInspectionController extends Controller
 
             $id = decryptId($request->id);
             $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
-
+            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $inspection = $this->emergency_light->selectOne($id);
-            $inspection_details = $this->emergency_light_details->GetDetails($inspection->id);
+            $inspection_details = $this->emergency_light_details->selectOne($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id,  EMERGENCY_LIGHT_INSPECTION);
 
@@ -340,11 +351,12 @@ class EmergencyLightInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'inspection_image' => $inspection_image,
+                'document_no' => $document_no,
                 'status_log' => $status_log,
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -623,7 +635,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -827,7 +839,7 @@ class EmergencyLightInspectionController extends Controller
 
             $sheet->mergeCells("L6:M8")->setCellValue("L6", "REMARKS");
 
-            $row = 9; 
+            $row = 9;
 
             foreach ($emergency_light_details as $index => $detail) {
                 $sheet->setCellValue("A$row", $detail->sr_no ?? '');
@@ -977,14 +989,15 @@ class EmergencyLightInspectionController extends Controller
 
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, EMERGENCY_LIGHT_INSPECTION);
-                $forklift_details = $this->emergency_light->selectOne($id);
-                $inspection = $this->emergency_light_details->GetDetails($forklift_details->id);
-
+                $emergency_light = $this->emergency_light->selectOne($id);
+                $inspection = $this->emergency_light_details->selectOne($emergency_light->id);
+                $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
                 $data = [
                     'status_log' => $status_log,
-                    'forklift_details' => $forklift_details,
+                    'emergency_light' => $emergency_light,
                     'pagetitle' => "Emergency Light Inspection",
                     'inspection' => $inspection,
+                    'document_no' => $document_no,
                 ];
             }
 
@@ -1004,11 +1017,11 @@ class EmergencyLightInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Hooter Inspection.pdf";
+            $filename = "Emergency light inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

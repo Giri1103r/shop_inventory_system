@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 FIRE_ALARM_INSPECTION,
@@ -270,7 +270,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
                                                         FIRE_ALARM_INSPECTION,
@@ -309,7 +309,7 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSignature(
+                                                        $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
                                                             FIRE_ALARM_INSPECTION,
@@ -372,7 +372,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
                                                     FIRE_ALARM_INSPECTION,
@@ -425,7 +425,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
                                                 FIRE_ALARM_INSPECTION,
@@ -477,7 +477,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
                                                 FIRE_ALARM_INSPECTION,
@@ -528,7 +528,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
                                                 FIRE_ALARM_INSPECTION,
@@ -555,7 +555,7 @@
                                             </div>
                                         @endif
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
                                                 FIRE_ALARM_INSPECTION,

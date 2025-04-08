@@ -16,12 +16,10 @@ class HealthInstrumentCalibrationDetails extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'sr_no',
         'health_instrument_id',
         'instrument_name',
         'resource_code',
         'exact_location',
-        'unit_id',
         'instrument_serial_no',
         'make',
         'model',
@@ -52,16 +50,14 @@ class HealthInstrumentCalibrationDetails extends Model
             foreach ($health_instrument_details as $health) {
                 $data = [
                     'health_instrument_id' => $id, 
-                    'sr_no'=>$health['sr_no'],
                     'instrument_name' => $health['instrument_name'],
                     'resource_code' => $health['resource_code'],
                     'exact_location' => $health['exact_location'],
-                    'unit_id' => decryptId($health['unit_id']),
                     'instrument_serial_no' => $health['instrument_serial_no'],
                     'make' => $health['make'],
                     'model' => $health['model'],
                     'instrument_range' => $health['instrument_range'],
-                    'calibration_frequency' => $health['calibration_frequency'],
+                    'calibration_frequency' => decryptId($health['frequency_id']),
                     'date_of_calibration' => DBdateformat($health['date_of_calibration']),
                     'due_date_of_calibration' => DBdateformat($health['due_date_of_calibration']),
                     'remarks' => $health['instrument_remarks'],
