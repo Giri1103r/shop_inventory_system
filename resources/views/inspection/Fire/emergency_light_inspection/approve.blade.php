@@ -107,7 +107,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 EMERGENCY_LIGHT_INSPECTION,

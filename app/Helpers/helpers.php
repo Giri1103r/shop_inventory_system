@@ -2029,12 +2029,15 @@ if (!function_exists('getMonth')) {
         function GetOHCSignature($userid, $id, $type)
         {
 
+
             $name = OhcSignature::where('emp_id', $userid)->where('ohc_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 $name = User::where('id', $userid)->first();
                 if ($name == null) {
                     return null;
                 }
+
+
                 return $name->signature_upload;
             } else {
                 return $name->file_path;

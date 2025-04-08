@@ -110,23 +110,27 @@ class CurrentNewExtCodeDialingController extends Controller
 
     public function Store(Request $request)
     {
-        dd($request->all());
         try {
-            // $rules = [
-            //     'unit_id' => 'required',
-            //     'department_id' => 'required',
-            //     'review_date' => 'required',
-
-            // ];
-            // $messages = [
-            //     'department_id.required' => 'Please select a Deparment.',
-            //     'unit_id.required' => 'Please select a unit.',
-            //     'review_date.required' => 'Please select the expiry date.',
-            // ];
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
+            $rules = [
+                'unit_id.*'        => 'required',
+                'department_id.*'  => 'required',
+                'emp_name.*'       => 'required',
+                'number.*'         => 'required',
+            ];
+            
+            $messages = [
+                'unit_id.*.required'        => 'Please select a unit for each row.',
+                'department_id.*.required'  => 'Please select a department for each row.',
+                'emp_name.*.required'       => 'Please enter the employee name for each row.',
+                'number.*.required'         => 'Please enter the number .',
+            ];
+            
+            $validator = Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            
 
             try {
 

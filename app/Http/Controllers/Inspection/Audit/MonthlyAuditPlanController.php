@@ -113,6 +113,7 @@ class MonthlyAuditPlanController extends Controller
                 'frequency' => $frequency,
 
             );
+            // dd($data);
             return view('inspection.inspection_audit.monthlyAudit.add',$data);
         } catch (Exception $ex) {
             report($ex);
@@ -151,7 +152,6 @@ class MonthlyAuditPlanController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
 
              $data = $this->monthly_audit_plan->store();
 

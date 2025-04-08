@@ -14,6 +14,9 @@ class FirstAidBagChecklist extends Model
     protected $fillable = [
         'id',
         'inspection_date',
+        'location',
+        'unit',
+        'frequency',
         'next_due',
         'inspection_data',
         'approval_remarks',
@@ -32,7 +35,10 @@ class FirstAidBagChecklist extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*');
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id')
+            ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_first_aid_bag_inspection.frequency', '=', 'inspection_frequency_option.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -43,8 +49,13 @@ class FirstAidBagChecklist extends Model
                 $query
                     ->orWhere('inspection_ohc_first_aid_bag_inspection.inspection_date', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
+
+
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
@@ -54,6 +65,16 @@ class FirstAidBagChecklist extends Model
         if ($request->has('next_due') && $request->next_due) {
             $formattedDate = DBdateformat($request->next_due);
             $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.next_due', $formattedDate);
+        }
+
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
 
 
@@ -66,7 +87,7 @@ class FirstAidBagChecklist extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_first_aid_bag_inspection.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -103,6 +124,9 @@ class FirstAidBagChecklist extends Model
             'next_due' => DBdateformat($request->next_due),
             'inspection_data' =>  $updated_medicine_checklist,
             'created_by' =>  Auth::id(),
+            'location' => decryptId($request->location_id),
+            'unit' => decryptId($request->unit_id),
+            'frequency' => decryptId($request->frequency_id),
         ];
         return  $this->create($data);
     }
@@ -116,13 +140,21 @@ class FirstAidBagChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*');
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters.location.*', 'inspection_frequency_option.*')
+            ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_first_aid_bag_inspection.frequency', '=', 'inspection_frequency_option.id');
+
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('inspection_ohc_first_aid_bag_inspection.inspection_date', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');;
             });
         }
 
@@ -135,6 +167,15 @@ class FirstAidBagChecklist extends Model
         if ($request->has('next_due') && $request->next_due) {
             $formattedDate = DBdateformat($request->next_due);
             $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.next_due', $formattedDate);
+        }
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        }
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
