@@ -36,9 +36,25 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label">Health Instrument ID</label>
+                                                    <div class="view_data">
+                                                        {{ isset($health_details->health_auto_id) ? $health_details->health_auto_id : '' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Unit ID</label>
+                                                    <div class="view_data">
+                                                        {{ getUnitname(isset($health_details->unit_id) ? $health_details->unit_id : '') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label"> Document No</label>
                                                     <div class="view_data">
-                                                        {{ isset($health_details->doc_no) ? $health_details->doc_no : '' }}
+                                                        {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -47,16 +63,15 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Issue Date</label>
                                                     <div class="view_data">
-                                                        {{ displaydateformat(isset($health_details->issue_date) ? $health_details->issue_date : '') }}
+                                                        {{ displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                                     </div>
                                                 </div>
                                             </div>
-                                    
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Revision Date</label>
                                                     <div class="view_data">
-                                                        {{ isset($health_details->revision_date) ? $health_details->revision_date : '' }}
+                                                        {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -74,7 +89,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label"> Serial No</label>
                                                         <div class="view_data">
-                                                            {{ isset($health_details->sr_no) ? $health_details->sr_no : '' }}
+                                                            {{ $loop->iteration }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -105,14 +120,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Unit ID</label>
-                                                        <div class="view_data">
-                                                            {{ getUnitname(isset($health_details->unit_id) ? $health_details->unit_id : '') }}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               
                                     
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -154,7 +162,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Calibration Frequency</label>
                                                         <div class="view_data">
-                                                            {{ isset($health_details->calibration_frequency) ? $health_details->calibration_frequency : '' }}
+                                                            {{ getFrequencyname(isset($health_details->calibration_frequency) ? $health_details->calibration_frequency : '') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -170,7 +178,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Due Date of Calibration</label>
+                                                        <label class="form-label">Next Due Date</label>
                                                         <div class="view_data">
                                                             {{ displaydateformat(isset($health_details->due_date_of_calibration) ? $health_details->due_date_of_calibration : '') }}
                                                         </div>

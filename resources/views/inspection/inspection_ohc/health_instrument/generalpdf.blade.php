@@ -165,15 +165,26 @@
 
         <table width="100%" style="width:100%;">
             <tr>
+                <td width="50%" style="padding:5px;"><b>Health Instrument ID</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ isset($health_details->health_auto_id) ? $health_details->health_auto_id : '' }}</td>
+            </tr>
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Unit</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ getUnitname(isset($health_details->unit_id) ? $health_details->unit_id : '') }}</td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Document Number</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ isset($health_details->doc_no) ? $health_details->doc_no : '' }}</td>
+                <td width="48%" style="padding:5px;"> {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($health_details->issue_date) ? $health_details->issue_date : '') }}
+                    {{ displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
 
                 </td>
             </tr>
@@ -181,7 +192,7 @@
                 <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($health_details->revision_date) ? $health_details->revision_date : '' }}
+                    {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
 
                 </td>
             </tr>
@@ -222,21 +233,18 @@
             <table class="table table-bordered tblborder">
                 <thead>
                     <tr>
-                        <th>S.No</th>
-                        <th>Instrument ID</th>
-                        <th>Instrument Detail ID</th>
-                        <th>Serial No</th>
+                        <th>Sr.No</th>
+                        
                         <th>Instrument Name</th>
                         <th>Resource Code</th>
                         <th>Exact Location</th>
-                        <th>Unit ID</th>
                         <th>Instrument Serial No</th>
                         <th>Make</th>
                         <th>Model</th>
                         <th>Instrument Range</th>
                         <th>Calibration Frequency</th>
                         <th>Date of Calibration</th>
-                        <th>Due Date of Calibration</th>
+                        <th>Next Due Date</th>
                         <th>Remarks</th>
                     </tr>
                 </thead>
@@ -244,18 +252,14 @@
                     @foreach ($health_instrument_calibration_details as $index => $health)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $health->instrument_id ?? 'N/A' }}</td>
-                            <td>{{ $health->instrument_detail_id ?? 'N/A' }}</td>
-                            <td>{{ $health->sr_no ?? 'N/A' }}</td>
                             <td>{{ $health->instrument_name ?? 'N/A' }}</td>
                             <td>{{ $health->resource_code ?? 'N/A' }}</td>
                             <td>{{ $health->exact_location ?? 'N/A' }}</td>
-                            <td>{{ $health->unit_id ?? 'N/A' }}</td>
                             <td>{{ $health->instrument_serial_no ?? 'N/A' }}</td>
                             <td>{{ $health->make ?? 'N/A' }}</td>
                             <td>{{ $health->model ?? 'N/A' }}</td>
                             <td>{{ $health->instrument_range ?? 'N/A' }}</td>
-                            <td>{{ $health->calibration_frequency ?? 'N/A' }}</td>
+                            <td>{{ getFrequencyname($health->calibration_frequency ?? 'N/A') }}</td>
                             <td>{{ displaydateformat($health->date_of_calibration ?? 'N/A') }}</td>
                             <td>{{ displaydateformat($health->due_date_of_calibration ?? 'N/A') }}</td>
                             <td>{{ $health->remarks ?? 'N/A' }}</td>
