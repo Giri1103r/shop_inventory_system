@@ -201,68 +201,60 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+    <table
+        style="width: 100%; border-collapse: collapse; text-align: center; font-family: Arial, sans-serif; font-size: 12px;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE
+                <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">SR. NO.</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">LOCATION</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">RESOURCE CODE
                 </th>
-                <th colspan="4"
-                    style="border: 2px solid black; padding: 8px; background-color: #ccc; font-weight: bold;">CHECK
-                    ITEMS</th>
-                <th colspan="4"
-                    style="border: 2px solid black; padding: 8px; background-color: #f0f0f0; font-weight: bold;">WATER
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
+                <th colspan="4" style="border: 2px solid black; padding: 6px; background-color: #ccc;">CONDITION</th>
+                <th colspan="4" style="border: 2px solid black; padding: 6px; background-color: #f0f0f0;">WATER</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">REMARK</th>
             </tr>
             <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">HANDS-FREE
-                    STAY OPEN VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">FOOT PEDAL
-                    VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">EYEWASH
-                    HEADS</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">RECEPTACLE
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">VALVE</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">HANDS-FREE STAY OPEN VALVE
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">QUALITY
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">PRESSURE
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    TEMPERATURE (15-35°C)</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">FOOT PEDAL VALVE</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">EYEWASH HEADS</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">RECEPTACLE</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">QUALITY</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">PRESSURE</th>
+                <th style="border: 2px solid black; padding: 6px; background-color: #eee;">TEMPERATURE (15–35°C)</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($inspection as $details)
                 <tr>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($details->location) }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->hand_free_stay_open_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->foot_pedal_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->eyewash_heads_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->receptacle }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->water == GOOD)
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->sr_no }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ getLocationName($details->location) }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->resource_code }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->value }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->hand_free_stay_open_value }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->foot_pedal_value }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">
+                        @if ($details->quality == 'GOOD')
                             Good
-                        @elseif($details->water == FAIR)
+                        @elseif($details->quality == 'FAIR')
                             Fair
-                        @elseif($details->water == POOR)
+                        @elseif($details->quality == 'POOR')
                             Poor
                         @else
                             Unknown
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->pressure }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->temperature }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
 
 
 

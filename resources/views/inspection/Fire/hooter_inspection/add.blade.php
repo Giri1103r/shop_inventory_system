@@ -635,19 +635,19 @@
                                                                 <input class="form-check-input" type="checkbox"
                                                                     name="blinking_light[${form_set_count}]" id="blinking_light[${form_set_count}]"
                                                                     value="YES">
-                                                                <label class="form-check-label" for="blinking_light">Blinking Light</label>
+                                                                <label class="form-check-label" for="blinking_light[${form_set_count}]">Blinking Light</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
                                                                     name="connection[${form_set_count}]" id="connection[${form_set_count}]"
                                                                     value="YES">
-                                                                <label class="form-check-label" for="connection">Connection</label>
+                                                                <label class="form-check-label" for="connection[${form_set_count}]">Connection</label>
                                                             </div>
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
                                                                     name="auditbility[${form_set_count}]" id="auditbility[${form_set_count}]"
                                                                     value="YES">
-                                                                <label class="form-check-label" for="auditbility">Audibility</label>
+                                                                <label class="form-check-label" for="auditbility[${form_set_count}]">Audibility</label>
                                                             </div>
                                                         </div>
                                                     </div>
