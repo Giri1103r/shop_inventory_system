@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                     FIRST AID BAG INSPECTION CHECKLIST</td>
+                    FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                     FIRST AID BAG INSPECTION CHECKLIST
+                    FIRST AID BAG INSPECTION CHECKLIST
                 </td>
             </tr>
         </table>
@@ -169,6 +169,27 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ Displaydateformat(isset($inspection_detail->next_due) ? $inspection_detail->next_due : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname(isset($inspection_detail->location) ? $inspection_detail->location : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($inspection_detail->unit) ? $inspection_detail->unit : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Frequency</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getFrequencyname(isset($inspection_detail->frequency) ? $inspection_detail->frequency : '') }}
             </td>
         </tr>
 
@@ -192,7 +213,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                     FIRST AID BAG INSPECTION CHECKLIST
+                    FIRST AID BAG INSPECTION CHECKLIST
                 </td>
             </tr>
         </table>
@@ -202,26 +223,19 @@
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Name Of Inspection</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Freeze Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Expiry Date</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Inspected By</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.remarks') }}</th>
             </tr>
 
@@ -245,14 +259,16 @@
                         {{ $medicines['remarks'] }}</td>
                 </tr>
             @endforeach
-            <tr>
-                <td colspan="7"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by->requestor_file_path) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
-                </td>
-            </tr>
+            @if ($inspection_created_by)
+                <tr>
+                    <td colspan="7"
+                        style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                        <img src="{{ admin_url($inspection_created_by) }}"
+                            alt="Checked By Signature" style="height: 50px; margin-top:2px;">
+                        <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
+                    </td>
+                </tr>
+            @endif
 
         </tbody>
     </table>
