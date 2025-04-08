@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire MockDrill Observation')
-@section('pageurl', admin_url('fire/fire-mock-drill-observation/list'))
+@section('title', 'Fire Pre Noc Checklist')
+@section('pageurl', admin_url('fire/pre-noc/checklist/list'))
 
 
 @section('content')
@@ -14,8 +14,8 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/fire-mock-drill-observation/add') }}">Add</x-button-add>
+                            {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('fire/pre-noc/checklist/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -24,31 +24,18 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                            <label for="inspection_id" class="form-label ">Inspection Id</label>
+                                            <input type="text" name="inspection_id" id="inspection_id"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status"
-                                                class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
-
+                                                <option value="{{ encryptId(1) }}">Active</option>
+                                                <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -71,10 +58,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
-                                        <th>{{ __('Inspection Status') }}</th>
+                                        <th>Observation Id</th>
+                                        <th>Date of Inspection</th>
+                                        <th>Approve Status </th>
+                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -82,6 +69,7 @@
                             </table>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -96,9 +84,6 @@
                 firstTh.removeClass('sorting_asc');
             });
 
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -125,17 +110,16 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('fire/fire-mock-drill-observation/list') }}",
+                        url: "{{ admin_url('fire/checklist-observation/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.inspection_id = $('#inspection_id').val();
+                            d.status = $('#status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -151,20 +135,22 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'observation_id',
+                            name: 'observation_id'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'date_of_inspection',
+                            name: 'date_of_inspection'
                         },
-                        {
-                            data: 'rev_dt',
-                            name: 'rev_dt',
-                        },
+                       
                         {
                             data: 'inspection_status',
-                            name: 'inspection_status',
+                            name: 'inspection_status'
+                        },
+                       
+                        {
+                            data: 'status',
+                            name: 'status'
                         },
                         {
                             data: 'action',
@@ -195,19 +181,15 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#checklist').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/fire-mock-drill-observation/export/pdf') }}" +
+                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&checklist=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -216,18 +198,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        checklist = $('#checklist').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('fire/fire-mock-drill-observation/export/excel') }}" +
+                                            "{{ admin_url('audit/assessment/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&checklist=' + checklist +
                                             '&status=' + status
                                     }
                                 },
@@ -264,12 +242,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate Fire Pre Noc Checklist checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -289,7 +267,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/fire-mock-drill-observation/status') }}",
+                                url: "{{ admin_url('fire/pre-noc/checklist/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -357,7 +335,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/fire-mock-drill-observation/delete') }}",
+                                url: "{{ admin_url('audit/assessment/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

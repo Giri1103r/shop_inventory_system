@@ -327,8 +327,6 @@
                     @endif
                 </td>
 
-
-
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->lever == 1)
                         <span style="color: green; font-weight: bold;">&#10004; Functional</span>
@@ -338,6 +336,7 @@
                         <span style="color: gray; font-weight: bold;">N/A</span>
                     @endif
                 </td>
+                
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>

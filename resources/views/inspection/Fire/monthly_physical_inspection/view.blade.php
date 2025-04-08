@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Store Inspection Checklist View')
-@section('pageurl', admin_url('ohc/monthly-medicine-store/inspection/list'))
+@section('title', 'Fire Equipment Monthly Phsyical Inspection View')
+@section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/monthly-medicine-store/inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('fire/equipment-monthly-physical-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -36,95 +36,75 @@
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->inspection_date) }}
+                                                    {{ Displaydateformat($inspection_details->date_of_inspection) }}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->next_due) }}
+                                                    {{ $document_no->doc_no }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($document_no->issue_date) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                <div class="view_data">
+                                                    {{ $document_no->rev_dt }}
                                                 </div>
                                             </div>
                                         </div>
 
 
-                                        <table class="table table-bordered table-striped">
+                                        <table class="table table-bordered table-striped mb-3">
                                             <thead class="table-secondary">
                                                 <th style="text-align: center">Sr. No.</th>
-                                                <th style="text-align: center">Name Of Inspection</th>
-                                                <th style="text-align: center">Available Quantity</th>
-                                                <th style="text-align: center">Expiry Date</th>
-                                                <th style="text-align: center">Inspected By</th>
-                                                <th style="text-align: center">Remark</th>
+                                                <th style="text-align: center">Equipment Name</th>
+                                                <th style="text-align: center">Status</th>
+                                                <th style="text-align: center">Remarks</th>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inspection_data as $medicines)
                                                     <tr>
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td class="text-center">
-                                                            {{ getMedicinename($medicines['medicine_id']) }}
-                                                        <td class="text-center">{{ $medicines['available_quantity'] }}
-                                                        <td class="text-center">
-                                                            {{ Displaydateformat($medicines['expired_date']) }}
-                                                        <td class="text-center">{{ getUsername($medicines['emp_id']) }}
+                                                            {{ getMonthlyInspectionEquipmentname($medicines['id']) }}
+                                                        <td class="text-center">{{ $medicines['status'] }}
                                                         <td class="text-center">{{ $medicines['remarks'] }}
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div class="row m-2">
-                                        <div class="col-md-4 form-group form-input mb-2">
-                                            <label class="form-label"
-                                                style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ admin_url($inspection_file) }}"
-                                                alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        @if (isset($inspection_details->approval_remarks))
-                                            <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Approval</h4>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.name') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUserName($inspection_details->updated_by) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($verified_by) }}" alt="Signature Upload"
-                                                                style="width: 100px; margin-top: -10px;" />
-                                                        </div>
-                                                    </div>
 
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->approval_remarks }}
+                                        @foreach ($images as $index => $image)
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">{{ getMonthlyInspectionEquipmentname($index) }}
+                                                </h4>
+                                            </div>
+                                            @foreach ($image as $img)
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($img->file_path) }}" alt="Signature Upload"
+                                                            style="width: 100px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endforeach
+                                        @endforeach
                                     </div>
+
                                 </div>
                             </div>
                         </div>

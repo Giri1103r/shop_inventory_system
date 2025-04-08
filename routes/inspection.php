@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Inspection\MSDS\MSDSController;
 use App\Http\Controllers\Inspection\RRAA\RRAAController;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
 use App\Http\Controllers\Inspection\Fire\HoseBoxController;
 use App\Http\Controllers\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Inspection\Ohc\SafetyPettyController;
@@ -34,6 +35,8 @@ use App\Http\Controllers\Inspection\Fire\FireSafetyEquipmentsController;
 use App\Http\Controllers\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\SandBucketInspectionController;
 use App\Http\Controllers\Inspection\Safety\ForkLiftInspectionController;
+use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
+use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
 use App\Http\Controllers\Inspection\Safety\FireSafetyEquipmentController;
 use App\Http\Controllers\Inspection\Fire\CoTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeDataController;
@@ -42,6 +45,7 @@ use App\Http\Controllers\Inspection\Ohc\CurrentNewExtCodeDialingController;
 use App\Http\Controllers\Inspection\Safety\OHSPlantSummaryReportController;
 use App\Http\Controllers\Inspection\Safety\SafetyWalkObservationController;
 use App\Http\Controllers\Inspection\Fire\EmergencyLightInspectionController;
+use App\Http\Controllers\Inspection\Fire\MonthlyPhysicalInspectionController;
 use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
@@ -51,17 +55,15 @@ use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
 use App\Http\Controllers\Inspection\Environment\AmbientNoiseMonitoringController;
+use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController;
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
-use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController;
-use App\Http\Controllers\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
-use App\Http\Controllers\Inspection\Fire\HydrantRiserInspectionContoller;
-use App\Models\Inspection\Fire\MonthlyPhysicalInspection;
+use App\Http\Controllers\Inspection\Fire\ChecklistObservationFollowupController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -650,16 +652,18 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
     });
     Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
-        Route::get('list', [MonthlyPhysicalInspection::class, 'index']);
-        Route::post('list', [MonthlyPhysicalInspection::class, 'index']);
-        Route::get('add', [MonthlyPhysicalInspection::class, 'add']);
-        Route::post('add/submit', [MonthlyPhysicalInspection::class, 'store']);
-        Route::get('view/{id}', [MonthlyPhysicalInspection::class, 'view']);
-        Route::post('delete', [MonthlyPhysicalInspection::class, 'delete']);
-        Route::get('export/excel', [MonthlyPhysicalInspection::class, 'exportExcel']);
-        Route::get('export/pdf', [MonthlyPhysicalInspection::class, 'exportPdf']);
-        Route::post('status', [MonthlyPhysicalInspection::class, 'statusChange']);
+        Route::get('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::post('list', [MonthlyPhysicalInspectionController::class, 'index']);
+        Route::get('add', [MonthlyPhysicalInspectionController::class, 'add']);
+        Route::post('add/submit', [MonthlyPhysicalInspectionController::class, 'store']);
+        Route::get('view/{id}', [MonthlyPhysicalInspectionController::class, 'view']);
+        Route::post('delete', [MonthlyPhysicalInspectionController::class, 'delete']);
+        Route::get('export/excel', [MonthlyPhysicalInspectionController::class, 'exportExcel']);
+        Route::get('export/pdf', [MonthlyPhysicalInspectionController::class, 'exportPdf']);
+        Route::post('status', [MonthlyPhysicalInspectionController::class, 'statusChange']);
+        Route::GET('exportViewPdf/{id}', [MonthlyPhysicalInspectionController::class, 'ExportViewPDF']);
     });
+
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {
         Route::get('list', [FireSafetyEquipmentsController::class, 'index']);
         Route::post('list', [FireSafetyEquipmentsController::class, 'index']);
@@ -798,6 +802,24 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
     });
 
+    Route::group(['prefix' => 'checklist-observation/'], function () {
+        Route::get('list', [ChecklistObservationFollowupController::class, 'index']);
+        Route::post('list', [ChecklistObservationFollowupController::class, 'index']);
+        Route::get('add/{inspection_type}/{inspection_id}', [ChecklistObservationFollowupController::class, 'add']);
+        Route::post('add/submit', [ChecklistObservationFollowupController::class, 'store']);
+        Route::get('edit/{id}', [ChecklistObservationFollowupController::class, 'edit']);
+        Route::post('edit/submit', [ChecklistObservationFollowupController::class, 'update']);
+        Route::get('view/{id}', [ChecklistObservationFollowupController::class, 'view']);
+        Route::post('delete', [ChecklistObservationFollowupController::class, 'delete']);
+        Route::get('export/excel', [ChecklistObservationFollowupController::class, 'exportExcel']);
+        Route::get('export/pdf', [ChecklistObservationFollowupController::class, 'exportPdf']);
+        Route::get('sample_download', [ChecklistObservationFollowupController::class, 'DownloadSample']);
+        Route::get('import', [ChecklistObservationFollowupController::class, 'import']);
+        Route::post('import/Submit', [ChecklistObservationFollowupController::class, 'importSubmit']);
+        Route::post('status', [ChecklistObservationFollowupController::class, 'statusChange']);
+        Route::post('unique', [ChecklistObservationFollowupController::class, 'Uniquecheck']);
+        Route::get('employeeName', [ChecklistObservationFollowupController::class, 'employeename']);
+    });
     Route::group(['prefix' => 'fire-extinguisher/cartridge/'], function () {
         Route::GET('list', [CartridgeTypeFireExtinguisherController::class, 'Index']);
         Route::POST('list', [CartridgeTypeFireExtinguisherController::class, 'Index']);
@@ -814,8 +836,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CartridgeTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CartridgeTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CartridgeTypeFireExtinguisherController::class, 'GetDepartment']);
-
-});
+    });
 
     Route::group(['prefix' => 'hose-reel-hose-inspection'], function () {
         Route::GET('list', [HoseReelHoseController::class, 'Index']);
@@ -869,9 +890,6 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('get/department', [HydrantRiserInspectionContoller::class, 'GetDepartment']);
     });
 });
-
-
-
 
 Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('list', [FloorStretcherController::class, 'Index']);

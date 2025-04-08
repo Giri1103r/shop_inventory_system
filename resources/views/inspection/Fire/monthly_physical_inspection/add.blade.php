@@ -1,5 +1,5 @@
     @extends('admin.layouts.admin')
-    @section('title', 'Medicine Store Inspection Checklist')
+    @section('title', 'Fire Equipment Monthly Phsyical Inspection')
     @section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
     @section('content')
         <div class="clearfix"></div>
@@ -34,6 +34,35 @@
 
                                             <div class="row">
 
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                                        <input type="text" name="doc_no" id = "doc_no"
+                                                            class="form-control" placeholder="Enter the Document Number"
+                                                            value="{{ $document_no->doc_no }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                        <input type="text" name="issue_date" id = ""
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                        <input type="text" name="rev_date" id = "rev_date"
+                                                            class="form-control" value="{{ $document_no->rev_dt }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -42,15 +71,46 @@
                                                             class="form-control inspection_date">
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                        <input type="text" name="next_due" id = "next_due"
-                                                            class="form-control next_due">
+                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                        <select name="location_id" id="location_id"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select {{ __('inspection.location') }}
+                                                            </option>
+                                                            @foreach ($locations as $location)
+                                                                <option value="{{ encryptId($location->id) }}"
+                                                                    {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                    {{ $location->location_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error('location_id')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.unit') }}</label>
+                                                        <select name="unit_id" id="unit_id"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($units as $unit)
+                                                                <option value="{{ encryptId($unit->id) }}"
+                                                                    {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
+                                                                    {{ $unit->unit_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    @error('unit_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <hr>
+                                                <input type="hidden" name="document_reference_id"
+                                                    value="{{ encryptId($document_no->id) }}">
                                                 <div class="">
                                                     <table class="table table-bordered table-striped">
                                                         <thead class="table-secondary">
@@ -65,7 +125,8 @@
                                                             @foreach ($equipment_list as $medicines)
                                                                 <tr>
                                                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                                                    <td class="text-center">{{ $medicines->equipment_name }}
+                                                                    <td class="text-center">
+                                                                        {{ $medicines->equipment_name }}
                                                                         <input type="hidden"
                                                                             name="id[{{ $medicines->id }}]"
                                                                             value="{{ encryptId($medicines->id) }}">
@@ -98,18 +159,19 @@
                                                     <div class="form-input col-md-4 mb-2">
                                                         <label class="form-label require">Image - 1
                                                         </label>
-                                                        <input type="file" name="equipment[{{ $index + 1 }}][1]"
+                                                        <input type="file" name="equipment[{{ $equipment->id }}][1]"
                                                             id="signature_upload_{{ $index }}"
                                                             class="form-control form-control-sm" accept="image/*"
                                                             placeholder="Upload {{ $equipment->name }} image">
                                                         <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload_{{ $index }}" class="text-danger">
+                                                        <div id="signature_upload_{{ $index }}"
+                                                            class="text-danger">
                                                         </div>
                                                     </div>
 
                                                     <div class="form-input col-md-4 mb-2">
                                                         <label class="form-label require">Image - 2</label>
-                                                        <input type="file" name="equipment[{{ $index + 1 }}][2]"
+                                                        <input type="file" name="equipment[{{ $equipment->id }}][2]"
                                                             id="signature_upload_signature_{{ $index }}"
                                                             class="form-control form-control-sm" accept="image/*"
                                                             placeholder="Upload signature for {{ $equipment->name }}">
@@ -210,22 +272,23 @@
                             inspection_date: {
                                 required: true,
                             },
-                            next_due: {
+                            unit_id: {
                                 required: true,
                             },
-                            signature_image: {
+                            location_id: {
                                 required: true,
                             }
+
                         },
                         messages: {
                             inspection_date: {
                                 required: "Inspection Date is required",
                             },
-                            next_due: {
-                                required: "Next Due Date is required",
+                            unit_id: {
+                                required: "Unit is Required",
                             },
-                            signature_image: {
-                                required: "Signature is required",
+                            location_id: {
+                                required: "Location is required",
                             }
                         },
                         errorElement: 'span',
@@ -255,44 +318,33 @@
                         });
 
                     $(document).ready(function() {
-                        $('input[name^="available_quantity"]').each(function() {
+                        $('input[type="file"][name^="equipment"]').each(function() {
                             $(this).rules('add', {
                                 required: true,
-                                number: true,
-                                min: 1,
+                                accept: "image/jpeg, image/png, image/jpg",
                                 messages: {
-                                    required: "Available Quantity is required",
-                                    number: "Please enter a valid number",
-                                    min: "Quantity must be at least 1"
+                                    required: "Please upload an image.",
+                                    accept: "Only JPG, JPEG, and PNG files are allowed."
                                 }
                             });
                         });
 
-                        $('input[name^="expired_date"]').each(function() {
-                            $(this).rules('add', {
-                                required: true,
-
-                                messages: {
-                                    required: "Expiry Date is required",
-
-                                }
-                            });
-                        });
-
-                        $('select[name^="emp_id"]').each(function() {
+                        $('input[name^="status"]').each(function() {
                             $(this).rules('add', {
                                 required: true,
                                 messages: {
-                                    required: "Employee is required",
+                                    required: "Status is required",
                                 }
                             });
                         });
 
                         $('textarea[name^="remarks"]').each(function() {
                             $(this).rules('add', {
-                                required: 500,
+                                required: true,
+                                minlength: 3,
                                 messages: {
-                                    required: "Remarks is required"
+                                    required: "Remarks are required",
+                                    minlength: "Remarks must be at least 3 characters long."
                                 }
                             });
                         });

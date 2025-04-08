@@ -5,33 +5,26 @@ namespace App\Models\Inspection\Fire;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Inspection\InspectionStaticDocno;
-class FireCheckListFollowUp extends Model
+
+class FireCheckListFollowUpObservation extends Model
 {
-    protected $table = 'inspection_fire_checklist_follow';
+    protected $table = 'inspection_fire_observation';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'inspection_category',
+        'inspection_id',
+        'sr_no',
         'inspection_type',
         'inspection_id',
-        'observation_id',
-        'document_reference_id',
-        'date_of_inspection',
-        'checked_by',
-        'verified_by',
-        'approved_by',
-        'description',
-        'remarks',
-        'inspection_status',
-        'capa_recomendation',
-        'capa_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'capa_ehs_remarks',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'unit_id',
+        'department_id',
+        'equipment_name',
+        'equipment_code',
+        'observation',
+        'date',
+        'month',
         'status',
         'trash',
         'created_by',
@@ -122,21 +115,31 @@ class FireCheckListFollowUp extends Model
         return $datas;
     }
 
-    public function store()
+    public function store($inspection_id)
     {
         $request = request();
-        $data = array(
-            'inspection_type' => decryptId($request->inspection_type),
-            'inspection_id' => decryptId($request->inspection_id),
-            'observation_id' => $request->observation_id,
-            'document_reference_id' => decryptId($request->document_reference_id),
-            'date_of_inspection' => DBdateformat($request->date_of_inspection),
-            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
-            'created_by' => Auth::id(),
-        );
+        $data = [];
 
-        return $this->create($data);
+        foreach ($request->obs as $index => $obs) {
+            $insert_array = [
+                'inspection_id' => $inspection_id,
+                'sr_no' => $obs['serial_number'] ?? null,
+                'unit_id' => $obs['unit_id'] ?? null,
+                'department_id' => $obs['department_id'] ?? null,
+                'equipment_name' => $obs['equipment_name'] ?? null,
+                'equipment_code' => $obs['equipment_code'] ?? null,
+                'observation' => $obs['observation'] ?? null,
+                'date' => DBdateformat($obs['date']) ?? null,
+                'month' => $obs['month'] ?? null,
+                'created_by' => Auth::id(),
+            ];
+
+            $data[] = $this->create($insert_array);
+        }
+
+        return $data;
     }
+
 
     public function exportdata()
     {
