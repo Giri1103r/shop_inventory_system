@@ -2282,6 +2282,8 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+
     if (!function_exists('GetTypeofLight')) {
 
         function GetTypeofLight($id)
@@ -2392,6 +2394,24 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+
+    if (!function_exists('getLightCondition')) {
+        function getLightCondition($id)
+        {
+            if ($id == GOOD) {
+                return 'Good';
+            } else if ($id == FAIR) {
+                return 'Fair';
+            } else if ($id == POOR) {
+                return 'Poor';
+            }else if ($id == DAMAGED) {
+                return 'Damaged';
+            }
+
+            return 'Unknown';
+        }
+    }
+
 
     if (!function_exists('getObservationType')) {
         function getObservationType($type_id)

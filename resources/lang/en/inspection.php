@@ -102,9 +102,9 @@ return [
     'power_supply' => 'Power Supply',
     'type_of_light' => 'Type Of light',
     'light_condition' => 'Light Condition',
-    'swith_condition' => 'Switch Condition',
+    'switch_condition' => 'Switch Condition',
     'status' => 'Status',
-    
+
 
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',

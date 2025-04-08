@@ -24,20 +24,40 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift_id" id="shift_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+
+                                            <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                            <select name="unit_id" id="unit_id"
+                                                class=" form-control single-select" style="width: 100%">
+                                                <option value="">Select Unit</option>
+                                                @foreach ($units as $unit)
+                                                    <option value="{{ encryptId($unit->id) }}">
+                                                        {{ $unit->unit_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+
+                                            <label
+                                            class="form-label require">{{ __('inspection.frequency') }}</label>
+                                        <select name="frequency_id" id="frequency_id"
+                                            class=" form-control single-select" style="width: 100%">
+                                            <option value="">Select Frequency</option>
+                                            @foreach ($frequency as $frequency)
+                                                <option value="{{ encryptId($frequency->id) }}">
+                                                    {{ $frequency->frequency_name }}</option>
+                                            @endforeach
+                                        </select>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -76,9 +96,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                       <th>Location</th>
+                                       <th>Shift</th>
+                                       <th>Unit</th>
+                                       <th>Frequency</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -134,9 +155,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.shift_id = $('#shift_id').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.frequency_id = $('#frequency_id').val();
                             d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
@@ -151,19 +172,23 @@
                             orderable: false,
                             searchable: true,
                         },
+                        {
+                            data: 'location_name',
+                            name: 'location_name',
+                        },
+                        {
+                            data: 'shift',
+                            name: 'shift',
+                        },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'frequency_name',
+                            name: 'frequency_name',
+                        },
 
-                        {
-                            data: 'doc_no',
-                            name: 'doc_no',
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date',
-                        },
-                        {
-                            data: 'revision_data',
-                            name: 'revision_data',
-                        },
                         {
                             data: 'inspection_status',
                             name: 'inspection_status',
@@ -197,9 +222,9 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        frequency_id = $('#frequency_id').val();
                                         inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -207,9 +232,9 @@
                                         window.location.href =
                                             "{{ admin_url('fire/emergency-light-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&shift_id=' + shift_id +
+                                            '&unit_id=' + unit_id +
+                                            '&frequency_id=' + frequency_id +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -218,18 +243,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        frequency_id = $('#frequency_id').val();
                                         inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/emergency-light-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&shift_id=' + shift_id +
+                                            '&unit_id=' + unit_id +
+                                            '&frequency_id=' + frequency_id +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
