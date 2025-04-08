@@ -608,13 +608,15 @@
                                 <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
                             </div>
 
-                            <div class="d-flex justify-content-end gap-0 m-2">
-                                <button class="btn btn-primary add-row me-3" type="button"
-                                    id="add-row" style="width: 84px;">
+                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                    style="min-width: 130px;">
                                     Add
                                 </button>
-                                <button type="button" class="btn btn-danger remove-row">
-                                    <i class="fa-solid fa-trash"></i> Remove
+                                <button type="button"
+                                    class="btn btn-danger remove-row d-flex align-items-center"
+                                    style="min-width: 130px;">
+                                    <i class="fa-solid fa-trash me-2"></i> Remove
                                 </button>
                             </div>
 

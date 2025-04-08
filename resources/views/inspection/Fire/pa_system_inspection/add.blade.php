@@ -52,7 +52,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
+                                                    <input type="text" name="rev_date" id = "rev_date" placeholder="Revision & Data"
                                                         class="form-control" value="{{ $document_no->rev_dt }}"
                                                         readonly>
                                                 </div>
@@ -61,7 +61,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                    <input type="text" name="inspection_date" id = "inspection_date" placeholder="Date of Inspection"
                                                         class="form-control">
                                                 </div>
                                             </div>
@@ -97,7 +97,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
+                                                    <input type="text" name="next_due" id = "next_due"  placeholder="Next Due On"
                                                         class="form-control">
                                                 </div>
                                             </div>
@@ -217,7 +217,8 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Remarks</label>
-                                                        <textarea name="remark[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                        <textarea name="remark[1]" id="remarks" class="form-control" style="resize: none;" rows="4"
+                                                        placeholder="Remarks"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -251,7 +252,7 @@
                                                         <label
                                                             class="form-label require">Mic Quantity</label>
                                                         <input type="text" name="mic_quantity[1]" id = "mic_quantity"
-                                                            class="form-control">
+                                                            class="form-control" placeholder="Mic Quantity">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -302,7 +303,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;" placeholder="Observation"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -570,7 +571,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Remarks</label>
-                                    <textarea name="remark[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                    <textarea name="remark[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"
+                                    placeholder="Remarks"></textarea>
                                 </div>
                             </div>
                              <div class="col-md-4 mb-2">
@@ -603,8 +605,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Mic Quantity</label>
-                                    <input type="text" name="mic_quantity[${form_set_count}]" id = "mic_quantity"
-                                        class="form-control">
+                                    <input type="text" name="mic_quantity[${form_set_count}]" id ="mic_quantity"
+                                        class="form-control" placeholder="Mic Quantity">
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
