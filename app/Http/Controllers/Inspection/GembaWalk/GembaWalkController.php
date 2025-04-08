@@ -170,12 +170,12 @@ class GembaWalkController extends Controller
 
     public function Store(Request $request)
     {
+        // dd($request->all());
         try {
              $rules = [
                 'document_no' => 'required',
                 'document_upload_date' => 'required',
                 'document_revision_date' => 'required',
-                'gemba_walk.*.gemba_walk_report_no' => 'required',
                 'gemba_walk.*.location_id' => 'required',
                 'gemba_walk.*.unit_id' => 'required',
                 'gemba_walk.*.date_of_observation' => 'required',
@@ -194,7 +194,6 @@ class GembaWalkController extends Controller
                 'document_no.required' => 'Document number is required.',
                 'document_upload_date.required' => 'Please provide the document upload date.',
                 'document_revision_date.required' => 'Please provide the document revision date.',
-                'gemba_walk.*.gemba_walk_report_no.required' => 'Gemba Walk Report Number is required.',
                 'gemba_walk.*.location_id.required' => 'Location ID is required.',
                 'gemba_walk.*.unit_id.required' => 'Unit ID is required.',
                 'gemba_walk.*.date_of_observation.required' => 'Date of observation is required.',

@@ -18,7 +18,6 @@ class GembaWalkChecklist extends Model
 
     protected $fillable = [
         'gemba_walk_id',
-        'gemba_walk_checklist_no',
         'location_id',
         'unit_id',
         'date_of_observation',
@@ -55,7 +54,6 @@ class GembaWalkChecklist extends Model
             foreach ($gembaWalkData as $index => $walk) {
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,
-                    'gemba_walk_checklist_no' => $walk['gemba_walk_report_no'],
                     'location_id' => decryptId($walk['location_id']),
                     'unit_id' => decryptId($walk['unit_id']),
                     'date_of_observation' => DBdateformat($walk['date_of_observation']),

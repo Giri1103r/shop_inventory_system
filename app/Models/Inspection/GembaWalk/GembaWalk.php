@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Scopes\TrashScope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -98,8 +99,8 @@ class GembaWalk extends Model
     public function store()
     {
         $request = request();
+        // dd($request);
         $insert_array = array(
-            'gemba_walk_auto_id' => $request->gemba_walk_id,
             'document_reference_id' => $request->document_reference_id,
             'date' => DBdateformat($request->document_upload_date),
             'shift_id' => decryptId($request->shift),
@@ -224,5 +225,17 @@ class GembaWalk extends Model
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
+    }
+
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_gemba_walk'));
+        static::created(function ($model) {
+
+            $uniqueId = 'GMB-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['gemba_walk_auto_id' => $uniqueId]);
+        });
     }
 }

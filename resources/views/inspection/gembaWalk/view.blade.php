@@ -115,7 +115,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Gemba Walk Serial No</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->gemba_walk_checklist_no) ? $gembaWalk->gemba_walk_checklist_no : '' }}
+                                                    {{ $loop->iteration }}
                                                 </div>
                                             </div>
                                         </div>

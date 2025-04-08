@@ -232,7 +232,6 @@
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Checklist ID</th>
                             <th>Location</th>
                             <th>Unit</th>
                             <th>Date of Observation</th>
@@ -252,8 +251,7 @@
                     <tbody>
                         @foreach ($gembaWalk_details as $index => $gembaWalk)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $gembaWalk->gemba_walk_checklist_no ?? 'N/A' }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ getLocationname($gembaWalk->location_id ?? 'N/A') }}</td>
                                 <td>{{ getUnitname($gembaWalk->unit_id ?? 'N/A') }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
