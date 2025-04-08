@@ -22,7 +22,7 @@ class MonthlyMedicineStoreController extends Controller
     private $medicine_checklist;
     private $medicine;
     private $signature;
-    
+
 
     public function __construct()
     {
@@ -353,6 +353,7 @@ class MonthlyMedicineStoreController extends Controller
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
             );
+
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';

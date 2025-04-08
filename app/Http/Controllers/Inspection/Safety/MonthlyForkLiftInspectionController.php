@@ -778,17 +778,18 @@ class MonthlyForkLiftInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.pdf.pdf', $data);
+            $view = view('inspection.Safety.forklift_inspection_monthly.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
             $filename = "Monthly Forklift Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('safety/fork-lift-inspection/list'));
+            return redirect(admin_url('safety/forklift-inspection/list'));
         }
     }
 
@@ -829,6 +830,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $filename = "ForkLift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
