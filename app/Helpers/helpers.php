@@ -50,8 +50,10 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1438,7 +1440,7 @@ if (!function_exists('getMonth')) {
 
         function getSPLBCount()
         {
-            $data = SafetyPettyChecklist::get()->count();
+            $data = SafetyPettyDetails::get()->count();
             return $data;
         }
     }
@@ -2296,6 +2298,8 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+
     if (!function_exists('GetTypeofLight')) {
 
         function GetTypeofLight($id)
@@ -2407,6 +2411,24 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getLightCondition')) {
+        function getLightCondition($id)
+        {
+            if ($id == GOOD) {
+                return 'Good';
+            } else if ($id == FAIR) {
+                return 'Fair';
+            } else if ($id == POOR) {
+                return 'Poor';
+            }else if ($id == DAMAGED) {
+                return 'Damaged';
+            }
+
+            return 'Unknown';
+        }
+    }
+
+
     if (!function_exists('getObservationType')) {
         function getObservationType($type_id)
         {
@@ -2469,6 +2491,10 @@ if (!function_exists('getMonth')) {
                     break;
 
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    return 'CTFE-000001';
+                    break;
+
+                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
 

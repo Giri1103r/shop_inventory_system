@@ -11,15 +11,24 @@ class SafetyPettyDetails extends Model
 {
     use  HasFactory;
 
-    protected $table = 'ohc_safety_petty_logbook_details';
+    protected $table = 'ohc_safety_petty_logbook';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'document_number',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
+        'serial_number',
+        'employee_name',
+        'employee_code',
+        'department',
+        'unit',
+        'date',
+        'amount',
+        'description',
+        'amount_given_by',
+        'amount_received_by',
+        'remark',
         'status',
         'trash',
         'created_by',
@@ -37,7 +46,16 @@ class SafetyPettyDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_safety_petty_logbook_details.*');
+
+        $query = $this->select(
+                'ohc_safety_petty_logbook.*',
+                'masters_employee.emp_name',
+                'masters_unit.unit_name',
+                'masters_department.department_name',
+            )
+            ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'ohc_safety_petty_logbook.department');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -47,28 +65,48 @@ class SafetyPettyDetails extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+
+        if ($request->has('emp_id') && $request->emp_id) {
+
+            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
         }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
+
+        if ($request->has('employee_code') && $request->employee_code) {
+
+            $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
+
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        if (isset($request->order) && count($request->order) > 0) {
+            $columnName = $request->order[0]['column'];
+            $columnorder = $request->order[0]['dir'];
+            switch ($columnName) {
+                case "created_by":
+                    $query = $query->orderBy('ohc_safety_petty_logbook.created_by', $columnorder);
+                    break;
+                case "created_date":
+                    $query = $query->orderBy('ohc_safety_petty_logbook.created_at', $columnorder);
+                    break;
+                default:
+                    $query = $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
+                    break;
+            }
+        }
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -88,14 +126,42 @@ class SafetyPettyDetails extends Model
     {
         $request = request();
 
-        $insert_array = array(
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
-            'created_by' => Auth::id(),
-        );
+        $insertedData = [];
 
-        return $this->create($insert_array);
+        foreach ($request->amount as $index => $amount) {
+            $insert_array = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'serial_number' =>$request->serial_number[$index],
+                'employee_name' => $request->emp_id[$index],
+                'employee_code' => $request->employee_code[$index],
+                'department' => decryptId($request->department_id[$index]),
+                'unit' => decryptId($request->unit_id[$index]),
+                'date' => DBdateformat($request->date[$index]),
+                'amount' => $request->amount[$index],
+                'description' => $request->description[$index],
+                'amount_given_by' => $amount,
+                'amount_received_by' => $request->amnt_receivedby_id[$index],
+                'remark' => $request->remark[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $insertedData []=  $this->create($insert_array);
+
+        }
+
+        return $insertedData;
+    }
+
+    public function UniqueCheck($data)
+    {
+        return $this->where('employee_code',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('employee_code',  $data)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function statuschange($id)
@@ -119,37 +185,49 @@ class SafetyPettyDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_safety_petty_logbook_details.*');
+        $query = $this->select(
+                    'ohc_safety_petty_logbook.*',
+                    'masters_employee.emp_name',
+                    'masters_unit.unit_name',
+                    'masters_department.department_name',
+                )
+                ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
+                ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
+                ->leftJoin('masters_department', 'masters_department.id', '=', 'ohc_safety_petty_logbook.department');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                $query
+                    ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        
+        if ($request->has('employee_name') && $request->employee_name) {
+            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . decryptId($request->employee_name) . '%');
+        }
+        if ($request->has('employee_code') && $request->employee_code) {
+            $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->department) && $request->department) {
+            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department) . '%');
         }
 
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
-        }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
-        }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
 
         return $query->get();
     }
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ohc_safety_petty_logbook_details'));
+        static::addGlobalScope(new TrashScope('ohc_safety_petty_logbook'));
     }
 
 }

@@ -8,6 +8,7 @@ use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use Illuminate\Http\Request;
 use App\Models\Master\Employee;
+use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -30,6 +31,7 @@ class SafetyPettyController extends Controller
     private $signature;
     private $user;
     private $document_reference;
+    private $department;
 
     public function __construct()
     {
@@ -41,6 +43,7 @@ class SafetyPettyController extends Controller
         $this->signature = new OhcSignature();
         $this->user = new User();
         $this->document_reference = new InspectionStaticDocno();
+        $this->department = new Department();
 
     }
 
@@ -76,8 +79,8 @@ class SafetyPettyController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                            </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                    </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
@@ -87,13 +90,18 @@ class SafetyPettyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        $data = [];
+        $units = $this->unit->getUnit();
+
+        $data = [
+            'units' => $units,
+        ];
         return view('inspection.inspection_ohc.safety_petty.list', $data);
     }
 
@@ -137,8 +145,10 @@ class SafetyPettyController extends Controller
         try {
 
             $sfty_petty_details = $this->sfty_petty_details->store();
-            $sfty_petty_id = $sfty_petty_details->id;
-            $this->sfty_petty_checklist->store($sfty_petty_id);
+            // dd($sfty_petty_details);
+            $sfty_petty_id = $sfty_petty_details[0]->id;
+            // dd($sfty_petty_id);
+            // $this->sfty_petty_checklist->store();
             $empId =  Auth::user()->id;
 
             $this->signature->signatureLogUpload(
@@ -155,6 +165,7 @@ class SafetyPettyController extends Controller
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -187,7 +198,7 @@ class SafetyPettyController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
-                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+                // $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
                 $document_no = $this->document_reference->selectOne($sfty_petty_details->document_reference_id);
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
@@ -200,7 +211,7 @@ class SafetyPettyController extends Controller
 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
-                    'sfty_petty_checklist' => $sfty_petty_checklist,
+                    // 'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
@@ -221,7 +232,7 @@ class SafetyPettyController extends Controller
 
             $this->sfty_petty_details->statuschange($id);
 
-            $this->sfty_petty_checklist->statuschange($id);
+            // $this->sfty_petty_checklist->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
         } catch (Exception $ex) {
@@ -241,10 +252,10 @@ class SafetyPettyController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Data',
-                __("common.status"),
+                'Employee Name',
+                'Employee Code',
+                'Department',
+                'Unit',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -254,10 +265,10 @@ class SafetyPettyController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->document_number;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] = $data->status == 1 ? 'Active' : 'In-Active';
+                $export[] =  $data->employee_name;
+                $export[] =  $data->employee_code;
+                $export[] = $data->department;
+                $export[] = $data->unit;
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -291,10 +302,10 @@ class SafetyPettyController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
+                    'Employee Name',
+                    'Employee Code',
+                    'Department',
+                    'Unit',
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -339,7 +350,7 @@ class SafetyPettyController extends Controller
 
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
-                $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
+                // $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
                 $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
@@ -352,7 +363,7 @@ class SafetyPettyController extends Controller
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
-                    'sfty_petty_checklist' => $sfty_petty_checklist,
+                    // 'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
@@ -389,10 +400,10 @@ class SafetyPettyController extends Controller
             $employee_code = $request->employee_code;
             $id = $request->id;
             if ($id == '') {
-                $record = $this->sfty_petty_checklist->uniqueCheck($employee_code);
+                $record = $this->sfty_petty_details->uniqueCheck($employee_code);
             } else {
                 $id = decryptId($id);
-                $record = $this->sfty_petty_checklist->ExistuniqueCheck($employee_code, $id);
+                $record = $this->sfty_petty_details->ExistuniqueCheck($employee_code, $id);
             }
             if ($record->count()) {
                 return Response::json(false);

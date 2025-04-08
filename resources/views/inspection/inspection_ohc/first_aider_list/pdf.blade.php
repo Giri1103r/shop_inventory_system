@@ -29,7 +29,7 @@
                             {{ ($value->doc_no) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->revision_date) }}
+                            {{ ($value->rev_dt) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
@@ -41,7 +41,7 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ displaydateformat($value->next_review_date) }}
                         </td>
-                       
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';
@@ -49,10 +49,10 @@
                             {{ $status }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->created_by) }}
+                            {{ getusername($value->inspection_created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
+                            {{ Displaydateformat($value->inspection_created_at) }}
                         </td>
                     </tr>
                     @php

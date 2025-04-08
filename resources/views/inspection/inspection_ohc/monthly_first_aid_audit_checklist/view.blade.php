@@ -55,22 +55,21 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($monthly_first_aid->doc_no) ? $monthly_first_aid->doc_no : '' }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review date</label>
+                                        <label class="form-label view_label">Issue Date</label>
                                         <div class="view_data">
-                                            {{ isset($monthly_first_aid->revision_date) ? $monthly_first_aid->revision_date : '' }}
+                                            {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issued Date</label>
+                                        <label class="form-label view_label">Review Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($monthly_first_aid->issue_date) ? $monthly_first_aid->issue_date : '') }}
+                                            {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
-
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date Of Inspection</label>
                                         <div class="view_data">

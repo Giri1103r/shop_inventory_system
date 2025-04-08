@@ -12,9 +12,7 @@ class FirstAiderList extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
         'last_updated_date',
         'next_review_date',
         'created_by',
@@ -33,6 +31,19 @@ class FirstAiderList extends Model
         $search = '';
         $query = $this->select('inspection_ohc_first_aider.*');
 
+        $query = $this->select(
+            'inspection_ohc_first_aider.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_first_aider.id as inspection_id',
+            'inspection_ohc_first_aider.status as inspection_status',
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_first_aider.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -46,17 +57,14 @@ class FirstAiderList extends Model
                     ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
             });
         }
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_first_aider.doc_no', $request->document_number );
+        if (isset($request->next_review_date) && $request->next_review_date) {
+            $query = $query->whereDate('inspection_ohc_first_aider.next_review_date', DBdateformat($request->next_review_date));
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_first_aider.issue_date',  $request->issue_date );
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_first_aider.revision_date',  $request->rev_date );
+        if (isset($request->last_updated_date) && $request->last_updated_date) {
+            $query = $query->whereDate('inspection_ohc_first_aider.last_updated_date', DBdateformat($request->last_updated_date));
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_first_aider.status',   decryptId($request->status) );
+            $query = $query->where('inspection_ohc_first_aider.status',   decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -113,11 +121,10 @@ class FirstAiderList extends Model
         $request = request();
 
         $insert_array = [
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
+
             'next_review_date' => !empty($request->next_review_date) ? DBdateformat($request->next_review_date) : null,
             'last_updated_date' => !empty($request->last_updated_date) ? DBdateformat($request->last_updated_date) : null,
-            'revision_date' => $request->review_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'created_by' => Auth::id(),
         ];
 
@@ -139,7 +146,7 @@ class FirstAiderList extends Model
             );
         }
 
-        return $this->where('id', $id)->update($update_data);
+        return $this->where('inspection_ohc_first_aider.id', $id)->update($update_data);
     }
 
     public function Selectone($id)
@@ -151,18 +158,30 @@ class FirstAiderList extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_first_aider.*');
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_first_aider.doc_no', $request->document_number );
+        $query = $this->select(
+            'inspection_ohc_first_aider.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_first_aider.id as inspection_id',
+            'inspection_ohc_first_aider.created_by as inspection_created_by',
+            'inspection_ohc_first_aider.created_at as inspection_created_at',
+        )
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_first_aider.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
+        if (isset($request->next_review_date) && $request->next_review_date) {
+
+            $query = $query->where('inspection_ohc_first_aider.next_review_date', DBdateformat($request->next_review_date));
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_first_aider.issue_date',  $request->issue_date );
+        if (isset($request->last_updated_date) && $request->last_updated_date) {
+            $query = $query->where('inspection_ohc_first_aider.last_updated_date', DBdateformat($request->last_updated_date));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_first_aider.revision_date',  $request->rev_date );
-        }
+
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_first_aider.status',   decryptId($request->status) );
+            $query = $query->where('inspection_ohc_first_aider.status',   decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -194,7 +213,7 @@ class FirstAiderList extends Model
         }
 
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_first_aider.id', 'DESC');
 
         return  $query->get();
     }

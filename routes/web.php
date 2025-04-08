@@ -1480,6 +1480,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/add/submit', [FirstAiderlistController::class, 'Store']);
                     Route::POST('/unique', [FirstAiderlistController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [FirstAiderlistController::class, 'View']);
+                    Route::GET('/generalpdf/{id}', [FirstAiderlistController::class, 'generalpdf']);
                     Route::POST('/status', [FirstAiderlistController::class, 'StatusChange']);
                     Route::GET('/export/excel', [FirstAiderlistController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [FirstAiderlistController::class, 'ExportPDF']);
