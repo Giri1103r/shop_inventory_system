@@ -811,6 +811,13 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('edit/submit', [ChecklistObservationFollowupController::class, 'update']);
         Route::get('view/{id}', [ChecklistObservationFollowupController::class, 'view']);
         Route::post('delete', [ChecklistObservationFollowupController::class, 'delete']);
+        Route::GET('verification/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'approvals']);
+        Route::POST('ehsofficer/verify/submit', [ChecklistObservationFollowupController::class, 'EHSOfficerSubmit']);
+        Route::POST('capa/submit', [ChecklistObservationFollowupController::class, 'CAPASubmit']);
+        Route::POST('capa/update', [ChecklistObservationFollowupController::class, 'CAPAUpdate']);
+        Route::POST('capa/reverify/submit', [ChecklistObservationFollowupController::class, 'CAPAVerifySubmit']);
+        Route::POST('level-one/verify/submit', [ChecklistObservationFollowupController::class, 'levelOneManagerSubmit']);
+        Route::POST('level-two/verify/submit', [ChecklistObservationFollowupController::class, 'levelTwoManagerSubmit']);
         Route::get('export/excel', [ChecklistObservationFollowupController::class, 'exportExcel']);
         Route::get('export/pdf', [ChecklistObservationFollowupController::class, 'exportPdf']);
         Route::get('sample_download', [ChecklistObservationFollowupController::class, 'DownloadSample']);

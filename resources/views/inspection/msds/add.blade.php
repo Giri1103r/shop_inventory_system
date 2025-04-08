@@ -271,7 +271,6 @@
         const maxFormSets = 200;
         const minFormSets = 1;
 
-        // $(".add-row").click(function() {
         $(document).on('click',".add-row",function() {
             let currentFormSets = $('#form-wrapper .form-set').length;
 
