@@ -342,6 +342,52 @@
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
+
+        @php
+        $prepared_by_signature = GetFireSignature(
+            $forklift_details->created_by,
+            $forklift_details->id,
+            HYDRANT_RISER,
+        );
+        $verified_by_signature = GetFireSignature(
+            $forklift_details->updated_by,
+            $forklift_details->id,
+            HYDRANT_RISER,
+        );
+        $verified_by_signature = GetFireSignature(
+            $forklift_details->approved_by,
+            $forklift_details->id,
+            HYDRANT_RISER,
+        );
+    @endphp
+    <tr>
+        <td colspan="5"
+            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+            <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                style="height: 50px;">
+            <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+        </td>
+        <td colspan="5"
+            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+            @if ($forklift_details->updated_by != null)
+                <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                    style="height: 50px;">
+                <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
+            @else
+                <p>Inspection has not been Verified Yet</p>
+            @endif
+        </td>
+        <td colspan="5"
+            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+            @if ($forklift_details->approved_by != null)
+                <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                    style="height: 50px;">
+                <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+            @else
+                <p>Inspection has not been Verified Yet</p>
+            @endif
+        </td>
+    </tr>
     </table>
 
 
