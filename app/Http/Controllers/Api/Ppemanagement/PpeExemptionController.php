@@ -315,7 +315,7 @@ class PpeExemptionController extends BaseController
                             'created_by' => getusername($value->created_by),
                             'created_at' => Displaydateformat($value->created_at),
                         ];
-                        if ($statusLabels[$value->from_status] == STATUS_USER_APPLIED) {
+                        if ($value->from_status == STATUS_USER_APPLIED) {
                             $ppestatuslog[] = [
                                 'from_status' => 'EHS Head Approval Pending',
                                 'to_status' => '-',
