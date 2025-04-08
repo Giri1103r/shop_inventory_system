@@ -151,8 +151,17 @@ class MonthlyEyeWashInspectionController extends Controller
                 }
             }
         }
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
 
-        $data = array();
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+        );
         return view('inspection.Safety.eye_wash_inspection.list', $data);
     }
 
@@ -164,7 +173,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
             $shifts = $this->shift->getShiftname();
-            $document_no = $this->document_reference->selectUsingName('DetectorInspection');
+            $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
             $data = array(
                 'locations' => $location,
@@ -758,25 +767,16 @@ class MonthlyEyeWashInspectionController extends Controller
 
         try {
 
-            $allData = $this->eye_wash->exportdata();
-            if ($allData->isEmpty()) {
+            $content = $this->eye_wash->exportdata();
+            $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
+            if ($content->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
-            $data = array(
-                'header' => $header,
-                'content' => $allData,
-                'pagetitle' => "Monthly Eye Wash Inspection",
-            );
+            $data = [
+                'content' => $content,
+                'document_no' => $document_no,
+            ];
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -790,7 +790,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.pdf.pdf', $data);
+            $view = view('inspection.Safety.eye_wash_inspection.bulkpdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);

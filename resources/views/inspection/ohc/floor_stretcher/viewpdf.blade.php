@@ -255,7 +255,7 @@
                 @endforeach
             @endforeach
             @php
-                $signature = GetSignature($inspection_detail->created_by, $inspection_detail->id, OHC_TYPE_FLOOR_STRETCHER);
+                $signature = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, OHC_TYPE_FLOOR_STRETCHER);
             @endphp
             <tr>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">

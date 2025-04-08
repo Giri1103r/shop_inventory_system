@@ -77,6 +77,7 @@
                                                         value="">
                                                 </div>
                                             </div>
+                                            
                                         </div>
 
                                         <div class="row mt-4">
@@ -106,7 +107,8 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit Name</label>
                                                                 <select name="obs[1][unit_id]" id="unit_id_1"
-                                                                    class="form-control single-select" style="width: 100%">
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
                                                                     <option value="">Select Unit</option>
                                                                     @foreach ($unitList as $unit)
                                                                         <option value="{{ $unit->id }}">
@@ -370,7 +372,6 @@
 
                     $("input[name='obs[" + form_set_count + "][date]']").rules('add', {
                         required: true,
-                        date: true,
                         messages: {
                             required: 'Date is required',
                         }

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Fire Pump House Inspection | KARAM</title>
+    <title>Hooter Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -195,63 +195,97 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly EyeWash Inspection Details
+                    Hooter Inspection Details
                 </td>
             </tr>
         </table>
     </div>
+
+    <br>
     <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
-        <!-- Column Headers -->
-        <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">QUANTITY</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ddd;">CHECK ITEMS</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
+        <!-- Header Info Rows -->
+        <tr style="background-color: #ddd;">
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">DATE OF INSPECTION :-
+                {{ Displaydateformat($forklift_details->date_of_inspection) }}
+            </th>
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">LOCATION :- {{ getLocationName($forklift_details->location) }}</th>
+            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">SHIFT :- {{ GetShiftName($forklift_details->shift) }}</th>
         </tr>
-        <tr>
-            <th colspan="4" style="border: 1px solid black;"></th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">BLINKING LIGHT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONNECTION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">AUDIBILITY</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONDITION OF HOOTER</th>
-            <th style="border: 1px solid black;"></th>
+        <tr style="background-color: #ddd;">
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">NEXT DUE ON :- {{ Displaydateformat($forklift_details->next_due) }}</th>
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">UNIT :- {{ GetUnitName($forklift_details->unit) }} </th>
+            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">FREQUENCY :- {{ GetFrequencyName($forklift_details->frequency) }}
+            </th>
         </tr>
 
+        <!-- Column Headers -->
+        <tr style="background-color: #ddd;">
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">SR. NO</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">RESOURCE CODE</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+            <th colspan="4" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
+        </tr>
+        <tr style="background-color: #ddd;">
+            <th style="border: 1px solid black; padding: 8px;">BLINKING LIGHT</th>
+            <th style="border: 1px solid black; padding: 8px;">CONNECTION</th>
+            <th style="border: 1px solid black; padding: 8px;">AUDIBILITY</th>
+            <th style="border: 1px solid black; padding: 8px;">CONDITION OF HOOTER</th>
+        </tr>
+
+        <!-- Dynamic Data Rows -->
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->blinking_light == 1)
                         <span style="color: green;">&#10004;</span>
                     @else
-                        <span style="color: red;">&#10060;</span>
+                        <span style="color: red;">X</span>
                     @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->connection == 1)
                         <span style="color: green;">&#10004;</span>
                     @else
-                        <span style="color: red;">&#10060;</span>
+                        <span style="color: red;">X</span>
                     @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->audiobility == 1)
                         <span style="color: green;">&#10004;</span>
                     @else
-                        <span style="color: red;">&#10060;</span>
+                        <span style="color: red;">X</span>
                     @endif
                 </td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->condition_of_hooter }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
+
+        <tr>
+            <td colspan="6"
+                style="border: 1px solid black; text-align: left; padding: 10px; background-color: #f0f0f0;">
+                <strong>OBSERVATION</strong>
+            </td>
+            <td colspan="3"
+                style="border: 1px solid black; text-align: center; padding: 10px; background-color: #f0f0f0;">
+                <img src="{{ admin_url($inspection_image) }}" style="width:110px; height:110px;" alt=""
+                    srcset="">
+            </td>
+        </tr>
+        {{-- <tr>
+            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
+            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
+            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
+        </tr> --}}
     </table>
 
+    <br>
 
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
