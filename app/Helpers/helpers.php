@@ -2082,6 +2082,20 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+                case EMERGENCY_LIGHT_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', EMERGENCY_LIGHT_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
                 case MONTHLY_FIRE_PUMP:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
                         ->where('status', 1)->where('trash', 'NO')->first();
@@ -2417,7 +2431,7 @@ if (!function_exists('getMonth')) {
                 return 'Fair';
             } else if ($id == POOR) {
                 return 'Poor';
-            }else if ($id == DAMAGED) {
+            } else if ($id == DAMAGED) {
                 return 'Damaged';
             }
 

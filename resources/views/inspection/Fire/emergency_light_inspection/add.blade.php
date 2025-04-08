@@ -640,7 +640,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no_${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(EMERGENCY_LIGHT_INSPECTION) }}"
                                                             readonly>
@@ -652,7 +652,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department"
+                                                        <select name="department[${form_set_count}]" id="department_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
 
@@ -672,14 +672,14 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.emergency_light_number') }}</label>
                                                         <input type="text" name="emergency_light_number[${form_set_count}]"
-                                                            id = "emergency_light_number" class="form-control">
+                                                            id = "emergency_light_number_${form_set_count}" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.condition_of_light') }}</label>
-                                                        <select name="condition_of_light[${form_set_count}]" id="condition_of_light"
+                                                        <select name="condition_of_light[${form_set_count}]" id="condition_of_light_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
 
@@ -694,7 +694,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.type_of_light') }}</label>
-                                                        <select name="type_of_light[${form_set_count}]" id="type_of_light"
+                                                        <select name="type_of_light[${form_set_count}]" id="type_of_light_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             @foreach ($lightType as $list)
@@ -708,7 +708,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity"
+                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -716,7 +716,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity"
+                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -724,7 +724,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.power_supply') }}</label>
-                                                        <select name="power_supply[${form_set_count}]" id="power_supply"
+                                                        <select name="power_supply[${form_set_count}]" id="power_supply_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select power supply</option>
                                                             @foreach ($powerSupply as $list)
@@ -738,7 +738,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.light_condition') }}</label>
-                                                        <select name="light_condition[${form_set_count}]" id="light_condition"
+                                                        <select name="light_condition[${form_set_count}]" id="light_condition_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -752,7 +752,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.switch_condition') }}</label>
-                                                        <select name="switch_condition[${form_set_count}]" id="switch_condition"
+                                                        <select name="switch_condition[${form_set_count}]" id="switch_condition_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -766,7 +766,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.status') }}</label>
-                                                        <select name="status[${form_set_count}]" id="status"
+                                                        <select name="status[${form_set_count}]" id="status_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status</option>
                                                             @foreach ($fireStatus as $list)
@@ -780,7 +780,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks_${form_set_count}" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
 
@@ -793,7 +793,9 @@
                     GetDepartment(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
-
+                    newFormSetElement.find('select.single-select').select2({
+                        width: '100%'
+                    });
                     $("select[name='department[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
