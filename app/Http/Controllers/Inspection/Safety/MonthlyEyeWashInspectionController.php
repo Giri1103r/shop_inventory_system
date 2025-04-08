@@ -814,6 +814,11 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+                $approved_by = GetSafetySignature($inspection_details->id,$inspection_details->approved_by,EYE_WASH_INSPECTION);
+                $verified_by = GetSafetySignature($inspection_details->id,$inspection_details->verified_by,EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature($inspection_details->id,$inspection_details->verified_by,EYE_WASH_INSPECTION);
+                $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
+
 
                 $data = [
                     'status_log' => $status_log,
@@ -821,7 +826,12 @@ class MonthlyEyeWashInspectionController extends Controller
                     'inspection' => $inspection,
                     'pagetitle' => "Monthly EyeWash Inspection",
                     'document_no' => $document_no,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
+                    'document_no' => $document_no,
                 ];
+
             }
 
             $property = [
