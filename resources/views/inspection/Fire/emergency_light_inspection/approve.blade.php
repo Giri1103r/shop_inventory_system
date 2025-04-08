@@ -536,7 +536,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection->l1_manager_verified_by) }}
+                                                        {{ getUserName($inspection->l1_manager_verification) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -550,7 +550,7 @@
                                             </div>
                                             @php
                                                 $signature = GetSignature(
-                                                    $inspection->l1_manager_verified_by,
+                                                    $inspection->l1_manager_verification,
                                                     $inspection->id,
                                                     EMERGENCY_LIGHT_INSPECTION,
                                                 );
@@ -587,7 +587,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection->l2_manager_verified_by) }}
+                                                        {{ getUserName($inspection->l2_manager_verification) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -601,7 +601,7 @@
                                             </div>
                                             @php
                                                 $signature = GetSignature(
-                                                    $inspection->l2_manager_verified_by,
+                                                    $inspection->l2_manager_verification,
                                                     $inspection->id,
                                                     EMERGENCY_LIGHT_INSPECTION,
                                                 );
