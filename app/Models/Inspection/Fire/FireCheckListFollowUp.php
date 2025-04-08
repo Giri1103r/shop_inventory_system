@@ -5,6 +5,7 @@ namespace App\Models\Inspection\Fire;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Inspection\InspectionStaticDocno;
+
 class FireCheckListFollowUp extends Model
 {
     protected $table = 'inspection_fire_checklist_follow';
@@ -16,22 +17,9 @@ class FireCheckListFollowUp extends Model
         'inspection_category',
         'inspection_type',
         'inspection_id',
-        'observation_id',
         'document_reference_id',
         'date_of_inspection',
-        'checked_by',
-        'verified_by',
-        'approved_by',
-        'description',
-        'remarks',
         'inspection_status',
-        'capa_recomendation',
-        'capa_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'capa_ehs_remarks',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -50,7 +38,7 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_checklist_follow.*');
+        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -137,6 +125,22 @@ class FireCheckListFollowUp extends Model
 
         return $this->create($data);
     }
+
+
+    public function selectOne($id, $observationid)
+    {
+        $data = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_static_docno.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid', 'inspection_fire_observation_whywhy.*','inspection_fire_signatureupload.file_path')
+            ->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id')
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_checklist_follow.document_reference_id')
+            ->leftjoin('inspection_fire_observation_whywhy', 'inspection_fire_observation_whywhy.observation_id', '=', 'inspection_fire_observation.id')
+            ->leftjoin('inspection_fire_signatureupload', 'inspection_fire_signatureupload.inspection_id', '=', 'inspection_fire_observation.id')
+            // ->where('inspection_fire_observation_whywhy.status', 1)
+            ->where('inspection_fire_checklist_follow.status', 1)
+            ->where('inspection_fire_checklist_follow.id', $id)
+            ->where('inspection_fire_observation.id', $observationid)->first();
+        return $data;
+    }
+
 
     public function exportdata()
     {

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibrationDetails;
 use Illuminate\Http\Request;
@@ -20,12 +22,18 @@ class HealthInstrumentCalibrationController extends Controller
     private $health_instrument_calibration;
     private $health_instrument_calibration_details;
     private $unit;
+    private $document_reference;
+    private $frequency;
+
+
 
     public function __construct()
     {
         $this->health_instrument_calibration = new HealthInstrumentCalibration();
         $this->health_instrument_calibration_details = new HealthInstrumentCalibrationDetails();
         $this->unit = new Unit();
+        $this->document_reference = new InspectionStaticDocno();
+        $this->frequency = new Frequency();
 
     }
 
@@ -81,8 +89,13 @@ class HealthInstrumentCalibrationController extends Controller
                 }
             }
         }
+        $unitList = $this->unit->getUnitList();
+        $data = [
+            'unitList' => $unitList,
 
-        return view('inspection.inspection_ohc.health_instrument.list');
+        ];
+
+        return view('inspection.inspection_ohc.health_instrument.list',$data);
     }
 
 
@@ -90,11 +103,15 @@ class HealthInstrumentCalibrationController extends Controller
     {
         try {
             $unitList = $this->unit->getUnitList();
+            $document_no = $this->document_reference->selectUsingName('HealthInstrumentcalibration');
+            $frequency = $this->frequency->getFrequency();
+
 
             $data = array(
                 'unitList' => $unitList,
+                'document_no' => $document_no,
+                'frequency' => $frequency,
             );
-            
             return view('inspection.inspection_ohc.health_instrument.add',$data);
 
         } catch (Exception $ex) {
@@ -104,21 +121,22 @@ class HealthInstrumentCalibrationController extends Controller
     
     public function Store(Request $request)
     {
+        // dd($request->all());
         try {
             $rules = [
+                'audit_id' => 'required',
                 'document_no' => 'required',
                 'issue_date' => 'required',
+                'unit_id' => 'required',
                 'review_date' => 'required',
-                'health_instrument.*.sr_no' => 'required',
                 'health_instrument.*.instrument_name' => 'required',
                 'health_instrument.*.resource_code' => 'required',
                 'health_instrument.*.exact_location' => 'required',
-                'health_instrument.*.unit_id' => 'required',
                 'health_instrument.*.instrument_serial_no' => 'required',
                 'health_instrument.*.make' => 'required',
                 'health_instrument.*.model' => 'required',
                 'health_instrument.*.instrument_range' => 'required',
-                'health_instrument.*.calibration_frequency' => 'required',
+                'health_instrument.*.frequency_id' => 'required',
                 'health_instrument.*.date_of_calibration' => 'required',
                 'health_instrument.*.due_date_of_calibration' => 'required',
                 'health_instrument.*.instrument_remarks' => 'required',
@@ -128,16 +146,15 @@ class HealthInstrumentCalibrationController extends Controller
                 'document_no.required' => 'Document number is required.',
                 'issue_date.required' => 'Issue date is required.',
                 'review_date.required' => 'Review date is required.',
-                'health_instrument.*.sr_no.required' => 'Serial number is required.',
+                'unit_id.required' => 'Please select a unit.',
                 'health_instrument.*.instrument_name.required' => 'Please enter the instrument name.',
                 'health_instrument.*.resource_code.required' => 'Please enter the resource code.',
                 'health_instrument.*.exact_location.required' => 'Please specify the exact location.',
-                'health_instrument.*.unit_id.required' => 'Please select a unit.',
                 'health_instrument.*.instrument_serial_no.required' => 'Instrument serial number is required.',
                 'health_instrument.*.make.required' => 'Please enter the make of the instrument.',
                 'health_instrument.*.model.required' => 'Please enter the model of the instrument.',
                 'health_instrument.*.instrument_range.required' => 'Instrument range is required.',
-                'health_instrument.*.calibration_frequency.required' => 'Calibration frequency is required.',
+                'health_instrument.*.frequency_id.required' => 'Calibration frequency is required.',
                 'health_instrument.*.date_of_calibration.required' => 'Please select the date of calibration.',
                 'health_instrument.*.due_date_of_calibration.required' => 'Please select the due date of calibration.',
                 'health_instrument.*.instrument_remarks.required' => 'Remarks are required.',
@@ -175,11 +192,13 @@ class HealthInstrumentCalibrationController extends Controller
             if (Auth::check()) {
 
                 $id = decryptId($id);
+                $health_id = $this->health_instrument_calibration->getDocumentId($id);
                 $health_instrument_calibration_details = $this->health_instrument_calibration->selectOne($id);
-
+                $document_no = $this->document_reference->selectOne($health_id->document_reference_id);
+                
                 $data = array(
                     'health_instrument_calibration_details' => $health_instrument_calibration_details,
-                    
+                    'document_no' => $document_no,
                 );
 
             }
@@ -202,9 +221,8 @@ class HealthInstrumentCalibrationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
+                'Health Instrumen ID',
+                'Unit',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -252,10 +270,9 @@ class HealthInstrumentCalibrationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                'Status',
+                'Health Instrumen ID',
+                'Unit',
+                __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -265,9 +282,8 @@ class HealthInstrumentCalibrationController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
+                $export[] =  $data->health_auto_id;
+                $export[] =  getUnitname($data->unit_id);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -293,12 +309,18 @@ class HealthInstrumentCalibrationController extends Controller
             $id = decryptId($request->id);
             
             if (Auth::check()) {
+
+                $health_id = $this->health_instrument_calibration->getDocumentId($id);
                 $health_instrument_calibration_details = $this->health_instrument_calibration->selectOne($id);
+                $document_no = $this->document_reference->selectOne($health_id->document_reference_id);
 
                 $data = [
                    'health_instrument_calibration_details' => $health_instrument_calibration_details,
+                   'document_no' => $document_no,
+
                 ];
             }
+
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',

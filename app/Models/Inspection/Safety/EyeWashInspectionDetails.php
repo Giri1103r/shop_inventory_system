@@ -26,6 +26,7 @@ class EyeWashInspectionDetails extends Model
         'quality',
         'pressure',
         'temperature',
+        'remarks',
         'status',
         'trash',
         'created_by',

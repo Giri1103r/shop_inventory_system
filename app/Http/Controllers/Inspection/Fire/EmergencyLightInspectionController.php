@@ -154,14 +154,14 @@ class EmergencyLightInspectionController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
-                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
-                   <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
-                </a>';
+                //             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                //    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                // </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -343,7 +343,7 @@ class EmergencyLightInspectionController extends Controller
             $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
             $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $inspection = $this->emergency_light->selectOne($id);
-            $inspection_details = $this->emergency_light_details->GetDetails($inspection->id);
+            $inspection_details = $this->emergency_light_details->selectOne($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id,  EMERGENCY_LIGHT_INSPECTION);
 
@@ -356,7 +356,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -635,7 +635,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -720,10 +720,10 @@ class EmergencyLightInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             $data = $this->emergency_light->selectOne($id);
-
+            $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
             $emergency_light_details = $this->emergency_light_details->selectOne($id);
-
-
+            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
+            $inspection_image = $this->files->GetFile($inspection_type, $id);
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -752,9 +752,9 @@ class EmergencyLightInspectionController extends Controller
             $sheet->mergeCells("K2:L2")->setCellValue("K2", "Issue Dt.");
             $sheet->mergeCells("K3:L3")->setCellValue("K3", "Rev. & Dt.");
 
-            $sheet->setCellValue("M1", $data->doc_no);
-            $sheet->setCellValue("M2", $data->issue_date);
-            $sheet->setCellValue("M3", $data->revision_date);
+            $sheet->setCellValue("M1", $document_no->doc_no);
+            $sheet->setCellValue("M2", $document_no->issue_date);
+            $sheet->setCellValue("M3", $document_no->rev_dt);
 
             $sheet->getStyle("C1:M3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
@@ -895,8 +895,8 @@ class EmergencyLightInspectionController extends Controller
                 // Optional: Apply border or alignment styling to each row
                 $sheet->getStyle("A$row:M$row")->applyFromArray([
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' =>Alignment::HORIZONTAL_LEFT,
+                        'vertical' =>Alignment::VERTICAL_CENTER,
                     ],
                     'borders' => [
                         'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
@@ -916,6 +916,38 @@ class EmergencyLightInspectionController extends Controller
             }
 
 
+
+            $sheet->setCellValue("A$row", "Observation");
+
+
+            $sheet->mergeCells("A{$row}:M{$row}");
+
+
+            $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical'   => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            $sheet->setCellValue("A11$row", $data->observation);
+            $sheet->mergeCells("A12{$row}:J12{$row}");
+
+            if (file_exists($inspection_image)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($inspection_image);
+                $drawing->setCoordinates('K12');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
             $fileName = 'emergency_light_inspection_' . date('Ymd_His') . '.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -937,9 +969,13 @@ class EmergencyLightInspectionController extends Controller
         try {
 
             $allData = $this->emergency_light->exportdata();
+            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+
+           
+            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $header = [
                 __("common.sno"),
                 'Document Number',
@@ -953,6 +989,8 @@ class EmergencyLightInspectionController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
+
                 'pagetitle' => "Emergency Light Inspection",
             );
 
@@ -968,7 +1006,7 @@ class EmergencyLightInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.emergency_light_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -976,7 +1014,7 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency Light Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -989,12 +1027,12 @@ class EmergencyLightInspectionController extends Controller
 
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, EMERGENCY_LIGHT_INSPECTION);
-                $forklift_details = $this->emergency_light->selectOne($id);
-                $inspection = $this->emergency_light_details->GetDetails($forklift_details->id);
+                $emergency_light = $this->emergency_light->selectOne($id);
+                $inspection = $this->emergency_light_details->selectOne($emergency_light->id);
                 $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
                 $data = [
                     'status_log' => $status_log,
-                    'forklift_details' => $forklift_details,
+                    'emergency_light' => $emergency_light,
                     'pagetitle' => "Emergency Light Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
@@ -1017,11 +1055,11 @@ class EmergencyLightInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Hooter Inspection.pdf";
+            $filename = "Emergency light inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

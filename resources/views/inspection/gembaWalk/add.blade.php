@@ -50,11 +50,12 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Document No </label>
                                                         <input type="text" name="document_no" id="document_no"
-                                                            class="form-control" placeholder=" Enter Document Number " value="{{ $document_no->doc_no }}" readonly>
+                                                            class="form-control" placeholder=" Enter Document Number "
+                                                            value="{{ $document_no->doc_no }}" readonly>
                                                     </div>
                                                 </div>
 
-                                                
+
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -62,7 +63,8 @@
                                                             class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                         <input type="text" name="issue_date" id = ""
                                                             class="form-control" placeholder="Issued Date"
-                                                            value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
                                                     </div>
                                                 </div>
 
@@ -70,7 +72,8 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">Document Revision Date</label>
                                                         <input type="text" name="document_revision_date"
-                                                            id="document_revision_date" value="{{ $document_no->rev_dt }}" readonly class="form-control">
+                                                            id="document_revision_date" value="{{ $document_no->rev_dt }}"
+                                                            readonly class="form-control">
                                                     </div>
                                                 </div>
 
@@ -89,14 +92,15 @@
                                                             class="form-control single-select">
                                                             <option value="">Select the option</option>
                                                             @foreach ($shift as $list)
-                                                                <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                                <option value="{{ encryptId($list->id) }}">
+                                                                    {{ $list->shift }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
 
-                                
+
 
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
@@ -105,40 +109,36 @@
                                                         <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                             alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                     @else
-                                                        <div class="form-input col-md-12 mb-2">
-                                                            <label class="form-label require">Signature</label>
-                                                            <input type="file" name="gemba_walk_prepared_by" id="gemba_walk_prepared_by"
-                                                                class="form-control form-control-sm" accept="image/*"
-                                                                placeholder="Enter the image">
-                                                            <small>Allowed file types: jpg, jpeg, png</small>
-                                                            <div id="gemba_walk_prepared_by" class="text-danger"></div>
-                                                        </div>
+                                                            <div class="col-md-12 mt-2 file-upload-block">
+                                                                <label 
+                                                                class="form-label require">Signature</label>
+                                                                <input type="file" class="form-control"
+                                                                name="gemba_walk_prepared_by" id="gemba_walk_prepared_by"  placeholder="Enter the image">
+                                                                <small>Allowed file types: jpg, jpeg, png</small>
+                                                                <div class="text-danger"></div>
+                                                            </div>
                                                     @endif
                                                 </div>
+                                            
 
                                                 <input type="hidden" name="document_reference_id"
-                                                value="{{ $document_no->id }}">
+                                                    value="{{ $document_no->id }}">
                                             </div>
 
                                             <div class="mt-4 row">
                                                 <div
                                                     class="card-header-inner d-flex justify-content-between align-items-center">
                                                     <h4 class="text-white">Checklist Details</h4>
-                                                    <button type="button" class="btn mb-2 btn-primary addChecklistDetails">Add
+                                                    <button type="button"
+                                                        class="btn mb-2 btn-primary addChecklistDetails">Add
                                                         More</button>
                                                 </div>
                                                 <div id="gemba_walk_checklist">
-                                                    
+
                                                     <div class="row gemba_walk_checklist_add " data-index="0">
 
                                                         <div class="row">
-                                                            <div class=" col-md-4 form-group form-input">
-                                                                <label class="form-label">Sr. No</label>
-                                                                <input type="text"
-                                                                    name="gemba_walk[0][gemba_walk_report_no]"
-                                                                    id="gemba_walk_report_no_0" class="form-control"
-                                                                    placeholder="" readonly>
-                                                            </div>
+                                                          
                                                             <div class="col-md-4">
                                                                 <div class="form-group form-input">
                                                                     <label for="location_id" class="form-label">
@@ -334,7 +334,6 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
@@ -342,7 +341,7 @@
             });
         });
         $(document).ready(function() {
-           
+
             flatpickr("#document_upload_date", {
                 dateFormat: "d-m-Y"
             });
@@ -358,21 +357,9 @@
             let checklistIndex = 1;
             let checklistCount = 1;
 
-            function generateSerialNumber(index) {
-                return `SER${index.toString().padStart(4, '0')}`;
-            }
 
-            function updateSerialNumbers() {
-                $(".gemba_walk_checklist_add").each(function(i) {
-                    let newIndex = i + 1;
-                    $(this).attr("id", `checklistDetails_${newIndex}`).attr("data-index", newIndex);
-                    $(this).find("[id^='gemba_walk_report_no_']").attr("id",
-                        `gemba_walk_report_no_${newIndex}`).val(generateSerialNumber(newIndex));
-                });
-                index = $(".gemba_walk_checklist_add").length;
-            }
+         
 
-            $("#gemba_walk_report_no_0").val(generateSerialNumber(1));
 
             $(".addChecklistDetails").on("click", function() {
                 const newChecklistField = `
@@ -381,12 +368,7 @@
                             <hr class="mt-3">
                          <div class="row">
 
-                            <div class="col-md-4 form-group form-input">
-                                <label class="form-label">Sr. No</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][gemba_walk_report_no]"
-                                    id="gemba_walk_report_no_${checklistIndex}" class="form-control"
-                                    value="${generateSerialNumber(checklistCount)}" readonly>
-                            </div>
+                         
 
                             <div class="col-md-4 form-input">
                                 <label class="form-label">Location</label>
@@ -437,11 +419,17 @@
                                 class="form-control" placeholder="Enter Hazard Observation">
                             </div>
 
-                            <div class="col-md-4 form-input mt-2 file-upload-block">
-                                <label class="form-label">Evidence</label>
-                                <input type="file" class="form-control validate-file-accept validate-file-required"
-                                    name="gemba_walk[${checklistIndex}][evidence]" id="evidence_${checklistIndex}">
-                            </div>
+                           
+
+                             <div class="col-md-4 mt-2 file-upload-block"
+                                                                id="file-upload-0">
+                                                                <label for="evidence_0"
+                                                                    class="form-label">Evidence</label>
+                                                                <input type="file" class="form-control"
+                                                                    name="gemba_walk[${checklistIndex}][evidence]" id="evidence_${checklistIndex}">
+                                                                <div class="text-danger"></div>
+
+                                                            </div>
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">CAPA</label>
@@ -519,7 +507,6 @@
 
                 $("#gemba_walk_checklist").append(newChecklistField);
 
-                updateSerialNumbers();
                 addValidationRules(checklistIndex);
                 checklistCount++;
                 checklistIndex++;
@@ -588,92 +575,153 @@
             $(document).on("click", ".removeChecklistDetails", function() {
                 $(this).closest(".gemba_walk_checklist_add").remove();
                 checklistIndex--;
-                updateSerialNumbers();
             });
 
             $(document).ready(function() {
-                $.validator.addMethod("filesize", function(value, element, param) {
-                    return this.optional(element) || (element.files[0] && element.files[0].size <=
-                        param);
-                }, "File size must be less than 5MB.");
 
+
+                
+                $.validator.addMethod("customPattern", function(value, element, pattern) {
+                    return this.optional(element) || pattern.test(value);
+                }, "Invalid format.");
+
+                $.validator.addMethod("filesize", function(value, element, maxSize) {
+                    if (element.files.length === 0) return true;
+                    return element.files[0].size <= maxSize;
+                }, "File size must be less than 5MB.");
                 $('#gembaWalkReportAdd').validate({
                     rules: {
-                       
-                        'gemba_walk[0][checklist_description]': {
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        document_upload_date: {
+                            required: true
                         },
-                        'gemba_walk[0][hazard]': {
-                            minlength: 3,
-                            maxlength: 200,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        shift: {
+                            required: true
                         },
-                        'gemba_walk[0][checklist_capa]': {
-                            minlength: 3,
-                            maxlength: 200,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                        },
-                        'gemba_walk[0][checklist_remark]': {
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                        },
-                        'gemba_walk[0][checklist_observation][0]': {
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                        },
-                        'gemba_walk_prepared_by': {
+                        gemba_walk_prepared_by: {
+                            required: true,
                             extension: "jpg|jpeg|png",
-                            filesize: 5 * 1024 * 1024,
+                            filesize: 5 * 1024 * 1024 // 5 MB
                         },
-                        'gemba_walk[0][evidence]': {
+
+                        "gemba_walk[0][location_id]": {
+                            required: true
+                        },
+                        "gemba_walk[0][unit_id]": {
+                            required: true
+                        },
+                        "gemba_walk[0][date_of_observation]": {
+                            required: true,
+                            date: true
+                        },
+                        "gemba_walk[0][observation_type]": {
+                            required: true
+                        },
+
+                        "gemba_walk[0][checklist_description]": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 2000,
+                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                        },
+                        "gemba_walk[0][hazard]": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 200,
+                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                        },
+                        "gemba_walk[0][evidence]": {
+                            required: true,
                             extension: "jpg|jpeg|png|pdf",
-                            filesize: 5 * 1024 * 1024,
+                            filesize: 5 * 1024 * 1024
+                        },
+                        "gemba_walk[0][checklist_capa]": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 200,
+                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                        },
+                        "gemba_walk[0][date_of_compliance]": {
+                            required: true,
+                            date: true
+                        },
+                        "gemba_walk[0][responsibility_id]": {
+                            required: true
+                        },
+                        "gemba_walk[0][current_status]": {
+                            required: true
+                        },
+                        "gemba_walk[0][checklist_remark]": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 2000,
+                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                        },
+                        "gemba_walk[0][checklist_observation][0]": {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 2000,
+                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
                         }
                     },
                     messages: {
-                       
-                        'gemba_walk[0][checklist_description]': {
+                        document_upload_date: {
+                            required: "Please select a date."
+                        },
+                        shift: {
+                            required: "Please select a shift."
+                        },
+                        gemba_walk_prepared_by: {
+                            required: "Please upload a signature.",
+                            extension: "Only JPG, JPEG, and PNG files are allowed.",
+                            filesize: "File size must be less than 5MB."
+                        },
+                        "gemba_walk[0][location_id]": "Please select a location.",
+                        "gemba_walk[0][unit_id]": "Please select a unit.",
+                        "gemba_walk[0][date_of_observation]": "Please enter the date of observation.",
+                        "gemba_walk[0][observation_type]": "Please select an observation type.",
+
+                        "gemba_walk[0][checklist_description]": {
+                            required: "Please enter a description.",
                             minlength: "Checklist Description must be at least 3 characters.",
                             maxlength: "Checklist Description cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
-                        'gemba_walk[0][hazard]': {
+                        "gemba_walk[0][hazard]": {
+                            required: "Please enter a hazard observation.",
                             minlength: "Hazard must be at least 3 characters.",
                             maxlength: "Hazard cannot exceed 200 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
-                        'gemba_walk[0][checklist_capa]': {
+                        "gemba_walk[0][evidence]": {
+                            required: "Please upload an evidence file.",
+                            extension: "Only JPG, JPEG, PNG, and PDF files are allowed.",
+                            filesize: "File size must be less than 5MB."
+                        },
+                        "gemba_walk[0][checklist_capa]": {
+                            required: "Please enter a CAPA.",
                             minlength: "CAPA must be at least 3 characters.",
-                            maxlength: "CAPA cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            maxlength: "CAPA cannot exceed 200 characters.",
+                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
-                        'gemba_walk[0][checklist_remark]': {
+                        "gemba_walk[0][date_of_compliance]": "Please enter the compliance date.",
+                        "gemba_walk[0][responsibility_id]": "Please select a responsible person.",
+                        "gemba_walk[0][current_status]": "Please select a status.",
+                        "gemba_walk[0][checklist_remark]": {
+                            required: "Please enter a remark.",
                             minlength: "Remark must be at least 3 characters.",
                             maxlength: "Remark cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
+                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
-                        'gemba_walk[0][checklist_observation][0]': {
+                        "gemba_walk[0][checklist_observation][0]": {
+                            required: "Please enter an observation.",
                             minlength: "Observation must be at least 3 characters.",
                             maxlength: "Observation cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed.",
-                        },
-                        'gemba_walk_prepared_by': {
-                            extension: "Only JPG, JPEG, and PNG files are allowed for the signature.",
-                            filesize: "File size must be less than 5MB.",
-                        },
-                        'gemba_walk[0][evidence]': {
-                            extension: "Only JPG, JPEG, PNG, and PDF files are allowed for evidence.",
-                            filesize: "File size must be less than 5MB.",
+                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         }
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
                         error.addClass('invalid-feedback');
-
                         if (element.attr("type") === "file") {
                             error.insertAfter(element.closest('.file-upload-block').find(
                                 '.text-danger'));
@@ -692,29 +740,83 @@
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
-                        if (errors) {
-                            console.log(`There are ${errors} validation errors.`);
-                            validator.errorList.forEach(function(error) {
-                                console.log(
-                                    `Field: ${error.element.name}, Error: ${error.message}`
-                                );
-                            });
-                        }
-                    },
+
+                    }
                 });
+
             });
 
 
             function addValidationRules(index) {
+                // Place this outside of addValidationRules()
                 $.validator.addMethod("filesize", function(value, element, param) {
-                    return this.optional(element) || (element.files[0] && element.files[0].size <=
-                        param);
+                    return this.optional(element) || (element.files[0] && element.files[0].size <= param);
                 }, "File size must be less than 5MB.");
+
+
+                $(`[name="gemba_walk[${index}][location_id]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a Location",
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][unit_id]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a Unit",
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][date_of_observation]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a Observation date",
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][observation_type]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a observation type",
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][date_of_compliance]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a compliance date",
+
+                    }
+                });
+
+                $(`[name="gemba_walk[${index}][responsibility_id]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a responsible person",
+
+                    }
+                });
+                $(`[name="gemba_walk[${index}][current_status]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select a Status",
+
+                    }
+                });
+
+
                 $(`[name="gemba_walk[${index}][checklist_description]"]`).rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 2000,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     messages: {
+                        required: "Please Enter a Descripotion",
                         minlength: "Checklist Description must be at least 3 characters.",
                         maxlength: "Checklist Description cannot exceed 2000 characters.",
                         pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
@@ -722,11 +824,12 @@
                 });
 
                 $(`[name="gemba_walk[${index}][hazard]"]`).rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-
                     messages: {
+                        required: "Please Enter a Hazard",
                         minlength: "Hazard must be at least 3 characters.",
                         maxlength: "Hazard cannot exceed 200 characters.",
                         pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
@@ -735,11 +838,13 @@
                 });
 
                 $(`[name="gemba_walk[${index}][checklist_capa]"]`).rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
 
                     messages: {
+                        required: "Please Enter a Checklist Capa",
                         minlength: "CAPA must be at least 3 characters.",
                         maxlength: "CAPA cannot exceed 200 characters.",
                         pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
@@ -748,6 +853,7 @@
                 });
 
                 $(`[name="gemba_walk[${index}][checklist_remark]"]`).rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 2000,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,

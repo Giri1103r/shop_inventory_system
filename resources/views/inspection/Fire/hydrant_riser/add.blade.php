@@ -243,10 +243,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -260,10 +260,10 @@
                                                                 Intact</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Damaged</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -277,10 +277,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -294,10 +294,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -311,10 +311,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -328,10 +328,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -345,10 +345,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -393,10 +393,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -582,7 +582,7 @@
                         },
                         device_image: {
                             required: true,
-                            extension: "jpg",
+                            // extension: "jpg",
                             filesize: 2097152
                         },
                         observation: {
@@ -653,7 +653,7 @@
                          "flow_test[1]": {
                             required: "Please add the Flow Test result (e.g., liters/minute)",
                             number: "Please enter a valid numeric value (e.g., 12.5)"
-                            
+
                         },
                         "physical_condition[1]": {
                             required: "Please Select The Physical Condition",
@@ -718,8 +718,8 @@
                     if (currentFormSets >= maxFormSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection CheckList Reached',
-                            text: 'You can only add up to 200 Detector Inspection CheckList.',
+                            title: 'Maximum Hydrant and Riser  CheckList Reached',
+                            text: 'You can only add up to 200 Hydrant and Riser CheckList.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -791,10 +791,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -808,10 +808,10 @@
                                                                 Intact</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Damaged</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -825,10 +825,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -842,10 +842,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -859,10 +859,10 @@
                                                                 Present</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Missing</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -876,10 +876,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -893,10 +893,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -941,10 +941,10 @@
                                                                 Functional</option>
                                                             <option value="{{ encryptId(0) }}">
                                                                 Non-functional</option>
-                                                            
+
                                                         </select>
                                                     </div>
-                                                  
+
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -975,11 +975,10 @@
                     `;
 
 
-            
+
                     let newFormSetElement = $(newFormSet);
 
                     let locationSelect = newFormSetElement.find('select[name^="department"]');
-                    GetDepartment(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
 
@@ -1106,8 +1105,8 @@
                     if (currentFormSets >= maxObsSets) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Maximum Detector Inspection Observation Limit Reached',
-                            text: 'You can only add up to 5 Detector Inspection Observation.',
+                            title: 'Maximum Hydrant and Riser Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Hydrant and Riser Inspection Observation.',
                             confirmButtonColor: '#3085d6'
                         });
                         return;
@@ -1116,7 +1115,7 @@
                     var newObsSet = `
                         <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Detector Inspection Observation</h4>
+                                                    <h4 class="text-white">Hydrant and Riser Inspection Observation</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -1150,22 +1149,7 @@
                 });
             });
 
-            function GetDepartment(selectElement) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ admin_url('fire/detector-inspection/get/department') }}",
-                    success: function(response) {
-                        if (response.length > 0) {
-                            let options = `<option value="">Select Department</option>`;
-                            response.forEach(department => {
-                                options +=
-                                    `<option value="${department.id}">${department.department_name}</option>`;
-                            });
-                            $(selectElement).html(options).trigger('change');
-                        }
-                    }
-                });
-            }
+
 
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
@@ -1198,7 +1182,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum One CheckList Required',
-                        text: 'At least One Detector Inspection Checklist is required.',
+                        text: 'At least One Hydrant and Riser Inspection Checklist is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;

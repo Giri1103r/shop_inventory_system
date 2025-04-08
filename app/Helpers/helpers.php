@@ -51,6 +51,8 @@ use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\MSDS\MSDSDetails;
+use App\Models\Inspection\RRAA\RRAADetails;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 
 if (!function_exists('get_encryptVal')) {
@@ -1412,7 +1414,7 @@ if (!function_exists('getMonth')) {
 
         function getMSDSCount()
         {
-            $data = MSDSCheckList::get()->count();
+            $data = MSDSDetails::get()->count();
             return $data;
         }
     }
@@ -1447,7 +1449,7 @@ if (!function_exists('getMonth')) {
 
         function getRRAACount()
         {
-            $data = RRAACheckList::get()->count();
+            $data = RRAADetails::get()->count();
             return $data;
         }
     }
@@ -2080,6 +2082,20 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
+                case EMERGENCY_LIGHT_INSPECTION:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', EMERGENCY_LIGHT_INSPECTION)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+
                 case MONTHLY_FIRE_PUMP:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
                         ->where('status', 1)->where('trash', 'NO')->first();
@@ -2190,6 +2206,7 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
             }
         }
     }
@@ -2403,6 +2420,24 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+
+    if (!function_exists('getLightCondition')) {
+        function getLightCondition($id)
+        {
+            if ($id == GOOD) {
+                return 'Good';
+            } else if ($id == FAIR) {
+                return 'Fair';
+            } else if ($id == POOR) {
+                return 'Poor';
+            } else if ($id == DAMAGED) {
+                return 'Damaged';
+            }
+
+            return 'Unknown';
+        }
+    }
+
 
     if (!function_exists('getObservationType')) {
         function getObservationType($type_id)
