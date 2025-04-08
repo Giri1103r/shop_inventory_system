@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly ForkLift Inspection | KARAM</title>
+    <title>MONTHLY FORKLIFT INSPECTION Checklist | KARAM</title>
 
     <style>
         .badge {
@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -118,12 +122,7 @@
     <htmlpageheader name="myHeader1" style="display:block;">
         <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
             <tr style="">
-                <td border="0" style="width:50%;float:left;text-align:left;">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
-                </td>
-                <td border="0"
-                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly ForkLift Inspection </td>
+
             </tr>
         </table>
     </htmlpageheader>
@@ -145,166 +144,183 @@
     </htmlpagefooter>
 
 
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly ForkLift Inspection
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    @foreach ($content as $forklift_details)
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($forklift_details->doc_no) ? $forklift_details->doc_no : '' }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ Displaydateformat(isset($forklift_details->issue_date) ? $forklift_details->issue_date : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($forklift_details->rev_dt) ? $forklift_details->rev_dt : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Created By</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($forklift_details->created_by) ? $forklift_details->created_by : '') }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ displayDateformat($forklift_details->created_at) }}</td>
-            </tr>
-        </table>
-
+    @foreach ($content as $details)
         <br>
-        @php
-            $user_response = json_decode($forklift_details->responses, true);
-        @endphp
 
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
+                        MONTHLY FORKLIFT INSPECTION CHECKLIST
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-        <table style="width:100%;">
-            <thead>
+        <table
+            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+            <tr>
+                <th colspan="3" style="border:1px solid black; height:50px;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
+                </th>
+                <th colspan="6" style="border:1px solid black; text-align: center;">
+                    <h3><b>MONTHLY FORKLIFT INSPECTION <br> CHECKLIST</b></h3>
+                </th>
+                <th colspan="3" style="border:1px solid black;">
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <td style="border: 1px solid black; width:70px;">Doc.No</td>
+                                <td style="border: 1px solid black;">{{ $details->doc_no }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
+                                <td style="border: 1px solid black;">{{ $details->issue_date }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>
+                                <td style="border: 1px solid black;">{{ $details->rev_dt }}</td>
+                            </tr>
+                        </thead>
+                    </table>
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    LOCATION: {{ $details->location_name ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    SHIFT: {{ $details->shift ?? 'N/A' }}
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    NEXT DUE: {{ Displaydateformat($details->next_due) ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    UNIT: {{ $details->unit_name ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    FREQUENCY: {{ $details->frequency_name ?? 'N/A' }}
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    IDENTIFICATION NO: {{ $details->identification_no ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    TYPE: {{ $details->forklift ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    CAPACITY: {{ $details->capacity ?? 'N/A' }}
+                </th>
+            </tr>
+
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
+                </th>
+                <th colspan="5"
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Description</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
+                </th>
+                <th colspan="5"
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Remarks
+                </th>
+            </tr>
+
+            @php
+                $user_response = json_decode($details->responses, true);
+                $srNo = 1;
+            @endphp
+
+            @foreach ($user_response as $index => $item)
                 <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        LOCATION: {{ $forklift_details->location_name ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        SHIFT: {{ $forklift_details->shift ?? 'N/A' }}
-                    </th>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
+                    <td colspan="5" style="border: 1px solid black; padding: 8px;">
+                        {{ GetChecklistTypeDate($index) }}
+                    </td>
+                    <td
+                        style="border: 1px solid black; padding: 8px; text-align: center; color: {{ strtoupper($item['answer']) == 'YES' ? 'green' : 'red' }};">
+                        @if (strtoupper($item['answer']) == 'YES')
+                            ✔
+                        @else
+                            ❌
+                        @endif
+                    </td>
+                    <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $item['remarks'] }}
+                    </td>
                 </tr>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        LOCATION: {{ $forklift_details->location_name ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        SHIFT: {{ $forklift_details->shift ?? 'N/A' }}
-                    </th>
-                </tr>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        NEXT DUE ON: {{ Displaydateformat($forklift_details->next_due) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        UNIT: {{ $forklift_details->unit_name ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        FREQUENCY: {{ $forklift_details->frequency_name ?? 'N/A' }}
-                    </th>
-                </tr>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        IDENTIFICATION NO: {{ Displaydateformat($forklift_details->identification_no) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        TYPE: {{ $forklift_details->forklift ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                        colspan="3">
-                        CAPACITY: {{ $forklift_details->capacity ?? 'N/A' }}
-                    </th>
-                </tr>
-                <tr>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;" colspan="2">
-                        Sr. No</th>
-                    <th colspan="4"
-                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                        Check Points</th>
-                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;" colspan="3">
-                        Reports</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($user_response as $subcategory => $questions)
-                    @php
-                        $rowCount = count($questions);
-                        $firstRow = true;
-                        $srNo = 1;
-                    @endphp
-                    @foreach ($questions as $questionId => $answer)
-                        <tr>
-                            @if ($firstRow)
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="2">
-                                    {{ $srNo }}</td>
-                                <td rowspan="{{ $rowCount }}"
-                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                    {{ GetSubChecklistTypeName($subcategory) }}
-                                </td>
-                                @php
-                                    $srNo++;
-                                    $firstRow = false;
-                                @endphp
-                            @endif
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                {{ GetChecklistTypeDate($questionId) }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;" colspan="3">
-                                @if ($answer == 'YES')
-                                    <span style="color: green; font-size: 20px;">✓</span>
-                                @elseif ($answer == 'NO' || $answer == 'N/A')
-                                    <span style="color: red; font-size: 20px;">X</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                @endforeach
-            </tbody>
+            @endforeach
+            @php
+                $creator_signature = GetSafetySignature(
+                    $details->created_by,
+                    $details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+                $verifier_signature = GetSafetySignature(
+                    $details->verified_by,
+                    $details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+                $approver_signature = GetSafetySignature(
+                    $details->approved_by,
+                    $details->id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+            @endphp
+
+            <!-- Signature Section in a Single Row -->
+            <tr>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
+                    <div>Checked & Prepared By: {{ getUsername($details->created_by) }}</div>
+                </td>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($details->verified_by != null)
+                        <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                        <div>Verified By: {{ getUsername($details->verified_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($details->approved_by != null)
+                        <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
+                            style="height: 50px;">
+                        <div>Approved By: {{ getUsername($details->approved_by) }}</div>
+                    @else
+                        <p>Inspection has not been Approved Yet</p>
+                    @endif
+                </td>
+            </tr>
+
         </table>
-
-        <br>
+        <div class="page-break"></div>
     @endforeach
+
+    <br>
 
 </body>
 
