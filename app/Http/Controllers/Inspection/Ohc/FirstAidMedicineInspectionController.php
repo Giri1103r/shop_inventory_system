@@ -360,8 +360,8 @@ class FirstAidMedicineInspectionController extends Controller
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
                 'document_no' => $document_no,
-
             );
+
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
@@ -388,14 +388,10 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-
-
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
-                'document_no' => $document_no,
 
             );
 

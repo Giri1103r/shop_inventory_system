@@ -979,7 +979,6 @@
                     let newFormSetElement = $(newFormSet);
 
                     let locationSelect = newFormSetElement.find('select[name^="department"]');
-                    GetDepartment(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
 

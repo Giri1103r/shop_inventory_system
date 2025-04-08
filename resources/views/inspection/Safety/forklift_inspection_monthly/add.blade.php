@@ -239,7 +239,7 @@
 
                                                         <th colspan="3"
                                                             style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                            Check Points
+                                                            Description
                                                         </th>
 
                                                         @foreach ($getoption as $option)
@@ -248,6 +248,8 @@
                                                                 {{ $option }}
                                                             </th>
                                                         @endforeach
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                                                            class="require">Remarks</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -265,13 +267,8 @@
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                     {{ $i }}
                                                                 </td>
-                                                                @if ($index == 0)
-                                                                    <td rowspan="{{ $rowCount }}"
-                                                                        style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
-                                                                        {{ $checklist->subcategory_name }}
-                                                                    </td>
-                                                                @endif
-                                                                <td colspan="2"
+
+                                                                <td colspan="3"
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
@@ -284,6 +281,11 @@
                                                                             class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
+                                                                <td style="border: 1px solid black; text-align: center; padding:5px;"
+                                                                    class="form-input">
+                                                                    <input type="text" class="form-control"
+                                                                        name="remarks[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]">
+                                                                </td>
                                                                 @php
                                                                     $i++;
                                                                 @endphp
@@ -486,6 +488,14 @@
                                     .message);
                             });
                         }
+                    });
+                    $('input[name^="remarks"]').each(function() {
+                        $(this).rules('add', {
+                            required: 500,
+                            messages: {
+                                required: "Remarks is required"
+                            }
+                        });
                     });
                 });
             });
