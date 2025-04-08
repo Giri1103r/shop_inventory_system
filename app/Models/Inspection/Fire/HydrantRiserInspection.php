@@ -50,7 +50,7 @@ class HydrantRiserInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hydrant_riser.id as fire_detector_id')
+        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hydrant_riser.id as fire_hydrant_riser_id')
             ->leftJoin('masters_location', 'inspection_fire_hydrant_riser.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_hydrant_riser.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_hydrant_riser.unit', '=', 'masters_unit.id')
@@ -133,7 +133,7 @@ class HydrantRiserInspection extends Model
     public function store()
     {
         $request = request();
-        
+
         $data = array(
             'doc_no' => $request->doc_no,
             'document_reference_id' => decryptId($request->document_reference_id),

@@ -18,14 +18,11 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
-use App\Models\Inspection\Fire\DetectorType;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Fire\DetectorInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Fire\DetectorInspectionDetails;
 use App\Models\Inspection\Fire\HydrantRiserInspection;
 use App\Models\Inspection\Fire\HydrantRiserInspectionDetails;
 
@@ -33,8 +30,6 @@ class HydrantRiserInspectionContoller extends Controller
 {
     private $hydrant;
     private $hydrant_checklist;
-    private $detector;
-    private $detector_details;
     private $shift;
     private $location;
     private $unit;
@@ -45,14 +40,11 @@ class HydrantRiserInspectionContoller extends Controller
     private $statusLog;
     private $checklist_follow;
     private $document_reference;
-    private $detector_type;
 
     public function __construct()
     {
         $this->hydrant = new HydrantRiserInspection();
         $this->hydrant_checklist = new HydrantRiserInspectionDetails();
-        $this->detector = new DetectorInspection();
-        $this->detector_details = new DetectorInspectionDetails();
         $this->department = new Department();
         $this->shift = new Shift();
         $this->location = new Location();
@@ -63,7 +55,6 @@ class HydrantRiserInspectionContoller extends Controller
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
-        $this->detector_type = new DetectorType();
 
     }
 
@@ -79,9 +70,9 @@ class HydrantRiserInspectionContoller extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_detector_id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_hydrant_riser_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_detector_id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_hydrant_riser_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -135,23 +126,23 @@ class HydrantRiserInspectionContoller extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/hydrant-riser-inspection/view/' . encryptId($row->fire_detector_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/hydrant-riser-inspection/view/' . encryptId($row->fire_hydrant_riser_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_hydrant_riser_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_hydrant_riser_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_hydrant_riser_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_hydrant_riser_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_detector_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($row->fire_hydrant_riser_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/hydrant-riser-inspection/exportViewPdf/' . encryptId($row->fire_hydrant_riser_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
                             return $btn;
@@ -192,7 +183,6 @@ class HydrantRiserInspectionContoller extends Controller
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
             $document_no = $this->document_reference->selectUsingName('HydrantAndRiser');
-            $detector_type = $this->detector_type->getDetectorType();
 
             $data = array(
                 'locations' => $location,
@@ -201,7 +191,6 @@ class HydrantRiserInspectionContoller extends Controller
                 'shifts' => $shifts,
                 'department' => $department,
                 'document_no' => $document_no,
-                'detector_types' => $detector_type,
             );
             // dd($data);
 
@@ -243,7 +232,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-            
+
                 'location_check_id.*' => 'required',
                 'hydrant_no.*' => 'required',
                 'lugs.*' => 'required',
@@ -258,20 +247,20 @@ class HydrantRiserInspectionContoller extends Controller
                 'condition_of_ivs.*' => 'required',
                 'approach.*' => 'required',
                 'remarks.*' => 'required',
-            
+
                 'observation' => 'required',
                 'device_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
-            
+
             $messages = [
-                
+
                 'inspection_date.required' => 'Inspection Date is required.',
                 'location_id.required' => 'Location is required.',
                 'shift_id.required' => 'Shift is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
                 'frequency_id.required' => 'Frequency is required.',
-            
+
                 'location_check_id.*.required' => 'Location Check is required.',
                 'hydrant_no.*.required' => 'Hydrant No is required.',
                 'lugs.*.required' => 'Lugs value is required.',
@@ -286,19 +275,19 @@ class HydrantRiserInspectionContoller extends Controller
                 'condition_of_ivs.*.required' => 'Condition of IVs is required.',
                 'approach.*.required' => 'Approach value is required.',
                 'remarks.*.required' => 'Remarks are required.',
-            
+
                 'observation.required' => 'Observation is required.',
                 'device_image.image' => 'The uploaded file must be an image.',
                 'device_image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg.',
                 'device_image.max' => 'The image size must not exceed 2 MB.',
             ];
-            
+
             $validator = Validator::make($request->all(), $rules, $messages);
-            
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
 
             $inspection = $this->hydrant->store();
             $inspection_type = HYDRANT_RISER;
@@ -428,7 +417,7 @@ class HydrantRiserInspectionContoller extends Controller
             $signature_update = $this->signature->signatureUpload(HYDRANT_RISER);
             $inspection_details = $this->hydrant->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'HYDRANT AND RISER Inspeciton Approved Successfully';    
+                $message = 'HYDRANT AND RISER Inspeciton Approved Successfully';
                 $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
