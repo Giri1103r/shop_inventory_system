@@ -154,7 +154,7 @@ class EmergencyLightInspectionController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -343,7 +343,7 @@ class EmergencyLightInspectionController extends Controller
             $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
             $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $inspection = $this->emergency_light->selectOne($id);
-            $inspection_details = $this->emergency_light_details->GetDetails($inspection->id);
+            $inspection_details = $this->emergency_light_details->selectOne($inspection->id);
             $inspection_image = $this->files->GetFile($inspection_type, $id);
             $status_log = $this->statusLog->selectOne($id,  EMERGENCY_LIGHT_INSPECTION);
 
@@ -356,7 +356,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -635,7 +635,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -989,12 +989,12 @@ class EmergencyLightInspectionController extends Controller
 
             if (Auth::check()) {
                 $status_log = $this->statusLog->selectOne($id, EMERGENCY_LIGHT_INSPECTION);
-                $forklift_details = $this->emergency_light->selectOne($id);
-                $inspection = $this->emergency_light_details->GetDetails($forklift_details->id);
+                $emergency_light = $this->emergency_light->selectOne($id);
+                $inspection = $this->emergency_light_details->selectOne($emergency_light->id);
                 $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
                 $data = [
                     'status_log' => $status_log,
-                    'forklift_details' => $forklift_details,
+                    'emergency_light' => $emergency_light,
                     'pagetitle' => "Emergency Light Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
@@ -1017,11 +1017,11 @@ class EmergencyLightInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Hooter Inspection.pdf";
+            $filename = "Emergency light inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

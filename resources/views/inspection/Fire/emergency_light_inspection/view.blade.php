@@ -300,9 +300,10 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
-                                                        HOOTER_INSPECTION,
+                                                        EMERGENCY_LIGHT_INSPECTION,
                                                     );
                                                 @endphp
+                                               
                                             @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -339,7 +340,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
-                                                            HOOTER_INSPECTION,
+                                                            EMERGENCY_LIGHT_INSPECTION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -402,7 +403,7 @@
                                                 $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
-                                                    HOOTER_INSPECTION,
+                                                    EMERGENCY_LIGHT_INSPECTION,
                                                 );
                                             @endphp
                                             @if (isset($signature))
@@ -455,7 +456,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                EMERGENCY_LIGHT_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -507,7 +508,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                EMERGENCY_LIGHT_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -558,7 +559,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                EMERGENCY_LIGHT_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
@@ -585,7 +586,7 @@
                                             $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
-                                                HOOTER_INSPECTION,
+                                                EMERGENCY_LIGHT_INSPECTION,
                                             );
                                         @endphp
                                         @if (isset($signature))
