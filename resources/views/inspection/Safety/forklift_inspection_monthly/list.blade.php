@@ -380,7 +380,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/status') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -448,7 +448,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/delete') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

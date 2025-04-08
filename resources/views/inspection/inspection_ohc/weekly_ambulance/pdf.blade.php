@@ -244,12 +244,36 @@
                     </tr>
                 @endforeach
             @endforeach
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Checked By</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Verified By
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Approved By
+                </th>
+
+
+            </tr>
+
+            <tr>
+                @php
+                    $createdSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
+                    $approvedSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
+                    $verifiedSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
+                @endphp
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($createdSignature->file_path) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" /></th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($verifiedSignature->file_path) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($approvedSignature->file_path) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                </th>
+
+
+            </tr>
 
         </table>
     @endforeach
-
-
-
 
 
 
