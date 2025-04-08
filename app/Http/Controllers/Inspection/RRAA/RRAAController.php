@@ -81,7 +81,6 @@ class RRAAController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -147,19 +146,16 @@ class RRAAController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
             try {
 
                 $this->rraa_details->store();
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
@@ -258,24 +254,15 @@ class RRAAController extends Controller
         try {
 
             $allData = $this->rraa_details->exportdata();
+            $document_no = $this->document_reference->selectUsingName('RRAA');
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Category',
-                'OHC Compliance Index',
-                'Frequency',
-                'Scope',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "RRAA Details",
             );
 
@@ -299,7 +286,6 @@ class RRAAController extends Controller
             $filename = "RRAA.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
