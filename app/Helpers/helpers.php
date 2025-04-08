@@ -52,6 +52,8 @@ use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\MSDS\MSDSDetails;
+use App\Models\Inspection\RRAA\RRAADetails;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 
 
@@ -1414,7 +1416,7 @@ if (!function_exists('getMonth')) {
 
         function getMSDSCount()
         {
-            $data = MSDSCheckList::get()->count();
+            $data = MSDSDetails::get()->count();
             return $data;
         }
     }
@@ -1449,7 +1451,7 @@ if (!function_exists('getMonth')) {
 
         function getRRAACount()
         {
-            $data = RRAACheckList::get()->count();
+            $data = RRAADetails::get()->count();
             return $data;
         }
     }

@@ -90,7 +90,6 @@ class SafetyPettyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -145,10 +144,9 @@ class SafetyPettyController extends Controller
         try {
 
             $sfty_petty_details = $this->sfty_petty_details->store();
-            // dd($sfty_petty_details);
+
             $sfty_petty_id = $sfty_petty_details[0]->id;
-            // dd($sfty_petty_id);
-            // $this->sfty_petty_checklist->store();
+
             $empId =  Auth::user()->id;
 
             $this->signature->signatureLogUpload(
@@ -165,7 +163,6 @@ class SafetyPettyController extends Controller
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -198,7 +195,6 @@ class SafetyPettyController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
-                // $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
                 $document_no = $this->document_reference->selectOne($sfty_petty_details->document_reference_id);
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
@@ -211,7 +207,6 @@ class SafetyPettyController extends Controller
 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
-                    // 'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
@@ -220,7 +215,6 @@ class SafetyPettyController extends Controller
             }
             return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -231,8 +225,6 @@ class SafetyPettyController extends Controller
             $id = decryptId($request->id);
 
             $this->sfty_petty_details->statuschange($id);
-
-            // $this->sfty_petty_checklist->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
         } catch (Exception $ex) {
@@ -291,7 +283,6 @@ class SafetyPettyController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
 
             $allData = $this->sfty_petty_details->exportdata();
@@ -350,7 +341,6 @@ class SafetyPettyController extends Controller
 
             if (Auth::check()) {
                 $sfty_petty_details = $this->sfty_petty_details->find($id);
-                // $sfty_petty_checklist = $this->sfty_petty_checklist->selectOne($id);
                 $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
 
                 $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
@@ -363,7 +353,6 @@ class SafetyPettyController extends Controller
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
-                    // 'sfty_petty_checklist' => $sfty_petty_checklist,
                     'signature_amount_givenby' => $signature_amount_givenby,
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
@@ -388,7 +377,6 @@ class SafetyPettyController extends Controller
             $filename = "Safety Petty Logbook Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
