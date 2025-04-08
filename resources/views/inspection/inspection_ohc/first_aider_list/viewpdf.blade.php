@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly First Aid Box Audit Checklist | KARAM</title>
+    <title>First Aider List| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly First Aid Box Audit Checklist </td>
+                    First Aider List</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly First Aid Box Audit Checklist
+                    First Aider List
                 </td>
             </tr>
         </table>
@@ -177,38 +177,49 @@
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="50%" style="padding:5px;"><b>Next Review date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getShift(isset($monthly_first_aid->shift) ? $monthly_first_aid->shift : '') }}
+                {{ displayDateformat(isset($first_aider->next_review_date) ? $first_aider->next_review_date : '') }}
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Date of Inspection</b></td>
+            <td width="50%" style="padding:5px;"><b>Last Update Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($monthly_first_aid->date_of_inspection) ? $monthly_first_aid->date_of_inspection : '') }}
+                {{ displayDateformat(isset($first_aider->last_updated_date) ? $first_aider->last_updated_date : '') }}
             </td>
         </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Frequency</b></td>
+        {{-- <tr>
+            <td width="50%" style="padding:5px;"><b>Signature</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getfrequencyname(isset($monthly_first_aid->frequency) ? $monthly_first_aid->frequency : '') }}
+                @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
+                    <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
+                        style="width: 150px; height: auto;" />
+                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                    {{-- Fixed typo --}}
+                    {{-- <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
+                        style="width: 150px; height: auto;" />
+                @else
+                    <span>No signature available</span>
+                @endif
             </td>
-        </tr>
+        </tr> --}}
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($monthly_first_aid->created_by) ? $monthly_first_aid->created_by : '') }}</td>
+                {{ getUsername(isset($first_aider->created_by) ? $first_aider->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($monthly_first_aid->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($first_aider->created_at) }}</td>
         </tr>
     </table>
+
+    <br>
 
     <div>
         <div style="width:100%;">
@@ -216,103 +227,42 @@
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Monthly First Aid Box Audit Checklist
+                        Employee details
                     </td>
                 </tr>
             </table>
         </div>
         <div class="table-responsive">
             <div class="col-md-12">
-                @if (isset($monthly_first_aid_audit_checklist) && $monthly_first_aid_audit_checklist->isNotEmpty())
+                @if (isset($first_aider_details) && $first_aider_details->isNotEmpty())
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
                                 <th>S.NO</th>
                                 <th>Unit</th>
                                 <th>Department</th>
-                                <th>First Aid Box Number</th>
-                                <th>Does the first-aid register is being properly maintened as &
-                                    when require.</th>
-                                <th>Does the first-aid box is bieng inspect as per periodicity.</th>
-                                <th>Does the First- aid box inspection Checklist is being filled as per periodicity.
-                                </th>
-                                <th>Does the First-aid box is being maintained as per the freeze
-                                    quantity.</th>
-                                <th>Does the medical requisition slip record is being
-                                    maintained.</th>
-                                <th>Does the first-aid box is clean.</th>
-                                <th>Does the first-aid box sticker available.</th>
-                                <th>Does the First aid material index is available.</th>
+                                <th>Employee Name</th>
+                                <th>Designation</th>
+                                <th>Mobile Number</th>
+
+
                             </tr>
                         </thead>
                         <tbody>
-                            @if (empty($monthly_first_aid_audit_checklist) || $monthly_first_aid_audit_checklist->isEmpty())
+                            @if ($first_aider_details->isEmpty())
                                 <tr>
-                                    <td colspan="12" class="text-center">No data is available</td>
+                                    <td colspan="4" class="text-center">No data is available</td>
                                 </tr>
                             @else
-                                @foreach ($monthly_first_aid_audit_checklist as $index => $log)
+                                @foreach ($first_aider_details as $data)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ getUnitname($log->unit_id) }}</td>
-                                        <td>{{ getDepartment($log->department_id) }}</td>
-                                        <td>{{ $log->first_aid_box_no }}</td>
-                                        <td>
-                                            @if ($log->first_aid_register_maintained == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_box_inspect_periodicity == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_box_checklist_periodicity == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_box_freeze_quantity == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->medicine_requisition_slip_record == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_box_clean == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_box_sticker == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($log->first_aid_material_index == 1)
-                                                <span style="color: green; font-size: 20px;">✓</span>
-                                            @else
-                                                <span style="color: red; font-size: 20px;">X</span>
-                                            @endif
-                                        </td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ getUnitname($data->unit_id) }}</td>
+                                        <td>{{ getDepartment($data->department_id) }}</td>
+                                        <td>{{ getEmployeename($data->emp_id) }}</td>
+                                        <td>{{ $data->designation_id }}</td>
+                                        <td>{{ $data->mobile_no }}</td>
+
                                     </tr>
                                 @endforeach
                             @endif
@@ -327,6 +277,9 @@
         </div>
         <br>
     </div>
+
+
+
     <br>
 
 </body>

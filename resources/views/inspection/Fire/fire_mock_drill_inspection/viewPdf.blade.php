@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Isolation Valve Inspection | KARAM</title>
+    <title>Mock Drill Observation | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Isolation Valve Inspection </td>
+                    Mock Drill Observation </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Isolation Valve Inspection
+                    Mock Drill Observation
                 </td>
             </tr>
         </table>
@@ -202,59 +202,76 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Isolation Valve Inspection Details
+                    Mock Drill Observation Details
                 </td>
             </tr>
         </table>
     </div>
     <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-        <tr>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
-                SR.NO</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
-                SHIFT</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                UNIT</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-               RECOMENDED CORRECTIVE AND PREVENTIVE ACTION</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
-                ACTION TAKEN</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                RESPONSIBILITY</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-               TARGET DATE OF COMPLIANCE</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                DATE OF CLOSURE</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-               STATUS</th>
-            <th rowspan="2"
-                style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
-                REMARKS</th>
-        </tr>
+        <thead>
+            <tr>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">SR.NO
+                </th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    OBSERVATION</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">DATE
+                    OF OBSERVATION</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">SHIFT
+                </th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">UNIT
+                </th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    RECOMMENDED & PREVENTIVE ACTION</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    ACTION TAKEN</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    RESPONSIBILITY</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    TARGET DATE OF COMPLIANCE</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">DATE
+                    OF CLOSURE</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    STATUS</th>
+                <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
+                    REMARKS</th>
+            </tr>
+        </thead>
+
 
         @foreach ($inspection as $details)
             <tr>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->observation }}
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->observation }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->date_of_observation }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ getShiftname($details->shift_id) }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ getUnitname($details->unit_id) }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->capa_remarks }}
                 </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->date_of_observation }}
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->action_taken }}
                 </td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ getShiftname($details->shift_id) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ getUnitname($details->unit_id) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ ($details->capa_remarks) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ getUsername($details->emp_id) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ Displaydateformat($details->date_of_compliance) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ Displaydateformat($details->date_of_closure) }}</td>
-                <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ ($details->observation_status == '1' ? 'Active' : 'Inactive') }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ getUsername($details->emp_id) }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ Displaydateformat($details->date_of_compliance) }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $forklift_details->date_of_closure ? Displaydateformat($forklift_details->date_of_closure) : 'The Action was not Completed' }}
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ $details->observation_status == '1' ? 'Active' : 'Inactive' }}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
@@ -280,6 +297,13 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
+                @php
+                    $verifier_signature = GetFireSignature(
+                        $forklift_details->created_by,
+                        $forklift_details->id,
+                        FIRE_MOCK_DRILL_INSPECION,
+                    );
+                @endphp
             @endif
             @if (isset($forklift_details->created_at))
                 <tr>
@@ -290,6 +314,13 @@
                     </td>
                 </tr>
             @endif
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($verifier_signature) }}" style="width:60px;" />
+                </td>
+            </tr>
             @if (isset($forklift_details->approved_by))
                 @if ($forklift_details->verified_by == $forklift_details->approved_by)
                     <tr>
@@ -300,6 +331,23 @@
                         </td>
                     </tr>
                 @endif
+
+                @php
+                    $approver_signature = GetFireSignature(
+                        $forklift_details->created_by,
+                        $forklift_details->id,
+                        FIRE_MOCK_DRILL_INSPECION,
+                    );
+                @endphp
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        <img src="{{ admin_url($approver_signature) }}" style="width:60px;" />
+                    </td>
+                </tr>
+
             @endif
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
@@ -351,6 +399,21 @@
                     {{ $forklift_details->capa_remarks }}
                 </td>
             </tr>
+
+            @php
+                $creator_signature = GetFireSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    FIRE_MOCK_DRILL_INSPECION,
+                );
+            @endphp
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($creator_signature) }}" style="width:60px;" />
+                </td>
+            </tr>
         </table>
         <br>
     @endif
@@ -387,6 +450,23 @@
                     {{ $forklift_details->capa_ehs_remarks }}
                 </td>
             </tr>
+
+            @php
+                $verifier_signature = GetFireSignature(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    FIRE_MOCK_DRILL_INSPECION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($verifier_signature) }}" style="width:60px;" />
+                </td>
+            </tr>
+
         </table>
         <br>
     @endif
@@ -422,6 +502,22 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_one_manager_remarks }}
+                </td>
+            </tr>
+
+            @php
+                $l1_manager_signature = GetFireSignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    FIRE_MOCK_DRILL_INSPECION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($l1_manager_signature) }}" style="width:60px;" />
                 </td>
             </tr>
         </table>
@@ -465,6 +561,22 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ $forklift_details->level_two_manager_remarks }}
+                </td>
+            </tr>
+
+            @php
+                $l2_manager_signature = GetFireSignature(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    FIRE_MOCK_DRILL_INSPECION,
+                );
+            @endphp
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    <img src="{{ admin_url($l2_manager_signature) }}" style="width:60px;" />
                 </td>
             </tr>
         </table>

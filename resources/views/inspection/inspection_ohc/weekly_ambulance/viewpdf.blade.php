@@ -160,19 +160,19 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($weeklyAmbulance->doc_no) ? $weeklyAmbulance->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($weeklyAmbulance->issue_date) ? $weeklyAmbulance->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($weeklyAmbulance->revision_date) ? $weeklyAmbulance->revision_date : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>

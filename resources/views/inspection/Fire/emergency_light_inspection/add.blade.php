@@ -36,27 +36,43 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
-                                                    <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                    <input type="text" name="document_no" id = "document_no"
+                                                        class="form-control" placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id="issue_date"
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('HTR-0') }}"
-                                                        readonly>
+                                                    <input type="text" name="review_date" id = "review_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -177,9 +193,9 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
                                                             @foreach ($department as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->department_name }}</option>
-                                                        @endforeach
+                                                                <option value="{{ encryptId($list->id) }}">
+                                                                    {{ $list->department_name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -275,8 +291,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.swith_condition') }}</label>
-                                                        <select name="swith_condition[1]" id="swith_condition"
+                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
+                                                        <select name="switch_condition[1]" id="switch_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -334,9 +350,9 @@
                                             @else
                                                 <div class="form-input col-md-12 mb-2">
                                                     <label class="form-label require">Signature</label>
-                                                    <input type="file" name="signature_image"
-                                                        id="signature_upload" class="form-control form-control-sm"
-                                                        accept="image/*" placeholder="Enter the image">
+                                                    <input type="file" name="signature_image" id="signature_upload"
+                                                        class="form-control form-control-sm" accept="image/*"
+                                                        placeholder="Enter the image">
                                                     <small>Allowed file types: jpg, jpeg, png</small>
                                                     <div id="signature_upload" class="text-danger"></div>
                                                 </div>
@@ -467,7 +483,7 @@
                         "power_supply[1]": {
                             required: true,
                         },
-                        "swith_condition[1]": {
+                        "switch_condition[1]": {
                             required: true,
                         },
                         "light_condition[1]": {
@@ -535,7 +551,7 @@
                         "power_supply[1]": {
                             required: "Please select the condition of light",
                         },
-                        "swith_condition[1]": {
+                        "switch_condition[1]": {
                             required: "Please select the  swith condition of light",
                         },
                         "light_condition[1]": {
@@ -735,8 +751,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.swith_condition') }}</label>
-                                                        <select name="swith_condition[${form_set_count}]" id="swith_condition"
+                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
+                                                        <select name="switch_condition[${form_set_count}]" id="switch_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -790,7 +806,7 @@
                             required: 'Please select the status',
                         }
                     });
-                    $("select[name='swith_condition[" + form_set_count + "]']").rules('add', {
+                    $("select[name='switch_condition[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Switch Condition',
@@ -891,7 +907,7 @@
                     $(this).find('select[name^="condition_of_light"]').attr('name', 'condition_of_light[' + idx + ']');
                     $(this).find('select[name^="type_of_light"]').attr('name', 'type_of_light[' + idx + ']');
                     $(this).find('select[name^="power_supply"]').attr('name', 'power_supply[' + idx + ']');
-                    $(this).find('select[name^="swith_condition"]').attr('name', 'swith_condition[' + idx + ']');
+                    $(this).find('select[name^="switch_condition"]').attr('name', 'switch_condition[' + idx + ']');
                     $(this).find('select[name^="light_condition"]').attr('name', 'light_condition[' + idx + ']');
                     $(this).find('select[name^="status"]').attr('name', 'status[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');

@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\InspectionStaticDocno;
+
 class FirstAiderlistController extends Controller
 {
 
@@ -63,29 +64,39 @@ class FirstAiderlistController extends Controller
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('status', function ($row) {
+                        ->addColumn('inspection_status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
-                            if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
-                            } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                            if ($row->inspection_status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
+                            } else if ($row->inspection_status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('last_updated_date', function ($row) {
+                            return Displaydateformat($row->last_updated_date);
+                        })
+                        ->addColumn('next_review_date', function ($row) {
+                            return Displaydateformat($row->last_updated_date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
 
                         ->addColumn('action', function ($row) {
-                            return '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn ="";
+                            $btn .= '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+
+                            $btn .= '<a href="' . admin_url('ohc/first-aider/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
+
+                          return $btn;
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status', 'issue_date'])
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'inspection_status', 'last_updated_date', 'next_review_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -171,15 +182,56 @@ class FirstAiderlistController extends Controller
             if (Auth::check()) {
                 $first_aider = $this->first_aider->Selectone($id);
                 $first_aider_details = $this->first_aider_details->Selectone($id);
+                $document_no = $this->document_reference->selectUsingName('FirstAiderList');
 
                 $data = array(
                     'first_aider' => $first_aider,
                     'first_aider_details' => $first_aider_details,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.first_aider_list.view', $data);
         } catch (Exception $ex) {
             dd($ex);
+        }
+    }
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $first_aider = $this->first_aider->Selectone($id);
+                $first_aider_details = $this->first_aider_details->Selectone($id);
+                $document_no = $this->document_reference->selectUsingName('FirstAiderList');
+            }
+            $data = [
+                'first_aider' => $first_aider,
+                'first_aider_details' => $first_aider_details,
+                'document_no' => $document_no,
+                'pagetitle' => "First Aider List",
+            ];
+            $property = [
+                'tempDir' => storage_path('app/public/pdf/temp/'),
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            // Load HTML from the Blade view
+            $html = view('inspection.inspection_ohc.first_aider_list.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "First Aider List.pdf";
+
+            return $mpdf->Output($filename, 'D');
+        } catch (\Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 
@@ -228,13 +280,13 @@ class FirstAiderlistController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
+                $export[] =  $data->rev_dt;
                 $export[] =  Displaydateformat($data->issue_date);
-                $export[] = Displaydateformat( $data->last_updated_date);
-                $export[] = Displaydateformat( $data->next_review_date);
+                $export[] = Displaydateformat($data->last_updated_date);
+                $export[] = Displaydateformat($data->next_review_date);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
@@ -307,7 +359,7 @@ class FirstAiderlistController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            ($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aider/list'));
         }
@@ -340,8 +392,7 @@ class FirstAiderlistController extends Controller
 
     public function employeedetails(Request $request)
     {
-        $id = $request->input('emp_name');
-
+        $id = decryptId($request->input('emp_name'));
         $employee = Employee::find($id);
 
         if ($employee) {

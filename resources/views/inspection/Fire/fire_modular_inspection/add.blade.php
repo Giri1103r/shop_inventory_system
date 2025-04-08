@@ -498,7 +498,6 @@
                         },
                         device_image: {
                             required: true,
-                            extension: "jpg",
                             filesize: 2097152
                         },
                         observation: {

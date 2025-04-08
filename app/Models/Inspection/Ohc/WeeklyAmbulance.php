@@ -15,9 +15,6 @@ class WeeklyAmbulance extends Model
     protected $fillable = [
         'checklist',
         'document_reference_id',
-        'doc_no',
-        'issue_date',
-        'revision_date',
         'date_of_inspection',
         'location',
         'shift',
@@ -57,46 +54,38 @@ class WeeklyAmbulance extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*');
 
-        $query = $this->select(
-            'inspection_ohc_weekly_ambulance_inspection_checklist.*',
-            'inspection_static_docno.*',
-            'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
-            'inspection_ohc_weekly_ambulance_inspection_checklist.status as ambulance_inspection_status',
-        )
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
 
+        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id' ,'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by')
+            ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id', '=', 'inspection_static_docno.id');
 
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                      ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                      ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit));
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', DBdateformat($request->issue_date));
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.shift', decryptId($request->shift));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.revision_date', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.location', decryptId($request->location_id));
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status',decryptId( $request->status));
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status', decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -160,7 +149,7 @@ class WeeklyAmbulance extends Model
             'unit' => decryptId($request->unit_id),
             'next_due' => DBdateformat($request->next_due_on),
             'date_of_inspection' => DBdateformat($request->date_of_inspection),
-            'approve_status'=>WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
         ];
 
@@ -272,24 +261,38 @@ class WeeklyAmbulance extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*');
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.doc_no',  $request->document_number);
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.issue_date', DBdateformat($request->issue_date));
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.revision_date', $request->rev_date );
-        }
+        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id' ,'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by',
+        'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at')
+        ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
+        ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
+        ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
+        ->leftJoin('inspection_frequency_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.frequency', '=', 'inspection_frequency_option.id')
+        ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id', '=', 'inspection_static_docno.id');
 
-        if (!empty($request->status)) {
-            $status = decryptId($request->status);
+    // dd($query);
+    $org_total =  $query;
+    $org_total_counts = $org_total->count();
 
-                $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status',  $status );
-
-        }
-
+    if (isset($request->search['value']) && $request->search['value'] != '') {
+        $search = $request->search['value'];
+        $query = $query->where(function ($query) use ($search) {
+            $query->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                  ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                  ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
+        });
+    }
+    if (isset($request->unit) && $request->unit) {
+        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit));
+    }
+    if (isset($request->shift) && $request->shift) {
+        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.shift', decryptId($request->shift));
+    }
+    if (isset($request->location_id) && $request->location_id) {
+        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.location', decryptId($request->location_id));
+    }
+    if (isset($request->status) && $request->status) {
+        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status', decryptId($request->status));
+    }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
@@ -319,7 +322,7 @@ class WeeklyAmbulance extends Model
             }
         }
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_weekly_ambulance_inspection_checklist.id', 'DESC');
 
         return  $query->get();
     }

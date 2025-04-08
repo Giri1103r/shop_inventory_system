@@ -80,9 +80,9 @@ class MonthlyFirstAidboxController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
@@ -102,11 +102,11 @@ class MonthlyFirstAidboxController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            $btn .=  '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .=  '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
 
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -194,10 +194,13 @@ class MonthlyFirstAidboxController extends Controller
             $type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
             $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
             $signatureview = $this->user->where('id', $requestorsignature)->first();
+
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
             $data = [
                 'monthly_first_aid' => $monthly_first_aid,
                 'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
                 'signatureview' => $signatureview,
+                'document_no' => $document_no,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
             ];
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
@@ -221,10 +224,13 @@ class MonthlyFirstAidboxController extends Controller
             $type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
             $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
             $signatureview = $this->user->where('id', $requestorsignature)->first();
+
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
             $data = [
                 'monthly_first_aid' => $monthly_first_aid,
                 'monthly_first_aid_audit_checklist' => $monthly_first_aid_audit_checklist,
                 'signatureview' => $signatureview,
+                'document_no' => $document_no,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
             ];
 
@@ -288,8 +294,8 @@ class MonthlyFirstAidboxController extends Controller
                 $export[] =  Displaydateformat($data->date_of_inspection);
                 $export[] =  getShift($data->shift);
                 $export[] =  getFrequencyname($data->frequency);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
@@ -355,7 +361,7 @@ class MonthlyFirstAidboxController extends Controller
             $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }

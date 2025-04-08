@@ -29,7 +29,7 @@
                             {{ ($value->doc_no) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->revision_date) }}
+                            {{ ($value->rev_dt) }}
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
@@ -49,10 +49,10 @@
                             {{ getohcrequisitionfloorstatus($value->approve_status) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->created_by) }}
+                            {{ getusername($value->inspection_created_by) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ Displaydateformat($value->created_at) }}
+                            {{ Displaydateformat($value->inspection_created_at) }}
                         </td>
                     </tr>
                     @php

@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Detector Inspection </td>
+                    Hydrant And Riser Inspection </td>
             </tr>
         </table>
     </htmlpageheader>

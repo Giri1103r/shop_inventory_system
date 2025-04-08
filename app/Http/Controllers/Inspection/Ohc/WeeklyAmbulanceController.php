@@ -90,8 +90,17 @@ class WeeklyAmbulanceController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('created_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('unit', function ($row) {
+                            return ($row->unit_name);
+                        })
+                        ->addColumn('location', function ($row) {
+                            return ($row->location_name);
+                        })
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
                         ->addColumn('approve_status', function ($row) {
                             $text = '';
@@ -166,8 +175,15 @@ class WeeklyAmbulanceController extends Controller
                 }
             }
         }
-
-        return view('inspection.inspection_ohc.weekly_ambulance.list');
+        $location = $this->location->getLocationname();
+        $shift = $this->shift->getShiftname();
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
+            'shift' => $shift,
+            'location' => $location,
+        );
+        return view('inspection.inspection_ohc.weekly_ambulance.list',$data);
     }
 
 
@@ -774,12 +790,12 @@ class WeeklyAmbulanceController extends Controller
                 $export[] =  $i;
                 $export[] = Displaydateformat($data->next_due);
                 $export[] = Displaydateformat($data->date_of_inspection);
-                $export[] =  getShift($data->shift);
-                $export[] =  getLocationname($data->location);
-                $export[] =  getUnitname($data->unit);
+                $export[] =  ($data->shift);
+                $export[] =  ($data->location_name);
+                $export[] =  getUnitname($data->unit_name);
                 $export[] =  getInspectionStatus($data->approve_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
@@ -872,6 +888,7 @@ class WeeklyAmbulanceController extends Controller
                 $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
+                $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
             }
             $data = [
                 'weeklyAmbulance' => $weeklyAmbulance,
@@ -879,6 +896,7 @@ class WeeklyAmbulanceController extends Controller
                 'inspectionCkeclist' => $inspectionCkeclist,
                 'checklist_details' =>  $checklist_details,
                 'getoption' => $getoption,
+                'document_no' => $document_no,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             ];
 

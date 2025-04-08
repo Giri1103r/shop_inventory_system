@@ -69,17 +69,20 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('unit', function ($row) {
+                            return ($row->unit_name);
+                        })
+                        ->addColumn('department', function ($row) {
+                            return ($row->department_name);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -112,13 +115,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if (((checkUserRole(ROLE_SAFETY_OFFICER) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING)) || ((checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
@@ -137,8 +140,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 }
             }
         }
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
 
-        return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.list');
+
+        );
+        return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.list',$data);
     }
 
     public function Add(Request $request)
@@ -272,6 +280,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
+                // dd(  $medicine_requisition_fdo_details)
                 $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FDO;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
@@ -291,6 +300,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
                 $data = array(
                     'medicinerequisition' => $medicine_requisition_fdo_details,
                     'medicine_requisition_fdo_checklist' => $medicine_requisition_fdo_checklist_details,
@@ -300,6 +310,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'approversignatureview' => $approversignatureview,
                     'signatureview' => $signatureview,
+                    'document_no' => $document_no,
 
                 );
             }
@@ -335,6 +346,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
                 $data = array(
                     'medicinerequisition' => $medicine_requisition_fdo_details,
                     'medicine_requisition_fdo_checklist' => $medicine_requisition_fdo_checklist_details,
@@ -344,6 +357,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'approversignatureview' => $approversignatureview,
                     'signatureview' => $signatureview,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.approval', $data);
@@ -378,6 +392,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
             }
 
             $data = [
@@ -386,6 +402,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 'statuslog' => $statuslog,
                 'safetyofficer' => $safetyofficer,
                 'requestorsignature' => $requestor_signature,
+                'document_no' => $document_no,
                 'safetyofficersignature' => $safetyofficersignature,
                 'approversignatureview' => $approversignatureview,
                 'signatureview' => $signatureview,
@@ -565,13 +582,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
+                $export[] =  $data->rev_dt;
                 $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getUnitname($data->department);
+                $export[] =  ($data->unit_name);
+                $export[] =  ($data->department_name);
                 $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
