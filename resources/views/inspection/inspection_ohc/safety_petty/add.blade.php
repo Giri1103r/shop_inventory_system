@@ -282,7 +282,7 @@
 
             $(document).on('change', '[id^="unit_id-"]', function() {
                 var unitId = $(this).val();
-                var departmentSelect = $(this).closest('form').find('[id^="department_id-"]');
+                var departmentSelect = $(this).closest('form').find('.department');
 
                 if (unitId) {
                     $.ajax({
@@ -290,11 +290,9 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            departmentSelect.empty().append(
-                                '<option value="">Select Department</option>');
+                            departmentSelect.empty().append('<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                departmentSelect.append('<option value="' + value.id +
-                                    '">' + value.name + '</option>');
+                                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
                             });
                             departmentSelect.trigger('change');
                         },
@@ -498,9 +496,6 @@
                 }
             });
 
-
-
-
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
@@ -513,6 +508,7 @@
                     'employee_code[1]': {
                         required: true,
                         noSpaces: true,
+                        uniqueItemCode: true,
                         remote: {
                             url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
                             type: 'post',
@@ -565,7 +561,8 @@
                     },
                     'employee_code[1]': {
                         required: "Employee Code is Required",
-                        remote: "{{ __('Employee Code should be unique') }}",
+                        uniqueItemCode: "Employee Code must be unique",
+                        remote: "Employee Code should be unique",
                     },
                     'department_id[1]': {
                         required: "Department is Required",
@@ -618,6 +615,20 @@
                 }
             });
 
+
+            $.validator.addMethod("uniqueItemCode", function(value, element) {
+                var itemCodes = [];
+
+                $("input[name^='employee_code']").each(function() {
+                    var itemCodeValue = $(this).val();
+                    if (itemCodeValue) {
+                        itemCodes.push(itemCodeValue);
+                    }
+                });
+
+                return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
+            }, "Employe Code must be unique");
+
             let form_set_count = 2;
             let serial_number = parseInt("{{ getSPLBCount() }}", 10) + 1;
             const maxFormSets = 200;
@@ -636,99 +647,6 @@
                     });
                     return;
                 }
-
-// function initSelect2AndSignature(form_set_count) {
-// $('#amnt_givenby_id-' + form_set_count).select2({
-//     ajax: {
-//         url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-//         dataType: 'json',
-//         delay: 250,
-//         data: function(params) {
-//             return {
-//                 search: params.term
-//             };
-//         },
-//         // processResults: function(data) {
-//         //     console.log('Returned Data:', data);
-//         //     return {
-//         //         results: $.map(data, function(item) {
-//         //             return {
-//         //                 id: item.id,
-//         //                 text: item.text
-//         //             };
-//         //         })
-//         //     };
-//         // }
-//         processResults: function(data) {
-//             console.log('Returned Data:', data);  // Log the data to check if the request works
-//             if (data && data.length > 0) {
-//                 return {
-//                     results: $.map(data, function(item) {
-//                         return {
-//                             id: item.id,
-//                             text: item.text
-//                         };
-//                     })
-//                 };
-//             } else {
-//                 console.log('No results found');
-//                 return { results: [] };
-//             }
-//         },
-//         error: function(xhr, status, error) {
-//             console.log('AJAX error:', error); // Log AJAX error if the request fails
-//         }
-//     },
-//     minimumInputLength: 1,
-//     dropdownCssClass: 'form-control',
-//     selectionCssClass: 'form-control'
-// });
-
-// $('#amnt_receivedby_id-' + form_set_count).select2({
-//     ajax: {
-//         url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-//         dataType: 'json',
-//         delay: 250,
-//         data: function(params) {
-//             return {
-//                 search: params.term
-//             };
-//         },
-//         processResults: function(data) {
-//             return {
-//                 results: $.map(data, function(item) {
-//                     return {
-//                         id: item.id,
-//                         text: item.text
-//                     };
-//                 })
-//             };
-//         }
-//     },
-//     minimumInputLength: 1,
-//     dropdownCssClass: 'form-control',
-//     selectionCssClass: 'form-control'
-// });
-
-// $('#amnt_givenby_id-' + form_set_count).on('select2:select', function(e) {
-//     var loginId = $(this).val();
-//     if (loginId) {
-//         updateGivenByDynamicSignatureField(loginId, form_set_count);
-//     } else {
-//         $('#signature_givenby-' + form_set_count).hide();
-//     }
-// });
-
-// $('#amnt_receivedby_id-' + form_set_count).on('select2:select', function(e) {
-//     var loginId = $(this).val();
-//     if (loginId) {
-//         updateReceivedByDynamicSignatureField(loginId, form_set_count);
-//     } else {
-//         $('#signature_receivedby-' + form_set_count).hide();
-//     }
-// });
-// }
-
 
                 let newSerialNumber = 'SPLB-' + ('0000' + serial_number).slice(-5);
 
@@ -791,7 +709,7 @@
                                 <div class="form-group form-input">
                                     <label class="form-label require">Department</label>
                                     <select name="department_id[${form_set_count}]" id="department_id-${form_set_count}"
-                                        class="form-control single-select" style="width: 100%">
+                                        class="form-control single-select department" style="width: 100%">
                                         <option value="">Select Department</option>
                                     </select>
                                 </div>
@@ -882,20 +800,6 @@
                     });
                 });
 
-                $('select[name^="amnt_givenby_id["]').each(function() {
-                    $(this).select2({
-                        placeholder: "Select Amount Given By",
-                        width: '100%'
-                    });
-                });
-
-                $('select[name^="amnt_receivedby_id["]').each(function() {
-                    $(this).select2({
-                        placeholder: "Select Amount Received By",
-                        width: '100%'
-                    });
-                });
-
                 $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
@@ -906,9 +810,21 @@
                 $("input[name='employee_code[" + form_set_count + "]']").rules('add', {
                     required: true,
                     noSpaces: true,
+                    uniqueItemCode: true,
+                    remote: {
+                            url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
+                            type: 'post',
+                            data: {
+                                location_type_name: function() {
+                                    return $('#employee_code').val();
+                                }
+                            }
+                    },
                     messages: {
                         required: 'Employee Code is required',
                         noSpaces: 'Employee Code cannot be empty or only spaces',
+                        uniqueItemCode: 'Employee Code must be unique',
+                        remote: "Employee Code should be unique",
                     }
                 });
 
@@ -974,159 +890,176 @@
                     }
                 });
 
-                form_set_count++;
-                updatePageIndices();
-                initDatePicker(`#date-${form_set_count - 1}`);
-                initEmpSelect2(`#emp_id-${form_set_count - 1}`);
-
                 initializeNewFormSet(form_set_count);
+                initDatePicker(`#date-${form_set_count}`);
+                initEmpSelect2(`#emp_id-${form_set_count}`);
+                form_set_count++;
+
+                updatePageIndices();
+
             });
 
+            function initializeNewFormSet(form_set_count) {
 
-function initializeNewFormSet(form_set_count) {
-    // Initialize Select2 for Amount Given By
-    $('#amnt_givenby_id-' + form_set_count).select2({
-        ajax: {
-            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                return { search: params.term };
-            },
-            processResults: function(data) {
-                if (data && data.length > 0) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return { id: item.id, text: item.text };
-                        })
-                    };
-                }
-                return { results: [] };
-            }
-        },
-        minimumInputLength: 1,
-        dropdownCssClass: 'form-control',
-        selectionCssClass: 'form-control'
-    });
+                const givenBySelector = '#amnt_givenby_id-' + form_set_count;
 
-    // Initialize Select2 for Amount Received By
-    $('#amnt_receivedby_id-' + form_set_count).select2({
-        ajax: {
-            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-            dataType: 'json',
-            delay: 250,
-            data: function(params) {
-                return { search: params.term };
-            },
-            processResults: function(data) {
-                if (data && data.length > 0) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return { id: item.id, text: item.text };
-                        })
-                    };
-                }
-                return { results: [] };
-            }
-        },
-        minimumInputLength: 1,
-        dropdownCssClass: 'form-control',
-        selectionCssClass: 'form-control'
-    });
+                const receivedBySelector = '#amnt_receivedby_id-' + form_set_count;
 
-    // Event handler for Amount Given By
-    $('#amnt_givenby_id-' + form_set_count).on('select2:select', function() {
-        var loginId = $(this).val();
-        if (loginId) {
-            updateGivenByDynamicSignatureField(loginId, form_set_count);
-        } else {
-            $('#signature_givenby-' + form_set_count).hide();
-        }
-    });
+                $(givenBySelector).select2({
+                        ajax: {
+                            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            },
+                            error: function(xhr, status, error) {
+                                // console.log('Error during AJAX call:', error);
+                                // console.log('Response:', xhr.responseText);
+                            }
+                        },
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
 
-    // Event handler for Amount Received By
-    $('#amnt_receivedby_id-' + form_set_count).on('select2:select', function() {
-        var loginId = $(this).val();
-        if (loginId) {
-            updateReceivedByDynamicSignatureField(loginId, form_set_count);
-        } else {
-            $('#signature_receivedby-' + form_set_count).hide();
-        }
-    });
-}
 
-function updateGivenByDynamicSignatureField(loginId, form_set_count) {
+                $(receivedBySelector).select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, status, error) {
+                            // console.log('Error during AJAX call:', error);
+                            // console.log('Response:', xhr.responseText);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
 
-    $.ajax({
-        url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-        method: 'GET',
-        data: {
-            login_id: loginId
-        },
-        success: function(response) {
-            var signatureDiv = $("#signature_givenby-" + form_set_count);
-            signatureDiv.empty();
+                $('#amnt_givenby_id-' + form_set_count).on('select2:select', function() {
+                    var loginId = $(this).val();
+                    if (loginId) {
+                        updateGivenByDynamicSignatureField(loginId, form_set_count);
+                    } else {
+                        $('#signature_givenby-' + form_set_count).hide();
+                    }
+                });
 
-            if (response.signature_upload) {
-                signatureDiv.html(
-                    '<label class="form-label" style="display: block;">Signature</label>' +
-                    '<img src="{{ admin_url('public/') }}' + response
-                    .signature_upload +
-                    '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                );
-            } else {
-                signatureDiv.html(
-                    '<label class="form-label require">Signature</label>' +
-                    '<input type="file" name="signature_givenby_image[' +
-                    form_set_count + ']" id="signature_givenby-' + form_set_count +
-                    '" ' +
-                    'class="form-control form-control-sm" accept="image/*">' +
-                    '<small>Allowed file types: jpg, jpeg, png</small>' +
-                    '<div id="signature_givenby_error-' + form_set_count +
-                    '" class="text-danger"></div>'
-                );
+                $('#amnt_receivedby_id-' + form_set_count).on('select2:select', function() {
+                    var loginId = $(this).val();
+                    if (loginId) {
+                        updateReceivedByDynamicSignatureField(loginId, form_set_count);
+                    } else {
+                        $('#signature_receivedby-' + form_set_count).hide();
+                    }
+                });
             }
 
-            signatureDiv.show();
-        }
-    });
-}
 
-function updateReceivedByDynamicSignatureField(loginId, form_set_count) {
-    $.ajax({
-        url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-        method: 'GET',
-        data: {
-            login_id: loginId
-        },
-        success: function(response) {
-            var signatureDiv = $("#signature_receivedby-" + form_set_count);
-            signatureDiv.empty();
+            function updateGivenByDynamicSignatureField(loginId, form_set_count) {
 
-            if (response.signature_upload) {
-                signatureDiv.html(
-                    '<label class="form-label" style="display: block;">Signature</label>' +
-                    '<img src="{{ admin_url('public/') }}' + response
-                    .signature_upload +
-                    '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                );
-            } else {
-                signatureDiv.html(
-                    '<label class="form-label require">Signature</label>' +
-                    '<input type="file" name="signature_receivedby_image[' +
-                    form_set_count + ']" id="signature_receivedby-' + form_set_count +
-                    '" ' +
-                    'class="form-control form-control-sm" accept="image/*">' +
-                    '<small>Allowed file types: jpg, jpeg, png</small>' +
-                    '<div id="signature_receivedby_error-' + form_set_count +
-                    '" class="text-danger"></div>'
-                );
+                $.ajax({
+                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+                    method: 'GET',
+                    data: {
+                        login_id: loginId
+                    },
+                    success: function(response) {
+                        var signatureDiv = $("#signature_givenby-" + form_set_count);
+                        signatureDiv.empty();
+
+                        if (response.signature_upload) {
+                            signatureDiv.html(
+                                '<label class="form-label" style="display: block;">Signature</label>' +
+                                '<img src="{{ admin_url('public/') }}' + response
+                                .signature_upload +
+                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+                            );
+                        } else {
+                            signatureDiv.html(
+                                '<label class="form-label require">Signature</label>' +
+                                '<input type="file" name="signature_givenby_image[' +
+                                form_set_count + ']" id="signature_givenby-' + form_set_count +
+                                '" ' +
+                                'class="form-control form-control-sm" accept="image/*">' +
+                                '<small>Allowed file types: jpg, jpeg, png</small>' +
+                                '<div id="signature_givenby_error-' + form_set_count +
+                                '" class="text-danger"></div>'
+                            );
+                        }
+
+                        updatePageIndices();
+                        signatureDiv.show();
+                    }
+                });
             }
 
-            signatureDiv.show();
-        }
-    });
-}
+            function updateReceivedByDynamicSignatureField(loginId, form_set_count) {
+                $.ajax({
+                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+                    method: 'GET',
+                    data: {
+                        login_id: loginId
+                    },
+                    success: function(response) {
+                        var signatureDiv = $("#signature_receivedby-" + form_set_count);
+                        signatureDiv.empty();
+
+                        if (response.signature_upload) {
+                            signatureDiv.html(
+                                '<label class="form-label" style="display: block;">Signature</label>' +
+                                '<img src="{{ admin_url('public/') }}' + response
+                                .signature_upload +
+                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+                            );
+                        } else {
+                            signatureDiv.html(
+                                '<label class="form-label require">Signature</label>' +
+                                '<input type="file" name="signature_receivedby_image[' +
+                                form_set_count + ']" id="signature_receivedby-' + form_set_count +
+                                '" ' +
+                                'class="form-control form-control-sm" accept="image/*">' +
+                                '<small>Allowed file types: jpg, jpeg, png</small>' +
+                                '<div id="signature_receivedby_error-' + form_set_count +
+                                '" class="text-danger"></div>'
+                            );
+                        }
+
+                        updatePageIndices();
+                        signatureDiv.show();
+                    }
+                });
+            }
 
             $(document).on('click', '.remove-row', function() {
                 let currentFormSets = $('#form-wrapper .form-set').length;
@@ -1159,13 +1092,30 @@ function updateReceivedByDynamicSignatureField(loginId, form_set_count) {
                     $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + (index +
                         1) + ']');
                     $(this).find('input[name^="date"]').attr('name', 'date[' + (index + 1) + ']');
-                    $(this).find('input[name^="amnt_givenby_id"]').attr('name', 'amnt_givenby_id[' + (
+                    $(this).find('input[name^="amount"]').attr('name', 'amount[' + (index + 1) + ']');
+                    $(this).find('select[name^="amnt_givenby_id"]').attr('name', 'amnt_givenby_id[' + (
                         index + 1) + ']');
+                    $(this).find('input[name^="signature_givenby_image"]').attr('name', 'signature_givenby_image[' + (index + 1) + ']');
+                    $(this).find('input[name^="signature_receivedby_image"]').attr('name', 'signature_receivedby_image[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_receivedby_id"]').attr('name', 'amnt_receivedby_id[' +
                         (index + 1) + ']');
                     $(this).find('textarea[name^="description"]').attr('name', 'description[' + (index +
                         1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
+
+
+                    $(this).find("input[name^='signature_givenby_image']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Signature Given by Image is required',
+                        }
+                    });
+                    $(this).find("input[name^='signature_receivedby_image']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Signature Received by Image is required',
+                        }
+                    });
                 });
             }
 

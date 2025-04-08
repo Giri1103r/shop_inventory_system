@@ -59,6 +59,7 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Observation Id</th>
+                                        <th>Serial Number</th>
                                         <th>Date of Inspection</th>
                                         <th>Approve Status </th>
                                         <th>{{ __('common.status') }}</th>
@@ -139,13 +140,17 @@
                             name: 'observation_id'
                         },
                         {
+                            data: 'sr_no',
+                            name: 'sr_no'
+                        },
+                        {
                             data: 'date_of_inspection',
                             name: 'date_of_inspection'
                         },
                        
                         {
-                            data: 'inspection_status',
-                            name: 'inspection_status'
+                            data: 'observation_status',
+                            name: 'observation_status'
                         },
                        
                         {

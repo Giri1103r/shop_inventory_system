@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use Exception;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\ohc\FirstAidBagChecklist;
@@ -21,6 +24,9 @@ class FirstAidBagChecklistController extends Controller
     private $medicine;
     private $signature;
     private $document_reference;
+    private $location;
+    private $unit;
+    private $frequency;
 
 
     public function __construct()
@@ -29,7 +35,9 @@ class FirstAidBagChecklistController extends Controller
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-
+        $this->location  = new Location();
+        $this->unit = new Unit();
+        $this->frequency = new Frequency();
     }
 
     public function Index(Request $request)
@@ -43,9 +51,9 @@ class FirstAidBagChecklistController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
@@ -64,13 +72,13 @@ class FirstAidBagChecklistController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
                             if ($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) {
-                                $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/approval/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/approval/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/exportViewpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/exportViewpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -82,13 +90,24 @@ class FirstAidBagChecklistController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
 
-        return view('inspection.inspection_ohc.first_aid_bag_inspection.list');
+        $location = $this->location->getLocationName();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+        );
+
+        return view('inspection.inspection_ohc.first_aid_bag_inspection.list', $data);
     }
 
     public function Add(Request $request)
@@ -97,10 +116,16 @@ class FirstAidBagChecklistController extends Controller
 
             $medicines = $this->medicine->getFirstAidData();
             $document_no = $this->document_reference->selectUsingName('EmergencyFloorFirstAidBagChecklist');
+            $location = $this->location->getLocationName();
+            $unit = $this->unit->getUnit();
+            $frequency = $this->frequency->getFrequency();
 
             $data = array(
                 'medicines' => $medicines,
                 'document_no' => $document_no,
+                'locations' => $location,
+                'units' => $unit,
+                'frequency' => $frequency,
 
             );
             return view('inspection.inspection_ohc.first_aid_bag_inspection.add', $data);
@@ -117,22 +142,21 @@ class FirstAidBagChecklistController extends Controller
 
             $rules = [
                 'inspection_date' => 'required',
+                'frequency_id' => 'required',
+                'location_id' => 'required',
+                'unit_id' => 'required',
                 'next_due' => 'required',
                 'available_quantity.*' => 'required',
                 'expired_date.*' => 'required',
                 'emp_id.*' => 'required',
-                'remarks.*' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+                'remarks.*' => 'required'
             ];
 
             $messages = [
                 'inspection_date.required' => 'Inspection Date is required.',
+                'frequency_id.required' => 'Frequency is required.',
+                'location_id.required' => 'Location is required.',
+                'unit_id.required' => 'Unit is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'available_quantity.*.required' => 'Available Quantity is required',
                 'expired_date.*.required' => 'Expired Date is required',
@@ -155,7 +179,6 @@ class FirstAidBagChecklistController extends Controller
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
@@ -169,17 +192,13 @@ class FirstAidBagChecklistController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
-            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            $signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
-            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection_details' => $inspection_details,
-                'inspection_file' => $inspection_file,
+                'signature' => $signature,
                 'inspection_data' => $inspection_data,
-                'verified_by' => $verified_by,
-                'document_no' => $document_no,
             );
 
 
@@ -292,9 +311,7 @@ class FirstAidBagChecklistController extends Controller
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_file = $this->signature->getFiles($id, $inspection_type);
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
             $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
-            $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
 
             $property = [
@@ -312,9 +329,8 @@ class FirstAidBagChecklistController extends Controller
                 'pagetitle' => "FIRST AID BAG INSPECTION CHECKLIST",
                 'inspection_data' => $inspection_data,
                 'inspection_created_by' => $inspection_created_by,
-                'inspection_updated_by' => $inspection_updated_by,
-                'document_no' => $document_no,
             );
+
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
