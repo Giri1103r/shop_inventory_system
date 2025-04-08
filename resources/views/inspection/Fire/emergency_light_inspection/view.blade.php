@@ -303,7 +303,7 @@
                                                         EMERGENCY_LIGHT_INSPECTION,
                                                     );
                                                 @endphp
-                                               
+
                                             @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -492,7 +492,7 @@
                                                 <label
                                                     class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                 <div class="view_data">
-                                                    {{ getUserName($inspection->l1_manager_verified_by) }}
+                                                    {{ getUserName($inspection->l1_manager_verification) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -506,7 +506,7 @@
                                         </div>
                                         @php
                                             $signature = GetFireSignature(
-                                                $inspection->l1_manager_verified_by,
+                                                $inspection->l1_manager_verification,
                                                 $inspection->id,
                                                 EMERGENCY_LIGHT_INSPECTION,
                                             );
@@ -541,9 +541,9 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                 <div class="view_data">
-                                                    {{ getUserName($inspection->l2_manager_verified_by) }}
+                                                    {{ getUserName($inspection->l2_manager_verification) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -557,7 +557,7 @@
                                         </div>
                                         @php
                                             $signature = GetFireSignature(
-                                                $inspection->l2_manager_verified_by,
+                                                $inspection->l2_manager_verification,
                                                 $inspection->id,
                                                 EMERGENCY_LIGHT_INSPECTION,
                                             );
@@ -572,33 +572,7 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        @if ($inspection->approved_by)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUsername($inspection->approved_by) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        @php
-                                            $signature = GetFireSignature(
-                                                $inspection->approved_by,
-                                                $inspection->id,
-                                                EMERGENCY_LIGHT_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
+                                      
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
