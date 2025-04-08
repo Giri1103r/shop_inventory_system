@@ -391,6 +391,7 @@ class AppServiceProvider extends ServiceProvider
         defined('HOSE_REEL_INSPECTION') or define('HOSE_REEL_INSPECTION',10);
         defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION',23);
         defined('HYDRANT_RISER') or define('HYDRANT_RISER', 4);
+        defined('OBSERVATION_FOLLOWUP') or define('OBSERVATION_FOLLOWUP', 17);
 
 
         // OPTIONS

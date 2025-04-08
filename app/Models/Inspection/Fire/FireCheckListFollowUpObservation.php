@@ -25,6 +25,21 @@ class FireCheckListFollowUpObservation extends Model
         'observation',
         'date',
         'month',
+        'observation_status',
+        'responsible_person_id',
+        'target_date',
+        'ehs_verify_by',
+        'closed_date',
+        'capa_status',
+        'capa_remarks',
+        'ehs_capa_verified_by',
+        'ehs_capa_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'verified_by',
+        'approved_by',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -131,6 +146,7 @@ class FireCheckListFollowUpObservation extends Model
                 'observation' => $obs['observation'] ?? null,
                 'date' => DBdateformat($obs['date']) ?? null,
                 'month' => $obs['month'] ?? null,
+                'observation_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
             ];
 
@@ -138,6 +154,67 @@ class FireCheckListFollowUpObservation extends Model
         }
 
         return $data;
+    }
+
+    public function EHSOfficerUpdate($id)
+    {
+        $request = request();
+        $update_array = array(
+            'responsible_person_id' => decryptId($request->responsible_person_id),
+            'target_date' => DBdateformat($request->target_date),
+            'ehs_verify_by' => Auth::id(),
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+    public function caparesponsibleUpdate($id)
+    {
+        $request = request();
+        $update_array = array(
+            'responsible_person_id' => decryptId($request->responsible_person_id),
+            'target_date' => DBdateformat($request->target_date),
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaUpdate($id)
+    {
+        $request = request();
+        $update_array = array(
+            'closed_date' => DBdateformat($request->closed_date),
+            'capa_status' => decryptId($request->capa_status),
+            'capa_remarks' => $request->capa_remarks,
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        $update_array = [
+            'ehs_capa_verified_by' => Auth::id(),
+            'ehs_capa_remarks' => $remarks,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        $request = request();
+        $update_array = [
+            'l1_manager_verified_by' => Auth::id(),
+            'level_one_manager_remarks' => $remarks,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+
+    public function statusUpdate($id, $observation_status)
+    {
+        $request = request();
+        $update_array = array(
+            'observation_status' => $observation_status,
+        );
+        return $this->where('id', $id)->update($update_array);
     }
 
 
