@@ -26,15 +26,12 @@
                         </td>
 
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->doc_no }}
+                            {{ $value->health_auto_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->issue_date) }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
 
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->revision_date) }}
-                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';

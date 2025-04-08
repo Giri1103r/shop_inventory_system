@@ -49,6 +49,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <div class="view_data">
+                                                    {{ getLocationname($inspection_details->location) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUnitname($inspection_details->unit) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <div class="view_data">
+                                                    {{ getFrequencyname($inspection_details->frequency) }}
+                                                </div>
+                                            </div>
+                                        </div>
 
 
                                         <table class="table table-bordered table-striped">
@@ -71,7 +95,8 @@
                                                         <td class="text-center">{{ $medicines['available_quantity'] }}</td>
                                                         <td class="text-center">
                                                             {{ Displaydateformat($medicines['expired_date']) }}</td>
-                                                        <td class="text-center">{{ getUsername($medicines['emp_id']) }}</td>
+                                                        <td class="text-center">{{ getUsername($medicines['emp_id']) }}
+                                                        </td>
                                                         <td class="text-center">{{ $medicines['remarks'] }}</td>
                                                     </tr>
                                                 @endforeach
@@ -82,11 +107,11 @@
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ admin_url($inspection_file->requestor_file_path) }}"
+                                            <img src="{{ admin_url($signature) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                         </div>
                                     </div>
-                                  
+
                                 </div>
                             </div>
                         </div>

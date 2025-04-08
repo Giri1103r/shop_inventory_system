@@ -883,7 +883,7 @@ class DetectorInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

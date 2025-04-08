@@ -25,20 +25,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                            <label for="next_review_date"
+                                                class="form-label ">Next Review date</label>
+                                            <input type="text" name="next_review_date" id="next_review_date"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                            <label for="last_updated_date"
+                                                class="form-label ">Last Updated Date</label>
+                                            <input type="text" name="last_updated_date" id="last_updated_date" class="form-control">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -70,9 +65,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>Next Review Date</th>
+                                        <th>Last Updated Date</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -97,7 +91,16 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var IssueDatepicker = flatpickr("#next_review_date", {
+                dateFormat: "d-m-Y",
 
+
+            });
+            var LastDatePickr = flatpickr("#last_updated_date", {
+                dateFormat: "d-m-Y",
+
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -131,8 +134,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
+                            d.next_review_date = $('#next_review_date').val();
+                            d.last_updated_date = $('#last_updated_date').val();
                             d.rev_date = $('#rev_date').val();
                             d.status = $('#status').val();
                         },
@@ -150,22 +153,16 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
+                            data: 'next_review_date',
+                            name: 'next_review_date'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'last_updated_date',
+                            name: 'last_updated_date'
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
-                        },
-
-
-                        {
-                            data: 'status',
-                            name: 'status'
+                            data: 'inspection_status',
+                            name: 'inspection_status'
                         },
                         {
                             data: 'created_date',
@@ -201,8 +198,8 @@
                                     action: function(e, dt, button, config) {
 
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
+                                        next_review_date = $('#next_review_date').val();
+                                        last_updated_date = $('#last_updated_date').val();
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
 
@@ -211,8 +208,8 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aider/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
+                                            '&next_review_date=' + next_review_date +
+                                            '&last_updated_date=' + last_updated_date +
                                             '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
@@ -222,8 +219,8 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
+                                        next_review_date = $('#next_review_date').val();
+                                        last_updated_date = $('#last_updated_date').val();
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
@@ -231,8 +228,8 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aider/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number+
-                                            '&issue_date=' + issue_date +
+                                            '&next_review_date=' + next_review_date+
+                                            '&last_updated_date=' + last_updated_date +
                                             '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }

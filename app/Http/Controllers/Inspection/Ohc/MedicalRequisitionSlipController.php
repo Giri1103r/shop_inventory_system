@@ -70,17 +70,20 @@ class MedicalRequisitionSlipController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('unit', function ($row) {
+                            return getUnitname($row->unit);
+                        })
+                        ->addColumn('department', function ($row) {
+                            return getDepartment($row->department);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -103,9 +106,9 @@ class MedicalRequisitionSlipController extends Controller
                                 case SAFETY_OFFICER_APPROVED:
                                     $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Safety Officer Approved</span>";
                                     break;
-                                    case SAFETY_OFFICER_REJECTED:
-                                        $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Safety Officer Rejected</span>";
-                                        break;
+                                case SAFETY_OFFICER_REJECTED:
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Safety Officer Rejected</span>";
+                                    break;
                                 default:
                                     $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
                             }
@@ -113,19 +116,19 @@ class MedicalRequisitionSlipController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == FLOOR_MANAGER_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == FLOOR_MANAGER_APPROVAL_PENDING)  || ((checkUserRole(ROLE_SAFETY_OFFICER) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
                             return   $btn;
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date'])
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date','unit','department'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -138,8 +141,13 @@ class MedicalRequisitionSlipController extends Controller
                 }
             }
         }
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
 
-        return view('inspection.inspection_ohc.medical_requisition_slip.list');
+
+        );
+        return view('inspection.inspection_ohc.medical_requisition_slip.list',$data);
     }
 
     public function Add(Request $request)
@@ -150,12 +158,12 @@ class MedicalRequisitionSlipController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $location = $this->location->getLocationname();
-            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
-                'medicine' => $medicine,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
 
             );
@@ -295,6 +303,7 @@ class MedicalRequisitionSlipController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
@@ -306,6 +315,7 @@ class MedicalRequisitionSlipController extends Controller
                     'approversignatureview' => $approversignatureview,
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
 
                 );
             }
@@ -355,9 +365,9 @@ class MedicalRequisitionSlipController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
-
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
                 $data = array(
-                 'medicinerequisition' => $medicinerequisition,
+                    'medicinerequisition' => $medicinerequisition,
                     'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
                     'statuslog' => $statuslog,
                     'safetyofficer' => $safetyofficer,
@@ -367,6 +377,7 @@ class MedicalRequisitionSlipController extends Controller
                     'approversignatureview' => $approversignatureview,
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
 
 
                 );
@@ -407,30 +418,32 @@ class MedicalRequisitionSlipController extends Controller
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
                 $signatureview = $this->user->where('id', $requestorsignature)->first();
 
-                $approversignatureview = null; // Initialize the variable
+                $approversignatureview = null;
 
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
 
-                $floorapproversignatureview = null; // Initialize the variable
+                $floorapproversignatureview = null;
 
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
             }
             $data = [
-              'medicinerequisition' => $medicinerequisition,
-                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
-                    'statuslog' => $statuslog,
-                    'safetyofficer' => $safetyofficer,
-                    'floormanger' => $floormanger,
-                   'signatureview' => $signatureview,
-                    'floorapproversignatureview' => $floorapproversignatureview,
-                    'approversignatureview' => $approversignatureview,
-                    'safetyofficersignature' => $safetyofficersignature,
-                    'floormanagersignature' => $floormanagersignature,
-
+                'medicinerequisition' => $medicinerequisition,
+                'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+                'statuslog' => $statuslog,
+                'safetyofficer' => $safetyofficer,
+                'floormanger' => $floormanger,
+                'signatureview' => $signatureview,
+                'floorapproversignatureview' => $floorapproversignatureview,
+                'approversignatureview' => $approversignatureview,
+                'safetyofficersignature' => $safetyofficersignature,
+                'floormanagersignature' => $floormanagersignature,
+                'document_no' => $document_no,
                 'pagetitle' => "Medicine Requisition Slip Floor",
             ];
 
@@ -489,14 +502,14 @@ class MedicalRequisitionSlipController extends Controller
                 $this->medicine_requisition_floor_details->floormanagerapprovalupdate($id, $nextStatus);
                 if ($request->action == "approve") {
                     $getsafetyofficer = getSafetyOfficer();
-                $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
-                $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
+                    $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
+                    $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
 
-                // medical officer
+                    // medical officer
 
-                $getmedicalassistant = getMedicalAssistant();
-                $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
-                $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
+                    $getmedicalassistant = getMedicalAssistant();
+                    $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
+                    $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     $notificationData = array(
@@ -611,7 +624,7 @@ class MedicalRequisitionSlipController extends Controller
                 $this->inspection_ohc_status_log->store($data);
                 $this->medicine_requisition_floor_details->safetyofficerapprovalupdate($id, $nextStatus);
                 $details = $this->medicine_requisition_floor_details->Selectone($id);
-                if($request->action == "approve"){
+                if ($request->action == "approve") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
@@ -644,7 +657,7 @@ class MedicalRequisitionSlipController extends Controller
                         'data' => $details
                     );
                     Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
-                } elseif($request->action == "reject"){
+                } elseif ($request->action == "reject") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
@@ -724,14 +737,15 @@ class MedicalRequisitionSlipController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
+                $export[] =  $data->rev_dt;
                 $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getUnitname($data->department);
+                $export[] =  ($data->unit_name);
+                $export[] =  ($data->department_name);
                 $export[] = Displaydateformat($data->date);
                 $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
+
 
                 $exportData[] = $export;
 

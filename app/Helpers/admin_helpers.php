@@ -44,6 +44,7 @@ use App\Models\Inspection\Fire\DailyFireHouseInspection;
 use App\Models\Inspection\audit\InterUnitAudit;
 use App\Models\Inspection\Fire\FirePreNocInspection;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 
 /*
  * Menu bar start
@@ -351,6 +352,11 @@ if (!function_exists('getsequence')) {
                 $count = FireCheckListFollowUp::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'OBSERVATION-' . getautogen($count);
+                break;
+            case 'HealthInstrument':
+                $count = HealthInstrumentCalibration::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'HEALTH-' . getautogen($count);
                 break;
             default:
                 $sequence = Str::random(5);

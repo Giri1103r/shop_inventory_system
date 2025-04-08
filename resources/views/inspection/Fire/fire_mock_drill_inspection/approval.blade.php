@@ -280,7 +280,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->verified_by,
                                                             $inspection->id,
-                                                            DETECTOR_INSPECTION,
+                                                            FIRE_MOCK_DRILL_INSPECION,
                                                         );
                                                     @endphp
                                                 @endif
@@ -366,7 +366,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->created_by,
                                                             $inspection->id,
-                                                            DETECTOR_INSPECTION,
+                                                            FIRE_MOCK_DRILL_INSPECION,
                                                         );
                                                     @endphp
                                                     @if (isset($signature))
@@ -420,7 +420,7 @@
                                                         $signature = GetFireSignature(
                                                             $inspection->verified_by,
                                                             $inspection->id,
-                                                            DETECTOR_INSPECTION,
+                                                            FIRE_MOCK_DRILL_INSPECION,
                                                         );
                                                     @endphp
                                                     @if (isset($signature))
@@ -474,7 +474,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->l1_manager_verified_by,
                                                         $inspection->id,
-                                                        DETECTOR_INSPECTION,
+                                                        FIRE_MOCK_DRILL_INSPECION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -525,7 +525,7 @@
                                                     $signature = GetFireSignature(
                                                         $inspection->l2_manager_verified_by,
                                                         $inspection->id,
-                                                        DETECTOR_INSPECTION,
+                                                        FIRE_MOCK_DRILL_INSPECION,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
