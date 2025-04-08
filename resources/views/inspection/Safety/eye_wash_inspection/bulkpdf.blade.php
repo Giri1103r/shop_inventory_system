@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -262,21 +266,9 @@
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
                 </tr>
                 @php
-                    $approved_by = GetSafetySignature(
-                        $details->id,
-                        $details->approved_by,
-                        EYE_WASH_INSPECTION,
-                    );
-                    $verified_by = GetSafetySignature(
-                        $details->id,
-                        $details->verified_by,
-                        EYE_WASH_INSPECTION,
-                    );
-                    $checked_by = GetSafetySignature(
-                        $details->id,
-                        $details->verified_by,
-                        EYE_WASH_INSPECTION,
-                    );
+                    $approved_by = GetSafetySignature($details->id, $details->approved_by, EYE_WASH_INSPECTION);
+                    $verified_by = GetSafetySignature($details->id, $details->verified_by, EYE_WASH_INSPECTION);
+                    $checked_by = GetSafetySignature($details->id, $details->verified_by, EYE_WASH_INSPECTION);
                 @endphp
                 <tr>
                     <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
@@ -320,6 +312,7 @@
 
 
         </div>
+        <div class="page-break"></div>
     @endforeach
 
 
