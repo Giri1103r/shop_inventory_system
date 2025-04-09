@@ -314,8 +314,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $filename = "OHC HYGIENE CLEANING CHECKLIST.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
-            report($ex);
+report($ex);report($ex);
         }
     }
 
