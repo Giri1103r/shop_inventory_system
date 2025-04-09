@@ -300,28 +300,45 @@
 
 
             </tr>
+
+            <tr>
+                <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->created_by))
+                            <img src="{{ admin_url($checked_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Checked By:- {{ getUsername($details->created_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Checked By:- Not yet checked</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->updated_by))
+                            <img src="{{ admin_url($verified_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Verified By:- {{ getUsername($details->verified_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Verified By:- Not yet verified</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->approved_by))
+                            <img src="{{ admin_url($approved_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Approved By:- {{ getUsername($details->approved_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Approved By:- Not yet approved</p>
+                        @endif
+                    </div>
+                </td>
+            </tr>
         @endforeach
     </table>
 
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    {{ __('inspection.observation') }}
-                </td>
-            </tr>
-        </table>
-    </div>
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $forklift_details->observation }}</td>
-        </tr>
-    </table>
     <br>
 
 
@@ -344,13 +361,7 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
-                @php
-                    $verifier_signature = GetFireSignature(
-                        $forklift_details->created_by,
-                        $forklift_details->id,
-                        DETECTOR_INSPECTION,
-                    );
-                @endphp
+
             @endif
             @if (isset($forklift_details->created_at))
                 <tr>
@@ -360,13 +371,7 @@
                     </td>
                 </tr>
             @endif
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url($verifier_signature) }}" style="width:60px;" />
-                </td>
-            </tr>
+
             @if (isset($forklift_details->approved_by))
                 @if ($forklift_details->verified_by == $forklift_details->approved_by)
                     <tr>
@@ -378,21 +383,9 @@
                     </tr>
                 @endif
 
-                @php
-                    $approver_signature = GetFireSignature(
-                        $forklift_details->created_by,
-                        $forklift_details->id,
-                        DETECTOR_INSPECTION,
-                    );
-                @endphp
 
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <img src="{{ admin_url($approver_signature) }}" style="width:60px;" />
-                    </td>
-                </tr>
+
+
             @endif
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
@@ -445,20 +438,7 @@
                 </td>
             </tr>
 
-            @php
-                $creator_signature = GetFireSignature(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    DETECTOR_INSPECTION,
-                );
-            @endphp
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url($creator_signature) }}" style="width:60px;" />
-                </td>
-            </tr>
+
 
         </table>
         <br>
@@ -496,21 +476,7 @@
                 </td>
             </tr>
 
-            @php
-                $verifier_signature = GetFireSignature(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    DETECTOR_INSPECTION,
-                );
-            @endphp
 
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url($verifier_signature) }}" style="width:60px;" />
-                </td>
-            </tr>
         </table>
         <br>
     @endif
@@ -548,21 +514,7 @@
                 </td>
             </tr>
 
-            @php
-                $l1_manager_signature = GetFireSignature(
-                    $forklift_details->l1_manager_verified_by,
-                    $forklift_details->id,
-                    DETECTOR_INSPECTION,
-                );
-            @endphp
 
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url($l1_manager_signature) }}" style="width:60px;" />
-                </td>
-            </tr>
 
         </table>
         <br>
@@ -607,21 +559,7 @@
                 </td>
             </tr>
 
-            @php
-                $l2_manager_signature = GetFireSignature(
-                    $forklift_details->l1_manager_verified_by,
-                    $forklift_details->id,
-                    DETECTOR_INSPECTION,
-                );
-            @endphp
 
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    <img src="{{ admin_url($l2_manager_signature) }}" style="width:60px;" />
-                </td>
-            </tr>
         </table>
         <br>
     @endif

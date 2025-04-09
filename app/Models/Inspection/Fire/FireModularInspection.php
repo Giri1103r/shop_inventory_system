@@ -157,10 +157,12 @@ class FireModularInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_modular_inspection.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_modular_inspection.*', 'inspection_shift_option.*', 'inspection_fire_modular_inspection_details.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_static_docno.*', 'inspection_fire_modular_inspection.id as fire_id', 'inspection_fire_modular_inspection.created_by as checked_by', 'inspection_fire_modular_inspection.updated_by as verified_by')
             ->leftJoin('masters_location', 'inspection_fire_modular_inspection.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_modular_inspection.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_modular_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_modular_inspection.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_fire_modular_inspection_details', 'inspection_fire_modular_inspection.id', '=', 'inspection_fire_modular_inspection_details.inspection_id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_modular_inspection.frequency', '=', 'inspection_frequency_option.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -197,9 +199,15 @@ class FireModularInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_modular_inspection.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_modular_inspection.id', 'DESC');
 
-        return  $query->get();
+
+        $data = $query->get();
+        if ($data) {
+            return $data->groupBy('fire_id');
+        } else {
+            return $data;
+        }
     }
 
 

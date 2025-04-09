@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>FIRE MOCK DRILL INSPECTION | KARAM</title>
+    <title>SAND BUCKET INSPECTION | KARAM</title>
 
     <style>
         .badge {
@@ -159,7 +159,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        FIRE MOCK DRILL INSPECTION DETAILS
+                        SAND BUCKET INSPECTION DETAILS
                     </td>
                 </tr>
             </table>
@@ -169,78 +169,126 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <th colspan="4" rowspan="3"
+                    <th colspan="2" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                     </th>
 
-                    <th colspan="4" rowspan="3"
+                    <th colspan="5" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.mock_drill') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.sand_bucket') }}</b></h3>
                     </th>
 
                     @foreach ($infoCells as $index => [$label, $value])
                         @if ($index == 0)
-                            <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                            <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                                 <strong>{{ $label }}</strong>: {{ $value }}
                             </th>
                         @else
                 </tr>
                 <tr>
-                    <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                    <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                         <strong>{{ $label }}</strong>: {{ $value }}
                     </th>
     @endif
     @endforeach
     </tr>
 
+    <tr style="background-color: #ddd;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            LOCATION: {{ getLocationName($first->location) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            SHIFT: {{ $first->shift }}
+        </th>
+    </tr>
 
+    <!-- Row 2: NEXT DUE, UNIT, FREQUENCY -->
+    <tr style="background-color: #ddd;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            UNIT: {{ GetUnitName($first->unit) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            FREQUENCY: {{ GetFrequencyName($first->frequency) }}
+        </th>
+    </tr>
 
     <!-- Column Headers -->
     <tr>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">SR. NO</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">OBSERVATION</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF OBSERVATION
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+        <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
         </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">SHIFT</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">UNIT</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">RECOMENDED AND
-            PREVENTIVE ACTION</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">ACTION TAKEN</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">RESPONSIBILITY</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">TARGET DATE OF
-            COMPLIANCE</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">DATE OF CLOSURE
-        </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">STATUS</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">REMARK</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
     </tr>
-
+    <tr>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND STAND
+            BUCKET NO.</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">FIRE SAND
+            BUCKET NO.</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">QUALITY AND
+            QUANTITY OF SAND</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">APPROACH</th>
+    </tr>
+    <tr>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET STAND</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PAINT</th>
+    </tr>
 
     <!-- Data Rows -->
     @foreach ($group as $details)
         <tr>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->observation }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->date_of_observation }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getShiftname($details->shift_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getUnitname($details->unit_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->capa_remarks }}
+            <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_no }}</td>
+            <td style="border: 1px solid black; padding: 8px;">
+                @if ($details->condition == 1)
+                    <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                @elseif ($details->condition == 2)
+                    <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                @elseif ($details->condition == 3)
+                    <span style="color: red; font-weight: bold;">&#10060; Poor</span>
+                @else
+                    <span style="color: gray; font-weight: bold;">N/A</span>
+                @endif
             </td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->action_taken }}
+
+            <td style="border: 1px solid black; padding: 8px;">
+                @if ($details->fire_bucket_condition == 1)
+                    <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                @elseif ($details->fire_bucket_condition == 2)
+                    <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                @elseif ($details->fire_bucket_condition == 3)
+                    <span style="color: red; font-weight: bold;">&#10060; Poor</span>
+                @else
+                    <span style="color: gray; font-weight: bold;">N/A</span>
+                @endif
             </td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getUsername($details->emp_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ Displaydateformat($details->date_of_compliance) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->date_of_closure ? Displaydateformat($details->date_of_closure) : 'The Action was not Completed' }}
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->observation_status == '1' ? 'Active' : 'Inactive' }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+            <td style="border: 1px solid black; padding: 8px;">
+                @if ($details->paint_condition == 1)
+                    <span style="color: green; font-weight: bold;">&#10004; Good</span>
+                @elseif ($details->paint_condition == 2)
+                    <span style="color: orange; font-weight: bold;">&#9888; Fair</span>
+                @elseif ($details->paint_condition == 3)
+                    <span style="color: red; font-weight: bold;">&#10060; Poor</span>
+                @else
+                    <span style="color: gray; font-weight: bold;">N/A</span>
+                @endif
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->sand_quantity }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
+
+
         </tr>
     @endforeach
 
@@ -250,7 +298,7 @@
         $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
     <tr>
-        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""
@@ -261,7 +309,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""

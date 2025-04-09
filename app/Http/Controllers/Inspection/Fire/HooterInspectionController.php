@@ -785,7 +785,7 @@ class HooterInspectionController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
             $data = array(
                 'content' => $allData,
                 'inspection_type' => $inspection_type,

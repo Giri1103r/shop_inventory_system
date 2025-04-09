@@ -810,25 +810,19 @@ class CartridgeTypeFireExtinguisherController extends Controller
         try {
 
             $allData = $this->cartridge_type->exportdata();
+            $inspection_type = CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION;
+            $document_no = $this->document_reference->selectUsingName('CartridgeTypeFireExtinguisher');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                __('inspection.inspection_date') ,
-                __('inspection.next_due') ,
-                __('inspection.location'),
-                __('inspection.shifts'),
-                __('inspection.unit'),
-                __('inspection.frequency'),
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
+                'inspection_type' => $inspection_type,
                 'pagetitle' => "Cartridge Type Fire Inspection",
             );
 
@@ -852,7 +846,6 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $filename = "Cartridge Type Fire Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
