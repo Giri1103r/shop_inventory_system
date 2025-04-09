@@ -746,24 +746,16 @@ class MonthlyForkLiftInspectionController extends Controller
         try {
 
             $allData = $this->forklift->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Monthly ForkLift Inspection",
-
             );
 
             $property = [

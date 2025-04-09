@@ -821,14 +821,25 @@ class WeeklyAmbulanceController extends Controller
         try {
 
             $allData = $this->weekly_ambulance_details->exportdata();
-// dd($allData);
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
+            $header = [
+                __("common.sno"),
+                'Next Due On',
+                'Date Of Inspection',
+                'Shift',
+                'Location',
+                'Unit',
+                'Approve Status',
+                __("common.created_by"),
+                __("common.created_date"),
+            ];
+
             $data = array(
-                'document_no' => $document_no,
+                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             );
