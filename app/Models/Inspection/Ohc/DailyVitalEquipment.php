@@ -37,7 +37,7 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*')
+        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','ohc_daily_vital_equipment_checklist.created_by as checked_by')
             ->leftJoin('inspection_shift_option', 'ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 
@@ -124,7 +124,7 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*')
+        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','ohc_daily_vital_equipment_checklist.created_by as checked_by')
             ->leftJoin('inspection_shift_option', 'ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 

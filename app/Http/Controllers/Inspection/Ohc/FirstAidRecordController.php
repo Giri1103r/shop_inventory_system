@@ -49,9 +49,9 @@ class FirstAidRecordController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->first_aid_record_id) . "' data-type = '1'>Active</span>";
                                 } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->first_aid_record_id) . "' data-type = '0'>In-Active</span>";
                                 }
                             // }
                             return $text;
@@ -67,8 +67,8 @@ class FirstAidRecordController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->first_aid_record_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->first_aid_record_id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
                             return $btn;
@@ -199,6 +199,7 @@ class FirstAidRecordController extends Controller
             }
             return view('inspection.inspection_ohc.first_aid_record.view', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }
@@ -255,21 +256,17 @@ class FirstAidRecordController extends Controller
 
             $allData = $this->first_aid_details->exportdata();
 
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                    'Month',
-                    'Year',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "First Aid Record Details",
             );
 
@@ -291,9 +288,9 @@ class FirstAidRecordController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "First Aid Record.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
-
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-record/list'));

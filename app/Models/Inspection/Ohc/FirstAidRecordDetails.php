@@ -38,7 +38,19 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_first_aid_record_details.*');
+
+        $query = $this->from('ohc_first_aid_record_details as maintable')
+            ->select(
+                'maintable.*',
+                'secondtable.*',
+                'masters_department.*',
+                'masters_unit.*',
+                'maintable.created_by as checked_by',
+                'maintable.id as first_aid_record_id'
+            )
+            ->leftJoin('ohc_first_aid_record_checklist as secondtable', 'maintable.id', '=', 'secondtable.ohc_first_aid_record_details_id')
+            ->leftJoin('masters_department', 'secondtable.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'secondtable.unit', '=', 'masters_unit.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -54,16 +66,16 @@ class FirstAidRecordDetails extends Model
         }
 
         if ($request->has('month') && $request->month) {
-            $query = $query->where('month', 'LIKE', '%' . $request->month . '%');
+            $query = $query->where('maintable.month', 'LIKE', '%' . $request->month . '%');
         }
         if ($request->has('year') && $request->year) {
-            $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
+            $query = $query->where('maintable.year', 'LIKE', '%' . $request->year . '%');
         }
 
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('maintable.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -85,7 +97,7 @@ class FirstAidRecordDetails extends Model
 
         $insert_array = array(
             'document_reference_id' => decryptId($request->document_reference_id),
-            'month' =>$request->month,
+            'month' => $request->month,
             'year' => $request->year,
             'created_by' => Auth::id(),
             'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid,
@@ -102,16 +114,16 @@ class FirstAidRecordDetails extends Model
     public function UniqueCheck($month, $year)
     {
         return $this->where('month', $month)
-                    ->where('year', $year)
-                    ->get();
+            ->where('year', $year)
+            ->get();
     }
 
     public function ExistuniqueCheck($month, $year, $id)
     {
         return $this->where('month', $month)
-                    ->where('year', $year)
-                    ->where('id', '!=', $id)
-                    ->get();
+            ->where('year', $year)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function statuschange($id)
@@ -135,7 +147,21 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_first_aid_record_details.*');
+
+        $query = $this->from('ohc_first_aid_record_details as maintable')
+            ->select(
+                'maintable.*',
+                'secondtable.*',
+                'masters_department.*',
+                'masters_unit.*',
+                'maintable.created_by as checked_by',
+                'maintable.id as first_aid_record_id'
+            )
+            ->leftJoin('ohc_first_aid_record_checklist as secondtable', 'maintable.id', '=', 'secondtable.ohc_first_aid_record_details_id')
+            ->leftJoin('masters_department', 'secondtable.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'secondtable.unit', '=', 'masters_unit.id');
+
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -150,14 +176,13 @@ class FirstAidRecordDetails extends Model
         if ($request->has('year') && $request->year) {
             $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('maintable.id', 'DESC');
 
         return  $query->get();
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
-    }
-
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
+    // }
 }

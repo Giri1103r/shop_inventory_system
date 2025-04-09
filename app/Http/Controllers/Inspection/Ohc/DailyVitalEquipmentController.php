@@ -197,6 +197,8 @@ class DailyVitalEquipmentController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
             $data = array(
@@ -222,9 +224,8 @@ class DailyVitalEquipmentController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Vital Equipment.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
