@@ -258,22 +258,15 @@ class FireSafetyEquipmentController extends Controller
         try {
 
             $allData = $this->safety_equipment->exportdata();
+            $document_no = $this->document_reference->selectUsingName('ListofFireSafetyEquipment');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                'Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Safety Equipment Details",
             );
 

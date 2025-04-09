@@ -825,6 +825,7 @@ class WeeklyAmbulanceController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+            $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
 
             $header = [
                 __("common.sno"),
@@ -841,6 +842,7 @@ class WeeklyAmbulanceController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             );
 

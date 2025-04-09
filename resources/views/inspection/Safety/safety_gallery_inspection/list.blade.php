@@ -239,7 +239,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         resource_code = $('#resource_code').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         unit = $('#unit').val();
                                         inspection_status = $('#inspection_status').val();
 
@@ -250,7 +250,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&resource_code=' + resource_code +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&unit=' + unit +
                                             '&inspection_status=' + inspection_status
                                     }
@@ -262,7 +262,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         resource_code = $('#resource_code').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         unit = $('#unit').val();
                                         inspection_status = $('#inspection_status').val();
 
@@ -273,7 +273,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&resource_code=' + resource_code +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&unit=' + unit +
                                             '&inspection_status=' + inspection_status
                                     }

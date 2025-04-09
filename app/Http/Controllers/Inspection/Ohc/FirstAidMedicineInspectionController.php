@@ -289,17 +289,8 @@ class FirstAidMedicineInspectionController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due',
-                'Inspection Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Monthly OHC First-Aid Medicine Inspection Checklist",
             );
@@ -324,6 +315,7 @@ class FirstAidMedicineInspectionController extends Controller
             $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));

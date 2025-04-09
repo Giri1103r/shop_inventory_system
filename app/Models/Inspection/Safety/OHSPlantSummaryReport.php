@@ -154,6 +154,7 @@ class OHSPlantSummaryReport extends Model
         $search = '';
         $query = $this->select(
             'inspection_safety_ohs_report.*',
+            'inspection_safety_ohs_report.created_by as checked_by',
             'inspection_static_docno.*',
             'inspection_safety_ohs_report.id as inspection_id'
         )
@@ -178,7 +179,7 @@ class OHSPlantSummaryReport extends Model
             $query = $query->whereDate('inspection_safety_ohs_report.updated_frequency', '=', ($request->frequency));
         }
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_safety_ohs_report.id', 'DESC');
 
         return  $query->get();
     }
