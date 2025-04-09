@@ -803,21 +803,16 @@ class FireModularInspectionController extends Controller
         try {
 
             $allData = $this->detector->exportdata();
+            $inspection_type = FIRE_MODULAR_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Fire Modular Inspection",
             );
@@ -834,7 +829,7 @@ class FireModularInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.fire_modular_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -842,6 +837,7 @@ class FireModularInspectionController extends Controller
             $filename = "Fire Modular Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
@@ -858,6 +854,10 @@ class FireModularInspectionController extends Controller
                 $forklift_details = $this->detector->selectOne($id);
                 $inspection = $this->detector_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, FIRE_MODULAR_INSPECTION);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, FIRE_MODULAR_INSPECTION);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, FIRE_MODULAR_INSPECTION);
+
 
                 $data = [
                     'status_log' => $status_log,
@@ -865,6 +865,9 @@ class FireModularInspectionController extends Controller
                     'document_no' => $document_no,
                     'pagetitle' => "Fire Modular Inspection",
                     'inspection' => $inspection,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 
