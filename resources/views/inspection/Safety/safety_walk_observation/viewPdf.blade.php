@@ -288,11 +288,11 @@
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
 
                             <td style="border: 2px solid black; padding: 8px;"><img
-                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt="" />
+                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt="" style="width:80px; height:80px"/>
                             </td>
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
                             </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->responsibility }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ getUsername($details->responsibility) }}</td>
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
                             <td style="border: 2px solid black; padding: 8px;">
                                 @if ($details->observation_status == 1)
@@ -329,7 +329,7 @@
                             src="{{ GetSafetyWalkImage($detail->id) }}" alt="" style="width:80px; height:80px">
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->recomended_action }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility) }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ Displaydateformat($detail->date_of_compliance) }}</td>

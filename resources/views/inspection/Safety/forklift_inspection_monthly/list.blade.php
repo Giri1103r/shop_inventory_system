@@ -275,7 +275,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -288,7 +288,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
@@ -302,7 +302,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -315,7 +315,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
@@ -380,7 +380,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/status') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -448,7 +448,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/forklift-inspection/monthly/list/delete') }}",
+                                url: "{{ admin_url('safety/forklift-inspection/monthly/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

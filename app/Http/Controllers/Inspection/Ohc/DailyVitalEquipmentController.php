@@ -190,23 +190,21 @@ class DailyVitalEquipmentController extends Controller
     {
 
         try {
+            $id = decryptId($request->id);
 
             $allData = $this->daily_vital->exportdata();
+
+            $daily_vital = $this->daily_vital->selectOne($id);
+            $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                __('inspection.inspection_date') ,
-                __('inspection.shifts') ,
-                __('inspection.unit') ,
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'daily_vital' => $daily_vital,
+                'document_no' => $document_no,
                 'pagetitle' => "Daily Vital Equipment",
             );
 
@@ -226,15 +224,15 @@ class DailyVitalEquipmentController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "OHC Daily Vital Equipment.pdf";
-            $mpdf->Output($filename, 'D');
+            $filename = "Daily Vital Equipment.pdf";
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
-
 
     public function exportViewPdf(Request $request)
     {
@@ -268,7 +266,7 @@ class DailyVitalEquipmentController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "OHC Daily Vital Equipment.pdf";
+            $filename = "Daily Vital Equipment.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

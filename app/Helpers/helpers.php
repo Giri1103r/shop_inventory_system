@@ -50,12 +50,10 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
-use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\MSDS\MSDSDetails;
 use App\Models\Inspection\RRAA\RRAADetails;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
-
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1442,7 +1440,7 @@ if (!function_exists('getMonth')) {
 
         function getSPLBCount()
         {
-            $data = SafetyPettyDetails::get()->count();
+            $data = SafetyPettyChecklist::get()->count();
             return $data;
         }
     }
@@ -2031,15 +2029,12 @@ if (!function_exists('getMonth')) {
         function GetOHCSignature($userid, $id, $type)
         {
 
-
             $name = OhcSignature::where('emp_id', $userid)->where('ohc_id', $id)->where('type', $type)->where('trash', 'NO')->first();
             if ($name == null) {
                 $name = User::where('id', $userid)->first();
                 if ($name == null) {
                     return null;
                 }
-
-
                 return $name->signature_upload;
             } else {
                 return $name->file_path;
@@ -2211,7 +2206,7 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
-                    
+
             }
         }
     }
@@ -2314,8 +2309,6 @@ if (!function_exists('getMonth')) {
             }
         }
     }
-
-
 
     if (!function_exists('GetTypeofLight')) {
 
@@ -2508,10 +2501,6 @@ if (!function_exists('getMonth')) {
                     break;
 
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
-                    return 'CTFE-000001';
-                    break;
-
-                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
 
