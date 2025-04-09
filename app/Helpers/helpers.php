@@ -55,6 +55,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 
