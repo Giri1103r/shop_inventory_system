@@ -835,7 +835,7 @@ class FireModularInspectionController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Fire Modular Inspection.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
