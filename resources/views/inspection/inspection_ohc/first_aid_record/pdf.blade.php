@@ -143,7 +143,7 @@
         </table>
     </htmlpagefooter>
 
-    @foreach ($content as $details)
+    @foreach ($content as $detail)
         <br>
 
         <div style="width:100%;">
@@ -160,17 +160,17 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
-                <th colspan="10" style="border:1px solid black;height:50;width:40">
+                <th colspan="3" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
-                <th colspan="25" style="border:1px solid black;">
+                <th colspan="6" style="border:1px solid black;">
                     <h3>
                         <span><b> {{ __('inspection.first_aid_record') }}</b></span>
                         <br>
                     </h3>
                 </th>
 
-                <th colspan="16" style="border:1px solid black;">
+                <th colspan="6" style="border:1px solid black;">
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
@@ -179,7 +179,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -187,58 +187,72 @@
                             </tr>
                         </thead>
                     </table>
-
                 </th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MONTH
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="1">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">MONTH
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> DEPARTMENT
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2"> DEPARTMENT
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">UNIT
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">UNIT
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">FIRST AID STATION NUMBER
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FIRST AID
+                    STATION NUMBER
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">FIRST AID BOX NUMBER
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FIRST AID
+                    BOX NUMBER
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">TOTAL NUMBER OF FIRST AID
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">TOTAL
+                    NUMBER OF FIRST AID
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARK
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">REMARK
                 </th>
             </tr>
+            @foreach ($detail as $details)
+                <tr>
+                    <td colspan="1"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}</td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($details->month) ? $details->month : '' }}</td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ getDepartment($details->department) }}
+                    </td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ getUnitname($details->unit) }}
+                    </td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($details->first_aid_station_number) ? $details->first_aid_station_number : '' }}
+                    </td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($details->first_aid_box_number) ? $details->first_aid_box_number : '' }}
+                    </td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($details->total_number_of_first_aid) ? $details->total_number_of_first_aid : '' }}
+                    </td>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($details->remark) ? $details->remark : '' }}
+                    </td>
+
+                </tr>
+            @endforeach
 
             <tr>
-                <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ $loop->iteration }}</td>
-                <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($details->month) ? $details->month : '' }}</td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ getDepartment($details->department) }}
-                </td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ getUnitname($details->unit) }}
-                </td>
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($details->first_aid_station_number) ? $details->first_aid_station_number : '' }}
-                </td>
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($details->first_aid_box_number) ? $details->first_aid_box_number : '' }}
-                </td>
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($details->total_number_of_first_aid) ? $details->total_number_of_first_aid : '' }}
-                </td>
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($details->remark) ? $details->remark : '' }}
-                </td>
+                <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Overall
+                    Total Number of First Aid</th>
 
-            </tr>
-
-            <tr>
-                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Overall Total Number of First Aid</th>
-
-                <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
-                    <div> {{ isset($details->overall_total_number_of_first_aid) ? $details->overall_total_number_of_first_aid : '' }}</div>
+                <th colspan="8" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <div>
+                        {{ isset($details->overall_total_number_of_first_aid) ? $details->overall_total_number_of_first_aid : '' }}
+                    </div>
                 </th>
             </tr>
 

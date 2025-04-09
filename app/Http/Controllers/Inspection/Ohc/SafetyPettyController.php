@@ -53,6 +53,7 @@ class SafetyPettyController extends Controller
             if ($request->ajax()) {
                 try {
                     $data =  $this->sfty_petty_details->list();
+
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -66,6 +67,7 @@ class SafetyPettyController extends Controller
                             // }
                             return $text;
                         })
+
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -82,6 +84,7 @@ class SafetyPettyController extends Controller
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
+
                         })
                         ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
