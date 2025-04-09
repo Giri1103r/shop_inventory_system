@@ -821,7 +821,7 @@ class SprinklarSystemController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Sprinklar System Inspection Inspection.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
