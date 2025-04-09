@@ -160,11 +160,25 @@ class EmergencyLightInspection extends Model
         $search = '';
         $query =
 
-        $this->select('inspection_fire_emergency_light_inspection.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_emergency_light_inspection.id as inspection_id')
-            ->leftJoin('masters_location', 'inspection_fire_emergency_light_inspection.location', '=', 'masters_location.id')
-            ->leftJoin('inspection_shift_option', 'inspection_fire_emergency_light_inspection.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin('masters_unit', 'inspection_fire_emergency_light_inspection.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_fire_emergency_light_inspection.frequency', '=', 'inspection_frequency_option.id');
+        $this->select(
+            'inspection_fire_emergency_light_inspection.*',
+            'inspection_shift_option.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_fire_emergency_light_inspection_details.*',
+            'inspection_frequency_option.*',
+            'inspection_fire_files.*',
+            'inspection_fire_emergency_light_inspection.id as inspection_id'
+        )
+        ->join('inspection_fire_emergency_light_inspection_details', 'inspection_fire_emergency_light_inspection_details.inspection_id', '=', 'inspection_fire_emergency_light_inspection.id')
+        ->join('inspection_fire_files', 'inspection_fire_files.inspection_id', '=', 'inspection_fire_emergency_light_inspection.id')
+        ->leftJoin('masters_location', 'inspection_fire_emergency_light_inspection.location', '=', 'masters_location.id')
+        ->leftJoin('inspection_shift_option', 'inspection_fire_emergency_light_inspection.shift', '=', 'inspection_shift_option.id')
+        ->leftJoin('masters_unit', 'inspection_fire_emergency_light_inspection.unit', '=', 'masters_unit.id')
+        ->leftJoin('inspection_frequency_option', 'inspection_fire_emergency_light_inspection.frequency', '=', 'inspection_frequency_option.id')
+        ->where('inspection_fire_emergency_light_inspection.trash', 'NO')
+        ->orderBy('inspection_fire_emergency_light_inspection.id', 'desc');
+
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];

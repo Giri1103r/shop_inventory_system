@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Weekly Ambulance Inspection Checklist | KARAM</title>
+    <title>Emergency Light Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -118,7 +118,12 @@
     <htmlpageheader name="myHeader1" style="display:block;">
         <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
             <tr style="">
-
+                {{-- <td border="0" style="width:50%;float:left;text-align:left;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </td>
+                <td border="0"
+                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                    Emergency Light Inspection </td> --}}
             </tr>
         </table>
     </htmlpageheader>
@@ -141,6 +146,8 @@
 
 
     @foreach ($content as $details)
+
+
         <br>
 
         <div style="width:100%;">
@@ -148,7 +155,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Weekly Ambulance Inspection Checklist
+                        Emergency Light Inspection
                     </td>
                 </tr>
             </table>
@@ -156,31 +163,31 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
-                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                <th  colspan="4" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
-                <th colspan="6" style="border:1px solid black;">
+                <th colspan="4" style="border:1px solid black;">
                     <h3>
-                        <span><b>WEEKLY AMBULANCE INSPECTION CHECKLIST</b></span>
+                        <span><b>EMERGENCY LIGHT INSPECTION CHECKLIST</b></span>
                         <br>
-
+                        <span><b>PN International Pvt Ltd. </b></span>
                     </h3>
                 </th>
 
-                <th colspan="6" style="border:1px solid black;">
+                <th colspan="4" style="border:1px solid black;">
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                                <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                                <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
                             </tr>
                         </thead>
                     </table>
@@ -193,90 +200,113 @@
                     DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                    colspan="6">
-                    UNIT: {{ getUnitname($details->unit) ?? 'N/A' }}
+                    colspan="4">
+                    LOCATION: {{ getLocationname($details->location) ?? 'N/A' }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                    colspan="6">
-                    SHIFT: {{ $details->shift ?? 'N/A' }}
+                    colspan="4">
+                    SHIFT: {{ ($details->shift) ?? 'N/A' }}
                 </th>
             </tr>
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                    colspan="8">
+                    colspan="4">
                     NEXT DUE: {{ Displaydateformat($details->next_due) ?? 'N/A' }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                    colspan="8">
-                    LOCATION: {{ getLocationname($details->location) ?? 'N/A' }}
+                    colspan="4">
+                    UNIT: {{ getUnitname($details->unit) ?? 'N/A' }}
                 </th>
-
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                    colspan="4">
+                    FREQUENCY: {{ getFrequencyname($details->frequency) ?? 'N/A' }}
+                </th>
             </tr>
 
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK ITEMS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">DEPARTMENT
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">OK/NOT-OK
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">EMERGENCY
+                    LIGHT
+                    NUMBER</th>
+                <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
                 </th>
-
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
             </tr>
-
-            @php
-                $checklist = json_decode($details->checklist, true);
-            @endphp
-
-            @foreach ($checklist['check_item'] as $groupId => $items)
-                @foreach ($items as $itemId)
-                    <tr>
-                        <td colspan="2"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $loop->iteration }}</td>
-                        <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ getSubcategoryDataname($itemId) }}</td>
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                            @if (strtolower($checklist['status'][$itemId]) === 'ok')
-                            <span style="color: green; font-size: 20px;">✓</span>
-                            @else
-                            <span style="color: red; font-size: 20px;">X</span>
-                            @endif
-                        </td >
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $checklist['remarks'][$itemId] ?? '' }}</td>
-                    </tr>
-                @endforeach
-            @endforeach
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Checked By</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Verified By
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">Approved By
-                </th>
 
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">DESCRIPTION
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CONDITION
+                    OF
+                    LIGHT</th>
 
             </tr>
-
             <tr>
-                @php
-                    $createdSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
-                    $approvedSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
-                    $verifiedSignature  = GetOHCSignature($details->created_by, $details->id,OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST)
-                @endphp
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($createdSignature->file_path) }}" alt="Signature Upload"
-                    style="width: 150px; margin-top: -10px;" /></th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($verifiedSignature->file_path) }}" alt="Signature Upload"
-                    style="width: 150px; margin-top: -10px;" />
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8"><img src="{{ admin_url($approvedSignature->file_path) }}" alt="Signature Upload"
-                    style="width: 150px; margin-top: -10px;" />
-                </th>
-
-
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">TYPE OF LIGHT</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CAPACITY</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LIGHT CONDITION</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SWITCH CONDITION</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">POWER SUPPLY</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">STATUS</th>
             </tr>
+
+
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ getDepartment($details->department) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $details->location }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $details->emergency_of_light }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ GetTypeofLight($details->type_of_light) }}
+                    </td>
+
+                    <td style="border: 1px solid black; padding: 8px;">
+                        {{ $details->capacity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;">
+                        {{ $details->quantity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;">
+                        {{ getLightCondition($details->light_condition) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;">
+                        {{ getLightCondition($details->switc_condition) }}
+
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ GetPowerSuply($details->power_supply) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;">
+                        {{ getFireLightInspectionStatus($details->fire_status) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
+
+
+                </tr>
+
+                <tr>
+
+                    <th colspan="12" style="border:1px solid black;">
+                        <h3>
+                            <span><b>OBSERVATION</b></span>
+
+                        </h3>
+                    </th>
+
+
+                </tr>
+                <tr>
+                    <td colspan="8"   style="border: 1px solid black; padding: 8px;">{{ $details->observation }}</td>
+                    <td colspan="4"  > <img src="{{ admin_url($details->file_path) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+                </tr>
 
         </table>
     @endforeach
-
-
-
+    <br>
+    </div>
     <br>
 
 </body>

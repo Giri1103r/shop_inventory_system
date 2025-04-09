@@ -186,10 +186,12 @@
                                             </div>
                                         </div>
 
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Overall Total Number of First Aid</h4>
+                                        </div>
                                         <div class="col-md-4 mt-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Overall Total Number of First
-                                                    Aid</label>
+                                                {{-- <label class="form-label require">Overall Total Number of First Aid</label> --}}
                                                 <input type="text" name ="overall_total_number_of_first_aid"
                                                     class="form-control" placeholder="Overall Total Number of First Aid"
                                                     value="0" readonly>

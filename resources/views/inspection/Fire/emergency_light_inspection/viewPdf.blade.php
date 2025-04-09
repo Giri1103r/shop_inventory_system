@@ -312,7 +312,11 @@
                     <td width="48%" style="padding:5px;"> {{ getUserName($emergency_light->verified_by) }}</td>
                 </tr>
                 @php
-                    $signature = GetSignature($emergency_light->verified_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+                    $signature = GetSignature(
+                        $emergency_light->verified_by,
+                        $emergency_light->id,
+                        EMERGENCY_LIGHT_INSPECTION,
+                    );
                 @endphp
             @endif
             @if (isset($emergency_light->created_at))
@@ -324,13 +328,13 @@
                 </tr>
             @endif
             @if (isset($signature))
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
 
 
-                      <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" /></td>
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
             @endif
@@ -346,17 +350,21 @@
                 @endif
 
                 @php
-                    $signature = GetSignature($emergency_light->approved_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+                    $signature = GetSignature(
+                        $emergency_light->approved_by,
+                        $emergency_light->id,
+                        EMERGENCY_LIGHT_INSPECTION,
+                    );
                 @endphp
             @endif
             @if (isset($signature))
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
 
 
-                      <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" /></td>
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
             @endif
@@ -403,6 +411,20 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+                $signature = GetFireSignature($emergency_light->created_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -438,6 +460,20 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->verified_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -466,7 +502,7 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($emergency_light->l1_manager_verified_by) }}</td>
+                    {{ getUserName($emergency_light->l1_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -474,6 +510,20 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->l1_manager_verification, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -498,10 +548,10 @@
         </div>
         <table width="100%" style="width:100%;">
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($emergency_light->l2_manager_verified_by) }}</td>
+                    {{ getUserName($emergency_light->l2_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -509,13 +559,20 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->l2_manager_verification, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername($emergency_light->approved_by) }}
-                </td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
             </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

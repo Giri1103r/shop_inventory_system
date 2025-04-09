@@ -203,22 +203,18 @@ class MSDSController extends Controller
         try {
 
             $allData = $this->msdsDetails->exportdata();
+            $document_no = $this->document_reference->selectUsingName('MSDS');
+
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Item Code',
-                'Name of Chemical',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "MSDS Details",
             );
 

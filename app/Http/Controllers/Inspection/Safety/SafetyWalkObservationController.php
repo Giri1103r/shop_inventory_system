@@ -133,8 +133,8 @@ class SafetyWalkObservationController extends Controller
                 'unit' => $unit,
                 'locations' => $locations,
                 'document_no' => $document_no,
-
             );
+
             return view('inspection.Safety.safety_walk_observation.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -279,9 +279,8 @@ class SafetyWalkObservationController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
-
             );
+
 
             return view('inspection.Safety.safety_walk_observation.view', $data);
         } catch (Exception $ex) {

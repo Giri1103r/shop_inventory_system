@@ -113,7 +113,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Gemba Walk Serial No</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->gemba_walk_checklist_no) ? $gembaWalk->gemba_walk_checklist_no : '' }}
+                                                    {{ $loop->iteration }}
                                                 </div>
                                             </div>
                                         </div>
@@ -149,7 +149,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Observation Type</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->observation_type_id) ? $gembaWalk->observation_type_id : '' }}
+                                                    {{ getObservationType(isset($gembaWalk->observation_type_id) ? $gembaWalk->observation_type_id : '') }}
                                                 </div>
                                             </div>
                                         </div>

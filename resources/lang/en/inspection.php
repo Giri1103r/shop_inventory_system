@@ -244,5 +244,9 @@ return [
     'working_temperature' => 'Working Temperature',
     'sprinkler_head' => 'Sprinkler Head',
     'neck_ring' => 'Neck Rink',
-    'date_of_closure' => 'Date of Closure'
+    'date_of_closure' => 'Date of Closure',
+
+
+    //Excess Error
+    'excess_error' => 'You cannot download more than 20 items!',
 ];
