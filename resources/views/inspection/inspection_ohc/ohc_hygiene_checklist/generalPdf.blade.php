@@ -201,23 +201,38 @@
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Date
                 </th>
-                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Shift
                 </th>
-                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Description/Equipment
                 </th>
-                <th colspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                <th colspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Cleaning and Sanitization
                 </th>
-                <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Signature Of Cleaner
+                </th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    Signature of Nursing Officer
+                </th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Remarks
                 </th>
                 @isset($nursing_signature)
-                    <th rowspan="2" style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                    <th rowspan="2"
+                        style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Nursing Officer Remarks
                     </th>
                 @endisset
@@ -256,6 +271,23 @@
                         <span style="color: red;">X</span>
                     </td>
                 @endif
+                <td colspan="1"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
+                        style="height: 50px; margin-top:2px;">
+
+                </td>
+
+                <td colspan="1"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($inspection_details->updated_by != null)
+                        <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+
                 <td style="border: 1px solid black; text-align: center; padding: 12px;">
                     {{ $inspection_details->cleaner_remarks }}
                 </td>
@@ -265,20 +297,7 @@
                     </td>
                 @endif
             </tr>
-            <tr>
-                <td colspan="3" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature" style="height: 50px; margin-top:2px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
-                </td>
-                <td colspan="4" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature" style="height: 50px;">
-                        <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-            </tr>
+
         </tbody>
     </table>
 
