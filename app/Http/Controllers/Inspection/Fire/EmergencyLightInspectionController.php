@@ -969,12 +969,12 @@ class EmergencyLightInspectionController extends Controller
         try {
 
             $allData = $this->emergency_light->exportdata();
-            // dd($allData);
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-           
+
             $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $header = [
                 __("common.sno"),
@@ -1058,7 +1058,7 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency light inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+           
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));

@@ -172,13 +172,7 @@ class Employee extends Model
         $insertArray = [];
         foreach ($emptemp as $item) {
 
-            $emailExists = $this->where('email', $item->email)->where('emp_id', '!=', $item->emp_id)->exists();
 
-            if ($emailExists) {
-                $errorMessage = "Email already exists.";
-                $this->updateErrorStatus($item->emp_id, $errorMessage);
-                continue;
-            }
             $role = DB::table('template_user_role')
                 ->where('role_name', $item->user_role)
                 ->first();
@@ -190,6 +184,9 @@ class Employee extends Model
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
                 'user_role' => 9,
+                'nationality'=> $item->nationality ?? null,
+                'id_type'=> $item->id_type ?? null,
+                'id_number'=> $item->id_number ?? null,
                 'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'reporting_manager' => $item->reporting_manager ?? null,

@@ -290,7 +290,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="row mt-2 observationContainer">
+                                                        {{-- <div class="row mt-2 observationContainer">
                                                             <div class="col-md-4 form-input observationRow">
                                                                 <label class="form-label">Observation</label>
                                                                 <textarea class="form-control" name="gemba_walk[0][checklist_observation][0]" id="checklist_observation_0"></textarea>
@@ -303,12 +303,41 @@
                                                                     style="margin-top: 30px;" data-index=0>Add
                                                                     More</button>
                                                             </div>
-                                                        </div>
-
+                                                        </div> --}}
                                                     </div>
                                                 </div>
 
-                                                <div class="submit-button" style="text-align: right;">
+                                                <div class="form-observation">
+                                                    <div class="row mt-4 form-obs">
+                                                        <div class="card-header-inner p-2">
+                                                            <h4 class="text-white">GembaWalk Inspection Observation</h4>
+                                                        </div>
+        
+                                                        <div class="col-md-12 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label
+                                                                    class="form-label require">{{ __('inspection.obs') }}</label>
+        
+                                                                <!-- Radio Buttons for Observation Needed -->
+                                                                <div class="mb-2">
+                                                                    <label class="me-3">
+                                                                        <input type="radio" name="observation_needed"
+                                                                            value="{{encryptId(1)}}"> Yes
+                                                                    </label>
+                                                                    <label>
+                                                                        <input type="radio" name="observation_needed"
+                                                                            value="{{encryptId(2)}}"> No
+                                                                    </label>
+                                                                </div>
+        
+                                                               
+                                                            </div>
+                                                        </div>
+        
+                                                    </div>
+                                                </div>
+
+                                                <div class="submit-button mt-4" style="text-align: right;">
                                                     <x-button-submit class="submit"></x-button-submit>
                                                     <x-button-reset class=""></x-button-reset>
                                                     <x-button-cancel
@@ -473,8 +502,9 @@
                             </div> 
 
                           </div>  
-
-
+                          
+                          
+                          {{--   observation 
                             <div class="row mt-2">
                                 <div class="observationContainer">
                                     <div class="row observationRow">
@@ -489,6 +519,8 @@
                                     </div>
                                 </div>
                             </div>
+                            --}}
+
 
                             <div class="col-md-12 mb-3 mt-3 d-flex align-items-end justify-content-end">
                                 <button type="button" class="btn btn-danger btn-sm removeChecklistDetails">Remove</button>
@@ -522,55 +554,55 @@
 
             });
 
-            $(document).on("click", ".addChecklistObservation", function() {
-                const checklistRow = $(this).closest(".gemba_walk_checklist_add");
-                const rowIndex = $(this).data("index");
-                const observationContainer = checklistRow.find(".observationContainer");
-                const observationIndex = checklistRow.find(".observationRow")
-                    .length;
+            // $(document).on("click", ".addChecklistObservation", function() {
+            //     const checklistRow = $(this).closest(".gemba_walk_checklist_add");
+            //     const rowIndex = $(this).data("index");
+            //     const observationContainer = checklistRow.find(".observationContainer");
+            //     const observationIndex = checklistRow.find(".observationRow")
+            //         .length;
 
-                if (observationIndex >= 5) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "Maximum 5 observations allowed."
-                    });
-                    return;
-                }
+            //     if (observationIndex >= 5) {
+            //         Swal.fire({
+            //             icon: "error",
+            //             title: "Sorry!",
+            //             text: "Maximum 5 observations allowed."
+            //         });
+            //         return;
+            //     }
 
-                const newObservationField = `
-            <div class="row mt-2 observationRow">
-                <div class="col-md-4 form-input">
-                    <label class="form-label">Observation</label>
-                    <textarea class="form-control" name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"></textarea>
-                </div>
-                <div class="col-md-4 d-flex align-items-center">
-                    <button type="button" class="btn btn-danger btn-sm removeChecklistObservation">
-                        <i class="fa-solid fa-trash text-light"></i>
-                    </button>
-                </div>
-            </div>`;
+            //     const newObservationField = `
+            //     <div class="row mt-2 observationRow">
+            //         <div class="col-md-4 form-input">
+            //             <label class="form-label">Observation</label>
+            //             <textarea class="form-control" name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"></textarea>
+            //         </div>
+            //         <div class="col-md-4 d-flex align-items-center">
+            //             <button type="button" class="btn btn-danger btn-sm removeChecklistObservation">
+            //                 <i class="fa-solid fa-trash text-light"></i>
+            //             </button>
+            //         </div>
+            //     </div>`;
 
-                observationContainer.append(newObservationField);
+            //     observationContainer.append(newObservationField);
 
-                $(`[name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"]`).rules(
-                    "add", {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-                        messages: {
-                            required: "Observation is required.",
-                            minlength: "Observation must be at least 2 characters.",
-                            maxlength: "Observation cannot exceed 200 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
-                        }
-                    });
-            });
+            //     $(`[name="gemba_walk[${rowIndex}][checklist_observation][${observationIndex}]"]`).rules(
+            //         "add", {
+            //             required: true,
+            //             minlength: 2,
+            //             maxlength: 200,
+            //             pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+            //             messages: {
+            //                 required: "Observation is required.",
+            //                 minlength: "Observation must be at least 2 characters.",
+            //                 maxlength: "Observation cannot exceed 200 characters.",
+            //                 pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+            //             }
+            //         });
+            // });
 
-            $(document).on("click", ".removeChecklistObservation", function() {
-                $(this).closest(".observationRow").remove();
-            });
+            // $(document).on("click", ".removeChecklistObservation", function() {
+            //     $(this).closest(".observationRow").remove();
+            // });
 
             $(document).on("click", ".removeChecklistDetails", function() {
                 $(this).closest(".gemba_walk_checklist_add").remove();
@@ -611,7 +643,6 @@
                         },
                         "gemba_walk[0][date_of_observation]": {
                             required: true,
-                            date: true
                         },
                         "gemba_walk[0][observation_type]": {
                             required: true
@@ -642,7 +673,6 @@
                         },
                         "gemba_walk[0][date_of_compliance]": {
                             required: true,
-                            date: true
                         },
                         "gemba_walk[0][responsibility_id]": {
                             required: true

@@ -316,7 +316,7 @@ class MonthlyMedicineStoreController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Monthly Medicine Store Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');

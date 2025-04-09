@@ -74,25 +74,6 @@ class EmployeeTemp extends Model
         foreach ($chunks as $chunk) {
             foreach ($chunk as $item) {
 
-                if (empty($item['Emp_OfficialMail'])) {
-                    Log::info("Skipped record due to empty email", [
-                        'emp_id' => $item['pk_Emp_Code'],
-                        'email' => $item['Emp_OfficialMail'],
-                    ]);
-                    continue;
-                }
-                $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
-
-                if ($emailExists) {
-                    $errorMessage = "Email already exists.";
-                    $this->updateErrorStatus($item['pk_Emp_Code'], $errorMessage);
-                    Log::info("Skipped record due to already exists", [
-                        'emp_id' => $item['pk_Emp_Code'],
-                        'email' => $item['Emp_OfficialMail'],
-                    ]);
-                    continue;
-                }
-
                 $designation = DB::table('masters_designation')
                 ->where('des_code', $item['fk_Emp_DesCode'])
                 ->value('designation_name') ?? null;
@@ -109,6 +90,9 @@ class EmployeeTemp extends Model
                     'joining_date' => !empty($item['Emp_JoiningDate']) ? DBdatetimeformat($item['Emp_JoiningDate']) : null,
                     'designation' => $designation,
                     'status' => $status,
+                    'nationality'=>'Indian',
+                    'id_type'=>'Aadhar',
+                    'id_number'=>'000',
                     'employee_status' => isset($item['Emp_Status']) ? $item['Emp_Status'] : null,
                     'email' => isset($item['Emp_OfficialMail']) ? $item['Emp_OfficialMail'] : null,
                     'reporting_manager' => isset($item['Emp_FirstApprover']) ? $item['Emp_FirstApprover'] : null,
@@ -130,6 +114,27 @@ class EmployeeTemp extends Model
                     ['emp_id' => $item['pk_Emp_Code']],
                     $valuesToInsertOrUpdate
                 );
+
+                if (empty($item['Emp_OfficialMail'])) {
+                    $errorMessage = "Email is empty.";
+                    $this->updateErrorStatus($item['pk_Emp_Code'], $errorMessage);
+                    Log::info("Skipped record due to empty email", [
+                        'emp_id' => $item['pk_Emp_Code'],
+                        'email' => $item['Emp_OfficialMail'],
+                    ]);
+                    continue;
+                }
+                $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
+
+                if ($emailExists) {
+                    $errorMessage = "Email already exists.";
+                    $this->updateErrorStatus($item['pk_Emp_Code'], $errorMessage);
+                    Log::info("Skipped record due to already exists", [
+                        'emp_id' => $item['pk_Emp_Code'],
+                        'email' => $item['Emp_OfficialMail'],
+                    ]);
+                    continue;
+                }
 
             }
         }
@@ -171,7 +176,7 @@ class EmployeeTemp extends Model
 
         $query = $this->select('masters_employee_temp.*');
         $query = $this->where('error_status', 1);
-        $query = $this->where('status', 1);
+        // $query = $this->where('status', 1);
 
 
         if ($request->search['value'] != null || $request->search['value'] != '') {

@@ -47,9 +47,14 @@ class ObservationWhyWhyAnalysis extends Model
     public function store($id, $observation_id)
     {
         $request = request();
-        $this->where('observation_id', decryptId($request->observation_id))->update(['trash' => 'YES'],['status' => '0']);
+        $this->where('observation_id', decryptId($request->observation_id))
+            ->update([
+                'trash' => 'YES',
+                'status' => '0'
+            ]);
+
         $data = array(
-            'inspection_id' => decryptId($request->inspection_id),
+            'inspection_id' => decryptId($request->id),
             'observation_id' => decryptId($request->observation_id),
             'why_1' => $request->why_1,
             'why_2' => $request->why_2,
