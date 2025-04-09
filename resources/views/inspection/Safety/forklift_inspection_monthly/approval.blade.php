@@ -230,7 +230,7 @@
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width:80px;; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -308,7 +308,7 @@
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px;; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -380,7 +380,7 @@
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                                             <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+                                                                style="width:80px;; margin-top: -10px;" />
                                                         </div>
                                                     </div>
                                                 @endif
@@ -432,7 +432,7 @@
                                                             <label class="form-label"
                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                                             <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+                                                                style="width:80px;; margin-top: -10px;" />
                                                         </div>
                                                     </div>
                                                 @endif
@@ -485,7 +485,7 @@
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px;; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -545,7 +545,7 @@
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px;; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -586,7 +586,7 @@
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width:80px;; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -639,7 +639,7 @@
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width:80px;; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -690,7 +690,7 @@
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width:80px;; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -742,7 +742,7 @@
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width:80px;; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>

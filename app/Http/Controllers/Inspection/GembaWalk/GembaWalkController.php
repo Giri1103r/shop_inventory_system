@@ -58,8 +58,6 @@ class GembaWalkController extends Controller
         $this->statusLog = new GembaWalkStatusLog();
         $this->document_reference = new InspectionStaticDocno();
         $this->shift = new Shift();
-
-
     }
 
 
@@ -116,7 +114,7 @@ class GembaWalkController extends Controller
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
                                 return $btn;
                             })
-                            ->rawColumns(['action', 'created_date', 'created_by','date', 'shift', 'gemba_walk_status'])
+                            ->rawColumns(['action', 'created_date', 'created_by', 'date', 'shift', 'gemba_walk_status'])
                             ->setFilteredRecords($data['filter_records'])
                             ->setTotalRecords($data['total_records'])
                             ->skipPaging()
@@ -135,7 +133,7 @@ class GembaWalkController extends Controller
 
             );
 
-            return view('inspection.gembaWalk.list',$data);
+            return view('inspection.gembaWalk.list', $data);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'An error occurred while processing your request. Please try again later.'], 500);
@@ -172,7 +170,7 @@ class GembaWalkController extends Controller
     {
         // dd($request->all());
         try {
-             $rules = [
+            $rules = [
                 'document_no' => 'required',
                 'document_upload_date' => 'required',
                 'document_revision_date' => 'required',
@@ -290,8 +288,8 @@ class GembaWalkController extends Controller
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
-                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
-                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by,$id,$type);
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
+                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
                 $status_log = $this->statusLog->selectOne($id);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
@@ -328,7 +326,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
-                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
 
@@ -537,7 +535,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_details = $this->gembaWalk->selectOne($gembaWalk_id);
                 $getUserId = $this->gembaWalk->getUserId($gembaWalk_id);
                 $type = GEMBA_WALK;
-                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $floorID = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 2)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
@@ -667,7 +665,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($gembaWalk_id);
                 $getUserId = $this->gembaWalk->getUserId($gembaWalk_id);
                 $type = GEMBA_WALK;
-                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
@@ -874,8 +872,8 @@ class GembaWalkController extends Controller
                 $status_log = $this->statusLog->selectOne($id);
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
-                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by,$id,$type);
-                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by,$id,$type);
+                $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
+                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
@@ -966,6 +964,7 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));
