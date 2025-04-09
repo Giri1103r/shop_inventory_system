@@ -422,7 +422,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             ];
 
             $property = [
-                'tempDir' => storage_path('app/public/pdf/temp/'), // Corrected path
+                'tempDir' => storage_path('app/public/pdf/temp/'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -739,7 +739,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
             $sheet->setCellValue("O3", $document_no->rev_dt);
 
-            $sheet->getStyle("A1:O3")->applyFromArray([
+            $sheet->getStyle("M1:O3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);

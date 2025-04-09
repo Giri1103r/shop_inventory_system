@@ -188,6 +188,6 @@ class FirstAidEquipment extends Model
 
     public function getFirstAidData()
     {
-        return $this->get();
+        return $this->where('status',1)->get();
     }
 }
