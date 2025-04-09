@@ -117,8 +117,10 @@ class HealthInstrumentCalibration extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','masters_unit.unit_name')
-        ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','inspection_ohc_health_instrument_calibration_track_sheet_details.*','masters_unit.unit_name','inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id','inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id','inspection_static_docno.*')
+        ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details','inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id','=','inspection_ohc_health_instrument_calibration_track_sheet.id')
+        ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id')
+        ->leftJoin('inspection_static_docno', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id', '=', 'inspection_static_docno.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -141,9 +143,12 @@ class HealthInstrumentCalibration extends Model
 
             $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.status',  decryptId($request->status));
         }
-        $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        $query->orderBy('inspection_ohc_health_instrument_calibration_track_sheet.id', 'DESC');
+        $results = $query->get();
+        $query = $results->groupBy('unit_name');
+
+        return  $query;
     }
 
     public function statuschange($id)

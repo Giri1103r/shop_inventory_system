@@ -151,7 +151,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.daily_vital_equipment') }}
+                        {{ __('title.daily_vital_equipment') }}
                     </td>
                 </tr>
             </table>
@@ -165,7 +165,7 @@
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
-                        <span><b> {{ __('inspection.daily_vital_equipment') }}</b></span>
+                        <span><b> {{ __('title.daily_vital_equipment') }}</b></span>
                         <br>
                     </h3>
                 </th>
@@ -179,7 +179,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -191,29 +191,29 @@
                 </th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
                     colspan="4">
                     DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
                     colspan="6">
                     UNIT: {{ getUnitname($details->unit) ?? 'N/A' }}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
                     colspan="10">
                     SHIFT: {{ $details->shift ?? 'N/A' }}
                 </th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="2">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4">CHECK
                     POINTS
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">RESPONSE
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4">RESPONSE
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4"> QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="5">REMARKS
                 </th>
             </tr>
 
