@@ -264,12 +264,11 @@
                                                         <select name="type[1]" id="type"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
-                                                            <option value="{{ encryptId(GATE) }}">
-                                                                {{ __('inspection.GATE') }}</option>
-                                                            <option value="{{ encryptId(BALL) }}">
-                                                                {{ __('inspection.BALL') }}</option>
-                                                            <option value="{{ encryptId(BUTTERFLY) }}">
-                                                                {{ __('inspection.BUTTERFLY') }}</option>
+                                                            @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -711,12 +710,11 @@
                                                         <select name="type[${form_set_count}]" id="type-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
-                                                            <option value="{{ encryptId(GATE) }}">
-                                                                {{ __('inspection.GATE') }}</option>
-                                                            <option value="{{ encryptId(BALL) }}">
-                                                                {{ __('inspection.BALL') }}</option>
-                                                            <option value="{{ encryptId(BUTTERFLY) }}">
-                                                                {{ __('inspection.BUTTERFLY') }}</option>
+                                                           @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
