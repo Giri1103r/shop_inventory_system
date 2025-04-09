@@ -789,21 +789,16 @@ class SprinklarSystemController extends Controller
         try {
 
             $allData = $this->sprinklar_system->exportdata();
+
+            $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+           
+
 
             $data = array(
-                'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Sprinklar System Inspection",
             );
@@ -820,14 +815,15 @@ class SprinklarSystemController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.sprinklar_system.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
             $filename = "Sprinklar System Inspection Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
@@ -840,16 +836,24 @@ class SprinklarSystemController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
+                $inspection_type = SPRINKLAR_SYSTEM_INSPECTION;
                 $status_log = $this->statusLog->selectOne($id,SPRINKLAR_SYSTEM_INSPECTION);
                 $forklift_details = $this->sprinklar_system->selectOne($id);
                 $inspection = $this->sprinklar_system_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Sprinklar System Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 

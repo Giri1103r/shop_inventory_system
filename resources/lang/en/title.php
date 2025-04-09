@@ -1,5 +1,6 @@
 <?php
 return [
+    'hooter' => 'HOOTER  INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'floor_stretcher' => 'Checklist Of Floor Stretcher Inspection',
     'safety_gallery' => 'SAFETY GALLERY INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'ohs_summary_report' => 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT LTD',
@@ -9,4 +10,5 @@ return [
     'fire_alarm' => 'FIRE ALARM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'first_bag_inspection' => 'FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.',
     'hygiene_checklist' => 'Daily OHC Hygine & Cleaning Checklist PN International Pvt Ltd',
+    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.'
 ];
