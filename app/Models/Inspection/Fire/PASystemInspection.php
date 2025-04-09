@@ -51,7 +51,7 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_pa_system.id as fire_pa_system_id')
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_pa_system.id as fire_pa_inspection_id')
             ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
@@ -162,11 +162,12 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
             ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_fire_pa_system.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_pa_system.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_fire_pa_system_checklist', 'inspection_fire_pa_system.id', '=', 'inspection_fire_pa_system_checklist.fire_pa_system_id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -177,7 +178,6 @@ class PASystemInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-
 
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
@@ -201,6 +201,13 @@ class PASystemInspection extends Model
             $query = $query->where('inspection_fire_pa_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
         $query->orderBy('inspection_fire_pa_system.id', 'DESC');
+
+        $data = $query->get();
+        if ($data) {
+            return $data = $data->groupBy('fire_pa_system_id');
+        }else{
+            return $data;
+        }
 
         return  $query->get();
     }
