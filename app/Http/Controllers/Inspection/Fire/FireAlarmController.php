@@ -789,21 +789,13 @@ class FireAlarmController extends Controller
         try {
 
             $allData = $this->fire_alarm->exportdata();
+            $inspection_type = FIRE_ALARM_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
+            
             $data = array(
-                'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Fire Alarm Inspection",
             );
@@ -814,20 +806,22 @@ class FireAlarmController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
+                'orientation' => 'L'
 
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.fire_alarm.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
 
             $filename = "Fire Alarm Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -840,16 +834,26 @@ class FireAlarmController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
+                $inspection_type = FIRE_ALARM_INSPECTION;
                 $status_log = $this->statusLog->selectOne($id, FIRE_ALARM_INSPECTION);
                 $forklift_details = $this->fire_alarm->selectOne($id);
                 $inspection = $this->fire_alarm_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
+
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Fire Alarm Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
+                    'inspection_type' => $inspection_type,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 
