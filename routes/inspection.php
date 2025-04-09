@@ -809,12 +809,11 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('add/submit', [ChecklistObservationFollowupController::class, 'store']);
         Route::get('edit/{id}', [ChecklistObservationFollowupController::class, 'edit']);
         Route::post('edit/submit', [ChecklistObservationFollowupController::class, 'update']);
-        Route::get('view/{id}', [ChecklistObservationFollowupController::class, 'view']);
+        Route::get('view/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'view']);
         Route::post('delete', [ChecklistObservationFollowupController::class, 'delete']);
         Route::GET('verification/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'approvals']);
         Route::POST('ehsofficer/verify/submit', [ChecklistObservationFollowupController::class, 'EHSOfficerSubmit']);
         Route::POST('capa/submit', [ChecklistObservationFollowupController::class, 'CAPASubmit']);
-        Route::POST('capa/update', [ChecklistObservationFollowupController::class, 'CAPAUpdate']);
         Route::POST('capa/reverify/submit', [ChecklistObservationFollowupController::class, 'CAPAVerifySubmit']);
         Route::POST('level-one/verify/submit', [ChecklistObservationFollowupController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [ChecklistObservationFollowupController::class, 'levelTwoManagerSubmit']);

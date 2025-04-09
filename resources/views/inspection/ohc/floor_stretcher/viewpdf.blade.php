@@ -122,8 +122,8 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </td>
                 <td border="0"
-                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Safety Gallery Inspection </td>
+                    style="width:50%;float:right;text-align:right;font-size: 20px;font-weight:bold;font-family: Georgia, serif;">
+                    Checklist Of Floor Stretcher Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -185,11 +185,12 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Floor Stretcher Checklist
+                    Checklist Of Floor Stretcher Inspection Details
                 </td>
             </tr>
         </table>
     </div>
+    <br>
     @php
         $inspection_details = json_decode($inspection_detail->responses, true);
         $srNo = 1;
@@ -198,6 +199,14 @@
 
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Date:- {{Displaydateformat($inspection_detail->issue_date)}}</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Shift  :- {{GetShiftName($inspection_detail->shift)}}</th>
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Frequency :- {{GetFrequencyName($inspection_detail->frequency)}} </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Unit :- {{GetUnitName($inspection_detail->unit)}} </th>
+            </tr>
             <tr>
                 <th rowspan="2"
                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; width: 8%;">

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Observation Approve')
+@section('title', 'Observation FollowUp Approve')
 @section('pageurl', admin_url('fire/checklist-observation/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -65,7 +65,7 @@
                                     <div class="form-wrapper">
                                         <div class="row mt-4 form-set">
                                             <div class="card-header-inner p-2 col-12">
-                                                <h4 class="text-white">Detector Inspection Checklist</h4>
+                                                <h4 class="text-white">Observation</h4>
                                             </div>
 
                                             <!-- SR No -->
@@ -161,7 +161,8 @@
 
                                 @if (
                                     $observation->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION ||
-                                        $observation->observation_status == EHS_OFFICER_REJECTED)
+                                        $observation->observation_status == EHS_OFFICER_REJECTED ||
+                                        $observation->observation_status == L1_MANAGER_REJECTED || $observation->observation_status == L2_MANAGER_REJECTED)
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -460,7 +461,7 @@
                                             </div>
                                         </div>
                                         <form method="POST" id="capaAction"
-                                            action="{{ admin_url('fire/checklist-observation/capa/update') }}"
+                                            action="{{ admin_url('fire/checklist-observation/capa/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
                                             @csrf
                                             <input type="hidden" value="{{ encryptId($observation->inspectionid) }}"
@@ -514,7 +515,7 @@
                                     </div>
                                 @elseif (
                                     $observation->observation_status >= WAITING_FOR_CAPA_ACTION &&
-                                        $observation->observation_status != EHS_OFFICER_REJECTED)
+                                        $observation->observation_status != EHS_OFFICER_REJECTED && $observation->observation_status != L1_MANAGER_REJECTED && $observation->observation_status != L2_MANAGER_REJECTED)
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -526,6 +527,14 @@
                                                     <label class="form-label ">{{ __('inspection.name') }}</label>
                                                     <div class="view_data">
                                                         {{ getUserName($observation->responsible_person_id) }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mt-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Date</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($observation->capa_date) }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mt-2">
@@ -555,7 +564,7 @@
 
                                 @if (
                                     $observation->observation_status == WAITING_FOR_CAPA_VERIFICATION &&
-                                        $observation->observation_status != EHS_OFFICER_REJECTED)
+                                        $observation->observation_status != EHS_OFFICER_REJECTED )
                                     <div class="basic-form mx-3">
                                         <form method="POST" id="forklistassessmentAdd"
                                             action="{{ admin_url('fire/checklist-observation/capa/reverify/submit') }}"
@@ -609,7 +618,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                @elseif ($observation->observation_status >= WAITING_FOR_CAPA_VERIFICATION)
+                                @elseif ($observation->observation_status >= WAITING_FOR_CAPA_VERIFICATION && $observation->observation_status != EHS_OFFICER_REJECTED && $observation->observation_status != L1_MANAGER_REJECTED && $observation->observation_status != L2_MANAGER_REJECTED)
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -625,23 +634,30 @@
                                                 </div>
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Closed
-                                                            Date</label>
+                                                        <label class="form-label ">Date</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($observation->created_at) }}
+                                                            {{ Displaydateformat($observation->ehs_capa_verified_date) }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">{{ __('inspection.signature') }}</label>
-                                                        <a href="{{ asset($observation->file_path) }}" target="_blank">
-                                                            <img src="{{ asset($observation->file_path) }}"
-                                                                alt="Signature" class="img-fluid rounded shadow"
-                                                                style="max-width: 20%; height: auto;">
-                                                        </a>
+                                               
+                                                @php
+                                                    $signature = GetFireSignature(
+                                                        $observation->ehs_capa_verified_by,
+                                                        $observation->observationid,
+                                                        OBSERVATION_FOLLOWUP,
+                                                    );
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                @endif
                                             </div>
 
 
@@ -668,7 +684,8 @@
                                             @csrf
                                             <input type="hidden" value="{{ encryptId($observation->inspectionid) }}"
                                                 name="id">
-                                            <input type="hidden" value="{{ encryptId($observation->observationid) }}" name="observationid">
+                                            <input type="hidden" value="{{ encryptId($observation->observationid) }}"
+                                                name="observation_id">
                                             <div class="row mt-3">
                                                 <div class="card-header-inner">
                                                     <h4 class="text-white">
@@ -715,58 +732,121 @@
                                             </div>
                                         </form>
                                     </div>
-                                @endif
-
-                                {{-- @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
-                                    <form method="POST" id="levelTwoManager"
-                                        action="{{ admin_url('fire/checklist-observation/level-two/verify/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
+                                @elseif ($observation->observation_status >= WAITING_FOR_L1_VERIFICATION && $observation->observation_status != EHS_OFFICER_REJECTED && $observation->observation_status != L1_MANAGER_REJECTED && $observation->observation_status != L2_MANAGER_REJECTED)
+                                    <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
-                                                    {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
+                                                    {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
-                                                <input type="text" name="name" id = "name" class="form-control"
-                                                    value="{{ getUserName(Auth::id()) }}" readonly>
-                                            </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <input type="text" name="date" id = "date" class="form-control"
-                                                    value="{{ todayDate() }}" readonly>
-                                            </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
+
+                                            <div class="row">
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($observation->l1_manager_verified_by) }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mt-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Date</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($observation->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @php
+                                                    $signature = GetFireSignature(
+                                                        $observation->l2_manager_verified_by,
+                                                        $observation->observationid,
+                                                        OBSERVATION_FOLLOWUP,
+                                                    );
+                                                @endphp
+                                                @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}"
+                                                                alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>
+
+
+                                            <div class="row mt-2">
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('Remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $observation->level_one_manager_remarks }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
-                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
-                                                name="level_two_manager"></textarea>
-                                        </div>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-approve></x-button-approve>
-                                            <x-button-reject></x-button-reject>
-                                        </div>
-                                    </form>
-                                @endif --}}
+                                    </div>
+                                @endif
+
+                                @if ($observation->observation_status == WAITING_FOR_L2_VERIFICATION)
+                                    <div class="basic-form mx-3">
+                                        <form method="POST" id="levelTwoManager"
+                                            action="{{ admin_url('fire/checklist-observation/level-two/verify/submit') }}"
+                                            autocomplete="off" enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="hidden" value="{{ encryptId($observation->inspectionid) }}"
+                                                name="id">
+                                            <input type="hidden" value="{{ encryptId($observation->observationid) }}"
+                                                name="observation_id">
+                                            <div class="row mt-3">
+                                                <div class="card-header-inner">
+                                                    <h4 class="text-white">
+                                                        {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
+                                                </div>
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                    <input type="text" name="name" id = "name"
+                                                        class="form-control" value="{{ getUserName(Auth::id()) }}"
+                                                        readonly>
+                                                </div>
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <input type="text" name="date" id = "date"
+                                                        class="form-control" value="{{ todayDate() }}" readonly>
+                                                </div>
+                                                <div class="col-md-4 form-group form-input mb-2">
+                                                    @if (isset(Auth::user()->signature_upload))
+                                                        <label class="form-label"
+                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                    @else
+                                                        <div class="form-input col-md-12 mb-2">
+                                                            <label class="form-label require">Signature</label>
+                                                            <input type="file" name="signature_image"
+                                                                id="signature_upload" class="form-control form-control-sm"
+                                                                accept="image/*" placeholder="Enter the image">
+                                                            <small>Allowed file types: jpg, jpeg, png</small>
+                                                            <div id="signature_upload" class="text-danger"></div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
+                                                    name="level_two_manager"></textarea>
+                                            </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-approve></x-button-approve>
+                                                <x-button-reject></x-button-reject>
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>

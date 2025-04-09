@@ -29,17 +29,22 @@ class FireCheckListFollowUpObservation extends Model
         'responsible_person_id',
         'target_date',
         'ehs_verify_by',
+        'ehs_verified_date',
         'closed_date',
+        'capa_date',
         'capa_status',
         'capa_remarks',
         'ehs_capa_verified_by',
+        'ehs_capa_verified_date',
         'ehs_capa_remarks',
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'verified_by',
         'approved_by',
         'l1_manager_verified_by',
+        'l1_manager_verified_date',
         'l2_manager_verified_by',
+        'l2_manager_verified_date',
         'status',
         'trash',
         'created_by',
@@ -162,25 +167,17 @@ class FireCheckListFollowUpObservation extends Model
         $update_array = array(
             'responsible_person_id' => decryptId($request->responsible_person_id),
             'target_date' => DBdateformat($request->target_date),
+            'ehs_verified_date' =>  DBdateformat($request->date),
             'ehs_verify_by' => Auth::id(),
         );
         return $this->where('id', $id)->update($update_array);
     }
-    public function caparesponsibleUpdate($id)
-    {
-        $request = request();
-        $update_array = array(
-            'responsible_person_id' => decryptId($request->responsible_person_id),
-            'target_date' => DBdateformat($request->target_date),
-        );
-        return $this->where('id', $id)->update($update_array);
-    }
-
     public function capaUpdate($id)
     {
         $request = request();
         $update_array = array(
             'closed_date' => DBdateformat($request->closed_date),
+            'capa_date' => DBdateformat($request->date),
             'capa_status' => decryptId($request->capa_status),
             'capa_remarks' => $request->capa_remarks,
         );
@@ -192,21 +189,33 @@ class FireCheckListFollowUpObservation extends Model
         $request = request();
         $update_array = [
             'ehs_capa_verified_by' => Auth::id(),
+            'ehs_capa_verified_date' =>  DBdateformat($request->date),
             'ehs_capa_remarks' => $remarks,
         ];
         $this->where('id', $id)->update($update_array);
     }
 
-    public function levelOneManagerSubmit($id, $status, $remarks)
+    public function levelOneManagerSubmit($id,$remarks)
     {
         $request = request();
         $update_array = [
             'l1_manager_verified_by' => Auth::id(),
+            'l1_manager_verified_date' =>  DBdateformat($request->date),
             'level_one_manager_remarks' => $remarks,
         ];
         $this->where('id', $id)->update($update_array);
     }
 
+    public function levelTwoManagerSubmit($id,$remarks)
+    {
+        $request = request();
+        $update_array = [
+            'l2_manager_verified_by' => Auth::id(),
+            'l2_manager_verified_date' =>  DBdateformat($request->date),
+            'level_two_manager_remarks' => $remarks,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
 
     public function statusUpdate($id, $observation_status)
     {
