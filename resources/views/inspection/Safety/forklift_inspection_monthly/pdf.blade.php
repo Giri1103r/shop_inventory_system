@@ -250,7 +250,6 @@
                 $srNo = 1;
             @endphp
 
-
             @foreach ($user_response as $index => $item)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
@@ -272,27 +271,28 @@
             @endforeach
             @php
                 $creator_signature = GetSafetySignature(
-                    $details->created_by,
-                    $details->id,
+                    $details->checked_by,
+                    $details->inspection_id,
                     MONTHLY_FORKLIFT_INSPECTION,
                 );
                 $verifier_signature = GetSafetySignature(
                     $details->verified_by,
-                    $details->id,
+                    $details->inspection_id,
                     MONTHLY_FORKLIFT_INSPECTION,
                 );
                 $approver_signature = GetSafetySignature(
                     $details->approved_by,
-                    $details->id,
+                    $details->inspection_id,
                     MONTHLY_FORKLIFT_INSPECTION,
                 );
             @endphp
 
+            <!-- Signature Section in a Single Row -->
             <tr>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
-                    <div>Checked & Prepared By: {{ getUsername($details->created_by) }}</div>
+                    <div>Checked & Prepared By: {{ getUsername($details->checked_by) }}</div>
                 </td>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">

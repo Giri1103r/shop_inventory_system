@@ -144,20 +144,19 @@
     </htmlpagefooter>
 
 
-    <br>
+    @foreach ($content as $details)
+        <br>
 
-    <div style="width:100%;">
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        {{ __('Fire Safety Equipment Details') }}
+                        SAFETY GALLERY INSPECTION
                     </td>
                 </tr>
             </table>
         </div>
-        <br>
 
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
@@ -166,101 +165,136 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3><b>{{ __('title.safety_equipment') }}</b></h3>
+                    <h3><b>{{__('title.safety_gallery')}}</b></h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">
                         <thead>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                                <td style="border: 1px solid black;">{{ $details->doc_no }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ $details->issue_date }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                                <td style="border: 1px solid black;">{{ $details->rev_dt }}</td>
                             </tr>
                         </thead>
                     </table>
                 </th>
             </tr>
-        </table>
-    </div>
 
-    <table style="width: 100%; border-collapse: collapse; text-align: center;">
-        <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.equipment_name') }}
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.item_code') }}
-                </th>
-                <th rowspan="2"
-                    style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.standard_norms') }}
-                </th>
-                <th rowspan="2"
-                    style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.equipment_category') }}
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    {{ __('inspection.unit_of_measurement') }}
+
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    RESOURCE CODE: {{ $details->resource_code ?? 'N/A' }}
                 </th>
             </tr>
+
             <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.minimum_order_value') }}
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    LOCATION: {{ $details->location_name ?? 'N/A' }}
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.economic_order_quantity') }}
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    UNIT: {{ $details->unit_name ?? 'N/A' }}
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('Status') }}
+
+            </tr>
+
+
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
                 </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd; font-weight: bold;">
-                    {{ __('inspection.remarks') }}
+                <th colspan="5"
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    CHECK ITEMS</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
+                </th>
+                <th colspan="5"
+                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Remarks
                 </th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach ($content as $details)
+
+            @php
+                $user_response = json_decode($details->responses, true);
+                $srNo = 1;
+            @endphp
+
+            @foreach ($user_response as $index => $item)
                 <tr>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ getEquipmentName($details->equipment_id) }}
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
+                    <td colspan="5" style="border: 1px solid black; padding: 8px;">
+                        {{ GetChecklistTypeDate($index) }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->item_code }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->standard_norms == STANDARD)
-                            Standard
-                        @elseif ($details->standard_norms == NORMS)
-                            Norms
+                    <td
+                        style="border: 1px solid black; padding: 8px; text-align: center; color: {{ strtoupper($item['answer']) == 'YES' ? 'green' : 'red' }};">
+                        @if (strtoupper($item['answer']) == 'YES')
+                            ✔
+                        @else
+                            ❌
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->equipment_category }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->measurement_unit }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->minimum_order_level }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->economic_order_quantity }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->observation_status == 1)
-                            Active
-                        @elseif($details->observation_status == 0)
-                            Deactive
-                        @endif
+                    <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $item['remarks'] }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->remark }}</td>
                 </tr>
             @endforeach
-        </tbody>
-    </table>
-    <div class="page-break"></div>
+            @php
+                $creator_signature = GetSafetySignature($details->checked_by, $details->inspection_id, SAFETY_GALLERY_INSPECTION);
+                $verifier_signature = GetSafetySignature(
+                    $details->verified_by,
+                    $details->inspection_id,
+                    SAFETY_GALLERY_INSPECTION,
+                );
+                $approver_signature = GetSafetySignature(
+                    $details->approved_by,
+                    $details->inspection_id,
+                    SAFETY_GALLERY_INSPECTION,
+                );
+            @endphp
 
+            <!-- Signature Section in a Single Row -->
+            <tr>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
+                    <div>Checked & Prepared By: {{ getUsername($details->checked_by) }}</div>
+                </td>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($details->verified_by != null)
+                        <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                        <div>Verified By: {{ getUsername($details->verified_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+                <td colspan="4"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($details->approved_by != null)
+                        <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
+                            style="height: 50px;">
+                        <div>Approved By: {{ getUsername($details->approved_by) }}</div>
+                    @else
+                        <p>Inspection has not been Approved Yet</p>
+                    @endif
+                </td>
+            </tr>
+
+        </table>
+        <div class="page-break"></div>
+    @endforeach
 
     <br>
 
