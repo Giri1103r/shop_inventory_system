@@ -178,7 +178,7 @@ class CoTypeFireExtinguisher extends Model
             ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id')
             ->leftJoin('inspection_co_type_fire_extinguisher_details', 'inspection_co_type_fire_extinguisher.id', '=', 'inspection_co_type_fire_extinguisher_details.inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id');
-
+ 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
