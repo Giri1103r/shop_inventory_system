@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>FIRE MOCK DRILL INSPECTION | KARAM</title>
+    <title>FIRE MODULAR INSPECTION | KARAM</title>
 
     <style>
         .badge {
@@ -144,7 +144,6 @@
     </htmlpagefooter>
 
 
-
     @foreach ($content as $inspection_id => $group)
         @php
             $first = $group->first();
@@ -159,7 +158,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        FIRE MOCK DRILL INSPECTION DETAILS
+                        FIRE MODULAR INSPECTION DETAILS
                     </td>
                 </tr>
             </table>
@@ -169,14 +168,14 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <th colspan="4" rowspan="3"
+                    <th colspan="2" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                     </th>
 
-                    <th colspan="4" rowspan="3"
+                    <th colspan="5" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.mock_drill') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.modular_drill') }}</b></h3>
                     </th>
 
                     @foreach ($infoCells as $index => [$label, $value])
@@ -194,53 +193,86 @@
     @endforeach
     </tr>
 
+    <tr style="background-color: #ddd;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            LOCATION: {{ getLocationName($first->location) }}
+        </th>
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            SHIFT: {{ $first->shift }}
+        </th>
+    </tr>
 
+    <!-- Row 2: NEXT DUE, UNIT, FREQUENCY -->
+    <tr style="background-color: #ddd;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
+        </th>
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            UNIT: {{ GetUnitName($first->unit) }}
+        </th>
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+            FREQUENCY: {{ GetFrequencyName($first->frequency) }}
+        </th>
+    </tr>
 
     <!-- Column Headers -->
     <tr>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">SR. NO</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">OBSERVATION</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF OBSERVATION
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">DEPARTMENT</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">RESOURCE CODE
         </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">SHIFT</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">UNIT</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">RECOMENDED AND
-            PREVENTIVE ACTION</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">ACTION TAKEN</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">RESPONSIBILITY</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">TARGET DATE OF
-            COMPLIANCE</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">DATE OF CLOSURE
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2" colspan="3">
+            DESCRIPTON
         </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">STATUS</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">REMARK</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1" colspan="3">
+            CHECK ITEMS
+        </th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
     </tr>
-
+    <tr>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION</th>
+    </tr>
+    <tr>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">TYPE</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CAPACITY</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">WORKING TEMPERATURE</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SPRINKLER HEAD</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NECK RING</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CYLINDER PRESSURE</th>
+    </tr>
 
     <!-- Data Rows -->
     @foreach ($group as $details)
         <tr>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->observation }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->date_of_observation }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getShiftname($details->shift_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getUnitname($details->unit_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->capa_remarks }}
+            <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->types_of_equipment }}
             </td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->action_taken }}
+
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->capacity_of_equipment }}
             </td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ getUsername($details->emp_id) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ Displaydateformat($details->date_of_compliance) }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->date_of_closure ? Displaydateformat($details->date_of_closure) : 'The Action was not Completed' }}
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">
-                {{ $details->observation_status == '1' ? 'Active' : 'Inactive' }}</td>
-            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->remarks }}</td>
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->working_temperature }} </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->sprinkler_head }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->neck_ring }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">
+                {{ $details->cylinder_pressure }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
+
+
         </tr>
     @endforeach
 
@@ -250,7 +282,7 @@
         $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
     <tr>
-        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""

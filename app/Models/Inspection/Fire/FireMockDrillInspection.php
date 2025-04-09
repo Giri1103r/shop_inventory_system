@@ -135,7 +135,8 @@ class FireMockDrillInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as inspection_id')
+        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation_details.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as fire_id', 'inspection_fire_mock_drill_observation.created_by as checked_by', 'inspection_fire_mock_drill_observation.updated_by as verified_by')
+            ->leftJoin('inspection_fire_mock_drill_observation_details', 'inspection_fire_mock_drill_observation.id', '=', 'inspection_fire_mock_drill_observation_details.inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -155,9 +156,14 @@ class FireMockDrillInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_mock_drill_observation.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_mock_drill_observation.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data->groupBy('fire_id');
+        } else {
+            return $data;
+        }
     }
 
 
