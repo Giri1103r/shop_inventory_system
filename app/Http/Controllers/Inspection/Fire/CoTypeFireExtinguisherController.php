@@ -806,6 +806,7 @@ class CoTypeFireExtinguisherController extends Controller
         try {
 
             $allData = $this->co_type->exportdata();
+            $inspection_type = CO_TYPE_FIRE_EXTINGUISHER_INSPECTION;
             $document_no = $this->document_reference->selectUsingName('CO2TypeFireExtinguisher');
 
             if ($allData->isEmpty()) {
@@ -818,6 +819,7 @@ class CoTypeFireExtinguisherController extends Controller
             $data = array(
                 'content' => $allData,
                 'document_no' => $document_no,
+                'inspection_type' => $inspection_type,
                 'pagetitle' => "CO2 Type Fire Inspection",
             );
 
@@ -839,7 +841,7 @@ class CoTypeFireExtinguisherController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "CO2 Type Fire Inspection.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

@@ -51,9 +51,10 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
+        $query = $this->select('inspection_co_type_fire_extinguisher.*','inspection_static_docno.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
 
@@ -163,11 +164,20 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_co_type_fire_extinguisher.*',
+                'inspection_shift_option.*',
+                'masters_unit.*', 'masters_location.*',
+                'inspection_frequency_option.*',
+                'inspection_co_type_fire_extinguisher_details.*',
+                'inspection_static_docno.*',
+                'inspection_co_type_fire_extinguisher.created_by as checked_by','inspection_co_type_fire_extinguisher.id as fire_id'
+            )
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_co_type_fire_extinguisher_details', 'inspection_co_type_fire_extinguisher.id', '=', 'inspection_co_type_fire_extinguisher_details.inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -202,7 +212,9 @@ class CoTypeFireExtinguisher extends Model
         }
         $query->orderBy('inspection_co_type_fire_extinguisher.id', 'DESC');
 
-        return  $query->get();
+        return $query->get()->groupBy('inspection_id');
+
+        return $query->get();
     }
 
 
