@@ -205,8 +205,11 @@ class MSDSController extends Controller
             $allData = $this->msdsDetails->exportdata();
             $document_no = $this->document_reference->selectUsingName('MSDS');
 
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
             $data = array(

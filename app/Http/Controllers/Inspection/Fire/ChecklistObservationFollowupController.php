@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inspection\Fire;
 use Exception;
 use Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,8 @@ use App\Models\Master\Department;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\ObservationWhyWhyAnalysis;
+use App\Mail\Inspection\Fire\FireInspection;
+use App\Models\User;
 
 class ChecklistObservationFollowupController extends Controller
 {
@@ -128,12 +131,11 @@ class ChecklistObservationFollowupController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/pre-noc/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/checklist-observation/view/'. encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) .  '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-
-                            if ((($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER)) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && (CheckUserRole(ROLE_EHS_OFFICER))) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER)))) || isAdmin())) {
+                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin()))) {
                                 $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
@@ -193,6 +195,42 @@ class ChecklistObservationFollowupController extends Controller
                 $inspection = $this->followup->store();
                 $inspection_id = $inspection->id;
                 $this->followupObservation->store($inspection_id);
+
+                $ehsOfficer = GetEHSOfficer();
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Fire Associate create the Observation",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($inspection_id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                $title = 'Fire Associate create the Observation FollowUp';
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('fire/checklist-observation/verification/' . encryptId($inspection_id));
+                    $details = array(
+                        'fire_type' => 'Observation Followup',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection
+                    );
+                    Mail::to($email_id)->queue(new FireInspection($details));
+                }
+
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
                 dd($ex);
@@ -206,18 +244,14 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
-    public function view($id)
+    public function view($id,$observationid)
     {
         try {
-            $id = decryptId($id);
             if (Auth::check()) {
-                $checklist_details = getCheckListQuestion(FIRE_PRE_NOC_CHECKLIST);
-                $fireNoc =   $this->fireNoc->selectOne($id);
-
+                $observation = $this->followup->selectOne(decryptId($id), decryptId($observationid));
 
                 $data = array(
-                    'fireNoc' => $fireNoc,
-                    'checklist_details' => $checklist_details,
+                    'observation' => $observation,
                 );
             }
             return view('inspection.fire.observationFollowup.view', $data);
@@ -285,7 +319,40 @@ class ChecklistObservationFollowupController extends Controller
             $inspection_updates = $this->followupObservation->EHSOfficerUpdate($observationid);
             $this->followupObservation->statusUpdate($observationid, $to_status);
             $inspection_details = $this->followup->selectOne($id, $observationid);
+            $mailsubject = 'CAPA Assigned';
+            $employees = User::where('id', $request->responsible_person_id)->get(['name', 'email', 'id']);
 
+            foreach ($employees as $employee) {
+                $email_id = $employee->email;
+
+                if (!empty($email_id)) { // Corrected email validation
+                    $details = array(
+                        'fire_type' => 'Observation Followup',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $mailsubject,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new FireInspection($details));
+                }
+            }
+
+            $notificationData = array(
+                'notification_type' => FIRE_INSPECTION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $mailsubject,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id)),
+                'assigned_user' => decryptId($request->responsible_person_id),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
             $insert_array = [
                 'type' => OBSERVATION_FOLLOWUP,
                 'inspection_id' => $inspection_details->observationid,
@@ -310,13 +377,47 @@ class ChecklistObservationFollowupController extends Controller
     {
 
         try {
-            $to_status = WAITING_FOR_CAPA_ACTION;
+            $to_status = WAITING_FOR_CAPA_VERIFICATION;
             $id = decryptId($request->id);
             $observationid = decryptId($request->observation_id);
-            $inspection_updates = $this->followupObservation->caparesponsibleUpdate($observationid);
+            $inspection_updates = $this->followupObservation->capaUpdate($observationid);
             $this->followupObservation->statusUpdate($observationid, $to_status);
             $inspection_details = $this->followup->selectOne($id, $observationid);
 
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'Observation FollowUp';
+            $notificationData = array(
+                'notification_type' => FIRE_INSPECTION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Observation",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Observation FollowUp';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('fire/checklist-observation/verification/' . encryptId($id));
+                $details = array(
+                    'fire_type' => 'Observation Followup',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+                Mail::to($email_id)->queue(new FireInspection($details));
+            }
             $insert_array = [
                 'type' => OBSERVATION_FOLLOWUP,
                 'inspection_id' => $inspection_details->observationid,
@@ -334,39 +435,6 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
-
-    public function CAPAUpdate(Request $request)
-    {
-
-        try {
-            $id = decryptId($request->id);
-            $observationid = decryptId($request->observation_id);
-            $to_status = WAITING_FOR_CAPA_VERIFICATION;
-            $inspection_updates = $this->followupObservation->capaUpdate($observationid);
-            $this->followupObservation->statusUpdate($observationid, $to_status);
-            $inspection_details = $this->followup->selectOne($id, $observationid);
-
-            $insert_array = [
-                'type' => OBSERVATION_FOLLOWUP,
-                'inspection_id' => $inspection_details->observationid,
-                'from_status' => WAITING_FOR_CAPA_ACTION,
-                'to_status' => $to_status,
-                'approved_by' => Auth::id(),
-                'remarks' => $request->remarks,
-            ];
-            $this->statusLog->create($insert_array);
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('fire/checklist-observation/list'));
-        } catch (Exception $ex) {
-
-            dd($ex);
-            report($ex);
-            Session::flash('error', 'Something Went Wrong!');
-            return redirect(admin_url('fire/checklist-observation/list'));
-        }
-    }
-
-
     public function CAPAVerifySubmit(Request $request)
     {
 
@@ -375,24 +443,88 @@ class ChecklistObservationFollowupController extends Controller
             $observationid = decryptId($request->observation_id);
             $remarks = $request->remarks;
             $status = $request->has('approved') ? 1 : 0;
-           
+            $inspection_details = $this->followup->selectOne($id, $observationid);
             if ($status == 1) {
-                // $message = 'CAPA Action Verified Successfully';
-                // $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
-                // $user = GetLevelOneManager();
-                // $users = $user ? $user->pluck('id')->toArray() : [];
-                // $users = array_merge($users, [$inspection_details->created_by]);
+                $message = 'CAPA Action Verified Successfully';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($inspection_details->id));
+                $user = GetLevelOneManager();
+                $users = $user ? $user->pluck('id')->toArray() : [];
+                $users = array_merge($users, [$inspection_details->created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => array_to_string($users),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                foreach ($users as $user) {
+                    $title = $message;
+                    $email_id = getUseremail($user);
+                    $url = $web_link;
+                    $details = array(
+                        'fire_type' => 'Observation FollowUp',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new FireInspection($details));
+                }
             } else {
-                // $message = 'EHS Officer Rejected the CAPA Action';
-                // $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                // $users = $inspection_details->created_by;
+                $message = 'EHS Officer Rejected the CAPA Action';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($inspection_details->id));
+                $users = $inspection_details->ehs_verify_by;
                 $to_status = EHS_OFFICER_REJECTED;
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => $users,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                $title = $message;
+                $email_id = getUseremail($users);
+                $url = $web_link;
+
+                $details = array(
+                    'fire_type' => 'Observation FollowUp',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
             $inspection_updates = $this->followupObservation->capaVerifySubmit($observationid, $status, $remarks);
-            $signature_update = $this->signature->observationFollowUp(OBSERVATION_FOLLOWUP,$observationid);
+            $signature_update = $this->signature->observationFollowUp(OBSERVATION_FOLLOWUP, $observationid);
             $this->followupObservation->statusUpdate($observationid, $to_status);
-            $inspection_details = $this->followup->selectOne($id, $observationid);
+
 
 
 
@@ -422,26 +554,206 @@ class ChecklistObservationFollowupController extends Controller
         try {
             $id = decryptId($request->id);
             $observationid = decryptId($request->observation_id);
-            $remarks = $request->remarks;
+            $remarks = $request->level_one_manager;
             $status = $request->has('approved') ? 1 : 0;
-           
-            if ($status == 1) {
-                // $message = 'CAPA Action Verified Successfully';
-                // $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/level-one-manager');
-                // $user = GetLevelOneManager();
-                // $users = $user ? $user->pluck('id')->toArray() : [];
-                // $users = array_merge($users, [$inspection_details->created_by]);
-                $to_status = WAITING_FOR_L2_VERIFICATION;
-            } else {
-                // $message = 'EHS Officer Rejected the CAPA Action';
-                // $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                // $users = $inspection_details->created_by;
-                $to_status = L1_MANAGER_REJECTED;
-            }
-            $inspection_updates = $this->followupObservation->levelOneManagerSubmit($observationid, $status, $remarks);
-            $signature_update = $this->signature->observationFollowUp(OBSERVATION_FOLLOWUP,$observationid);
-            $this->followupObservation->statusUpdate($observationid, $to_status);
             $inspection_details = $this->followup->selectOne($id, $observationid);
+            if ($status == 1) {
+                $message = 'Level One Manager Verified Successfully';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id));
+                $user = GetLevelOneManager();
+                $users = $user ? $user->pluck('id')->toArray() : [];
+                $users = array_merge($users, [$inspection_details->created_by]);
+                $to_status = WAITING_FOR_L2_VERIFICATION;
+
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => array_to_string($users),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                foreach ($users as $user) {
+                    $title = $message;
+                    $email_id = getUseremail($user);
+                    $url = $web_link;
+                    $details = array(
+                        'fire_type' => 'Observation FollowUp',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new FireInspection($details));
+                }
+            } else {
+                $message = 'Level One Manager Rejected the CAPA Action';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id));
+                $users = $inspection_details->ehs_verify_by;
+                $to_status = L1_MANAGER_REJECTED;
+
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => $users,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                $title = $message;
+                $email_id = getUseremail($users);
+                $url = $web_link;
+
+                $details = array(
+                    'fire_type' => 'Observation FollowUp',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+
+                Mail::to($email_id)->queue(new FireInspection($details));
+            }
+            $inspection_updates = $this->followupObservation->levelOneManagerSubmit($observationid, $remarks);
+            $signature_update = $this->signature->observationFollowUp(OBSERVATION_FOLLOWUP, $observationid);
+            $this->followupObservation->statusUpdate($observationid, $to_status);
+
+
+
+
+            $insert_array = [
+                'type' => OBSERVATION_FOLLOWUP,
+                'inspection_id' => $observationid,
+                'from_status' => WAITING_FOR_CAPA_VERIFICATION,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('fire/checklist-observation/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            report($ex);
+            Session::flash('error', 'Something Went Wrong!');
+            return redirect(admin_url('fire/checklist-observation/list'));
+        }
+    }
+
+    public function levelTwoManagerSubmit(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+            $observationid = decryptId($request->observation_id);
+            $remarks = $request->level_two_manager;
+            $status = $request->has('approved') ? 1 : 0;
+            $inspection_details = $this->followup->selectOne($id, $observationid);
+            if ($status == 1) {
+                $message = 'Observation FollowUp Approved Successfully!';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/level-one-manager');
+                $user = GetLevelOneManager();
+                $users = $user ? $user->pluck('id')->toArray() : [];
+                $users = array_merge($users, [$inspection_details->created_by]);
+                $to_status = INSPECTION_APPROVED;
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => array_to_string($users),
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                foreach ($users as $user) {
+                    $title = $message;
+                    $email_id = getUseremail($user);
+                    $url = $web_link;
+                    $details = array(
+                        'fire_type' => 'Observation FollowUp',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new FireInspection($details));
+                }
+            } else {
+                $message = 'Level Two Manager Rejected the CAPA Action';
+                $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/capa');
+                $users = $inspection_details->created_by;
+                $to_status = L2_MANAGER_REJECTED;
+
+                $mailsubject = 'Observation FollowUp';
+                $notificationData = array(
+                    'notification_type' => FIRE_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => $message,
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  $web_link,
+                    'assigned_user' => $users,
+                    'created_by' => Auth::id(),
+                );
+                notificationSave($notificationData);
+
+                $title = $message;
+                $email_id = getUseremail($users);
+                $url = $web_link;
+
+                $details = array(
+                    'fire_type' => 'Observation FollowUp',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection_details
+                );
+
+                Mail::to($email_id)->queue(new FireInspection($details));
+            }
+            $inspection_updates = $this->followupObservation->levelTwoManagerSubmit($observationid, $remarks);
+            $signature_update = $this->signature->observationFollowUp(OBSERVATION_FOLLOWUP, $observationid);
+            $this->followupObservation->statusUpdate($observationid, $to_status);
+
 
 
 

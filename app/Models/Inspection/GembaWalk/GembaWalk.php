@@ -7,6 +7,7 @@ use App\Scopes\TrashScope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GembaWalk extends Model
 {
@@ -54,7 +55,6 @@ class GembaWalk extends Model
                     ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
-
             });
         }
 
@@ -120,6 +120,7 @@ class GembaWalk extends Model
             'inspection_gemba_walk_checklist.*',
             'inspection_gemba_walk_checklist_files.file_path',
             'inspection_gemba_walk.created_by as user_id',
+
 
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
@@ -190,9 +191,21 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-       $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+
+        $query = $this->select(
+            'inspection_gemba_walk.*',
+            'inspection_gemba_walk_status.status_name',
+            'inspection_gemba_walk_status.bg_color',
+            'inspection_shift_option.shift',
+            'inspection_gemba_walk_checklist.*'
+        )
+            ->leftjoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+            
+           
+            
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -201,7 +214,6 @@ class GembaWalk extends Model
                     ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
-
             });
         }
         if ($request->has('doc_no') && $request->doc_no) {
@@ -221,10 +233,11 @@ class GembaWalk extends Model
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
         }
-        
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_gemba_walk.id', 'DESC');
+        $results = $query->get();
+        $query = $results->groupBy('gemba_walk_id');
 
-        return  $query->get();
+        return  $query;
     }
 
 

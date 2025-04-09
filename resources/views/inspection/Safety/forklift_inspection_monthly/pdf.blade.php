@@ -250,6 +250,7 @@
                 $srNo = 1;
             @endphp
 
+
             @foreach ($user_response as $index => $item)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
@@ -287,7 +288,6 @@
                 );
             @endphp
 
-            <!-- Signature Section in a Single Row -->
             <tr>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">

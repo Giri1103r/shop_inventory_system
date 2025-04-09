@@ -190,11 +190,9 @@ class DailyVitalEquipmentController extends Controller
     {
 
         try {
-            $id = decryptId($request->id);
 
             $allData = $this->daily_vital->exportdata();
 
-            $daily_vital = $this->daily_vital->selectOne($id);
             $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
 
             if ($allData->isEmpty()) {
@@ -203,7 +201,6 @@ class DailyVitalEquipmentController extends Controller
 
             $data = array(
                 'content' => $allData,
-                'daily_vital' => $daily_vital,
                 'document_no' => $document_no,
                 'pagetitle' => "Daily Vital Equipment",
             );
