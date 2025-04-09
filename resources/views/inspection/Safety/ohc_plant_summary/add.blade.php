@@ -266,9 +266,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
+              
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });

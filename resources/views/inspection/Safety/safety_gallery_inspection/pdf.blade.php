@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>MONTHLY FORKLIFT INSPECTION Checklist | KARAM</title>
+    <title>SAFETY GALLERY INSPECTION | KARAM</title>
 
     <style>
         .badge {
@@ -152,7 +152,7 @@
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        MONTHLY FORKLIFT INSPECTION CHECKLIST
+                        SAFETY GALLERY INSPECTION
                     </td>
                 </tr>
             </table>
@@ -250,15 +250,15 @@
                 </tr>
             @endforeach
             @php
-                $creator_signature = GetSafetySignature($details->created_by, $details->id, SAFETY_GALLERY_INSPECTION);
+                $creator_signature = GetSafetySignature($details->checked_by, $details->inspection_id, SAFETY_GALLERY_INSPECTION);
                 $verifier_signature = GetSafetySignature(
                     $details->verified_by,
-                    $details->id,
+                    $details->inspection_id,
                     SAFETY_GALLERY_INSPECTION,
                 );
                 $approver_signature = GetSafetySignature(
                     $details->approved_by,
-                    $details->id,
+                    $details->inspection_id,
                     SAFETY_GALLERY_INSPECTION,
                 );
             @endphp
@@ -268,7 +268,7 @@
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
-                    <div>Checked & Prepared By: {{ getUsername($details->created_by) }}</div>
+                    <div>Checked & Prepared By: {{ getUsername($details->checked_by) }}</div>
                 </td>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">

@@ -219,7 +219,7 @@ class FireSafetyEquipment extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_safety_equipment.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_safety_equipment.id', 'DESC');
 
         return  $query->get();
     }

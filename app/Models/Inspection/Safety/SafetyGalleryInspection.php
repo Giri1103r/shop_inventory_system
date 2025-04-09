@@ -290,7 +290,7 @@ class SafetyGalleryInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_static_docno.*', 'inspection_safety_gallery.id as inspection_id')
+        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_static_docno.*', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
@@ -299,11 +299,12 @@ class SafetyGalleryInspection extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('masters_unit.resource_code LIKE "%' . $search . '%"');
+                $query->where('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->where('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->where('masters_unit.resource_code LIKE "%' . $search . '%"');
             });
         }
+
 
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_safety_gallery.location', 'LIKE', '%' . decryptId($request->location) . '%');
