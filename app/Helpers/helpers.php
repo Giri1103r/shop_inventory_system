@@ -55,6 +55,7 @@ use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2207,7 +2208,6 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
-
             }
         }
     }
@@ -2687,7 +2687,7 @@ if (!function_exists('getGivenSignatureBlock')) {
             $name = $fallbackName ?? 'Signed';
 
             return '<img src="' . $imageUrl . '" alt="Signature" style="height: 50px;"><br>' .
-                   '<span>' . e($name) . '</span>';
+                '<span>' . e($name) . '</span>';
         }
 
         return 'N/A';
@@ -2704,9 +2704,25 @@ if (!function_exists('getReceivedSignatureBlock')) {
             $name = $fallbackName ?? 'Signed';
 
             return '<img src="' . $imageUrl . '" alt="Signature" style="height: 50px;"><br>' .
-                   '<span>' . e($name) . '</span>';
+                '<span>' . e($name) . '</span>';
         }
 
         return 'N/A';
+    }
+}
+if (!function_exists('getMonthlyPhsyicalInspectionImages')) {
+    function getMonthlyPhsyicalInspectionImages($id)
+    {
+        $data = MonthlyPhysicalInspectionFileUpload::where('inspection_id', $id)
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->get();
+
+        if ($data) {
+            $groupedData = $data->groupBy('equipment_id');
+            return $groupedData;
+        }
+
+        return false;
     }
 }

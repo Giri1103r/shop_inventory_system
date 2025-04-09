@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hooter Inspection | KARAM</title>
+    <title>Fire Extinguisher Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -158,7 +158,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Hooter Inspection Details
+                        Fire Extinguisher InspectionDetails
                     </td>
                 </tr>
             </table>
@@ -168,25 +168,25 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <th colspan="2" rowspan="3"
+                    <th colspan="3" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                     </th>
 
-                    <th colspan="5" rowspan="3"
+                    <th colspan="6" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.hooter') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.fire_alarm') }}</b></h3>
                     </th>
 
                     @foreach ($infoCells as $index => [$label, $value])
                         @if ($index == 0)
-                            <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                            <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                                 <strong>{{ $label }}</strong>: {{ $value }}
                             </th>
                         @else
                 </tr>
                 <tr>
-                    <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                    <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                         <strong>{{ $label }}</strong>: {{ $value }}
                     </th>
     @endif
@@ -197,71 +197,88 @@
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
         </th>
-        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             LOCATION: {{ getLocationName($first->location) }}
         </th>
-        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             SHIFT: {{ GetShiftName($first->shift) }}
         </th>
     </tr>
 
-    <!-- Row 2: NEXT DUE, UNIT, FREQUENCY -->
     <tr style="background-color: #ddd;">
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
         </th>
-        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             UNIT: {{ GetUnitName($first->unit) }}
         </th>
-        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             FREQUENCY: {{ GetFrequencyName($first->frequency) }}
         </th>
     </tr>
 
-    <!-- Column Headers -->
     <tr style="background-color: #ddd;">
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">SR. NO</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">DEPARTMENT</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">RESOURCE CODE</th>
-        <th colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">REMARK</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+        <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">DESCRIPTION</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARKS</th>
     </tr>
     <tr style="background-color: #ddd;">
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">BLINKING LIGHT</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">CONNECTION</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">AUDIBILITY</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">CONDITION OF HOOTER</th>
+        <th style="border: 1px solid black; padding: 8px;">TYPE</th>
+        <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
+        <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
+        <th style="border: 1px solid black; padding: 8px;">CYLINDER PRESSURE</th>
+        <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>
+        <th style="border: 1px solid black; padding: 8px;">SAFETY PIN</th>
+        <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
     </tr>
 
-    <!-- Data Rows -->
     @foreach ($group as $detail)
-        <tr>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->sr_no }}</td>
-            <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($detail->department) }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->resource_code }}</td>
+    <tr>
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+        <!-- SL -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->sr_no }}</td>
+        <!-- FIRE POINT NO. -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            {{ GetDeptName($detail->department) }}</td> <!-- DEPARTMENT -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            {{ getLocationname($detail->location) }}</td> <!-- LOCATION -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            {{ getExtinguisherTypeName($detail->type) }}
+        </td> <!-- TYPE -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->capacity }}
+        </td> <!-- CAPACITY -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->quantity }}
+        </td> <!-- QUANTITY -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            {{ $detail->cylinder_pressure }}</td> <!-- CYLINDER PRESSURE -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            @if ($detail->discharge_tube == FUNCTIONAL)
+                {{ __('inspection.functional') }}
+            @elseif($detail->discharge_tube == NON_FUNCTIONAL)
+                {{ __('inspection.non_functional') }}
+            @endif
+        </td> <!-- DISCHARGE TUBE -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">
+            @if ($detail->safety_pin == PRESENT)
+                {{ __('inspection.present') }}
+            @elseif($detail->safety_pin == MISSING)
+                {{ __('inspection.missing') }}
+            @endif
+        </td> <!-- SAFETY PIN -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->approach }}
+        </td> <!-- APPROACH -->
 
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->quantity }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->blinking_light == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
-            </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->connection == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
-            </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->audiobility == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
-            </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {{ $detail->condition_of_hooter }}
-            </td>
-            <td style="border: 1px solid black; padding: 6px;">{{ $detail->remarks }}</td>
-        </tr>
+
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->description }}
+        </td> <!-- DESCRIPTION -->
+        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $detail->remarks }}
+        </td>
+        <!-- REMARKS -->
+    </tr>
     @endforeach
 
     @php
@@ -269,19 +286,20 @@
         $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
         $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
+
     <tr>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Checked By:- {{ getUsername($first->checked_by) }}</p>
+                    <p style="margin: 0;">Checked By:- {{ getUsername($first->created_by) }}</p>
                 @else
                     <p style="margin: 0;">Checked By:- Not yet checked</p>
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""
@@ -292,7 +310,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""

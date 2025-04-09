@@ -53,6 +53,22 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                <select name="shift_id" id="shift_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.shifts') }}
+                                                    </option>
+                                                    @foreach ($shifts as $location)
+                                                        <option value="{{ encryptId($location->id) }}"
+                                                            {{ old('shift_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            {{ $location->shift }}</option>
+                                                    @endforeach
+                                                </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.unit') }}</label>
                                                 <select name="unit" id="unit" class=" form-control single-select"
                                                     style="width: 100%">
@@ -179,6 +195,7 @@
                             d.location = $('#location').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.shift = $('#shift_id').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -248,6 +265,7 @@
                                         location = $('#location').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
+                                        shift = $('#shift_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -259,7 +277,8 @@
                                             '&next_due=' + next_due +
                                             '&frequency=' + frequency +
                                             '&unit=' + unit +
-                                            '&location=' + location
+                                            '&location=' + location +
+                                            '&shift=' + shift
                                     }
                                 },
                                 {
@@ -272,6 +291,7 @@
                                         location = $('#location').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
+                                        shift = $('#shift_id').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -282,7 +302,7 @@
                                             '&next_due=' + next_due +
                                             '&frequency=' + frequency +
                                             '&unit=' + unit +
-                                            '&location=' + location
+                                            '&shift=' + shift
                                     }
                                 },
                             ]

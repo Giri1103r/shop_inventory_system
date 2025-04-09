@@ -31,7 +31,6 @@ class FirstAidMedicineInspectionController extends Controller
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -287,6 +286,8 @@ class FirstAidMedicineInspectionController extends Controller
             $allData = $this->medicine_checklist->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
 

@@ -175,8 +175,20 @@
         @endphp
 
 
+
         <table style="width: 100%; border-collapse: collapse; padding: 5px;">
             <thead>
+                <tr>
+                    <th colspan="3"
+                        style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                        DATE OF INSPECTION: {{ Displaydateformat($details->inspection_date) ?? 'N/A' }}
+                    </th>
+                    <th colspan="3"
+                        style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                        NEXT DUE: {{ Displaydateformat($details->next_due) ?? 'N/A' }}
+                    </th>
+                </tr>
+
                 <tr>
                     <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                         {{ __('inspection.sr_no') }}</th>

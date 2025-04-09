@@ -142,6 +142,47 @@ class MonthlyPhysicalInspection extends Model
         return $this->where('id', $id)->first();
     }
 
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_fire_monthly_physical_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_fire_monthly_physical_inspection.id as inspection_id', 'inspection_static_docno.*',)
+            ->leftJoin('masters_location', 'inspection_fire_monthly_physical_inspection.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_physical_inspection.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('masters_unit', 'inspection_fire_monthly_physical_inspection.unit', '=', 'masters_unit.id');
+
+        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+            });
+        }
+
+
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_monthly_physical_inspection.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
+        }
+
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_fire_monthly_physical_inspection.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+        }
+
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_monthly_physical_inspection.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
+        }
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_monthly_physical_inspection.inspection_status', decryptId($request->inspection_status));
+        }
+
+        $query->orderBy('inspection_fire_monthly_physical_inspection.id', 'DESC');
+
+
+        return  $query->get();
+    }
+
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_fire_monthly_physical_inspection'));

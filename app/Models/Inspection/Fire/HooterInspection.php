@@ -165,7 +165,7 @@ class HooterInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hooter.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_hooter.created_by as checked_by','inspection_static_docno.*','inspection_fire_hooter_details.*')
+        $query = $this->select('inspection_fire_hooter.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_hooter.created_by as checked_by','inspection_fire_hooter.id as fire_id','inspection_static_docno.*','inspection_fire_hooter_details.*')
             ->leftJoin('masters_location', 'inspection_fire_hooter.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_hooter.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_hooter.unit', '=', 'masters_unit.id')
