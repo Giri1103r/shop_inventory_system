@@ -739,10 +739,11 @@
                                                         <select name="type[${form_set_count}]" id="type-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">{{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">{{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">{{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">{{ __('inspection.FOAM') }}</option>
+                                                            @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
