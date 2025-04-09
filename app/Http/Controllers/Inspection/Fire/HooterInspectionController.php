@@ -780,23 +780,15 @@ class HooterInspectionController extends Controller
         try {
 
             $allData = $this->hooter->exportdata();
+            $inspection_type = HOOTER_INSPECTION;
+            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
+            
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Hooter Inspection",
+                'inspection_type' => $inspection_type,
             );
 
             $property = [
@@ -805,13 +797,14 @@ class HooterInspectionController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
+                'orientation' => 'L'
 
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.hooter_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -819,6 +812,7 @@ class HooterInspectionController extends Controller
             $filename = "Hooter Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -831,11 +825,16 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id, HOOTER_INSPECTION);
+                $inspection_type = HOOTER_INSPECTION;
+                $status_log = $this->statusLog->selectOne($id, $inspection_type);
                 $forklift_details = $this->hooter->selectOne($id);
                 $inspection = $this->hooter_details->GetDetails($forklift_details->id);
-                $inspection_image = $this->files->GetFile(HOOTER_INSPECTION, $id);
+                $inspection_image = $this->files->GetFile($inspection_type, $id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
 
                 $data = [
                     'status_log' => $status_log,
@@ -844,6 +843,9 @@ class HooterInspectionController extends Controller
                     'inspection' => $inspection,
                     'inspection_image' => $inspection_image,
                     'document_no' => $document_no,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 

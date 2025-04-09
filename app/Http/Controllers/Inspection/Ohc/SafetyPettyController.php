@@ -53,19 +53,21 @@ class SafetyPettyController extends Controller
             if ($request->ajax()) {
                 try {
                     $data =  $this->sfty_petty_details->list();
+
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '1'>Active</span>";
                                 } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '0'>In-Active</span>";
                                 }
                             // }
                             return $text;
                         })
+
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -77,11 +79,12 @@ class SafetyPettyController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->safety_petty_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalpdf/' . encryptId($row->safety_petty_id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
+
                         })
                         ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
@@ -287,23 +290,24 @@ class SafetyPettyController extends Controller
 
             $allData = $this->sfty_petty_details->exportdata();
 
+            $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                    'Employee Name',
-                    'Employee Code',
-                    'Department',
-                    'Unit',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+            $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+            $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
+                'type' => $type,
+                'sub_type_given' => $sub_type_given,
+                'sub_type_received' => $sub_type_received,
                 'pagetitle' => "Safety Petty Logbook Details",
             );
 
@@ -327,7 +331,6 @@ class SafetyPettyController extends Controller
             $filename = "Safety Petty Logbook.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/safety-petty-logbook/list'));

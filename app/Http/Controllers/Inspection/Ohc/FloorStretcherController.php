@@ -257,7 +257,7 @@ class FloorStretcherController extends Controller
             }
 
             if(count($allData) > 20){
-                return redirect()->back()->with('error', 'No data found');
+                return redirect()->back()->with('error', "__('inspection.excess_error')");
             }
 
 

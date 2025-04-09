@@ -52,6 +52,7 @@ class SafetyPettyDetails extends Model
                 'masters_employee.emp_name',
                 'masters_unit.unit_name',
                 'masters_department.department_name',
+                'ohc_safety_petty_logbook.id as safety_petty_id'
             )
             ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
@@ -190,6 +191,7 @@ class SafetyPettyDetails extends Model
                     'masters_employee.emp_name',
                     'masters_unit.unit_name',
                     'masters_department.department_name',
+                    'ohc_safety_petty_logbook.id as safety_petty_id'
                 )
                 ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
                 ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
@@ -206,7 +208,7 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
-        
+
         if ($request->has('employee_name') && $request->employee_name) {
             $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . decryptId($request->employee_name) . '%');
         }
