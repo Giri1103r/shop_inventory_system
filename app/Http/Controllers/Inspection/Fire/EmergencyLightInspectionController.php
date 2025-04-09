@@ -30,6 +30,7 @@ use App\Models\Inspection\Fire\Master\LightType;
 use App\Models\Inspection\Fire\Master\PowerSuply;
 use App\Models\Inspection\Fire\Master\Status;
 use App\Models\Inspection\InspectionStaticDocno;
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -1058,7 +1059,7 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency light inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           
+
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));

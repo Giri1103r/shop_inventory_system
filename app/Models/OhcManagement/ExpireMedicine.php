@@ -127,7 +127,7 @@ class ExpireMedicine extends Model
     public function medicinediscard($id,  $quantity,  $remarks)
     {
         $request = request();
-        $unit = decryptId($request->unit_id);
+        $unit = Auth::user()->unit_id;
         $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
             ->update(['approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING, 'quantity' => $quantity, 'remarks' => $remarks, 'unit_id' => $unit]);
         return $data;

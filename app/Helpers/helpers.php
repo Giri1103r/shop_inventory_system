@@ -54,6 +54,13 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+<<<<<<< Updated upstream
+=======
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\MSDS\MSDSDetails;
+use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
+use App\Models\Inspection\RRAA\RRAADetails;
+>>>>>>> Stashed changes
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 
@@ -2042,6 +2049,17 @@ if (!function_exists('getMonth')) {
                 return $name->file_path;
             }
         }
+    }
+
+    if (!function_exists('GetOHCMedicineFDO')) {
+
+        function GetOHCMedicineFDO( $id,)
+        {
+
+            $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            return $medicineRequisition;
+        }
+
     }
 
     if (!function_exists('GetSignature')) {

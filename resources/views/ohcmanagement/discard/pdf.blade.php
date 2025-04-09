@@ -36,7 +36,7 @@
                             {{ ($value->remarks) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->discard_date) }}
+                            {{ displaydateformat($value->expire_date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getDiscardStatus($value->approve_status) }}
