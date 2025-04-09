@@ -279,21 +279,16 @@ class MonthlyMedicineStoreController extends Controller
     {
         try {
             $allData = $this->medicine_checklist->exportdata();
+            
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due',
-                'Inspection Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+           
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Monthly Medicine Store Inspection",
             );
@@ -316,7 +311,7 @@ class MonthlyMedicineStoreController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Monthly Medicine Store Inspection.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');

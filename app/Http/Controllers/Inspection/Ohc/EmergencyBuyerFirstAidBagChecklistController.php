@@ -305,23 +305,14 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->emergency_buyer_first_aid_bag->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Date Of Inspection',
-                'Location First Aid Bag',
-                'Shift',
-                'Unit',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Emergency Buyer Bag Inspection",
             );
@@ -345,7 +336,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Emergency Buyer Bag Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
 
             report($ex);

@@ -284,9 +284,13 @@ class FirstAidMedicineInspectionController extends Controller
     public function ExportPDF()
     {
         try {
+
             $allData = $this->medicine_checklist->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
 
@@ -315,7 +319,6 @@ class FirstAidMedicineInspectionController extends Controller
             $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
