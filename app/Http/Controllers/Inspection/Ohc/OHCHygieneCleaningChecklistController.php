@@ -29,7 +29,6 @@ class OHCHygieneCleaningChecklistController extends Controller
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -137,14 +136,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'shift_id' => 'required',
                 'inspection' => 'required',
                 'remarks' => 'required',
-                'signature_image' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
             ];
 
             $messages = [
@@ -152,7 +144,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'shift_id.required' => 'Shift ID is required.',
                 'inspection.required' => 'Inspection is required.',
                 'remarks.required' => 'Remarks is required.',
-                'signature_image' => 'Signature is required.',
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -214,7 +206,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             ];
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
@@ -242,6 +233,8 @@ class OHCHygieneCleaningChecklistController extends Controller
             $allData = $this->ohc_hygiene->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
             $header = [
@@ -288,20 +281,13 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
 
-            $header = [
-                __("common.sno"),
-                'Issue Date',
-                'Shift',
-                'Checklist Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "OHC HYGIENE CLEANING CHECKLIST",
             );

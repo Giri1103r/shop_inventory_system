@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -27,6 +28,7 @@ class FirstAidBagChecklistController extends Controller
     private $location;
     private $unit;
     private $frequency;
+    private $shift;
 
 
     public function __construct()
@@ -38,6 +40,7 @@ class FirstAidBagChecklistController extends Controller
         $this->location  = new Location();
         $this->unit = new Unit();
         $this->frequency = new Frequency();
+        $this->shift = new Shift();
     }
 
     public function Index(Request $request)
@@ -90,7 +93,6 @@ class FirstAidBagChecklistController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -100,11 +102,13 @@ class FirstAidBagChecklistController extends Controller
         $location = $this->location->getLocationName();
         $unit = $this->unit->getUnit();
         $frequency = $this->frequency->getFrequency();
+        $shift = $this->shift->getShiftname();
 
         $data = array(
             'locations' => $location,
             'units' => $unit,
             'frequency' => $frequency,
+            'shifts' => $shift,
         );
 
         return view('inspection.inspection_ohc.first_aid_bag_inspection.list', $data);
@@ -119,6 +123,7 @@ class FirstAidBagChecklistController extends Controller
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
+            $shift = $this->shift->getShiftname();
 
             $data = array(
                 'medicines' => $medicines,
@@ -126,6 +131,7 @@ class FirstAidBagChecklistController extends Controller
                 'locations' => $location,
                 'units' => $unit,
                 'frequency' => $frequency,
+                'shifts' => $shift,
 
             );
             return view('inspection.inspection_ohc.first_aid_bag_inspection.add', $data);
@@ -259,19 +265,12 @@ class FirstAidBagChecklistController extends Controller
             $allData = $this->medicine_checklist->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due',
-                'Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'pagetitle' => "FIRST AID BAG INSPECTION CHECKLIST",
             );

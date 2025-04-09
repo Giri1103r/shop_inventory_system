@@ -7,4 +7,6 @@ return [
     'opd_medicine' => 'Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd',
     'medicine_store' => 'Monthly OHC Store Medicine Inspection Checklist PN International Pvt.Ltd',
     'fire_alarm' => 'FIRE ALARM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
+    'first_bag_inspection' => 'FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.',
+    'hygiene_checklist' => 'Daily OHC Hygine & Cleaning Checklist PN International Pvt Ltd',
 ];

@@ -79,6 +79,25 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                    <select name="shift_id" id="shift_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select {{ __('inspection.shifts') }}
+                                                        </option>
+                                                        @foreach ($shifts as $location)
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('shift_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                {{ $location->shift }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('shift_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -302,6 +321,9 @@
                         unit_id:{
                             required: true,
                         },
+                        shift_id:{
+                            required: true,
+                        },
                     },
                     messages: {
                         inspection_date: {
@@ -321,6 +343,9 @@
                         },
                         unit_id: {
                             required: "Unit is required",
+                        },
+                        shift_id: {
+                            required: "Shift is required",
                         },
 
                     },
