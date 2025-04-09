@@ -165,7 +165,7 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3><b>MONTHLY FORKLIFT INSPECTION <br> CHECKLIST</b></h3>
+                    <h3><b>{{__('title.safety_gallery')}}</b></h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">
@@ -188,56 +188,36 @@
             </tr>
 
             <tr>
-                <th colspan="4"
+                <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                     DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
-                <th colspan="4"
+
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    RESOURCE CODE: {{ $details->resource_code ?? 'N/A' }}
+                </th>
+            </tr>
+
+            <tr>
+                <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                     LOCATION: {{ $details->location_name ?? 'N/A' }}
                 </th>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    SHIFT: {{ $details->shift ?? 'N/A' }}
-                </th>
-            </tr>
-
-            <tr>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    NEXT DUE: {{ Displaydateformat($details->next_due) ?? 'N/A' }}
-                </th>
-                <th colspan="4"
+                <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                     UNIT: {{ $details->unit_name ?? 'N/A' }}
                 </th>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    FREQUENCY: {{ $details->frequency_name ?? 'N/A' }}
-                </th>
+
             </tr>
 
-            <tr>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    IDENTIFICATION NO: {{ $details->identification_no ?? 'N/A' }}
-                </th>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    TYPE: {{ $details->forklift ?? 'N/A' }}
-                </th>
-                <th colspan="4"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    CAPACITY: {{ $details->capacity ?? 'N/A' }}
-                </th>
-            </tr>
 
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
                 </th>
                 <th colspan="5"
                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Description</th>
+                    CHECK ITEMS</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
                 </th>
                 <th colspan="5"
@@ -270,20 +250,16 @@
                 </tr>
             @endforeach
             @php
-                $creator_signature = GetSafetySignature(
-                    $details->created_by,
-                    $details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
+                $creator_signature = GetSafetySignature($details->created_by, $details->id, SAFETY_GALLERY_INSPECTION);
                 $verifier_signature = GetSafetySignature(
                     $details->verified_by,
                     $details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
+                    SAFETY_GALLERY_INSPECTION,
                 );
                 $approver_signature = GetSafetySignature(
                     $details->approved_by,
                     $details->id,
-                    MONTHLY_FORKLIFT_INSPECTION,
+                    SAFETY_GALLERY_INSPECTION,
                 );
             @endphp
 
