@@ -103,8 +103,8 @@ class DiscardController extends Controller
                             return $text;
                         })
 
-                        ->editColumn('discard_date', function ($row) {
-                            return displaydateformat($row->discard_date);
+                        ->editColumn('expire_date', function ($row) {
+                            return displaydateformat($row->expire_date);
                         })
                         ->editColumn('medicine_id', function ($row) {
                             return getMedicinename($row->medicine_id);
@@ -131,7 +131,7 @@ class DiscardController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'discard_date', 'approve_status', 'unit_id', 'approved_by', 'medicine_id'])
+                        ->rawColumns(['action', 'expire_date', 'approve_status', 'unit_id', 'approved_by', 'medicine_id'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -343,7 +343,7 @@ class DiscardController extends Controller
                         'created_by' => Auth::id(),
                     ];
                     notificationSave($notificationData);
-                  
+
                 } else {
                     $mailsubject =  'Medicine Name Has Been Rejected';
                     $details['mail_subject'] =   $mailsubject;

@@ -252,9 +252,4 @@ return [
     'excess_error' => 'You cannot download more than 20 items!',
 
 
-    //daily vital equipment
-    'daily_vital_equipment' => 'Daily Vital Equipment Inspection Checklist',
-
-    //first aid record
-    'first_aid_record' => 'First Aid Record',
 ];

@@ -162,7 +162,7 @@
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
                         <span><b>MEDICAL REQUISITION ISSUE SLIP
-                            PN INTERNATIONAL PVT. LTD.</b></span>
+                            </b></span>
                         <br>
                         <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
                     </h3>
@@ -177,7 +177,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -191,7 +191,7 @@
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                     colspan="4">
-                  DEPARTMENT: {{ getDepartment($details->department) ?? 'N/A' }}
+                    DEPARTMENT: {{ getDepartment($details->department) ?? 'N/A' }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                     colspan="6">
@@ -199,66 +199,73 @@
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                     colspan="6">
-                    DATE: {{ Displaydateformat($details->date ?? 'N/A' )}}
+                    DATE: {{ Displaydateformat($details->date ?? 'N/A') }}
                 </th>
             </tr>
 
 
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK ITEMS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
+                    MEDICINE
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">OK/NOT-OK
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
                 </th>
 
             </tr>
-
             @php
-                $checklist = json_decode($details->checklist, true);
+                $medicineRequisitionDetails = GetOHCMedicineFDO($details->id);
             @endphp
+                @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
+            <tr>
 
-            @foreach ($checklist['check_item'] as $groupId => $items)
-                @foreach ($items as $itemId)
-                    <tr>
-                        <td colspan="2"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $loop->iteration }}</td>
-                        <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ getSubcategoryDataname($itemId) }}</td>
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                            @if (strtolower($checklist['status'][$itemId]) === 'ok')
-                            <span style="color: green; font-size: 20px;">✓</span>
-                            @else
-                            <span style="color: red; font-size: 20px;">X</span>
-                            @endif
-                        </td >
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $checklist['remarks'][$itemId] ?? '' }}</td>
-                    </tr>
-                @endforeach
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}</td>
+                    <td colspan="6"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $medicineRequisitionDetails->quantity }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $medicineRequisitionDetails->remarks }}</td>
+
+            </tr>
+
             @endforeach
+
 
 
             <tr>
                 @php
-                    $createdSignature  = GetOHCSignature($details->inspection_created_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
-                    $verifiedSignature = GetOHCSignature($details->verified_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
-                    $approvedSignature = GetOHCSignature($details->approved_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
+                    $createdSignature = GetOHCSignature(
+                        $details->created_by,
+                        $details->id,
+                        OHC_TYPE_MEDICINE_REQUISTION_FDO,
+                    );
+                    $approvedSignature = GetOHCSignature(
+                        $details->approved_by,
+                        $details->id,
+                        OHC_TYPE_MEDICINE_REQUISTION_FDO,
+                    );
                 @endphp
 
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
-                    <img src="{{ admin_url( $createdSignature) }}" alt="Signature Upload"
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Checked By</div>
+                    <div style="margin-top: 5px;">Requestor Signature </div>
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
-                    <img src="{{ admin_url($verifiedSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Verified By</div>
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
                     <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Approved By</div>
+                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer  Signature</div>
                 </th>
+
             </tr>
 
 

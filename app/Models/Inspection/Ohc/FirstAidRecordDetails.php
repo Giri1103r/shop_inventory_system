@@ -39,20 +39,6 @@ class FirstAidRecordDetails extends Model
         $request = request();
         $search = '';
 
-        // $query = $this->from('ohc_first_aid_record_details as maintable')
-        //     ->select(
-        //         'maintable.*',
-        //         'secondtable.*',
-        //         'masters_department.*',
-        //         'masters_unit.*',
-        //         'maintable.created_by as checked_by',
-        //         'maintable.id as first_aid_record_id'
-        //     )
-        //     ->leftJoin('ohc_first_aid_record_checklist as secondtable', 'maintable.id', '=', 'secondtable.ohc_first_aid_record_details_id')
-        //     ->leftJoin('masters_department', 'secondtable.department', '=', 'masters_department.id')
-        //     ->leftJoin('masters_unit', 'secondtable.unit', '=', 'masters_unit.id');
-
-
         $query = $this->select('ohc_first_aid_record_details.*');
 
         $org_total =  $query;

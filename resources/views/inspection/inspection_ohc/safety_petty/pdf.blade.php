@@ -151,7 +151,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.safety_petty_logbook') }}
+                        {{ __('title.safety_petty_logbook') }}
                     </td>
                 </tr>
             </table>
@@ -165,7 +165,7 @@
                 </th>
                 <th colspan="25" style="border:1px solid black;">
                     <h3>
-                        <span><b> {{ __('inspection.safety_petty_logbook') }}</b></span>
+                        <span><b> {{ __('title.safety_petty_logbook') }}</b></span>
                         <br>
                     </h3>
                 </th>
@@ -179,7 +179,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>

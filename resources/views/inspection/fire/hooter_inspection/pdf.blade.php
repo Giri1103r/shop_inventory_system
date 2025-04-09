@@ -265,9 +265,9 @@
     @endforeach
 
     @php
-        $approved_by = GetFireSignature($first->approved_by, $first->id, $inspection_type);
-        $verified_by = GetFireSignature($first->verified_by, $first->id, $inspection_type);
-        $checked_by = GetFireSignature($first->checked_by, $first->id, $inspection_type);
+        $approved_by = GetFireSignature($first->approved_by, $first->fire_id, $inspection_type);
+        $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
+        $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
     <tr>
         <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
@@ -275,7 +275,7 @@
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Checked By:- {{ getUsername($first->created_by) }}</p>
+                    <p style="margin: 0;">Checked By:- {{ getUsername($first->checked_by) }}</p>
                 @else
                     <p style="margin: 0;">Checked By:- Not yet checked</p>
                 @endif

@@ -146,7 +146,6 @@
 
     @foreach ($content as $groupedCollection)
         @php $firstItem = $groupedCollection->first(); @endphp
-
         <br>
 
         <div style="width:100%;">
@@ -166,7 +165,7 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
                 <th colspan="6">
-                    <h3 style="margin: 0;"><b>DAILY GEMBA WALK- 6'S OBSERVATION REPORT</b></h3>
+                    <h3 style="margin: 0;"><b>{{ __('title.gemba_walk') }}</b></h3>
                 </th>
                 <th colspan="6">
                     <table style="width:100%; border-collapse: collapse;" border="1">

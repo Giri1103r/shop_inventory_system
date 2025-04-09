@@ -50,7 +50,7 @@
                             <b>Discard Date</b>
                         </td>
                         <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                            valign="top"> {{displaydateformat( $details['discard_date']) }}</td>
+                            valign="top"> {{displaydateformat( $details['expire_date']) }}</td>
                     </tr>
 
                     <tr>

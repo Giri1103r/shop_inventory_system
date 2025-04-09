@@ -806,25 +806,18 @@ class CoTypeFireExtinguisherController extends Controller
         try {
 
             $allData = $this->co_type->exportdata();
+            $document_no = $this->document_reference->selectUsingName('CO2TypeFireExtinguisher');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                __('inspection.inspection_date') ,
-                __('inspection.next_due') ,
-                __('inspection.location'),
-                __('inspection.shifts'),
-                __('inspection.unit'),
-                __('inspection.frequency'),
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "CO2 Type Fire Inspection",
             );
 
@@ -846,7 +839,7 @@ class CoTypeFireExtinguisherController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "CO2 Type Fire Inspection.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

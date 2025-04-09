@@ -272,6 +272,18 @@
                     {{ getLocationname($details->location) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ getUnitname($details->unit) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    @if ($details->audio_quality == GOOD)
+                        GOOD
+                    @elseif($details->audio_quality == FAIR)
+                        FAIR
+                    @elseif($details->audio_quality == POOR)
+                        POOR
+                    @endif
+                </td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
                     @if ($details->mic_condition == GOOD)
                         GOOD
                     @elseif($details->mic_condition == FAIR)
@@ -301,6 +313,7 @@
                         POOR
                     @endif
                 </td>
+
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
                     @if ($details->operation == FUNCTIONAL)
                         {{ __('inspection.functional') }}
@@ -311,18 +324,7 @@
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">
                     {{ $details->remark }}
                 </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ getUnitname($details->unit) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->audio_quality == GOOD)
-                        GOOD
-                    @elseif($details->audio_quality == FAIR)
-                        FAIR
-                    @elseif($details->audio_quality == POOR)
-                        POOR
-                    @endif
-                </td>
+
             </tr>
             @endforeach
             @php

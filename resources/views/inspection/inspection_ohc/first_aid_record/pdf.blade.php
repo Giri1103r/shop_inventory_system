@@ -151,7 +151,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.first_aid_record') }}
+                        {{ __('title.first_aid_record') }}
                     </td>
                 </tr>
             </table>
@@ -165,7 +165,7 @@
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
-                        <span><b> {{ __('inspection.first_aid_record') }}</b></span>
+                        <span><b> {{ __('title.first_aid_record') }}</b></span>
                         <br>
                     </h3>
                 </th>

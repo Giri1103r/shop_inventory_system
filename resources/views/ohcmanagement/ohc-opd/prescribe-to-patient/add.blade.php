@@ -398,7 +398,7 @@
                                                             <label for="Fitness" class="require">File Upload</label>
                                                             <input type="file" name="file" id="file"
                                                                 class="form-control">
-                                                            <small>Allowed file types: PDF, DOCX, DOC</small>
+                                                                <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-8 mb-2">
@@ -1066,7 +1066,7 @@
                             return $('#fitness_certificate').val() ==
                                 '1';
                         },
-                        extension: "pdf|doc|docx"
+                        extension: "pdf|doc|docx|png|jpg|jpeg"
                     },
                     close_description: {
                         required: function() {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fire Alarm Inspection | KARAM</title>
+    <title>Fire Extinguisher Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -158,7 +158,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Fire Alarm Inspection Details
+                        Fire Extinguisher InspectionDetails
                     </td>
                 </tr>
             </table>
@@ -168,25 +168,25 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <th colspan="2" rowspan="3"
+                    <th colspan="3" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                     </th>
 
-                    <th colspan="5" rowspan="3"
+                    <th colspan="6" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.fire_alarm') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.isolating_valve') }}</b></h3>
                     </th>
 
                     @foreach ($infoCells as $index => [$label, $value])
                         @if ($index == 0)
-                            <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                            <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                                 <strong>{{ $label }}</strong>: {{ $value }}
                             </th>
                         @else
                 </tr>
                 <tr>
-                    <th colspan="3" style="border: 1px solid black; font-size: 12px; padding: 4px;">
+                    <th colspan="4" style="border: 1px solid black; font-size: 12px; padding: 4px;">
                         <strong>{{ $label }}</strong>: {{ $value }}
                     </th>
     @endif
@@ -197,10 +197,10 @@
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
         </th>
-        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             LOCATION: {{ getLocationName($first->location) }}
         </th>
-        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             SHIFT: {{ GetShiftName($first->shift) }}
         </th>
     </tr>
@@ -209,59 +209,75 @@
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
         </th>
-        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             UNIT: {{ GetUnitName($first->unit) }}
         </th>
-        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             FREQUENCY: {{ GetFrequencyName($first->frequency) }}
         </th>
     </tr>
 
     <tr style="background-color: #ddd;">
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">SR. NO</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">DEPARTMENT</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">RESOURCE CODE</th>
-        <th colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">REMARK</th>
+        <th rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 5%;">
+            SR.NO</th>
+        <th rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 15%;">
+            LOCATION OF ISV</th>
+        <th rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+            RESOURCE CODE</th>
+        <th colspan="7"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">CHECK
+            ITEMS</th>
+        <th colspan="3" rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+            REMARKS</th>
     </tr>
     <tr style="background-color: #ddd;">
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">GLASS</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">HAMMER</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">MANNUAL CALL POINT</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">APPROACH</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 10%;">
+            SIZE OF ISV (MM)</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            STATUS OPEN</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            STATUS CLOSE</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            WHEEL OPERATION</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            STATUS OF ISV</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            LEAKAGE (Y/N)</th>
+        <th style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; width: 8%;">
+            VALVE TYPE</th>
     </tr>
 
     @foreach ($group as $detail)
         <tr>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->sr_no }}</td>
-            <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($detail->department) }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->resource_code }}</td>
-
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->quantity }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                @if ($detail->glass == FUNCTIONAL)
-                    {{ __('inspection.functional') }}
-                @else
-                    {{ __('inspection.non_functional') }}
-                @endif
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $detail->location_isv }}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                @if ($detail->hammer == FUNCTIONAL)
-                        {{ __('inspection.functional') }}
-                    @else
-                        {{ __('inspection.non_functional') }}
-                    @endif
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $detail->resource_code }}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                @if ($detail->mannual_call_point == PRESENT)
-                        {{ __('inspection.present') }}
-                    @else
-                        {{ __('inspection.missing') }}
-                    @endif
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $detail->size_isv }}</td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ $detail->open == OPEN ? 'Opened' : 'Closed' }}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->approach }}</td>
-            <td style="border: 1px solid black; padding: 6px;">{{ $detail->remarks }}</td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ $detail->close == OPEN ? 'Opened' : 'Closed' }}
+            </td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ $detail->wheel_operation == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
+            </td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ $detail->isv_status == FUNCTIONAL ? __('inspection.functional') : __('inspection.non_functional') }}
+            </td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ $detail->leakage == YES ? __('inspection.yes') : __('inspection.no') }}
+            </td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ getValveTypeName($detail->type) }}
+            </td>
+            <td colspan="3" style="border: 1px solid black; padding: 10px; text-align: center;">{{ $detail->remarks }}</td>
         </tr>
     @endforeach
 
@@ -272,7 +288,7 @@
     @endphp
 
     <tr>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""
@@ -283,7 +299,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""
@@ -294,7 +310,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""
