@@ -146,7 +146,7 @@
                 <td width="50%" style="padding:5px;"><b>Discarded Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ displayDateformat(isset($user_discard->discard_date) ? $user_discard->discard_date : '') }}</td>
+                    {{ displayDateformat(isset($user_discard->expire_date) ? $user_discard->expire_date : '') }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>

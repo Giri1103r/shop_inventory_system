@@ -813,11 +813,13 @@ class PrescribetoPatientController extends Controller
             $opdpatient = $this->opd_patient->selectOne($id);
             $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
             $isreffered = $this->isreffered->selectOne($opdpatient->id);
+            $hospital = $this->hospital->selectOne($isreffered->hospital_name);
         }
         $data = [
             'opdpatient' => $opdpatient,
             'opd_firstaid' => $opd_firstaid,
             'isreffered' => $isreffered,
+            'hospital' => $hospital,
             'pagetitle' => "Medicine Slip",
         ];
 

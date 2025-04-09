@@ -8,6 +8,13 @@ return [
     'safety_equipment' => 'List of Fire Safety & Rescue Equipment PN International Pvt Ltd',
     'opd_medicine' => 'Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd',
     'medicine_store' => 'Monthly OHC Store Medicine Inspection Checklist PN International Pvt.Ltd',
+    'weekly_first_aid'=>'WEEKLY FIRST-AID BOX INSPECTION CHECKLIST ',
+    'gemba_walk'=>'DAILY GEMBA WALK  OBSERVATION REPORT',
+    'emergency_buyer_first_aid_bag'=>"BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.",
+    'health_instrument'=>"Fire & Safety Equipment Instrument Calibration Track Sheet PN International Pvt Ltd",
+
+
+
 
     'msds' => 'Chemical (MSDS) Master List PN International Pvt.Ltd.',
     'rraa' => 'Occupational Health Safety ,Fire & Enviromental  Compliance  Sheet PN International Pvt Ltd',
@@ -20,5 +27,7 @@ return [
     'fire_alarm' => 'FIRE ALARM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'first_bag_inspection' => 'FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.',
     'hygiene_checklist' => 'Daily OHC Hygine & Cleaning Checklist PN International Pvt Ltd',
-    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.'
+    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
+    'fire_extinguisher' => 'FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE) PN INTERNATIONAL PVT. LTD.',
+    'isolating_valve' => 'ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
 ];

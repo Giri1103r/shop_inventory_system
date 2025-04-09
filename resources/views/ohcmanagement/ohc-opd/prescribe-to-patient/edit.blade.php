@@ -32,14 +32,15 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="opdpatient"
-                                        action="{{ admin_url('ohc/prescribe-to-patient/edit/submit') }}">
+                                        action="{{ admin_url('ohc/prescribe-to-patient/edit/submit') }}"enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($opdpatient->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="is_outside_worker"> Is OutSide Worker</label><br>
+                                                    <label class="form-label" for="is_outside_worker"> Is OutSide
+                                                        Worker</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1"
                                                         {{ $opdpatient->is_outside_employee == 1 ? 'checked' : '' }}>
@@ -190,13 +191,15 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require" for="cheif_complaint">Cheif Complaint</label>
+                                                    <label class="form-label require" for="cheif_complaint">Cheif
+                                                        Complaint</label>
                                                     <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control">{{ $opdpatient->cheif_complaint }}"</textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="vital_checkup">Vital Checkup</label><br>
+                                                    <label class="form-label" for="vital_checkup">Vital
+                                                        Checkup</label><br>
                                                     <input type="checkbox" id="vital_checkup" name="vital_checkup"
                                                         value="1"
                                                         {{ $opdpatient->vital_checkup == 1 ? 'checked' : '' }}>
@@ -230,7 +233,8 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="first_aid_treatment">First Aid Treatment</label><br>
+                                                    <label class="form-label" for="first_aid_treatment">First Aid
+                                                        Treatment</label><br>
                                                     <input type="checkbox" id="first_aid_treatment"
                                                         name="first_aid_treatment" value="1"
                                                         {{ $opdpatient->first_aid_treatment == 1 ? 'checked' : '' }}>
@@ -428,32 +432,38 @@
                                                     </div>
                                                 </div>
                                                 <div class="row close" style="display: none;">
+                                                    <!-- Fitness Certificate Dropdown -->
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label for="Fitness" class="require">Fitness
-                                                                Certificate</label>
+                                                            <label for="fitness_certificate" class="require">Fitness Certificate</label>
                                                             <select name="fitness_certificate" id="fitness_certificate"
                                                                 class="form-control single-select" style="width: 100%">
-                                                                <option value="">select the Fitness certificate
-                                                                </option>
-                                                                <option value="1"
-                                                                    {{ $opdpatient->fitness_certificate == 1 ? 'selected' : '' }}>
-                                                                    Required</option>
-                                                                <option value="2"
-                                                                    {{ $opdpatient->fitness_certificate == 2 ? 'selected' : '' }}>
-                                                                    Not Required</option>
-
+                                                                <option value="">Select the Fitness certificate</option>
+                                                                <option value="1" {{ $opdpatient->fitness_certificate == 1 ? 'selected' : '' }}>Required</option>
+                                                                <option value="2" {{ $opdpatient->fitness_certificate == 2 ? 'selected' : '' }}>Not Required</option>
                                                             </select>
                                                         </div>
                                                     </div>
+
+                                                    <!-- File Upload -->
+                                                    <div class="col-md-4 mb-2 file_upload" style="display: none;">
+                                                        <div class="form-group form-input">
+                                                            <label for="file" class="require">File Upload</label>
+                                                            <input type="file" name="file" id="file" class="form-control">
+                                                            <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Close Description -->
                                                     <div class="col-md-8 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label for="close" class="form-label require">Close the
-                                                                Description</label>
-                                                            <textarea name="close_description" id="close_description" cols="30" rows="5" class="form-control">{{ $opdpatient->closed_description }}</textarea>
+                                                            <label for="close_description" class="form-label require">Close the Description</label>
+                                                            <textarea name="close_description" id="close_description" cols="30" rows="5"
+                                                                class="form-control">{{ $opdpatient->closed_description }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
+
 
                                                 <div class="row other_vechicles"style="display: none;">
                                                     <div class="col-md-4 mb-2">
@@ -626,6 +636,13 @@
                             return $('#is_reffered').is(':checked');
                         }
                     },
+                    file: {
+                        required: function() {
+                            return $('#fitness_certificate').val() ==
+                                '1';
+                        },
+                       extension: "pdf|doc|docx|png|jpg|jpeg"
+                    },
                     patient_status: {
                         required: function() {
                             return $('#is_reffered').is(':checked');
@@ -677,6 +694,10 @@
                     },
                     department_id: {
                         required: "Please enter department Name.",
+                    },
+                    file: {
+                        required: "File is required.",
+                        extension: "Please Select the valid mime Type."
                     },
                     dob: {
                         required: "Please enter the date of birth.",
@@ -806,7 +827,15 @@
         });
         // date picker and time picker
 
+        $('#fitness_certificate').change(function() {
+            var selectedValue = $(this).val();
 
+            if (selectedValue == '1') {
+                $('.file_upload').show();
+            } else {
+                $('.file_upload').hide();
+            }
+        });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#date", {
                 dateFormat: "d-m-Y",

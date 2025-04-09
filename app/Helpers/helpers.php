@@ -41,6 +41,7 @@ use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\Inspection\Safety\SignatureUpload;
+use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\FloorStretcherFiles;
@@ -2044,6 +2045,17 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetOHCMedicineFDO')) {
+
+        function GetOHCMedicineFDO( $id,)
+        {
+
+            $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            return $medicineRequisition;
+        }
+
+    }
+
     if (!function_exists('GetSignature')) {
         function GetSignature($userid, $id, $type)
         {
@@ -2724,5 +2736,17 @@ if (!function_exists('getMonthlyPhsyicalInspectionImages')) {
         }
 
         return false;
+    }
+}
+
+// Get Valve Type Name
+if (!function_exists('getValveTypeName')) {
+    function getValveTypeName($id)
+    {
+        $data = IsolatingValveType::where('id', $id)->first();
+        if ($data) {
+            return $data->name;
+        }
+        return null;
     }
 }
