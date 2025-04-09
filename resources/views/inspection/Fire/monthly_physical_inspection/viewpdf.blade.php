@@ -258,18 +258,12 @@
                         <img src="{{ admin_url($img->file_path) }}" alt="Verified By Signature"
                             style="height: 50px; width: auto;">
                     </td>
-
-                    @if ($key % 2 == 1)
+                @endforeach
             </tr>
-            <tr>
-    @endif
+            </tr>
+        </table>
+        <br>
     @endforeach
-    </tr>
-    </table>
-    @endforeach
-
-    <br>
-
 </body>
 
 </html>
