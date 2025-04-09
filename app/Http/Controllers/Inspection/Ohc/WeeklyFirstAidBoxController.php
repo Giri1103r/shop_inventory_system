@@ -174,6 +174,7 @@ class WeeklyFirstAidBoxController extends Controller
 
             $id = decryptId($request->id);
             $inspection_details = $this->weekly_first_aid->selectOne($id);
+            dd($inspection_details);
             $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);

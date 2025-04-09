@@ -29,7 +29,7 @@ class GembaWalkChecklist extends Model
         'responsibility_id',
         'gemba_walk_checklist_status',
         'remark',
-        'observation',
+        // 'observation',
         'status',
         'trash',
         'created_by',
@@ -65,7 +65,7 @@ class GembaWalkChecklist extends Model
                     'responsibility_id' => decryptId($walk['responsibility_id']),
                     'gemba_walk_checklist_status' => $walk['current_status'],
                     'remark' => $walk['checklist_remark'],
-                    'observation' => json_encode($walk['checklist_observation']),
+                    // 'observation' => json_encode($walk['checklist_observation']),
                     'created_by' => Auth::id()
                 ];
 

@@ -741,7 +741,6 @@ class SafetyGalleryInsepctionController extends Controller
     {
 
         try {
-
             $allData = $this->safetygallery->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -773,7 +772,7 @@ class SafetyGalleryInsepctionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.pdf.pdf', $data);
+            $view = view('inspection.Safety.safety_gallery_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);

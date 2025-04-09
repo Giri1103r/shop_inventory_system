@@ -156,6 +156,7 @@
                 </tr>
             </table>
         </div>
+        <br>
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
@@ -230,6 +231,7 @@
         </table>
 
         <div class="page-break"></div>
+        
     @endforeach
 
 
