@@ -208,14 +208,18 @@
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">DATE OF INSPECTION :-
                 {{ Displaydateformat($forklift_details->date_of_inspection) }}
             </th>
-            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">LOCATION :- {{ getLocationName($forklift_details->location) }}</th>
-            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">SHIFT :- {{ GetShiftName($forklift_details->shift) }}</th>
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">LOCATION :-
+                {{ getLocationName($forklift_details->location) }}</th>
+            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">SHIFT :-
+                {{ GetShiftName($forklift_details->shift) }}</th>
         </tr>
         <tr style="background-color: #ddd;">
-            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">NEXT DUE ON :- {{ Displaydateformat($forklift_details->next_due) }}</th>
-            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">UNIT :- {{ GetUnitName($forklift_details->unit) }} </th>
-            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">FREQUENCY :- {{ GetFrequencyName($forklift_details->frequency) }}
-            </th>
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">NEXT DUE ON :-
+                {{ Displaydateformat($forklift_details->next_due) }}</th>
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px;">UNIT :-
+                {{ GetUnitName($forklift_details->unit) }} </th>
+            <th colspan="2" style="border: 1px solid black; text-align: left; padding: 8px;">FREQUENCY :-
+                {{ GetFrequencyName($forklift_details->frequency) }}</th>
         </tr>
 
         <!-- Column Headers -->
@@ -223,11 +227,11 @@
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">SR. NO</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">RESOURCE CODE</th>
-            <th rowspan="2" style="border: 1px solid black; padding: 8px;">QUANTITY</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
+            <th colspan="5" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
         </tr>
         <tr style="background-color: #ddd;">
+            <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
             <th style="border: 1px solid black; padding: 8px;">BLINKING LIGHT</th>
             <th style="border: 1px solid black; padding: 8px;">CONNECTION</th>
             <th style="border: 1px solid black; padding: 8px;">AUDIBILITY</th>
@@ -267,23 +271,44 @@
             </tr>
         @endforeach
 
+        <!-- Signatures Section -->
         <tr>
-            <td colspan="6"
-                style="border: 1px solid black; text-align: left; padding: 10px; background-color: #f0f0f0;">
-                <strong>OBSERVATION</strong>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->created_by))
+                        <img src="{{ admin_url($checked_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Checked By:- {{ getUsername($forklift_details->created_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Checked By:- Not yet checked</p>
+                    @endif
+                </div>
             </td>
-            <td colspan="3"
-                style="border: 1px solid black; text-align: center; padding: 10px; background-color: #f0f0f0;">
-                <img src="{{ admin_url($inspection_image) }}" style="width:110px; height:110px;" alt=""
-                    srcset="">
+            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->verified_by))
+                        <img src="{{ admin_url($verified_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Verified By:- {{ getUsername($forklift_details->verified_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet verified</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->approved_by))
+                        <img src="{{ admin_url($approved_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Approved By:- {{ getUsername($forklift_details->approved_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Approved By:- Not yet approved</p>
+                    @endif
+                </div>
             </td>
         </tr>
-        {{-- <tr>
-            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
-            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
-            <td colspan="3">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos architecto aliquid laborum officiis? Laboriosam est possimus quaerat quidem magni aut accusamus at voluptatum nam ratione qui nesciunt, dolores sapiente accusantium.</td>
-        </tr> --}}
     </table>
+
 
     <br>
 

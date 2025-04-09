@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hooter Inspection | KARAM</title>
+    <title>Fire Alarm Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -158,7 +158,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Hooter Inspection Details
+                        Fire Alarm Inspection Details
                     </td>
                 </tr>
             </table>
@@ -168,7 +168,6 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <!-- Logo (3 columns) -->
                     <th colspan="2" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
@@ -176,9 +175,8 @@
 
                     <th colspan="5" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.hooter') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.fire_alarm') }}</b></h3>
                     </th>
-
 
                     @foreach ($infoCells as $index => [$label, $value])
                         @if ($index == 0)
@@ -207,7 +205,6 @@
         </th>
     </tr>
 
-    <!-- Row 2: NEXT DUE, UNIT, FREQUENCY -->
     <tr style="background-color: #ddd;">
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
@@ -220,55 +217,60 @@
         </th>
     </tr>
 
-    <!-- Column Headers -->
     <tr style="background-color: #ddd;">
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">SR. NO</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">DEPARTMENT</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">RESOURCE CODE</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
-        <th colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
+        <th colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">REMARK</th>
     </tr>
     <tr style="background-color: #ddd;">
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">BLINKING LIGHT</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">CONNECTION</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">AUDIBILITY</th>
-        <th style="border: 1px solid black; padding: 6px; text-align: center;">CONDITION OF HOOTER</th>
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">GLASS</th>
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">HAMMER</th>
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">MANNUAL CALL POINT</th>
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">APPROACH</th>
     </tr>
 
-    <!-- Data Rows -->
     @foreach ($group as $detail)
         <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->sr_no }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($detail->department) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->resource_code }}</td>
+
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->quantity }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->blinking_light == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
+                @if ($detail->glass == FUNCTIONAL)
+                    {{ __('inspection.functional') }}
+                @else
+                    {{ __('inspection.non_functional') }}
+                @endif
             </td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->connection == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
+                @if ($detail->hammer == FUNCTIONAL)
+                        {{ __('inspection.functional') }}
+                    @else
+                        {{ __('inspection.non_functional') }}
+                    @endif
             </td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {!! $detail->audiobility == 1
-                    ? '<span style="color: green;">&#10004;</span>'
-                    : '<span style="color: red;">X</span>' !!}
+                @if ($detail->mannual_call_point == PRESENT)
+                        {{ __('inspection.present') }}
+                    @else
+                        {{ __('inspection.missing') }}
+                    @endif
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {{ $detail->condition_of_hooter }}
-            </td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->approach }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ $detail->remarks }}</td>
         </tr>
     @endforeach
+
     @php
-        $approved_by = GetFireSignature($first->approved_by, $first->id, $inspection_type);
-        $verified_by = GetFireSignature($first->verified_by, $first->id, $inspection_type);
-        $checked_by = GetFireSignature($first->checked_by, $first->id, $inspection_type);
+        $approved_by = GetFireSignature($first->approved_by, $first->fire_id, $inspection_type);
+        $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
+        $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
+
     <tr>
         <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
@@ -286,8 +288,7 @@
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}
-                    </p>
+                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}</p>
                 @else
                     <p style="margin: 0;">Verified By:- Not yet verified</p>
                 @endif
@@ -298,8 +299,7 @@
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}
-                    </p>
+                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
                 @else
                     <p style="margin: 0;">Approved By:- Not yet approved</p>
                 @endif
@@ -310,6 +310,15 @@
     </div>
     <div class="page-break"></div>
     @endforeach
+
+
+
+
+
+
+
+
+
 
     <br>
 

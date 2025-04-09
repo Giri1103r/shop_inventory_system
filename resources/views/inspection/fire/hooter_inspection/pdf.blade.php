@@ -168,7 +168,6 @@
             <!-- Header Table -->
             <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 13px;">
                 <tr>
-                    <!-- Logo (3 columns) -->
                     <th colspan="2" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
@@ -178,7 +177,6 @@
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <h3 style="margin: 0;"><b>{{ __('title.hooter') }}</b></h3>
                     </th>
-
 
                     @foreach ($infoCells as $index => [$label, $value])
                         @if ($index == 0)
@@ -225,11 +223,11 @@
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">SR. NO</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">DEPARTMENT</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">RESOURCE CODE</th>
-        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
-        <th colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
+        <th colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">REMARK</th>
     </tr>
     <tr style="background-color: #ddd;">
+        <th style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">BLINKING LIGHT</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">CONNECTION</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">AUDIBILITY</th>
@@ -242,6 +240,7 @@
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->sr_no }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($detail->department) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->resource_code }}</td>
+
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->quantity }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {!! $detail->blinking_light == 1
@@ -264,10 +263,11 @@
             <td style="border: 1px solid black; padding: 6px;">{{ $detail->remarks }}</td>
         </tr>
     @endforeach
+
     @php
-        $approved_by = GetFireSignature($first->approved_by, $first->id, $inspection_type);
-        $verified_by = GetFireSignature($first->verified_by, $first->id, $inspection_type);
-        $checked_by = GetFireSignature($first->checked_by, $first->id, $inspection_type);
+        $approved_by = GetFireSignature($first->approved_by, $first->fire_id, $inspection_type);
+        $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
+        $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
     @endphp
     <tr>
         <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
@@ -275,7 +275,7 @@
                 @if (!empty($first->checked_by))
                     <img src="{{ admin_url($checked_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Checked By:- {{ getUsername($first->created_by) }}</p>
+                    <p style="margin: 0;">Checked By:- {{ getUsername($first->checked_by) }}</p>
                 @else
                     <p style="margin: 0;">Checked By:- Not yet checked</p>
                 @endif
@@ -286,8 +286,7 @@
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}
-                    </p>
+                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}</p>
                 @else
                     <p style="margin: 0;">Verified By:- Not yet verified</p>
                 @endif
@@ -298,8 +297,7 @@
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
-                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}
-                    </p>
+                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
                 @else
                     <p style="margin: 0;">Approved By:- Not yet approved</p>
                 @endif
@@ -310,6 +308,15 @@
     </div>
     <div class="page-break"></div>
     @endforeach
+
+
+
+
+
+
+
+
+
 
     <br>
 

@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -139,13 +143,7 @@
         </table>
     </htmlpagefooter>
 
-    @php
-        $user_response = json_decode($daily_vital->responses, true);
-    @endphp
-
-    @foreach ($user_response as $subcategory => $questions)
-        @foreach ($questions as $questionId => $answer)
-
+    @foreach ($content as $details)
         <br>
 
         <div style="width:100%;">
@@ -153,11 +151,12 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            Daily Vital Equipment Inspection Checklist
+                        {{ __('title.daily_vital_equipment') }}
                     </td>
                 </tr>
             </table>
         </div>
+        <br>
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
@@ -166,7 +165,7 @@
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
-                        <span><b>Daily Vital Equipment Inspection Checklist</b></span>
+                        <span><b> {{ __('title.daily_vital_equipment') }}</b></span>
                         <br>
                     </h3>
                 </th>
@@ -180,7 +179,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -191,49 +190,90 @@
 
                 </th>
             </tr>
-
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK POINTS
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
+                    colspan="4">
+                    DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">RESPONSE
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
+                    colspan="6">
+                    UNIT: {{ getUnitname($details->unit) ?? 'N/A' }}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2; text-align: left;"
+                    colspan="10">
+                    SHIFT: {{ $details->shift ?? 'N/A' }}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="2">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4">CHECK
+                    POINTS
                 </th>
-
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4">RESPONSE
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="4"> QUANTITY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #b8cde2;" colspan="5">REMARKS
+                </th>
             </tr>
 
+            @php
+                $user_response = json_decode($details->responses, true);
+                $srNo = 1;
+            @endphp
+
+            @foreach ($user_response as $index => $item)
+                @foreach ($item as $question_index => $value)
+                    <tr>
+                        <td colspan="2"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $srNo++ }}</td>
+                        <td colspan="4"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ GetChecklistTypeDate($question_index) }}
+                        </td>
+                        <td colspan="4"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            @php
+                                $responseText = $value['response'] ?? '-';
+                            @endphp
+                            @if ($responseText == 'YES')
+                                <span style="color: green; font-size: 20px;">✓</span>
+                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
+                                <span style="color: red; font-size: 20px;">X</span>
+                            @else
+                                {{ $responseText }}
+                            @endif
+                        </td>
+                        <td colspan="4"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $value['quantity'] ?? '-' }}
+                        </td>
+                        <td colspan="5"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $value['remark'] ?? '-' }}
+                        </td>
+                    </tr>
+
+                @endforeach
+            @endforeach
+
             <tr>
-                <td colspan="2"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $loop->iteration }}</td>
-                <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ GetChecklistTypeDate($questionId) }}
-                </td>
-                <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    @php
-                        $responseText = $answer['response'] ?? '-';
-                    @endphp
-                    @if ($responseText == 'YES')
-                        <span style="color: green; font-size: 20px;">✓</span>
-                    @elseif ($responseText == 'NO' || $responseText == 'N/A')
-                        <span style="color: red; font-size: 20px;">X</span>
-                    @else
-                        {{ $responseText }}
-                    @endif
-                </td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ $answer['quantity'] ?? '-' }}
-                </td >
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ $answer['remark'] ?? '-' }}
-                </td>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Checked By</th>
+
+                @php
+                    $createdSignature  = GetOHCSignature($details->checked_by, $details->id,OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST);
+               @endphp
+
+                <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;"><img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -2px;" />
+                </th>
             </tr>
 
         </table>
         <br>
 
-        @endforeach
+        <div class="page-break"></div>
     @endforeach
 
 

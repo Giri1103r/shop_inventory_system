@@ -31,7 +31,6 @@ class FirstAidMedicineInspectionController extends Controller
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
