@@ -787,7 +787,6 @@ class PASystemInspectionController extends Controller
             $filename = "Fire PA System.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/pa-system-inspection/list'));

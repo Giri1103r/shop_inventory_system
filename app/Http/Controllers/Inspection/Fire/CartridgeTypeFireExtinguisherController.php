@@ -340,14 +340,13 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
 
-            if ($inspection->observation_needed == 1) { 
+            if ($inspection->observation_needed == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
             }
 
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
@@ -376,7 +375,6 @@ class CartridgeTypeFireExtinguisherController extends Controller
             );
             return view('inspection.fire.cartridge_type_fire_extinguisher.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
@@ -816,7 +814,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
         try {
 
             $allData = $this->cartridge_type->exportdata();
-            // dd($allData);
+
             $inspection_type = CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION;
             $document_no = $this->document_reference->selectUsingName('CartridgeTypeFireExtinguisher');
 
@@ -851,9 +849,8 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Cartridge Type Fire Inspection.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
