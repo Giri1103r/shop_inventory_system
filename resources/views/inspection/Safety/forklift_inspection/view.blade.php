@@ -1,245 +1,295 @@
-@extends('admin.layouts.admin')
-@section('title', 'Forklift Inspection')
-@section('pageurl', admin_url('safety/forklift-inspection/list'))
-@section('content')
-    <div class="clearfix"></div>
-    <div class="page-titles">
-        <div class="d-flex align-items-center">
+=
+<!DOCTYPE html>
+<html>
 
-        </div>
+<head>
+    <title>Forklift Inspection | KARAM</title>
+
+    <style>
+        .badge {
+            padding: 1px 9px 2px;
+            font-size: 12.025px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #ffffff;
+            background-color: #999999;
+            border-radius: 9px;
+        }
+
+        @page {
+            size: auto;
+            odd-header-name: html_myHeader1;
+            even-header-name: html_myHeader1;
+            odd-footer-name: html_myFooter1;
+            even-footer-name: html_myFooter1;
+        }
+
+        @page noheader {
+            odd-header-name: _blank;
+            even-header-name: _blank;
+            odd-footer-name: _blank;
+            even-footer-name: _blank;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid black;
+            padding: 5px;
+            word-wrap: break-word;
+            max-width: 100px;
+            /* Adjust as needed */
+        }
+
+        .table-striped tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, .05) !important;
+        }
+
+        body {
+            font-size: 13px;
+        }
+
+        .full-width {
+            width: 100%;
+            font-size: 11px;
+        }
+
+        .tblborder {
+            border: 1px solid black;
+        }
+
+        .activity,
+        .activity th,
+        .activity td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .header-cell {
+            background-color: #ce0f1f;
+            color: #000;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .table_card {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .table_card th,
+        .table_card td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table_card th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table_card tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table_card tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .table_card td {
+            text-align: center;
+        }
+
+        .table-container {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <htmlpageheader name="myHeader1" style="display:block;">
+        <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
+            <tr style="">
+            </tr>
+        </table>
+    </htmlpageheader>
+
+    <htmlpagefooter name="myFooter1" style="display:none">
+        <table width="100%"
+            style="width:100%;border:0;background-color: #FFF;border-top: 4px solid #000;padding-top:10px;padding-bottom:10px;">
+            <tr>
+                <td width="33%">
+                    <span style="font-style: italic;">{DATE d-m-Y}</span>
+                </td>
+                <td width="33%" align="center" style="font-weight: bold; font-style: italic;">
+                </td>
+                <td width="33%" style="text-align: right;">
+                    {PAGENO}/{nbpg}
+                </td>
+            </tr>
+        </table>
+    </htmlpagefooter>
+
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Forklift Inspection
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <div class="content-body  default-height">
-        <div class="container-fluid main-content">
-            <!-- row -->
-            <div class="row">
+    <table width="100%" style="width:100%;">
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($inspection_details->rev_dt) ? $inspection_details->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Created By</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_details->created_at) }}</td>
+        </tr>
+    </table>
 
-                <div class="col-12">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('safety/forklift-inspection/list') }}"></x-button-back>
-                                </div>
-                            </div>
+    <br>
 
-                            <div class="card-body">
-                                <div class="basic-form mx-3">
-                                    <div class="row">
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                                <div class="view_data">
-                                                    {{ $document_no->doc_no }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($document_no->issue_date) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                                <div class="view_data">
-                                                    {{ $document_no->rev_dt }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection_details->inspection_date) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @php
-                                            $signature = GetSafetySignature(
-                                                $inspection_details->created_by,
-                                                $inspection_details->id,
-                                                FORKLIFT_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 100px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        <hr>
-                                        @foreach ($inspection as $details)
-                                            <div class="form-wrapper">
-                                                <div class="row mt-4 form-set">
-                                                    <div class="card-header-inner p-2">
-                                                        <h4 class="text-white">Forklift Inspection</h4>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label ">{{ __('inspection.sr_no') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $loop->iteration }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.department') }}</label>
-                                                            <div class="view_data">
-                                                                {{ getDepartment($details->department_id) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label ">{{ __('inspection.unit') }}</label>
-                                                            <div class="view_data">
-                                                                {{ getUnitname($details->unit_id) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.identification_no') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->identification_no }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.observation') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->observation }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.corrective_action') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->correction_preventive_action }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Forklift Inspection
+                </td>
+            </tr>
+        </table>
+    </div>
 
 
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.employee') }}</label>
-                                                            <div class="view_data">
-                                                                {{ getUsername($details->responsibility) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
-                                                            <div class="view_data">
-                                                                {{ Displaydateformat($details->date_of_compliance) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.observation_status') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->observation_status == 1)
-                                                                    Active
-                                                                @elseif($details->observation_status == 0)
-                                                                    Inactive
-                                                                @else
-                                                                    Unknown
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->remarks }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT
+                </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">UNIT
+                </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">IDENTIFICATION
+                    NUMBER/SERIAL NUMBER
+                </th>
+            </tr>
+            <tr>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    OBSERVATION
+                </th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    CORRECTIVE AND PREVENTIVE ACTION</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    RESPONSIBILITY</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DATE OF
+                    COMPLIANCE</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                    STATUS</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">REMARKS
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($inspection as $detail)
+                <tr>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($detail->department_id) }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ getUnitname($detail->unit_id) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->identification_no }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        @if (isset($inspection_details->approval_remarks))
-                                            <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Approval</h4>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.level_one_manager') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getUserName($inspection_details->updated_by) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                @php
-                                                    $signature = GetSafetySignature(
-                                                        $inspection_details->updated_by,
-                                                        $inspection_details->id,
-                                                        FORKLIFT_INSPECTION,
-                                                    );
-                                                @endphp
-                                                @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->approval_remarks }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->correction_preventive_action }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ Displaydateformat($detail->date_of_compliance) }}</td>
 
-                </div>
-            </div>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        @if ($detail->observation_status == 1)
+                            Active
+                        @elseif($detail->observation_status == 0)
+                            Inactive
+                        @else
+                            Unknown
+                        @endif
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
+                </tr>
+            @endforeach
+            @php
+                $prepared_by_signature = GetSafetySignature(
+                    $inspection_details->created_by,
+                    $inspection_details->id,
+                    FORKLIFT_INSPECTION,
+                );
+                $verified_by_signature = GetSafetySignature(
+                    $inspection_details->updated_by,
+                    $inspection_details->id,
+                    FORKLIFT_INSPECTION,
+                );
+            @endphp
+            <tr>
+                <td colspan="5"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                        style="height: 50px;">
+                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
+                </td>
+                <td colspan="5"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($inspection_details->updated_by != null)
+                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;">
+                        <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+            </tr>
 
-        @stop
-        @push('script')
-        @endpush
+        </tbody>
+    </table>
+    <br>
+
+</body>
+
+</html>

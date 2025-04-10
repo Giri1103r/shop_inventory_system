@@ -27,7 +27,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\MSDS\MSDSDetails;
 use App\Models\Inspection\Ohc\OhcSignature;
+use App\Models\Inspection\RRAA\RRAADetails;
 use Kreait\Firebase\Messaging\CloudMessage;
 use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\Fire\DetectorType;
@@ -37,7 +39,9 @@ use App\Models\Inspection\MSDS\MSDSCheckList;
 use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\Master\ChecklistType;
+use App\Models\Inspection\Ohc\SafetyPettyDetails;
 use App\Models\Inspection\Safety\SignatureUpload;
+use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Ohc\DailyVitalEquipment;
 use App\Models\Inspection\Ohc\FloorStretcherFiles;
@@ -46,14 +50,14 @@ use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Fire\FireExtinguisherType;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
-use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\MSDS\MSDSDetails;
-use App\Models\Inspection\RRAA\RRAADetails;
+use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1440,7 +1444,7 @@ if (!function_exists('getMonth')) {
 
         function getSPLBCount()
         {
-            $data = SafetyPettyChecklist::get()->count();
+            $data = SafetyPettyDetails::get()->count();
             return $data;
         }
     }
@@ -2042,6 +2046,17 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetOHCMedicineFDO')) {
+
+        function GetOHCMedicineFDO( $id,)
+        {
+
+            $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            return $medicineRequisition;
+        }
+
+    }
+
     if (!function_exists('GetSignature')) {
         function GetSignature($userid, $id, $type)
         {
@@ -2206,7 +2221,6 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
-
             }
         }
     }
@@ -2623,9 +2637,9 @@ if (!function_exists('getMonth')) {
     }
 
 
-    // Get OHC Signature
-    if (!function_exists('GetOHCSignature')) {
-        function GetOHCSignature($userid, $id, $type)
+    // Get Floor Stretcher Signature
+    if (!function_exists('GetFSSignature')) {
+        function GetFSSignature($userid, $id, $type)
         {
             switch ($type) {
                 case OHC_TYPE_FLOOR_STRETCHER:
@@ -2671,5 +2685,69 @@ if (!function_exists('getMonth')) {
                 return $equipment_name->equipment_name;
             }
         }
+    }
+}
+
+
+
+if (!function_exists('getGivenSignatureBlock')) {
+    function getGivenSignatureBlock($type, $sub_type, $id, $fallbackName = null)
+    {
+        $signature = (new OhcSignature())->getGivenBy($type, $sub_type, $id);
+
+        if ($signature && !empty($signature->file_path)) {
+            $imageUrl = admin_url($signature->file_path);
+            $name = $fallbackName ?? 'Signed';
+
+            return '<img src="' . $imageUrl . '" alt="Signature" style="height: 50px;"><br>' .
+                '<span>' . e($name) . '</span>';
+        }
+
+        return 'N/A';
+    }
+}
+
+if (!function_exists('getReceivedSignatureBlock')) {
+    function getReceivedSignatureBlock($type, $sub_type, $id, $fallbackName = null)
+    {
+        $signature = (new OhcSignature())->getReceivedBy($type, $sub_type, $id);
+
+        if ($signature && !empty($signature->file_path)) {
+            $imageUrl = admin_url($signature->file_path);
+            $name = $fallbackName ?? 'Signed';
+
+            return '<img src="' . $imageUrl . '" alt="Signature" style="height: 50px;"><br>' .
+                '<span>' . e($name) . '</span>';
+        }
+
+        return 'N/A';
+    }
+}
+if (!function_exists('getMonthlyPhsyicalInspectionImages')) {
+    function getMonthlyPhsyicalInspectionImages($id)
+    {
+        $data = MonthlyPhysicalInspectionFileUpload::where('inspection_id', $id)
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->get();
+
+        if ($data) {
+            $groupedData = $data->groupBy('equipment_id');
+            return $groupedData;
+        }
+
+        return false;
+    }
+}
+
+// Get Valve Type Name
+if (!function_exists('getValveTypeName')) {
+    function getValveTypeName($id)
+    {
+        $data = IsolatingValveType::where('id', $id)->first();
+        if ($data) {
+            return $data->name;
+        }
+        return null;
     }
 }

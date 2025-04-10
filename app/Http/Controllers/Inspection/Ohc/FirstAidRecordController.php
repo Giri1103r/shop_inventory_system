@@ -254,22 +254,18 @@ class FirstAidRecordController extends Controller
         try {
 
             $allData = $this->first_aid_details->exportdata();
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
+
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                    'Month',
-                    'Year',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "First Aid Record Details",
             );
 
@@ -293,7 +289,6 @@ class FirstAidRecordController extends Controller
             $filename = "First Aid Record.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-record/list'));

@@ -334,7 +334,7 @@ class DetectorInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
 
             if ($inspection->observation_needed == 1) {
-                return redirect(admin_url('fire/checklist-observation/add/'.encryptId($inspection_type).'/'.encryptId($id)));
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/detector-inspection/list'));
             }
@@ -801,23 +801,19 @@ class DetectorInspectionController extends Controller
         try {
 
             $allData = $this->detector->exportdata();
+            $inspection_type = DETECTOR_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'pagetitle' => "Detector Inspection",
+                'inspection_type' => $inspection_type,
             );
 
             $property = [
@@ -832,7 +828,7 @@ class DetectorInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.detector_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -856,6 +852,10 @@ class DetectorInspectionController extends Controller
                 $forklift_details = $this->detector->selectOne($id);
                 $inspection = $this->detector_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, DETECTOR_INSPECTION);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, DETECTOR_INSPECTION);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, DETECTOR_INSPECTION);
+
 
                 $data = [
                     'status_log' => $status_log,
@@ -863,6 +863,9 @@ class DetectorInspectionController extends Controller
                     'document_no' => $document_no,
                     'pagetitle' => "Detector Inspection",
                     'inspection' => $inspection,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 
@@ -883,7 +886,7 @@ class DetectorInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Detector Inspection.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

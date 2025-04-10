@@ -15,6 +15,7 @@ class FirstAidBagChecklist extends Model
         'id',
         'inspection_date',
         'location',
+        'shift_id',
         'unit',
         'frequency',
         'next_due',
@@ -35,9 +36,10 @@ class FirstAidBagChecklist extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id')
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
             ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_first_aid_bag_inspection.shift_id', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_frequency_option', 'inspection_ohc_first_aid_bag_inspection.frequency', '=', 'inspection_frequency_option.id');
 
         $org_total =  $query;
@@ -52,6 +54,7 @@ class FirstAidBagChecklist extends Model
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -75,6 +78,9 @@ class FirstAidBagChecklist extends Model
         }
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
 
 
@@ -127,6 +133,7 @@ class FirstAidBagChecklist extends Model
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
+            'shift' => decryptId($request->shift_id),
         ];
         return  $this->create($data);
     }
@@ -140,9 +147,10 @@ class FirstAidBagChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters.location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
             ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_first_aid_bag_inspection.shift_id', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_frequency_option', 'inspection_ohc_first_aid_bag_inspection.frequency', '=', 'inspection_frequency_option.id');
 
 
@@ -154,6 +162,7 @@ class FirstAidBagChecklist extends Model
                     ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');;
             });
         }
@@ -177,11 +186,13 @@ class FirstAidBagChecklist extends Model
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
-
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_ohc_first_aid_bag_inspection.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_first_aid_bag_inspection.id', 'DESC');
 
         return  $query->get();
     }

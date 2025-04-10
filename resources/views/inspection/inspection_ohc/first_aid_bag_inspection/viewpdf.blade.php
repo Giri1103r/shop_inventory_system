@@ -179,6 +179,13 @@
             </td>
         </tr>
         <tr>
+            <td width="50%" style="padding:5px;"><b>Shift</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShiftname(isset($inspection_detail->shift_id) ? $inspection_detail->shift_id : '') }}
+            </td>
+        </tr>
+        <tr>
             <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">

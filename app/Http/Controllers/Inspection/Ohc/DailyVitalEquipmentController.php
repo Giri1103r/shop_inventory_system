@@ -43,8 +43,8 @@ class DailyVitalEquipmentController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -57,7 +57,7 @@ class DailyVitalEquipmentController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action' ,'created_date', 'created_by', 'issue_date'])
+                        ->rawColumns(['action' ,'created_date', 'created_by', 'date_of_inspection'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -197,6 +197,8 @@ class DailyVitalEquipmentController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
             $data = array(
@@ -222,9 +224,8 @@ class DailyVitalEquipmentController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Vital Equipment.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));

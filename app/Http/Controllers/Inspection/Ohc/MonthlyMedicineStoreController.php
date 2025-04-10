@@ -279,21 +279,16 @@ class MonthlyMedicineStoreController extends Controller
     {
         try {
             $allData = $this->medicine_checklist->exportdata();
+            
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due',
-                'Inspection Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+           
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Monthly Medicine Store Inspection",
             );

@@ -252,7 +252,6 @@
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
                 <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
             </tr>
             <tr>
@@ -278,7 +277,8 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;"> {{ $details->sr_no }}</td>
 
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $details->fire_point_no }}</td>
+                        {{ $details->fire_point_no }}
+                    </td>
 
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ GetDeptName($details->department) }}</td>

@@ -260,19 +260,11 @@ class MonthlyPhysicalInspectionController extends Controller
             $allData = $this->safety_equipment->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                'Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Fire Equipment Monthly Physical Inspection Details",
             );
@@ -297,6 +289,7 @@ class MonthlyPhysicalInspectionController extends Controller
             $filename = "Fire Equipment Monthly Physical Inspection Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));

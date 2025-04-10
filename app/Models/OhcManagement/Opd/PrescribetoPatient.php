@@ -214,7 +214,23 @@ class PrescribetoPatient extends Model
     public function updates($id)
     {
         $request = request();
+        $destinationPath = 'uploads/ohc_management/opd/prescribe_to_patient';
 
+        if (!File::exists(public_path($destinationPath))) {
+            File::makeDirectory(public_path($destinationPath), 0777, true, true);
+        }
+
+        $ohc_file_path = null;
+
+        if ($request->hasFile('file')) {
+
+            $ohc_file = $request->file('file');
+
+            $ohc_file_name = time() . '_' . $ohc_file->getClientOriginalName();
+            $ohc_file->move(public_path($destinationPath), $ohc_file_name);
+
+            $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
+        }
         if ($request->has('is_outside_worker') == 1) {
             $employeeId =  $request->outside_emp_id;
         } else {
@@ -264,6 +280,7 @@ class PrescribetoPatient extends Model
             'closed_description' => $request->close_description,
             'suggested_details' => $request->details,
             'created_by' => Auth::id(),
+            'file_upload' => $ohc_file_path,
             'dob' => DBdateformat($request->dob),
             'updated_by' => Auth::id()
         );

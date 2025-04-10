@@ -159,10 +159,12 @@ class SandBucketInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_sand_bucket.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_sand_bucket.*', 'inspection_shift_option.*', 'inspection_fire_sand_bucket_details.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_static_docno.*', 'inspection_fire_sand_bucket.id as fire_id', 'inspection_fire_sand_bucket.created_by as checked_by', 'inspection_fire_sand_bucket.updated_by as verified_by')
             ->leftJoin('masters_location', 'inspection_fire_sand_bucket.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_sand_bucket.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_sand_bucket.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_sand_bucket.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_fire_sand_bucket_details', 'inspection_fire_sand_bucket.id', '=', 'inspection_fire_sand_bucket_details.inspection_id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_sand_bucket.frequency', '=', 'inspection_frequency_option.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -197,9 +199,14 @@ class SandBucketInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_sand_bucket.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_sand_bucket.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data->groupBy('fire_id');
+        } else {
+            return $data;
+        }
     }
 
 

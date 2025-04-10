@@ -22,6 +22,7 @@ use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\Fire\IsolationValve;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Fire\IsolationValveDetails;
 use App\Models\Inspection\InspectionStaticDocno;
 
@@ -39,6 +40,7 @@ class IsolationValveController extends Controller
     private $statusLog;
     private $checklist_follow;
     private $document_reference;
+    private $valve_type;
 
     public function __construct()
     {
@@ -54,6 +56,7 @@ class IsolationValveController extends Controller
         $this->statusLog = new FireStatusLog();
         $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
+        $this->valve_type = new IsolatingValveType();
     }
 
     public function Index(Request $request)
@@ -178,6 +181,7 @@ class IsolationValveController extends Controller
             $shifts = $this->shift->getShiftname();
             $department = $this->department->getdepartment();
             $document_no = $this->document_reference->selectUsingName('IsolatingValveInspection');
+            $types = $this->valve_type->getTypes();
 
             $data = array(
                 'locations' => $location,
@@ -186,6 +190,7 @@ class IsolationValveController extends Controller
                 'shifts' => $shifts,
                 'department' => $department,
                 'document_no' => $document_no,
+                'types' => $types,
             );
 
             return view('inspection.fire.isolation_valve.add', $data);
@@ -787,6 +792,7 @@ class IsolationValveController extends Controller
         try {
 
             $allData = $this->isolation_valve->exportdata();
+            $inspection_type = ISOLATION_VALVE_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -802,6 +808,7 @@ class IsolationValveController extends Controller
 
             $data = array(
                 'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Isolation Valve Inspection",
             );
@@ -818,7 +825,7 @@ class IsolationValveController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.isolation_valve.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -826,6 +833,7 @@ class IsolationValveController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
@@ -838,17 +846,27 @@ class IsolationValveController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
+                $inspection_type = ISOLATION_VALVE_INSPECTION;
                 $status_log = $this->statusLog->selectOne($id,ISOLATION_VALVE_INSPECTION);
                 $forklift_details = $this->isolation_valve->selectOne($id);
                 $inspection = $this->isolation_valve_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Isolation Valve Inspection",
                     'inspection' => $inspection,
+                    'inspection_type' => $inspection_type,
                     'document_no' => $document_no,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
+                    
                 ];
             }
 
@@ -869,7 +887,7 @@ class IsolationValveController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Isolation Valve Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

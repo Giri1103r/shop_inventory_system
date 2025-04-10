@@ -271,20 +271,23 @@
                         text: '{{ __('common.pdf') }}',
                         action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    doc_no = $('#document_number').val();
-                                    issue_date = $('#issue_date').val();
+                                    first_aid_box_no = $('#first_aid_box_no').val();
+                                    shift = $('#shift').val();
                                     loc = $('#location_id').val();
                                     unit = $('#unit_id').val();
+                                    first_aider = $('#first_aider').val();
 
+                                    
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
-                                        '&issue_date=' + issue_date +
+                                       '&first_aid_box_no=' + first_aid_box_no +
+                                        '&shift=' + shift +
                                         '&location_id=' + loc +
-                                        '&unit_id=' + unit 
+                                        '&unit_id=' + unit +
+                                        '&first_aider' + first_aider
 
                                 }
                             },

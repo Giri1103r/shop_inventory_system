@@ -5,7 +5,7 @@ namespace App\Models\Inspection\Ohc;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Master\Employee;
 use App\Models\User;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
@@ -159,7 +159,7 @@ class MedicineRequistionSlipfdodetails extends Model
             'department' => decryptId($request->department_id),
             'document_reference_id' => decryptId($request->document_reference_id),
             'unit' => decryptId($request->unit_id),
-            'date' => !empty($request->date) ? DBdateformat($request->date) : null,
+            'date' => Carbon::now(),
             'next_due' => !empty($request->next_due_on) ? DBdateformat($request->next_due_on) : null,
             'first_aid_box_no' => $request->first_aid_box_no,
             'first_aider' => $request->first_aider,
@@ -175,6 +175,11 @@ class MedicineRequistionSlipfdodetails extends Model
     {
         return $this->where('id', $id)->first();
     }
+
+    public function ExcelSelectone($id)
+    {
+        return $this->where('id', $id)->get();
+    }
     public function safetyofficerapprovalupdate($id, $nextStatus)
     {
         return $this->where('id', $id)->update(['approved_by' => Auth::id(), 'approve_status' => $nextStatus]);
@@ -184,22 +189,7 @@ class MedicineRequistionSlipfdodetails extends Model
         $search = '';
         $request = Request();
         $query = $this->select(
-            'inspection_ohc_medicine_requisition_slip_fdo_details.*',
-            'inspection_static_docno.*',
-            'masters_unit.*',
-            'masters_department.*',
-            'inspection_ohc_medicine_requisition_slip_fdo_details.id as inspection_id',
-            'inspection_ohc_medicine_requisition_slip_fdo_details.created_by as inspection_created_by',
-            'inspection_ohc_medicine_requisition_slip_fdo_details.created_at as inspection_created_at',
-        )
-            ->leftJoin('masters_unit', 'inspection_ohc_medicine_requisition_slip_fdo_details.unit', '=', 'masters_unit.id')
-            ->leftJoin('masters_department', 'inspection_ohc_medicine_requisition_slip_fdo_details.department', '=', 'masters_department.id')
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_medicine_requisition_slip_fdo_details.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+            'inspection_ohc_medicine_requisition_slip_fdo_details.*') ;
 
 
         $user = Auth::user();
@@ -233,35 +223,8 @@ class MedicineRequistionSlipfdodetails extends Model
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.approve_status',  decryptId($request->status));
         }
 
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "rev_date":
-                    $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.revision_date', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.doc_no', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC');
-                    break;
-            }
-        }
+        return $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC')->get();
 
 
-        return $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC')->get(); // Add `get()` here
     }
 }

@@ -174,6 +174,7 @@ class GembaWalkController extends Controller
                 'document_no' => 'required',
                 'document_upload_date' => 'required',
                 'document_revision_date' => 'required',
+                'observation_needed' => 'required',
                 'gemba_walk.*.location_id' => 'required',
                 'gemba_walk.*.unit_id' => 'required',
                 'gemba_walk.*.date_of_observation' => 'required',
@@ -185,13 +186,13 @@ class GembaWalkController extends Controller
                 'gemba_walk.*.responsibility_id' => 'nullable',
                 'gemba_walk.*.current_status' => 'nullable|string',
                 'gemba_walk.*.checklist_remark' => 'nullable|string',
-                'gemba_walk.*.checklist_observation.*' => 'nullable|string',
             ];
 
             $messages = [
                 'document_no.required' => 'Document number is required.',
                 'document_upload_date.required' => 'Please provide the document upload date.',
                 'document_revision_date.required' => 'Please provide the document revision date.',
+                'observation_needed.required' => 'Please provide the observation.',
                 'gemba_walk.*.location_id.required' => 'Location ID is required.',
                 'gemba_walk.*.unit_id.required' => 'Unit ID is required.',
                 'gemba_walk.*.date_of_observation.required' => 'Date of observation is required.',
@@ -203,7 +204,6 @@ class GembaWalkController extends Controller
                 'gemba_walk.*.checklist_capa.string' => 'Checklist CAPA must be a valid text.',
                 'gemba_walk.*.date_of_compliance.date_format' => 'Date of compliance must be in the format dd-mm-yyyy.',
                 'gemba_walk.*.checklist_remark.string' => 'Checklist remark must be a valid text.',
-                'gemba_walk.*.checklist_observation.*.string' => 'Checklist observation must be a valid text.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -213,6 +213,7 @@ class GembaWalkController extends Controller
             }
 
             $gembaWalk = $this->gembaWalk->store();
+            $inspection_type = GEMBA_WALK;
 
             $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignature($gembaWalk->id);
             $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
@@ -276,7 +277,11 @@ class GembaWalkController extends Controller
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
         }
-        return redirect(admin_url('inspection/gemba-walk/list'));
+        if ($gembaWalk->observation_needed == 1) {
+            return redirect(admin_url('fire/checklist-observation/add/'.encryptId($inspection_type).'/'.encryptId($id)));
+        } else {
+            return redirect(admin_url('inspection/gemba-walk/list'));
+        }
     }
 
     public function view($id)
@@ -311,6 +316,7 @@ class GembaWalkController extends Controller
 
                 );
             }
+            // dd($data);
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -925,20 +931,13 @@ class GembaWalkController extends Controller
             $allData = $this->gembaWalk->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Date',
-                'Shift',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+           
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Gemba Walk Details",
             );

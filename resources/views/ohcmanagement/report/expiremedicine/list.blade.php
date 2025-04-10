@@ -264,10 +264,10 @@
                 <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Select the Unit:') }}</label>
                 <input type="text" id="unit" class="swal2-input" value="${unit_id}" readonly placeholder="Enter the unit" style="width: 80%; display: block;">
 
-                <label style="display: block; font-weight: bold; margin-top: 5px;">{{ __('Available Balance:') }}</label>
+                <label style="display: block; font-weight: bold; margin-top: 10px;">{{ __('Available Balance:') }}</label>
                 <input type="text" id="available_balance" class="swal2-input" value="${balance}" readonly placeholder="Balance" style="width: 80%; display: block;">
 
-                <label style="display: block; font-weight: bold; margin-top: 5px;">{{ __('Enter Quantity:') }}</label>
+                <label style="display: block; font-weight: bold; margin-top: 10px;">{{ __('Enter Quantity:') }}</label>
                 <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%; display: block;" required>
 
                 <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>

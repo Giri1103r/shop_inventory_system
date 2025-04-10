@@ -263,7 +263,9 @@
                                 <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td>
                                 <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
-                                <td>
+                                <td>{{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}</td>
+
+                                {{-- <td>
                                     @if (!empty($gembaWalk->observation))
                                         @php $observations = json_decode($gembaWalk->observation, true); @endphp
                                         @if (is_array($observations))
@@ -276,7 +278,7 @@
                                     @else
                                         N/A
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>

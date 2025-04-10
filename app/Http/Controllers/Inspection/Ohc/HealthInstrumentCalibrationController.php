@@ -217,19 +217,11 @@ class HealthInstrumentCalibrationController extends Controller
             $allData = $this->health_instrument_calibration->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Health Instrumen ID',
-                'Unit',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Health Instrument Calibration Details",
             );
@@ -253,6 +245,7 @@ class HealthInstrumentCalibrationController extends Controller
             $filename = "Heakth Instrument Calibration.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));

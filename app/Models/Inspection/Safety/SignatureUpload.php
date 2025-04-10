@@ -72,6 +72,7 @@ class SignatureUpload extends Model
                 $this->create($insert_array);
             }
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }

@@ -188,7 +188,6 @@ class WeeklyFirstAidBoxController extends Controller
                 'document_no' => $document_no,
 
             );
-            // dd($data);
 
             return view('inspection.inspection_ohc.weekly_first_aid.view', $data);
         } catch (Exception $ex) {
@@ -299,24 +298,13 @@ class WeeklyFirstAidBoxController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->weekly_first_aid->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'First Aid Box No',
-                'Shift',
-                'Location',
-                'Unit',
-                'First Aider Name',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "First Aid Name",
             );
@@ -343,7 +331,7 @@ class WeeklyFirstAidBoxController extends Controller
             $filename = "Weekly First Aid.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
+        dd($ex);
             report($ex);
         }
     }

@@ -256,20 +256,15 @@ class FloorStretcherController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Unit',
-                'Frequency',
-                'Shift',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            if(count($allData) > 20){
+                return redirect()->back()->with('error', "__('inspection.excess_error')");
+            }
+
+
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Floor Stretcher Inspection",
+                'pagetitle' => "__('title.floor_stretcher)",
             );
 
             $property = [
@@ -292,6 +287,7 @@ class FloorStretcherController extends Controller
             $filename = "Floor-Stretcher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -330,7 +326,7 @@ class FloorStretcherController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Floor Stretcher Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

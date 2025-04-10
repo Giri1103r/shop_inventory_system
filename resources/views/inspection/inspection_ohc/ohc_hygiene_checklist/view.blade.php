@@ -97,6 +97,12 @@
                                             </th>
                                             <th rowspan="2"
                                                 style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                                                Cleaner Signature</th>
+                                            <th rowspan="2"
+                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
+                                                Nursing Signature</th>
+                                            <th rowspan="2"
+                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                                                 Remarks</th>
                                             @isset($nursing_signature)
                                                 <th rowspan="2"
@@ -135,6 +141,21 @@
                                                 @endif
 
                                             </td>
+
+                                            <td style="border: 1px solid black; text-align: center; padding: 12px;"
+                                                class="form-input">
+                                                <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
+                                                    style="width:100px; height:100px;">
+                                            </td>
+                                            <td style="border: 1px solid black; text-align: center; padding: 12px;"
+                                                class="form-input">
+                                                @if ($nursing_signature)
+                                                    <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
+                                                        style="width:100px; height:100px;">
+                                                @else
+                                                <p>Inspection has not been Verified Yet</p>
+                                                @endif
+                                            </td>
                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"
                                                 class="form-input">
                                                 {{ $inspection_details->cleaner_remarks }}
@@ -149,26 +170,6 @@
                                     </tbody>
                                 </table>
 
-                            </div>
-                            <div class="container d-flex justify-content-between">
-                                <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('Cleaner Signature') }}</label>
-                                    <div class="view_data">
-                                        <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                            style="width:100px; height:100px;">
-                                    </div>
-                                </div>
-                                @isset($nursing_signature)
-                                    <div class="container ">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Nursing Officer') }}</label>
-                                            <div class="view_data">
-                                                <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                                    style="width:100px; height:100px;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endisset
                             </div>
                         </div>
                     </div>

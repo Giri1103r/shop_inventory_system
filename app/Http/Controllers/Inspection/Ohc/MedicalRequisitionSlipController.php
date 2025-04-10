@@ -25,6 +25,7 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 
 class MedicalRequisitionSlipController extends Controller
 {
@@ -40,12 +41,14 @@ class MedicalRequisitionSlipController extends Controller
     private $signature;
     private $inventory;
     private $document_reference;
+    private $freeze_medicine;
 
     private $location;
     public function __construct()
     {
 
         $this->upload_log = new UploadLog();
+        $this->freeze_medicine = new FirstAidEquipment();
         $this->unit = new Unit();
         $this->department = new Department();
         $this->shift = new Shift();
@@ -128,7 +131,7 @@ class MedicalRequisitionSlipController extends Controller
 
                             return   $btn;
                         })
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date','unit','department'])
+                        ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date', 'unit', 'department'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -147,7 +150,7 @@ class MedicalRequisitionSlipController extends Controller
 
 
         );
-        return view('inspection.inspection_ohc.medical_requisition_slip.list',$data);
+        return view('inspection.inspection_ohc.medical_requisition_slip.list', $data);
     }
 
     public function Add(Request $request)
@@ -155,7 +158,7 @@ class MedicalRequisitionSlipController extends Controller
         try {
             $unit = $this->unit->getunit();
             $shift = $this->shift->getShiftname();
-            $medicine = $this->inventory->getstockdata();
+            $medicine = $this->freeze_medicine->getFirstAidData();
             $signature_upload = $this->user->getSignature();
             $location = $this->location->getLocationname();
             $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
@@ -171,6 +174,13 @@ class MedicalRequisitionSlipController extends Controller
         } catch (Exception $ex) {
             dd($ex);
         }
+    }
+
+    public function freezeQuantity(Request $request)
+    {
+        $medicineId = getMedicinename($request->medicineId);
+        $response = $this->freeze_medicine->where('medicine_id', $medicineId)->where('status', 1)->first();
+        return response()->json($response);
     }
 
     public function store(Request $request)

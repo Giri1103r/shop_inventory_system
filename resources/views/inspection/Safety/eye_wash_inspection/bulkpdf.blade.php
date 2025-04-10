@@ -266,9 +266,9 @@
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
                 </tr>
                 @php
-                    $approved_by = GetSafetySignature($details->id, $details->approved_by, EYE_WASH_INSPECTION);
-                    $verified_by = GetSafetySignature($details->id, $details->verified_by, EYE_WASH_INSPECTION);
-                    $checked_by = GetSafetySignature($details->id, $details->verified_by, EYE_WASH_INSPECTION);
+                    $approved_by = GetSafetySignature($details->approved_by, $details->id, EYE_WASH_INSPECTION);
+                    $verified_by = GetSafetySignature($details->verified_by, $details->id, EYE_WASH_INSPECTION);
+                    $checked_by = GetSafetySignature($details->checked_by, $details->id, EYE_WASH_INSPECTION);
                 @endphp
                 <tr>
                     <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">

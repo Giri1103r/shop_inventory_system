@@ -38,6 +38,7 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
+
         $query = $this->select('ohc_first_aid_record_details.*');
 
         $org_total =  $query;
@@ -85,7 +86,7 @@ class FirstAidRecordDetails extends Model
 
         $insert_array = array(
             'document_reference_id' => decryptId($request->document_reference_id),
-            'month' =>$request->month,
+            'month' => $request->month,
             'year' => $request->year,
             'created_by' => Auth::id(),
             'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid,
@@ -102,16 +103,16 @@ class FirstAidRecordDetails extends Model
     public function UniqueCheck($month, $year)
     {
         return $this->where('month', $month)
-                    ->where('year', $year)
-                    ->get();
+            ->where('year', $year)
+            ->get();
     }
 
     public function ExistuniqueCheck($month, $year, $id)
     {
         return $this->where('month', $month)
-                    ->where('year', $year)
-                    ->where('id', '!=', $id)
-                    ->get();
+            ->where('year', $year)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function statuschange($id)
@@ -135,7 +136,21 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_first_aid_record_details.*');
+
+        $query = $this->select(
+            'ohc_first_aid_record_details.*',
+            'ohc_first_aid_record_checklist.*',
+            'masters_department.*',
+            'masters_unit.*',
+            'ohc_first_aid_record_details.created_by as checked_by',
+            'ohc_first_aid_record_details.id as first_aid_record_id'
+        )
+            ->leftJoin('ohc_first_aid_record_checklist', 'ohc_first_aid_record_details.id', '=', 'ohc_first_aid_record_checklist.ohc_first_aid_record_details_id')
+            ->leftJoin('masters_department', 'ohc_first_aid_record_checklist.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'ohc_first_aid_record_checklist.unit', '=', 'masters_unit.id')
+            ->where('ohc_first_aid_record_details.trash', 'NO');
+
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -150,14 +165,18 @@ class FirstAidRecordDetails extends Model
         if ($request->has('year') && $request->year) {
             $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ohc_first_aid_record_details.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data = $data->groupBy('ohc_first_aid_record_details_id');
+        }else{
+            return $data;
+        }
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
-    }
-
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
+    // }
 }

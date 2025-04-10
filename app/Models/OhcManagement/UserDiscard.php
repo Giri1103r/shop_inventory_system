@@ -16,7 +16,7 @@ class UserDiscard extends Model
         'batch_no',
         'quantity',
         'expire_medicine',
-        'discard_date',
+        'expire_date',
         'approved_by',
         'approve_status',
         'unit_id',
@@ -84,7 +84,7 @@ class UserDiscard extends Model
         $insert_array = [
             'medicine_id' => $expire_medicine->medicine_id,
             'quantity' => $request->quantity,
-            'discard_date' =>  $today,
+            'expire_date' =>  $today,
             'unit_id' =>  Auth::user()->unit_id,
             'expire_medicine_id' => $expire_medicine->id,
             'expire_id' => $id,
