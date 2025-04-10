@@ -1427,6 +1427,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/list', [MedicalRequisitionSlipController::class, 'Index']);
                     Route::POST('/list', [MedicalRequisitionSlipController::class, 'Index']);
                     Route::GET('/add', [MedicalRequisitionSlipController::class, 'Add']);
+                    Route::GET('/freeze-medicine-quantity', [MedicalRequisitionSlipController::class, 'freezeQuantity']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);
@@ -1447,6 +1448,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/add/submit', [MedicalRequisitionSlipSecurityGateController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipSecurityGateController::class, 'UniqueCheck']);
                     Route::GET('/generalpdf/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'generalExcel']);
                     Route::GET('/approval/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'approval']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipSecurityGateController::class, 'View']);
                     Route::POST('/status', [MedicalRequisitionSlipSecurityGateController::class, 'StatusChange']);

@@ -70,7 +70,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
-                                            {{ getUnitname(isset($dailyFire->shift_id) ? $dailyFire->shift_id : '') }}
+                                            {{ getUnitname(isset($dailyFire->unit_id) ? $dailyFire->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -133,7 +133,7 @@
                                         </tbody>
                                     </table>
                                     <div class="mt-3 col-md-4 form-input">
-                                        <label class="form-label">signature</label>
+                                        <label class="form-label">Signature</label>
                                         <div>
                                             <a href="{{ asset($dailyFire->file_path) }}" target="_blank">
                                                 <img src="{{ asset($dailyFire->file_path) }}" alt="Signature"

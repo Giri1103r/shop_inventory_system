@@ -48,7 +48,6 @@ class EmployeecumPatientController extends Controller
         $this->uploadlog = new UploadLog();
         $this->employee = new Employee();
         $this->work = new Work();
-
     }
 
 
@@ -87,15 +86,15 @@ class EmployeecumPatientController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('ohc/employee-cum-patient/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/employee-cum-patient/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ohc/employee-cum-patient/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/employee-cum-patient/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status','dob'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'dob'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -154,19 +153,19 @@ class EmployeecumPatientController extends Controller
 
             try {
 
-               $this->employeecumpatient->store();
+                $this->employeecumpatient->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-              report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
-          report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
@@ -195,12 +194,12 @@ class EmployeecumPatientController extends Controller
             $id = decryptId($request->id);
 
             $employeeType = DB::table('ohc_master_employee_cum_patient_employee_type')->select('employee_type_name', 'id')->where('trash', 'No')->where('status', 1)->get();
-            $employeeList=$this->employee->getEmployeefulldata();
+            $employeeList = $this->employee->getEmployeefulldata();
             $employeecumpatient = $this->employeecumpatient->find($id);
             $data = array(
                 'employeecumpatient' => $employeecumpatient,
                 'employeeType' => $employeeType,
-                'employeeList'=>$employeeList
+                'employeeList' => $employeeList
             );
 
 
@@ -280,7 +279,7 @@ class EmployeecumPatientController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = $this->employeecumpatient->empuniqueCheck( $emp_name);
+                $isUnique = $this->employeecumpatient->empuniqueCheck($emp_name);
             } else {
                 $id = decryptId($id);
                 $isUnique = $this->employeecumpatient->empexistUniqueCheck($emp_name, $id);
@@ -462,7 +461,7 @@ class EmployeecumPatientController extends Controller
             $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_id,
-                    'text' => $employee->emp_id ,
+                    'text' => $employee->emp_id,
                 ];
             })
         );
@@ -472,21 +471,24 @@ class EmployeecumPatientController extends Controller
     {
         $emp_id = $request->input('empId');
 
-        $employee = Employee::select('emp_name','mobile_no')
+        $employee = Employee::select('emp_name', 'mobile_no', 'company')
             ->where('emp_id', $emp_id)
             ->first();
 
         if (!$employee) {
-            $employee = Work::select('emp_name','mobile_no')
+            $employee = Work::select('emp_name', 'mobile_no', 'company')
                 ->where('emp_id', $emp_id)
                 ->first();
         }
-
         if ($employee) {
+            
+            $company = Company::where('id', $employee->company)
+                ->where('status', 1)
+                ->first();
+
             return response()->json([
                 'employee' => $employee,
-
-
+                'company' => $company,
             ]);
         } else {
             return response()->json([

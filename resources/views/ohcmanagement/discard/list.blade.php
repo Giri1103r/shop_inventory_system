@@ -229,8 +229,8 @@
                     name: 'quantity'
                 },
                 {
-                    data: 'discard_date',
-                    name: 'discard_date'
+                    data: 'expire_date',
+                    name: 'expire_date'
                 },
 
                 {

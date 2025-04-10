@@ -51,11 +51,12 @@ class CartridgeTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_cartridge_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_cartridge_type_fire_extinguisher.id as fire_co_type_id')
+        $query = $this->select('inspection_cartridge_type_fire_extinguisher.*', 'inspection_shift_option.*', 'inspection_static_docno.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_cartridge_type_fire_extinguisher.id as fire_co_type_id')
             ->leftJoin('masters_location', 'inspection_cartridge_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_cartridge_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_cartridge_type_fire_extinguisher.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_cartridge_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_cartridge_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_cartridge_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -162,11 +163,14 @@ class CartridgeTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_cartridge_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_cartridge_type_fire_extinguisher.*','inspection_cartridge_type_fire_extinguisher_details.*', 'inspection_shift_option.*', 'inspection_static_docno.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*',
+        'inspection_cartridge_type_fire_extinguisher.created_by as checked_by','inspection_cartridge_type_fire_extinguisher.id as fire_id')
             ->leftJoin('masters_location', 'inspection_cartridge_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_cartridge_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_cartridge_type_fire_extinguisher.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_cartridge_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_cartridge_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_cartridge_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_cartridge_type_fire_extinguisher_details', 'inspection_cartridge_type_fire_extinguisher.id', '=', 'inspection_cartridge_type_fire_extinguisher_details.inspection_id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -200,6 +204,8 @@ class CartridgeTypeFireExtinguisher extends Model
             $query = $query->where('inspection_cartridge_type_fire_extinguisher.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
         $query->orderBy('inspection_cartridge_type_fire_extinguisher.id', 'DESC');
+
+        return $query->get()->groupBy('inspection_id');
 
         return  $query->get();
     }

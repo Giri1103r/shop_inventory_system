@@ -200,78 +200,125 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; border: 2px solid black; font-family: Arial, sans-serif;">
+    <br>
+    <table style="width:100%; border-collapse: collapse; font-family: Calibri; font-size: 11pt;" border="1">
         <tr>
-            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
-                title="DATE OF INSPECTION">DATE OF INSPECTION :- {{DisplayDateformat($forklift_details->date_of_inspection)}}</td>
-            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;"
+                title="DATE OF INSPECTION">DATE OF INSPECTION :-
+                {{ DisplayDateformat($forklift_details->date_of_inspection) }}</td>
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
                 LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
-            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="SHIFT">SHIFT :-  {{ getShiftName($forklift_details->shift) }}
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="SHIFT">SHIFT :-
+                {{ getShiftName($forklift_details->shift) }}
             </td>
         </tr>
         <tr>
-            <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="NEXT DUE ON">
-                NEXT DUE ON :- {{DisplayDateformat($forklift_details->next_due)}}</td>
-            <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT :- {{ getUnitname($forklift_details->unit) }}
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="NEXT DUE ON">
+                NEXT DUE ON :- {{ DisplayDateformat($forklift_details->next_due) }}</td>
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT
+                :- {{ getUnitname($forklift_details->unit) }}
             </td>
-            <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
+            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
                 FREQUENCY :- {{ getUnitname($forklift_details->frequency) }}</td>
         </tr>
 
         <tr>
-            <td colspan="10"
-                style="border: 2px solid black; padding: 8px; font-weight: bold; background-color: #f9f9f9; text-align: center;"
-                title="Check Items">CHECK ITEMS</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">SR NO.</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">LOCATION</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">HOSE BOX NO.</td>
+            <td colspan="5" style="text-align: center; font-weight: bold;">CHECK ITEMS</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">APPROACH</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">REMARK</td>
+        </tr>
+        <tr>
+            <td style="text-align: center; font-weight: bold;">TYPE OF HOSE</td>
+            <td style="text-align: center; font-weight: bold;">QUANTITY</td>
+            <td style="text-align: center; font-weight: bold;">BRANCH QUANTITY</td>
+            <td style="text-align: center; font-weight: bold;">HOSE BOX KEY</td>
+            <td>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; border: none;">HOSE</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold; border: none;">CONDITION</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
 
-        <!-- Header Row -->
-        <tr style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
-            <td style="border: 2px solid black; padding: 8px;" title="Serial Number">SR NO.</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Location">LOCATION</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">HOSE BOX NO.</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">TYPE OF HOSE</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Quantity">QUANTITY</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Branch">BRANCH</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">HOSE BOX KEY</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Condition">CONDITION</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Approach">APPROACH</td>
-            <td style="border: 2px solid black; padding: 8px;" title="Remarks">REMARK</td>
-        </tr>
-
-        <!-- Data Loop -->
         @foreach ($inspection as $details)
             <tr>
-                <td style="border: 2px solid black; padding: 8px;" title="Serial Number">{{ $details->sr_no }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Location">
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 8px;" title="Location">
                     {{ getLocationName($details->location) }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Number">{{ $details->hose_box_no }}
+                <td style="border: 1px solid black; padding: 8px;" title="Hose Box Number">
+                    {{ $details->hose_box_no }}
                 </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Type of Hose">
+                <td style="border: 1px solid black; padding: 8px;" title="Type of Hose">
                     {{ getHoseTypeName($details->hose_types) }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Quantity">{{ $details->quantity }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Branch">{{ $details->branch_quantity }}
+                <td style="border: 1px solid black; padding: 8px;" title="Quantity">{{ $details->quantity }}</td>
+                <td style="border: 1px solid black; padding: 8px;" title="Branch">{{ $details->branch_quantity }}
                 </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Hose Box Key">
+                <td style="border: 1px solid black; padding: 8px;" title="Hose Box Key">
                     @if ($details->hose_box_key == PRESENT)
                         <p>Present</p>
                     @else
                         <p>Missing</p>
                     @endif
                 </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Condition">
+                <td style="border: 1px solid black; padding: 8px;" title="Condition">
                     @if ($details->condition == GOOD)
-                        <p>Present</p>
+                        <p>Good</p>
                     @elseif ($details->condition == FAIR)
                         <p>Fair</p>
                     @else
                         <p>Poor</p>
                     @endif
                 </td>
-                <td style="border: 2px solid black; padding: 8px;" title="Approach">{{ $details->approach }}</td>
-                <td style="border: 2px solid black; padding: 8px;" title="Remarks">{{ $details->remarks }}</td>
+                <td style="border: 1px solid black; padding: 8px;" title="Approach">{{ $details->approach }}</td>
+                <td style="border: 1px solid black; padding: 8px;" title="Remarks">{{ $details->remarks }}</td>
             </tr>
         @endforeach
+        <tr>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->created_by))
+                        <img src="{{ admin_url($checked_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Checked By:- {{ getUsername($forklift_details->created_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Checked By:- Not yet checked</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->verified_by))
+                        <img src="{{ admin_url($verified_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Verified By:- {{ getUsername($forklift_details->verified_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet verified</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($forklift_details->approved_by))
+                        <img src="{{ admin_url($approved_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Approved By:- {{ getUsername($forklift_details->approved_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Approved By:- Not yet approved</p>
+                    @endif
+                </div>
+            </td>
+        </tr>
+
     </table>
+    <br>
+
 
 
 

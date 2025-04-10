@@ -238,13 +238,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.valve_type') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->type == GATE)
-                                                                {{ __('inspection.GATE') }}
-                                                            @elseif($details->type == BALL)
-                                                                {{ __('inspection.BALL') }}
-                                                            @elseif($details->type == BUTTERFLY)
-                                                                {{ __('inspection.BUTTERFLY') }}
-                                                            @endif
+                                                            {{ getValveTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>

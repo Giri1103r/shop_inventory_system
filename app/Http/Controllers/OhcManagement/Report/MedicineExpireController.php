@@ -106,21 +106,54 @@ class MedicineExpireController extends Controller
                         })
                         ->editColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                                $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid text-dark fa-eye"></i></a>';
-                            }
                             $expireDate = Carbon::parse($row->expire_date);
                             $today = Carbon::today();
-                            if (($expireDate->lessThanOrEqualTo($today)) && $row->approve_status != OHC_DISCARD_EHS_APPROVED) {
+                            $oneMonthAhead = $today->copy()->addMonth();
 
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" data-balance="' . $row->balance .  '" data-medicine="' . $row->medicine . '" data-unit="' . $row->unit .  '" class="discard" title="discard" style="color:rgb(255, 248, 248);margin-right: 5px;">
-                                <i class="fa fa-times-circle"></i>
-                             </a>';
-                            }
-                            if($row->approve_status != OHC_DISCARD_EHS_APPROVED && checkUserRole(ROLE_EHS_HEAD)){
 
-                                $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close" title="Close" style="color: white;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
+                            if (CheckUserPermission('view')) {
+                                if ($expireDate->lessThanOrEqualTo($today)) {
+                                    $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->id)) . '" class="me-1" title="View">
+                                    <i class="fa-solid fa-eye" style="color:white;"></i>
+                                 </a>';
+                                } else if ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
+                                    $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->id)) . '" class="me-1" title="View">
+                                    <i class="fa-solid fa-eye" style="color:black;"></i>
+                                 </a>';
+                                } else {
+                                    $btn .= '<a href="' . admin_url('ohc/medicine-expire-report/view/' . encryptId($row->id)) . '" class="me-1" title="View">
+                                    <i class="fa-solid fa-eye" ></i>
+                                 </a>';
+                                }
                             }
+
+
+
+                            if ($row->approve_status != OHC_DISCARD_EHS_APPROVED) {
+                                if ($expireDate->lessThanOrEqualTo($today)) {
+
+                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" data-balance="' . $row->balance .  '" data-medicine="' . $row->medicine . '" data-unit="' . $row->unit .  '" class="discard me-1" title="Discard">
+                                                <i class="fa-solid fa-ban" style="color:white;"></i>
+                                             </a>';
+                                } 
+                            }
+
+                            if ($row->approve_status != OHC_DISCARD_EHS_APPROVED && checkUserRole(ROLE_EHS_HEAD)) {
+                                if ($expireDate->lessThanOrEqualTo($today)) {
+                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                                    <i class="fa fa-window-close" aria-hidden="true" style="color:white;"></i>
+                                 </a>';
+                                } elseif ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
+                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                                    <i class="fa fa-window-close" aria-hidden="true" style="color:back;"></i>
+                                 </a>';
+                                }else{
+                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                                    <i class="fa fa-window-close" aria-hidden="true" ></i>
+                                 </a>';
+                                }
+                            }
+
                             return $btn;
                         })
 
@@ -312,9 +345,10 @@ class MedicineExpireController extends Controller
             $remarks = $request->remarks;
             $quantity = $request->quantity;
             $unit_id = $request->unit_id;
+
             $expire_medicine = $this->expire_medicine->selectOne($id);
             $medicinediscard = $this->expire_medicine->medicinediscard($id,  $quantity,  $remarks);
-          $discard_id =  $this->discard->store($id, $remarks, $expire_medicine);
+            $discard_id =  $this->discard->store($id, $remarks, $expire_medicine);
             $this->ohc_status->medicineexpire($discard_id);
             $details = $this->expire_medicine->selectOne($id);
             // Email details
@@ -353,7 +387,7 @@ class MedicineExpireController extends Controller
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => getMedicinename($details->medicine_id)  ." " ."  Request For the Discard by " . getUsername($details->created_by),
+                    'message' => getMedicinename($details->medicine_id)  . " " . "  Request For the Discard by " . getUsername($details->created_by),
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' =>    $details->id,
                     'module' => 1,

@@ -2,6 +2,7 @@
 
 namespace App\Models\Master;
 
+use App\Models\User;
 use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -41,10 +42,8 @@ class PpeExemption extends Model
         $request = request();
         $search = '';
         $query = $this->select('ppe_ppeexemption.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->join('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
-            ->join('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+            ->leftjoin('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
+            ->leftjoin('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id');
 
         $user = Auth::user();
         $empId = $user->employee_id;
@@ -113,7 +112,7 @@ class PpeExemption extends Model
         $data_count = $query->count();
         $total_records = $data_count;
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ppe_ppeexemption.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -136,20 +135,22 @@ class PpeExemption extends Model
 
         if ($request->request_for == 1) {
 
-            $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+            $employee = User::where('employee_id', $request->emp_id)
+                ->select('unit_id', 'department_id', 'company_id')
                 ->first();
 
-            $unit = $employee->unit ?? null;
-            $department = $employee->department ;
-            $company = $employee->company ?? null;
+            $unit = $employee->unit_id;
+            $department = $employee->department_id;
+
+
+            $company = $employee->company_id ?? null;
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
                 ->select('unit', 'department', 'company')
                 ->first();
 
             $unit = $work->unit ?? null;
-            $department = $work->department ;
+            $department = $work->department;
             $company = $work->company ?? null;
         } else {
             $unit = Auth::user()->unit_id;

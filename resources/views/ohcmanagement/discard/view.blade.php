@@ -51,7 +51,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Discard Date') }}</label>
                                         <div class="view_data">
-                                            {{ Displaydateformat(isset($user_discard->discard_date) ? $user_discard->discard_date : '') }}
+                                            {{ Displaydateformat(isset($user_discard->expire_date) ? $user_discard->expire_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
