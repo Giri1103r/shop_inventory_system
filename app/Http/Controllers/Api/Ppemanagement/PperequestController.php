@@ -209,12 +209,12 @@ class PperequestController extends BaseController
                 }
                 if ($request->request_for == 1) {
 
-                    $employee = Employee::where('emp_id', $request->emp_id)
-                        ->select('unit', 'department', 'company')
+                    $employee = User::where('emp_id', $request->emp_id)
+                        ->select('unit_id', 'department_id', 'company_id')
                         ->first();
 
-                    $unit = $employee->unit;
-                    $department = $employee->department;
+                    $unit = $employee->unit_id;
+                    $department = $employee->department_id;
                 } elseif ($request->request_for == 2) {
                     $work = Work::where('emp_id', $request->emp_id)
                         ->select('unit', 'department', 'company')
