@@ -155,7 +155,7 @@ class PrescribetoPatientController extends Controller
                             if ($row->patient_status != 3 && $row->patient_status != 2) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="cancel" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
                             }
-                            if ($row->fitness_certificate != 2) {
+                            if ($row->fitness_certificate == 1) {
                                 $btn .= ' <a href="' . asset('public/' . $row->file_upload) . '" target="_blank" title="medical_certificate">
                                             <i class="fas fa-file-alt r"></i>
                                           </a> ';
