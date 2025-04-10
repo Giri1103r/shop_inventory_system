@@ -141,7 +141,13 @@
                     {{ isset($medicinefitness->emp_id) ? $medicinefitness->emp_id : '' }}
                 </td>
             </tr>
-
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Company Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getCompanyname(isset($medicinefitness->company_id) ? $medicinefitness->company_id : '' )}}
+                </td>
+            </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>

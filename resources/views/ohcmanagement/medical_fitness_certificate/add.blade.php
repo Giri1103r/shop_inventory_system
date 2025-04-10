@@ -41,6 +41,9 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
                                                     </select>
+                                                    @error('emp_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -48,6 +51,19 @@
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
                                                         class="form-control" placeholder="Employee Name" readonly>
+                                                    @error('emp_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Company</label>
+                                                    <input type="text" name="company_id" id="company_id"
+                                                        class="form-control" placeholder="Enter the Company name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -61,14 +77,18 @@
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
+
+                                                    @error('date')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Medical Fitness Certificate
                                                         Upload</label>
-                                                    <input type="file" name="file" id="file" class="form-control"
-                                                      >
+                                                    <input type="file" name="file" id="file"
+                                                        class="form-control">
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
@@ -77,6 +97,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks</label>
                                                     <textarea name="remarks" id="remarks" class="form-control " cols="30" rows="5"></textarea>
+                                                    @error('remarks')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -150,7 +173,7 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-
+                            $('#company_id').val(response.company.company_name).prop('readonly', true);
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
                         }
@@ -181,6 +204,9 @@
                     emp_name: {
                         required: true,
                     },
+                    company_id: {
+                        required: true,
+                    },
                     date: {
                         required: true,
                     },
@@ -203,6 +229,9 @@
                     },
                     date: {
                         required: "Please select the date.",
+                    },
+                    company_id: {
+                        required: "Please Enter the Company name.",
                     },
                     file: {
                         required: "File is required.",

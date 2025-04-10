@@ -178,7 +178,8 @@ class MedicalRequisitionSlipController extends Controller
 
     public function freezeQuantity(Request $request)
     {
-        $medicineId = getMedicinename($request->medicineId);
+        $medicineId = decryptId($request->medicineId);
+
         $response = $this->freeze_medicine->where('medicine_id', $medicineId)->where('status', 1)->first();
         return response()->json($response);
     }

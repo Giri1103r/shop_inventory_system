@@ -183,7 +183,7 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]"
+                                                                    <input type="number" min="1" name="quantity[0]"
                                                                         id="quantity" placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
@@ -353,50 +353,50 @@
 
 
                 var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                        </select>
-                    </div>
-                </td>
-  <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Freeze Quantity</label>
-                        <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                <tr>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="medicine_id" class="require">Medicine Name</label>
+                            <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control medicine_id single-select" style="width: 100%">
+                                <option value="">Select the Medicine Name</option>
+                                @foreach ($medicine as $list)
+                                      <option value="{{ encryptId($list->medicine_id) }}">
+                                             {{ getMedicinename($list->medicine_id) }}
+                                                   </option>
+                                        @endforeach
+                            </select>
+                        </div>
+                    </td>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Freeze Quantity</label>
+                            <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control freeze_quantity" readonly>
+                            <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Quantity</label>
+                            <input type="number" min="1" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                            <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="remarks" class="">Remarks</label>
-                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="remarks" class="">Remarks</label>
+                            <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                    </td>
+                </tr>`;
 
                 $('#medicine-tbody').append(newRow);
 
@@ -442,6 +442,36 @@
                     }
                 });
                 filterMedicineOptions();
+
+                $(document).on('change', '.medicine_id', function() {
+                    var $row = $(this).closest('tr'); // Get current row
+                    var medicineId = $(this).val();
+
+                    if (medicineId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                medicineId: medicineId
+                            },
+                            success: function(data) {
+                                if (data && data.freeze_quantity !== undefined) {
+                                    $row.find('.freeze_quantity').val(data
+                                        .freeze_quantity);
+                                } else {
+                                    $row.find('.freeze_quantity').val('');
+                                }
+                            },
+                            error: function(xhr) {
+                                alert(
+                                    'Error fetching freeze quantity. Please try again.');
+                            }
+                        });
+                    } else {
+                        $row.find('.freeze_quantity').val('');
+                    }
+                });
                 medicine_requisition_row_count++;
 
             });
