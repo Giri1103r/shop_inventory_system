@@ -161,13 +161,11 @@ class SafetyPermitController extends BaseController
                     }
                 }
 
-                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
-                $state_of_isolation = [];
-
-                $items = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
-
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true) ?? [];
                 $state_of_isolation = [];
                 $other_if_any = [];
+
+                $items = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
                 foreach ($items as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
@@ -176,21 +174,22 @@ class SafetyPermitController extends BaseController
                         'image' => asset('assets/images/safetypermit/person.png'),
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
-
-                    ];
-                    $isolationpanel = [
-                        'image' => asset('assets/images/safetypermit/person.png'),
-                        'name' => "Isolation fire panel",
-                        'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
-
-                    ];
-                    $isolationpaneldescription = [
-
-                        'name' => "Isolation fire panel Description",
-                        'checked' => $safetypermit->isolationpanel_description
-
                     ];
                 }
+
+                // These should be outside the loop, defined once
+                $isolationpanel = [
+                    'image' => asset('assets/images/safetypermit/person.png'),
+                    'name' => "Isolation fire panel",
+                    'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
+                ];
+
+                $isolationpaneldescription = [
+                    'name' => "Isolation fire panel Description",
+                    'checked' => $safetypermit->isolationpanel_description
+                ];
+
+
                 $protective_equip = [];
 
                 foreach ($safetypermit->mapped_protective_equip as $job => $details) {

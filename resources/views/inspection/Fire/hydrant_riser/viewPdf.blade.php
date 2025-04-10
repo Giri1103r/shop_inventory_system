@@ -404,10 +404,10 @@
     </div>
     <table width="100%" style="width:100%;">
         <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $forklift_details->observation }}</td>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }} :</b>
+                {{ $forklift_details->observation == '1' ? 'YES' : 'NO' }}
+            </td>
+          
         </tr>
     </table>
     <br>
