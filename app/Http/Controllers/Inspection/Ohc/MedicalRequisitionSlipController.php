@@ -786,22 +786,11 @@ class MedicalRequisitionSlipController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Unit',
-                'Department',
-                'Date',
-                'Approve Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
+                'document_no' => $document_no,
                 'content' => $allData,
                 'pagetitle' => "Medicine Requisition Slip Floor",
             );
@@ -826,7 +815,7 @@ class MedicalRequisitionSlipController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Medicine Requisition Slip Floor.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
 
             dd($ex);

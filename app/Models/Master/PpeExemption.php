@@ -42,10 +42,8 @@ class PpeExemption extends Model
         $request = request();
         $search = '';
         $query = $this->select('ppe_ppeexemption.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->join('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
-            ->join('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+            ->leftjoin('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
+            ->leftjoin('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id');
 
         $user = Auth::user();
         $empId = $user->employee_id;
@@ -114,7 +112,7 @@ class PpeExemption extends Model
         $data_count = $query->count();
         $total_records = $data_count;
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ppe_ppeexemption.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);

@@ -148,7 +148,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Medical Requisition Slip- Fdo & Security Gate
+                        MEDICAL REQUISITION SLIP
                     </td>
                 </tr>
             </table>
@@ -161,14 +161,14 @@
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
-                        <span><b>MEDICAL REQUISITION ISSUE SLIP
+                        <span><b>MEDICAL REQUISITION SLIP
                             </b></span>
                         <br>
                         <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
                     </h3>
                 </th>
 
-                <th colspan="6" style="border:1px solid black;">
+                <th colspan="8" style="border:1px solid black;">
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
@@ -177,7 +177,8 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -190,7 +191,7 @@
             </tr>
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                    colspan="4">
+                    colspan="6">
                     DEPARTMENT: {{ getDepartment($details->department) ?? 'N/A' }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
@@ -209,6 +210,8 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
                     MEDICINE
                 </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">FREEZE QUANTITY
+                </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
@@ -216,10 +219,10 @@
 
             </tr>
             @php
-                $medicineRequisitionDetails = GetOHCMedicineFDO($details->id);
+                $medicineRequisitionDetails = GetOHCMedicineFloor($details->id);
             @endphp
-                @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
-            <tr>
+            @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
+                <tr>
 
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
@@ -229,13 +232,15 @@
                         {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $medicineRequisitionDetails->freeze_quantity }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->quantity }}</td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->remarks }}</td>
 
-            </tr>
-
+                </tr>
             @endforeach
 
 
@@ -267,12 +272,12 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
                     <img src="{{ admin_url($FloorManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Floor Manager  Signature</div>
+                    <div style="margin-top: 5px;">Floor Manager Signature</div>
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
                     <img src="{{ admin_url($SafetyOfficerManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer  Signature</div>
+                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer Signature</div>
                 </th>
 
             </tr>
