@@ -916,7 +916,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk Details.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
@@ -961,7 +961,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
