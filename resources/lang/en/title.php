@@ -16,6 +16,7 @@ return [
 
 
 
+
     'msds' => 'Chemical (MSDS) Master List PN International Pvt.Ltd.',
     'rraa' => 'Occupational Health Safety ,Fire & Enviromental  Compliance  Sheet PN International Pvt Ltd',
     'daily_vital_equipment' => 'OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD',
@@ -27,5 +28,7 @@ return [
     'fire_alarm' => 'FIRE ALARM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'first_bag_inspection' => 'FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.',
     'hygiene_checklist' => 'Daily OHC Hygine & Cleaning Checklist PN International Pvt Ltd',
-    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.'
+    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
+    'hydrant_riser'=>"HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.",
+
 ];

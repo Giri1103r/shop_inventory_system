@@ -238,9 +238,10 @@
                             <th> Observation Type</th>
                             <th>Description</th>
                             <th>Hazard</th>
+                            <th>Image</th>
                             <th>capa</th>
-                            <th>date_of_compliance</th>
-                            <th>responsibility_id</th>
+                            <th>Date of Compliance</th>
+                            <th>Responsible Person</th>
                             <th>Status</th>
                             <th>remark</th>
                             <th>observation</th>
@@ -258,6 +259,13 @@
                                 <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                                 <td>{{ $gembaWalk->hazard ?? 'N/A' }}</td>
+                                <td>
+                                    @if (!empty($gembaWalk->file_path))
+                                        <img src="{{ public_path($gembaWalk->file_path) }}" style="width: 100px; height: auto;">
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
                                 <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td>
                                 <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td>
