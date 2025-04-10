@@ -2,6 +2,7 @@
 
 namespace App\Models\Master;
 
+use App\Models\User;
 use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -136,20 +137,22 @@ class PpeExemption extends Model
 
         if ($request->request_for == 1) {
 
-            $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+            $employee = User::where('employee_id', $request->emp_id)
+                ->select('unit_id', 'department_id', 'company_id')
                 ->first();
 
-            $unit = $employee->unit ?? null;
-            $department = $employee->department ;
-            $company = $employee->company ?? null;
+            $unit = $employee->unit_id;
+            $department = $employee->department_id;
+
+
+            $company = $employee->company_id ?? null;
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
                 ->select('unit', 'department', 'company')
                 ->first();
 
             $unit = $work->unit ?? null;
-            $department = $work->department ;
+            $department = $work->department;
             $company = $work->company ?? null;
         } else {
             $unit = Auth::user()->unit_id;
