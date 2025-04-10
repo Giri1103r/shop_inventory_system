@@ -2518,6 +2518,10 @@ if (!function_exists('getMonth')) {
                     return 'CTFE-000001';
                     break;
 
+                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    return 'CTFE-000001';
+                    break;
+
                 case HOSE_BOX_INSPECTION:
                     return 'HBI-000001';
                     break;
