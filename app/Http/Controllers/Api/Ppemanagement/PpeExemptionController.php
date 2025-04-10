@@ -176,7 +176,7 @@ class PpeExemptionController extends BaseController
                     $employee = User::where('employee_id', $request->emp_id)
                         ->select('unit_id', 'department_id', 'company_id')
                         ->first();
-dd($employee);
+
                     $unit = $employee->unit_id;
                     $department = $employee->department_id;
 
@@ -276,7 +276,7 @@ dd($employee);
                 return $this->sendResponse($success, 'PPE Exemption Created successfully');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
