@@ -178,20 +178,6 @@
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($daily_vital->unit) ? $daily_vital->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShift(isset($daily_vital->shift) ? $daily_vital->shift : '') }}
-            </td>
-        </tr>
-        <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -212,6 +198,18 @@
 
     <table border="1" cellspacing="0" cellpadding="8" width="100%">
         <thead>
+            <tr>
+                <td colspan="1" style="border: 1px solid black; padding: 8px; font-weight: bold;"
+                    title="DATE OF INSPECTION">DATE OF INSPECTION :-
+                    {{ DisplayDateformat($daily_vital->date_of_inspection) }}</td>
+                <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="UNIT">
+                    UNIT :- {{ getUnitname($daily_vital->unit) }}
+                </td>
+                <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
+                    SHIFT :- {{ getShiftName($daily_vital->shift) }}
+                </td>
+            </tr>
+
             <tr>
                 <th style="background-color: #ccc; text-align: center;">Sr. No</th>
                 <th style="background-color: #ccc; text-align: center;">Check Points</th>

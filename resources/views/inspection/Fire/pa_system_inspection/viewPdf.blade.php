@@ -176,48 +176,6 @@
             </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.inspection_date') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat($forklift_details->date_of_inspection) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.location') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getLocationname($forklift_details->location) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShiftName($forklift_details->shift) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.next_due') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat($forklift_details->next_due) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.unit') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname($forklift_details->unit) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.frequency') }}</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getFrequencyname($forklift_details->frequency) }}
-            </td>
-        </tr>
-        <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -244,6 +202,26 @@
     </div>
     <table style="width: 100%; border-collapse: collapse; text-align: center; border: 1px solid black;">
         <thead>
+            <tr>
+                <td colspan="3" style="border: 1px solid black; padding: 8px; font-weight: bold;"
+                    title="DATE OF INSPECTION">DATE OF INSPECTION :-
+                    {{ DisplayDateformat($forklift_details->date_of_inspection) }}</td>
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
+                    LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
+                    SHIFT :- {{ getShiftName($forklift_details->shift) }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" style="border: 1px solid black; padding: 8px; font-weight: bold;"
+                    title="NEXT DUE ON">
+                    NEXT DUE ON :- {{ DisplayDateformat($forklift_details->next_due) }}</td>
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT
+                    :- {{ getUnitname($forklift_details->unit) }}
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
+                    FREQUENCY :- {{ getFrequencyname($forklift_details->frequency) }}</td>
+            </tr>
             <tr>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>

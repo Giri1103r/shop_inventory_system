@@ -250,7 +250,7 @@ class CoTypeFireExtinguisherController extends Controller
                 'safety_pin.*' => 'required',
                 'approach.*' => 'required',
                 'remarks.*' => 'required',
-                'observation' => 'required',
+                // 'observation' => 'required',
             ];
 
             $messages = [
@@ -274,7 +274,7 @@ class CoTypeFireExtinguisherController extends Controller
                 'safety_pin.*.required' => 'Safety Pin is required.',
                 'approach.*.required' => 'Approach is required.',
                 'remarks.*.required' => 'Remarks are required.',
-                'observation.required' => 'Observation is  required.',
+                // 'observation.required' => 'Observation is  required.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -290,7 +290,7 @@ class CoTypeFireExtinguisherController extends Controller
             $inspection_details = $this->co_type_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -337,7 +337,13 @@ class CoTypeFireExtinguisherController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire-extinguisher/co2/list'));
+
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire-extinguisher/co2/list'));
+            }
+
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');

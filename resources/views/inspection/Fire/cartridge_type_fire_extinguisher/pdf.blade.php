@@ -201,7 +201,7 @@
             LOCATION: {{ getLocationName($first->location) }}
         </th>
         <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
-            SHIFT: {{ getShiftName($first->shift) }}
+            SHIFT: {{ $first->shift }}
         </th>
     </tr>
 
@@ -242,7 +242,6 @@
     </tr>
 
     @foreach ($group as $detail)
-
         <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $loop->iteration }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ $detail->fire_point_no }}</td>
@@ -250,7 +249,7 @@
 
             <td style="border: 1px solid black; padding: 6px; text-align: center;"> {{ getLocationname($detail->location) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {{ getExtinguisherTypeName($detail->type) }}
+                {{ getExtinguisherTypeName($detail->extinguisher_type) }}
             </td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->capacity }}
