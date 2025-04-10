@@ -276,7 +276,7 @@ class PpeExemptionController extends BaseController
                 return $this->sendResponse($success, 'PPE Exemption Created successfully');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
