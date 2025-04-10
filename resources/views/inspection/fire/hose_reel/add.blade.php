@@ -277,6 +277,21 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.nozzle') }}</label>
+                                                        <select name="status_of_hose[1]" id="status_of_hose"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status Of The Hose
+                                                            </option>
+                                                            <option value="{{ encryptId(OPERATIONAL) }}">
+                                                                Operational </option>
+                                                            <option value="{{ encryptId(NON_OPERATIONAL) }}">
+                                                                Non Operational </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -404,6 +419,9 @@
                         "location[1]": {
                             required: true,
                         },
+                        "status_of_hose[1]":{
+                            required: true,
+                        },
                         shift_id: {
                             required: true,
                         },
@@ -517,6 +535,9 @@
                         },
                         "flow[1]":{
                             required: "Please select the status of the test flow",
+                        },
+                        "status_of_hose[1]":{
+                            required: "Please select the status of the hose",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -695,6 +716,21 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.nozzle') }}</label>
+                                                        <select name="status_of_hose[${form_set_count}]" id="status_of_hose-${form_set_count}"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Status Of The Hose
+                                                            </option>
+                                                            <option value="{{ encryptId(OPERATIONAL) }}">
+                                                                Operational </option>
+                                                            <option value="{{ encryptId(NON_OPERATIONAL) }}">
+                                                                Non Operational </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -772,6 +808,14 @@
                         required: true,
                         messages: {
                             required: 'Please select the flow test status',
+                        }
+                    });
+
+
+                    $("select[name='status_of_hose[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please select the status of hose',
                         }
                     });
 
@@ -895,6 +939,7 @@
                     $(this).find("select[name^='nozzle']").attr('name', 'nozzle[' + idx + ']');
                     $(this).find("select[name^='hose']").attr('name', 'hose[' + idx + ']');
                     $(this).find("select[name^='flow']").attr('name', 'flow[' + idx + ']');
+                    $(this).find("select[name^='status_of_hose']").attr('name', 'status_of_hose[' + idx + ']');
                     $(this).find("textarea[name^='approach']").attr('name', 'approach[' + idx + ']');
                     $(this).find("textarea[name^='remarks']").attr('name', 'remarks[' + idx + ']');
 
