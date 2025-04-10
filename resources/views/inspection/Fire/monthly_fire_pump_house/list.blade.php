@@ -250,7 +250,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/pdf') }}" +
+                                            "{{ admin_url('fire/monthly-fire-pump-house-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&shift=' + shift +
@@ -271,7 +271,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('safety/safety-gallery-inspection/export/excel') }}" +
+                                            "{{ admin_url('fire/monthly-fire-pump-house-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&shift=' + shift +
