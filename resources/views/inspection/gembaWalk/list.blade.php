@@ -246,7 +246,7 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#gemba_walk_auto_id').val();
+                                    var gemba_walk_auto_id = $('#gemba_walk_auto_id').val();
                                     var date = $('#date').val();
                                     var inspection_status = $('#inspection_status').val();
                                     var shift = $('#shift').val();
@@ -271,7 +271,7 @@
                                 action: function(e, dt, button, config) {
 
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var doc_no = $('#gemba_walk_auto_id').val();
+                                    var gemba_walk_auto_id = $('#gemba_walk_auto_id').val();
                                     var date = $('#date').val();
                                     var inspection_status = $('#inspection_status').val();
                                     var shift = $('#shift').val();

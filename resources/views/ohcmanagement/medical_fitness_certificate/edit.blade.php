@@ -27,7 +27,7 @@
 
                             <div class="card-body">
                                 <div class="basic-form">
-                                    <form method="POST" id="MedicineRequisitionForm" enctype="multipart/form-data"
+                                    <form method="POST" id="medicalfitnessform" enctype="multipart/form-data"
                                         action="{{ admin_url('ohc/medical-fitness/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
@@ -46,6 +46,9 @@
                                                                 {{ $medicalfitness->emp_id }}</option>
                                                         @endif
                                                     </select>
+                                                    @error('emp_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -56,11 +59,26 @@
                                                         class="form-control" value="{{ $medicalfitness->emp_name }}"
                                                         placeholder="Employee Name" readonly>
                                                 </div>
+                                                @error('emp_name')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Company Name</label>
+                                                    <input type="text" name="company_id" id="company_id"
+                                                        class="form-control"
+                                                        value="{{ getCompanyname($medicalfitness->company_id) }}"
+                                                        placeholder="Enter the Company Name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
-                                                        </label>
+                                                    </label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
                                                             value="{{ displaydateformat($medicalfitness->date) }}"
@@ -69,6 +87,9 @@
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
+                                                    @error('date')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -86,7 +107,7 @@
                                                             </a>
                                                         </p>
                                                         <input type="hidden" name="existing_pre_image"
-                                                            value="{{ $medicalfitness->file }}">
+                                                            id="existing_pre_image" value="{{ $medicalfitness->file }}">
                                                     @else
                                                         <p>No file is uploaded</p>
                                                     @endif
@@ -97,6 +118,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks</label>
                                                     <textarea name="remarks" id="remarks" class="form-control " cols="30" rows="5">{{ $medicalfitness->remarks }}</textarea>
+                                                    @error('remarks')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -163,49 +187,43 @@
                 selectionCssClass: 'form-control'
             });
 
-            // Function to fetch and set Employee Name based on Employee ID
-            function fetchEmployeeName(empId) {
-                if (empId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
-                        type: 'GET',
-                        data: {
-                            empId: empId
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success && response.employee) {
-                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-                            } else {
-                                $('#emp_name').val('').prop('readonly', true);
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching employee name. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#emp_name').val('').prop('readonly', true);
-                }
-            }
 
-            // Handle Employee ID change event
-            $('#emp_id').on('change', function() {
-                var empId = $(this).val();
-                fetchEmployeeName(empId);
-            });
 
-            // Set preselected values if available
-            // var empId = '{{ $medicalfitness->emp_id ?? '' }}';
-            // var empName = '{{ $medicalfitness->emp_name ?? '' }}';
 
-            // if (empId && empName) {
-            //     var newOption = new Option(empName, empId, true, true);
-            //     $('#emp_id').append(newOption).trigger('change');
-            //     $('#emp_name').val(empName).prop('readonly', true);
-            // }
+
         });
-
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                    type: 'GET',
+                    data: {
+                        empId: empId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+                            if (response.company) {
+                                $('#company_id').val(response.company.company_name).prop('readonly',
+                                    true);
+                            } else {
+                                $('#company_id').val('').prop('readonly', true);
+                            }
+                        } else {
+                            $('#emp_name').val('').prop('readonly', true);
+                            $('#company_id').val('').prop('readonly', true);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching employee name and company name. Please try again.');
+                    }
+                });
+            } else {
+                $('#emp_name').val('').prop('readonly', true);
+            }
+        });
         $(function() {
 
             $.validator.addMethod(
@@ -219,60 +237,62 @@
             $('#medicalfitnessform').validate({
                 rules: {
                     emp_id: {
-                        required: true,
+                        required: true
                     },
                     emp_name: {
-                        required: true,
+                        required: true
                     },
-
                     date: {
-                        required: true,
+                        required: true
                     },
                     file: {
-                        required: true,
+                        required: function(element) {
+                            return $('#existing_pre_image').length === 0 || $('#existing_pre_image')
+                                .val() === "";
+                        },
                         extension: "pdf|doc|docx"
-
+                    },
+                    company_id: {
+                        required: true
                     },
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 600,
-
-                    },
-
-
+                        maxlength: 600
+                    }
                 },
                 messages: {
                     emp_id: {
-                        required: "Please select the Employee Code.",
+                        required: "Please select the Employee Code."
                     },
                     emp_name: {
-                        required: "Please select the Employee Name.",
+                        required: "Please select the Employee Name."
                     },
-
+                    company_id: {
+                        required: "Please Enter the Company name."
+                    },
                     date: {
-                        required: "Please select the date.",
+                        required: "Please select the date."
                     },
                     file: {
                         required: "File is required.",
-                        extension: "Please Select the valid mime Type."
+                        extension: "Please Select a valid file type (pdf, doc, docx)."
                     },
                     remarks: {
                         required: 'Remarks is required',
-                        minlength: 3,
-                        maxlength: 600,
-                    },
-
+                        minlength: 'Remarks must be at least 3 characters.',
+                        maxlength: 'Remarks cannot exceed 600 characters.'
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
@@ -283,6 +303,7 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
+
 
 
         });

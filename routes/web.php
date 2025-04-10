@@ -1427,6 +1427,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/list', [MedicalRequisitionSlipController::class, 'Index']);
                     Route::POST('/list', [MedicalRequisitionSlipController::class, 'Index']);
                     Route::GET('/add', [MedicalRequisitionSlipController::class, 'Add']);
+                    Route::GET('/freeze-medicine-quantity', [MedicalRequisitionSlipController::class, 'freezeQuantity']);
                     Route::POST('/add/submit', [MedicalRequisitionSlipController::class, 'Store']);
                     Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);

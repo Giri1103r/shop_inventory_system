@@ -85,6 +85,10 @@ class FirePreNocController extends Controller
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
+
+                            $btn .= '<a href="' . admin_url('fire/pre-noc/checklist/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -353,6 +357,54 @@ class FirePreNocController extends Controller
             report($ex);
             Session::flash('error', 'Permit Checklist Category failed!');
             return redirect(admin_url('inspection/checklist-type/list'));
+        }
+    }
+    public function generalpdf($id)
+    {
+        try {
+
+
+            $id = decryptId($id);
+            if (Auth::check()) {
+
+                $fireNoc =   $this->fireNoc->selectOne($id);
+                $checklist_details = getCheckListQuestion(FIRE_PRE_NOC_CHECKLIST);
+            }
+            $data = [
+                'fireNoc' => $fireNoc,
+                'pagetitle' => "Daily Fire Pump House Inspection",
+            ];
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                // 'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+                'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
+                    public_path('assets/fonts/Noto_Sans_Devanagari'),
+                ]),
+                'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+                    'NotoSansDevanagari' => [
+                        'R' => 'NotoSansDevanagari-Regular.ttf',
+                        'B' => 'NotoSansDevanagari-Bold.ttf',
+                    ],
+                ]),
+                'default_font' => 'NotoSansDevanagari',
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.fire.firePreNoc.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "Daily Fire Pump House Inspection.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 }

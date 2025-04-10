@@ -145,6 +145,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAssessmentController::class, 'statusChange']);
         Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
+        Route::get('generalpdf/{id}', [AuditAssessmentController::class, 'generalpdf']);
     });
 
     Route::group(['prefix' => '6s-analysis/'], function () {
@@ -212,6 +213,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [InterUnitAuditController::class, 'statusChange']);
         Route::post('unique', [InterUnitAuditController::class, 'Uniquecheck']);
         Route::get('employeeName', [InterUnitAuditController::class, 'employeename']);
+        Route::get('generalpdf/{id}', [InterUnitAuditController::class, 'generalpdf']);
     });
 });
 
@@ -711,6 +713,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('status', [FirePumpHouseController::class, 'statusChange']);
         Route::post('unique', [FirePumpHouseController::class, 'Uniquecheck']);
         Route::get('employeeName', [FirePumpHouseController::class, 'employeename']);
+        Route::get('generalpdf/{id}', [FirePumpHouseController::class, 'generalpdf']);
     });
 
     Route::group(['prefix' => 'pre-noc/checklist/'], function () {
@@ -730,6 +733,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('status', [FirePreNocController::class, 'statusChange']);
         Route::post('unique', [FirePreNocController::class, 'Uniquecheck']);
         Route::get('employeeName', [FirePreNocController::class, 'employeename']);
+        Route::get('generalpdf/{id}', [FirePreNocController::class, 'generalpdf']);
     });
     Route::group(['prefix' => 'pa-system-inspection'], function () {
         Route::GET('list', [PASystemInspectionController::class, 'Index']);

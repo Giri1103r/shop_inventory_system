@@ -192,7 +192,6 @@ class HydrantRiserInspectionContoller extends Controller
                 'department' => $department,
                 'document_no' => $document_no,
             );
-            // dd($data);
 
             return view('inspection.fire.hydrant_riser.add', $data);
         } catch (Exception $ex) {
@@ -248,7 +247,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'approach.*' => 'required',
                 'remarks.*' => 'required',
 
-                'observation' => 'required',
+                'observation_needed' => 'required',
                 'device_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
 
@@ -276,7 +275,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'approach.*.required' => 'Approach value is required.',
                 'remarks.*.required' => 'Remarks are required.',
 
-                'observation.required' => 'Observation is required.',
+                'observation_needed.required' => 'Observation is required.',
                 'device_image.image' => 'The uploaded file must be an image.',
                 'device_image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif, svg.',
                 'device_image.max' => 'The image size must not exceed 2 MB.',
@@ -295,7 +294,7 @@ class HydrantRiserInspectionContoller extends Controller
 
             $inspection_details = $this->hydrant_checklist->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -342,7 +341,12 @@ class HydrantRiserInspectionContoller extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/hydrant-riser-inspection/list'));
+            // return redirect(admin_url('fire/hydrant-riser-inspection/list'));
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/'.encryptId($inspection_type).'/'.encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/hydrant-riser-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -768,7 +772,6 @@ class HydrantRiserInspectionContoller extends Controller
     {
         try {
             $allData = $this->hydrant->exportdata();
-            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -821,26 +824,18 @@ class HydrantRiserInspectionContoller extends Controller
         try {
 
             $allData = $this->hydrant->exportdata();
+            $inspection_type = HYDRANT_RISER;
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due Date',
-                'Location',
-                'Shift',
-                'Unit',
-                'Frequency',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Hydrant and Riser Inspection",
+                'inspection_type' => $inspection_type,
+
             );
 
             $property = [
@@ -855,7 +850,7 @@ class HydrantRiserInspectionContoller extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.hydrant_riser.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);

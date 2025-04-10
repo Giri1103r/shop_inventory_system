@@ -431,12 +431,33 @@
                                                     <h4 class="text-white">Hydrant And Riser Observation</h4>
                                                 </div>
 
-                                                <div class="col-md-12 mb-2">
+                                                {{-- <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
                                                         <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
 
+                                                    </div>
+                                                </div> --}}
+
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+
+                                                        <!-- Radio Buttons for Observation Needed -->
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(1)}}"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(2)}}"> No
+                                                            </label>
+                                                        </div>
+
+                                                       
                                                     </div>
                                                 </div>
                                             </div>

@@ -48,7 +48,12 @@
                                         </div>
                                     </div>
 
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Company Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname(isset($medicalfitness->company_id) ? $medicalfitness->company_id : '') }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
@@ -90,7 +95,7 @@
                                             {{ displayDateformat($medicalfitness->created_at) }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-12 form-input">
+                                    <div class="mb-3 col-md-8 form-input">
                                         <label class="form-label view_label">{{ __('Remarks') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicalfitness->remarks) ? $medicalfitness->remarks : '' }}

@@ -23,6 +23,7 @@ class HoseReelHoseDetails extends Model
         'hose',
         'flow',
         'approach',
+        'status_of_hose',
         'remarks',
         'created_by',
         'updated_by',
@@ -52,7 +53,7 @@ class HoseReelHoseDetails extends Model
         $length = $request->length;
         $nozzle = $request->nozzle;
         $hose = $request->hose;
-        $condition = $request->condition;
+        $status_of_hose = $request->status_of_hose;
         $flow = $request->flow;
         $approach = $request->approach;
         $remarks = $request->remarks;
@@ -64,6 +65,7 @@ class HoseReelHoseDetails extends Model
                 'location' => decryptId($location[$index]),
                 'department' => decryptId($department[$index]),
                 'length' => $length[$index],
+                'status_of_hose' => decryptId($status_of_hose[$index]),
                 'nozzle' => decryptId($nozzle[$index]),
                 'hose' => decryptId($hose[$index]),
                 'flow' => decryptId($flow[$index]),    

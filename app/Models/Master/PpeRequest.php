@@ -51,7 +51,6 @@ class PpeRequest extends Model
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
 
             ->where('inventory2.trash', 'NO')
-            ->where('masters_department.trash', 'NO')
             ->where('ppe_pperequest.trash', 'NO');
 
 
@@ -152,12 +151,15 @@ class PpeRequest extends Model
 
         if ($request->request_for == 1) {
 
-            $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+            $employee = User::where('employee_id', $request->emp_id)
+                ->select('unit_id', 'department_id', 'company_id')
                 ->first();
 
-            $unit = $employee->unit;
-            $department = $employee->department;
+            $unit = $employee->unit_id;
+            $department = $employee->department_id;
+
+
+
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
                 ->select('unit', 'department', 'company')

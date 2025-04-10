@@ -124,8 +124,8 @@
                                             </div>
                                             <div
                                                 class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                <button class="btn btn-primary add-row me-3" type="button"
-                                                    id="add-row" style="width: 84px;">
+                                                <button class="btn btn-primary add-row me-3" type="button" id="add-row"
+                                                    style="width: 84px;">
                                                     Add
                                                 </button>
 
@@ -142,7 +142,6 @@
                                                         <tr>
                                                             <th>Medicine</th>
                                                             <th>Freeze Quantity</th>
-
                                                             <th>Quantity</th>
                                                             <th>Remarks</th>
                                                             <th>Action</th>
@@ -156,7 +155,7 @@
                                                                     <label for="medicine_id" class="require">Medicine
                                                                         Name</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control single-select"
+                                                                        class="form-control medicine_id single-select"
                                                                         style="width: 100%">
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
@@ -169,17 +168,7 @@
                                                                     </select>
                                                                 </div>
                                                             </td>
-                                                            {{-- <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="available_quantity"
-                                                                        class="require">Available
-                                                                        Quantity</label>
-                                                                    <input type="text" name="available_quantity[0]"
-                                                                        id="available_quantity" value=""
-                                                                        placeholder="Available quantity"
-                                                                        class="form-control" readonly>
-                                                                </div>
-                                                            </td> --}}
+
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Freeze
@@ -187,14 +176,14 @@
                                                                     <input type="text" name="freeze_quantity[0]"
                                                                         id="freeze_quantity"
                                                                         placeholder="Enter the Freeze quantity"
-                                                                        class="form-control">
+                                                                        class="form-control freeze_quantity" readonly>
 
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]"
+                                                                    <input type="number" min="1" name="quantity[0]"
                                                                         id="quantity" placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
@@ -224,33 +213,33 @@
                                         </div>
 
                                         @if ($signature_upload->signature_upload != '')
-                                        <label class="form-label view_label">Requestor Signature</label>
+                                            <label class="form-label view_label">Requestor Signature</label>
 
-                                        <p>
-                                            <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                target="_blank">
-                                                <img src="{{ asset($signature_upload->signature_upload) }}"
-                                                    style="width: 100px" alt="image">
-                                            </a>
-                                        </p>
-                                    @else
-                                        <div class="col-md-4 mb-3">
-                                            <label for="signature_image"
-                                                class="form-label fw-bold require">Requestor Signature</label>
-                                            <input type="file"
-                                                class="form-control validate-file-accept validate-file-required"
-                                                accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                id="signature_image">
-                                            <div class="text-danger"></div>
-                                            <small>Allowed file types: png, jpeg, jpg</small>
+                                            <p>
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <label for="signature_image" class="form-label fw-bold require">Requestor
+                                                    Signature</label>
+                                                <input type="file"
+                                                    class="form-control validate-file-accept validate-file-required"
+                                                    accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                    id="signature_image">
+                                                <div class="text-danger"></div>
+                                                <small>Allowed file types: png, jpeg, jpg</small>
 
-                                            <!-- Preview Container -->
-                                            <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                <img id="imagePreview" src="#" alt="Signature Preview"
-                                                    class="img-thumbnail" width="200">
+                                                <!-- Preview Container -->
+                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                                                    <img id="imagePreview" src="#" alt="Signature Preview"
+                                                        class="img-thumbnail" width="200">
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif
+                                        @endif
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -270,9 +259,6 @@
 
         </div>
     </div>
-    </form>
-    </div>
-
 @stop
 
 @push('script')
@@ -328,6 +314,34 @@
                 $('#department_id').trigger('change.');
             }
         });
+        $(document).on('change', '.medicine_id', function() {
+            var $row = $(this).closest('tr'); // Get current row
+            var medicineId = $(this).val();
+
+            if (medicineId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        medicineId: medicineId
+                    },
+                    success: function(data) {
+                        if (data && data.freeze_quantity !== undefined) {
+                            $row.find('.freeze_quantity').val(data.freeze_quantity);
+                        } else {
+                            $row.find('.freeze_quantity').val('');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching freeze quantity. Please try again.');
+                    }
+                });
+            } else {
+                $row.find('.freeze_quantity').val('');
+            }
+        });
+
         $(document).ready(function() {
 
             let medicine_requisition_row_count = 1;
@@ -339,50 +353,50 @@
 
 
                 var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                        </select>
-                    </div>
-                </td>
-  <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                <tr>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="medicine_id" class="require">Medicine Name</label>
+                            <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control medicine_id single-select" style="width: 100%">
+                                <option value="">Select the Medicine Name</option>
+                                @foreach ($medicine as $list)
+                                      <option value="{{ encryptId($list->medicine_id) }}">
+                                             {{ getMedicinename($list->medicine_id) }}
+                                                   </option>
+                                        @endforeach
+                            </select>
+                        </div>
+                    </td>
+                        <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Freeze Quantity</label>
+                            <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control freeze_quantity" readonly>
+                            <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="quantity" class="require">Quantity</label>
+                            <input type="number" min="1" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                            <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="remarks" class="">Remarks</label>
-                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group form-input">
+                            <label for="remarks" class="">Remarks</label>
+                            <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                            <i class="fa-solid fa-trash"></i>
+                        </div>
+                    </td>
+                </tr>`;
 
                 $('#medicine-tbody').append(newRow);
 
@@ -428,6 +442,36 @@
                     }
                 });
                 filterMedicineOptions();
+
+                $(document).on('change', '.medicine_id', function() {
+                    var $row = $(this).closest('tr'); // Get current row
+                    var medicineId = $(this).val();
+
+                    if (medicineId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                medicineId: medicineId
+                            },
+                            success: function(data) {
+                                if (data && data.freeze_quantity !== undefined) {
+                                    $row.find('.freeze_quantity').val(data
+                                        .freeze_quantity);
+                                } else {
+                                    $row.find('.freeze_quantity').val('');
+                                }
+                            },
+                            error: function(xhr) {
+                                alert(
+                                    'Error fetching freeze quantity. Please try again.');
+                            }
+                        });
+                    } else {
+                        $row.find('.freeze_quantity').val('');
+                    }
+                });
                 medicine_requisition_row_count++;
 
             });

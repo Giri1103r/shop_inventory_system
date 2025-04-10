@@ -58,6 +58,7 @@ use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2052,6 +2053,17 @@ if (!function_exists('getMonth')) {
         {
 
             $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            return $medicineRequisition;
+        }
+
+    }
+
+    if (!function_exists('GetOHCMedicineFloor')) {
+
+        function GetOHCMedicineFloor( $id,)
+        {
+
+            $medicineRequisition =MedicineRequisitionSlipFloor::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
             return $medicineRequisition;
         }
 
