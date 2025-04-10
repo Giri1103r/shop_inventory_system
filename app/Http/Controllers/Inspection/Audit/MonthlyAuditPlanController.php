@@ -239,25 +239,16 @@ class MonthlyAuditPlanController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->monthly_audit_plan->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Auditee Name',
-                'Unit',
-                'Task Name',
-                 'Complaince Category',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+         
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Monthly Audit Plan",
             );
 
             $property = [
@@ -276,10 +267,10 @@ class MonthlyAuditPlanController extends Controller
             $html = $view->render();
             $mpdf->WriteHTML($html);
 
-            $filename = " Monthlt Audit Plan.pdf";
+            $filename = "Monthly Audit Plan Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
+         dd($ex);
             report($ex);
         }
     }

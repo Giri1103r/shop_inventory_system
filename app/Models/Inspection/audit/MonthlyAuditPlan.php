@@ -176,7 +176,12 @@ class MonthlyAuditPlan extends Model
         }
         
         $query->orderBy('id', 'DESC');
-        return  $query->get();
+
+        $data =  $query->get();
+
+        $query = $data->groupBy('unit_name');
+
+        return $query;
     }
     
 }
