@@ -200,42 +200,45 @@
             </tr>
         </table>
     </div>
+    <br>
     <table
         style="border-collapse: collapse; width: 100%; text-align: center; font-family: Arial, sans-serif; border: 1px solid black;">
         <thead>
             <tr>
-                <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;"
                     title="DATE OF INSPECTION">DATE OF INSPECTION :-
                     {{ DisplayDateformat($forklift_details->date_of_inspection) }}</td>
-                <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="LOCATION">
                     LOCATION :- {{ getLocationname($forklift_details->location) }}</td>
-                <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
                     SHIFT :- {{ getShiftName($forklift_details->shift) }}
                 </td>
             </tr>
             <tr>
-                <td colspan="3" style="border: 2px solid black; padding: 8px; font-weight: bold;"
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;"
                     title="NEXT DUE ON">
                     NEXT DUE ON :- {{ DisplayDateformat($forklift_details->next_due) }}</td>
-                <td colspan="4" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="UNIT">UNIT
                     :- {{ getUnitname($forklift_details->unit) }}
                 </td>
-                <td colspan="2" style="border: 2px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
+                <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
                     FREQUENCY :- {{ getFrequencyname($forklift_details->frequency) }}</td>
             </tr>
             <tr>
                 <th rowspan="2" title="sr_no" style="border: 1px solid black; padding: 5px;">SR. NO.</th>
                 <th rowspan="2" title="department" style="border: 1px solid black; padding: 5px;">DEPARTMENT</th>
                 <th rowspan="2" title="location" style="border: 1px solid black; padding: 5px;">LOCATION</th>
-                <th rowspan="2" title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th>
-                <th colspan="4" style="border: 1px solid black; padding: 5px;">CHECK ITEMS</th>
+                {{-- <th rowspan="2" title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th> --}}
+                <th colspan="5" style="border: 1px solid black; padding: 5px;">CHECK ITEMS</th>
                 <th rowspan="2" title="approach" style="border: 1px solid black; padding: 5px;">APPROACH</th>
                 <th rowspan="2" title="remarks" style="border: 1px solid black; padding: 5px;">REMARKS</th>
             </tr>
             <tr>
+                <th title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th>
                 <th title="nozzle" style="border: 1px solid black; padding: 5px;">NOZZLE CONDITION</th>
                 <th title="hose" style="border: 1px solid black; padding: 5px;">HOSE CONDITION</th>
                 <th title="flow" style="border: 1px solid black; padding: 5px;">FLOW TEST</th>
+                <th title="test_status" style="border: 1px solid black; padding: 5px;">STATUS</th>
             </tr>
         </thead>
         <tbody>
@@ -270,17 +273,59 @@
                             <p>Fail</p>
                         @endif
                     </td>
-                    <td style="border: 1px solid black; padding: 5px;">{{ $details->remarks }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">
+                        @if ($details->status_of_hose == OPERATIONAL)
+                            <p>Operational</p>
+                        @else
+                            <p>Non Operational</p>
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ $details->approach }}</td>
                     <td style="border: 1px solid black; padding: 5px;">{{ $details->remarks }}</td>
                 </tr>
             @endforeach
+            <tr>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->created_by))
+                            <img src="{{ admin_url($checked_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Checked By:- {{ getUsername($forklift_details->created_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Checked By:- Not yet checked</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->verified_by))
+                            <img src="{{ admin_url($verified_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Verified By:- {{ getUsername($forklift_details->verified_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Verified By:- Not yet verified</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($forklift_details->approved_by))
+                            <img src="{{ admin_url($approved_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Approved By:- {{ getUsername($forklift_details->approved_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Approved By:- Not yet approved</p>
+                        @endif
+                    </div>
+                </td>
+            </tr>
         </tbody>
     </table>
 
 
 
 
-
+    <br>
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">

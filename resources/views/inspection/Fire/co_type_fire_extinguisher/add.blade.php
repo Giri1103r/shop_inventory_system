@@ -346,9 +346,18 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="observation" class="form-control"
-                                                        placeholder="Observation" style="resize: none;"></textarea>
-
+                                                        {{-- <textarea name="observation" id="observation" class="form-control"
+                                                        placeholder="Observation" style="resize: none;"></textarea> --}}
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

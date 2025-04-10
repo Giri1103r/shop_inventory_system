@@ -16,6 +16,7 @@ return [
 
 
 
+
     'msds' => 'Chemical (MSDS) Master List PN International Pvt.Ltd.',
     'rraa' => 'Occupational Health Safety ,Fire & Enviromental  Compliance  Sheet PN International Pvt Ltd',
     'daily_vital_equipment' => 'OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD',
@@ -28,6 +29,9 @@ return [
     'fire_alarm' => 'FIRE ALARM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'first_bag_inspection' => 'FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.',
     'hygiene_checklist' => 'Daily OHC Hygine & Cleaning Checklist PN International Pvt Ltd',
+    'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
+    'hydrant_riser'=>"HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.",
+
     'detector' => 'DETECTOR INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'sand_bucket' => 'FIRE SAND BUCKET & STAND INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'mock_drill' => 'MOCK DRILL OBSERVATION FOLLOW UP SHEET PN INTERNATIONAL PVT. LTD.',
@@ -35,4 +39,6 @@ return [
     'sprinklar' => 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
     'fire_extinguisher' => 'FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE) PN INTERNATIONAL PVT. LTD.',
     'isolating_valve' => 'ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
+    'hose_reel' => 'INSPECTION CHECKLIST OF HOSE REEL HOSE PN INTERNATIONAL PVT. LTD.',
+    'hose_box' => 'HOSE BOX INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.',
 ];

@@ -283,7 +283,7 @@ class HoseBoxController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -793,22 +793,18 @@ class HoseBoxController extends Controller
         try {
 
             $allData = $this->hose_box->exportdata();
+            $inspection_type = HOSE_BOX_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
+            if(count($allData) > 20){
+                return redirect()->back()->with('error', __('inspection.excess_error'));
+            }
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'inspection_type' => $inspection_type,
                 'pagetitle' => "Hose Box Inspection",
             );
 
@@ -818,13 +814,13 @@ class HoseBoxController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
+                'orientation' => 'L'
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.hose_box.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -844,17 +840,26 @@ class HoseBoxController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,HOSE_BOX_INSPECTION);
+                $inspection_type = HOSE_BOX_INSPECTION;
+                $status_log = $this->statusLog->selectOne($id, HOSE_BOX_INSPECTION);
                 $forklift_details = $this->hose_box->selectOne($id);
                 $inspection = $this->hose_box_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, $inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, $inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, $inspection_type);
 
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,
                     'pagetitle' => "Hose Box Inspection",
                     'inspection' => $inspection,
+                    'inspection_type' => $inspection_type,
                     'document_no' => $document_no,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 
@@ -870,7 +875,7 @@ class HoseBoxController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.hose_box.viewPdf',$data);
+            $html = view('inspection.fire.hose_box.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
