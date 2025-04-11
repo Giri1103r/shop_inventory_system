@@ -904,6 +904,7 @@ Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('export/excel', [FloorStretcherController::class, 'ExportExcel']);
     Route::GET('export/pdf', [FloorStretcherController::class, 'ExportPdf']);
     Route::GET('exportViewPdf/{id}', [FloorStretcherController::class, 'ExportViewPDF']);
+    Route::GET('export/excel/{id}', [FloorStretcherController::class, 'GeneralExcel']);
     Route::POST('status', [FloorStretcherController::class, 'StatusChange']);
     Route::POST('delete', [FloorStretcherController::class, 'Delete']);
 });
