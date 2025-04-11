@@ -305,9 +305,41 @@
             @endforeach
         @endforeach
 
+        @php
+            $signature = GetOHCSignature(
+                $weeklyAmbulance->created_by,
+                $weeklyAmbulance->id,
+                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+            );
+            $Verifiedsignature = GetOHCSignature(
+                $weeklyAmbulance->verified_by,
+                $weeklyAmbulance->id,
+                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+            );
+            $Approvedsignature = GetOHCSignature(
+                $weeklyAmbulance->approved_by,
+                $weeklyAmbulance->id,
+                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+            );
+        @endphp
 
-
-
+        <tr>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                <div style="margin-top: 5px;">Checked By:{{getUsername($weeklyAmbulance->created_by)}}</div>
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <img src="{{ admin_url($Verifiedsignature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                <div style="margin-top: 5px;">Verified By:{{getUsername($weeklyAmbulance->verified_by)}}</div>
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <img src="{{ admin_url($Verifiedsignature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                <div style="margin-top: 5px;">Approved By:{{getUsername($weeklyAmbulance->approved_by)}}</div>
+            </th>
+        </tr>
 
     </table>
 
@@ -332,9 +364,9 @@
                 </tr>
             @endif
             @php
-                $signature = GetSignature(
-                    $occupational_health_center->verified_by,
-                    $occupational_health_center->id,
+                $signature = GetOHCSignature(
+                    $weeklyAmbulance->verified_by,
+                    $weeklyAmbulance->id,
                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                 );
             @endphp
@@ -358,7 +390,7 @@
                 </tr>
             @endif
             @php
-                $signature = GetSignature(
+                $signature = GetOHCSignature(
                     $weeklyAmbulance->approved_by,
                     $weeklyAmbulance->id,
                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -430,7 +462,7 @@
                 </td>
             </tr>
             @php
-                $signature = GetSignature(
+                $signature = GetOHCSignature(
                     $weeklyAmbulance->approved_by,
                     $weeklyAmbulance->id,
                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -483,7 +515,7 @@
                 </td>
             </tr>
             @php
-                $signature = GetSignature(
+                $signature = GetOHCSignature(
                     $weeklyAmbulance->verified_by,
                     $weeklyAmbulance->id,
                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -537,23 +569,23 @@
                 </td>
             </tr>
             @php
-                $signature = GetFireSignature(
-                    $weeklyAmbulance->l1_manager_verification,
-                    $weeklyAmbulance->id,
-                    EMERGENCY_LIGHT_INSPECTION,
-                );
-            @endphp
-            @if (isset($signature))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
+            $signature = GetOHCSignature(
+                $weeklyAmbulance->l1_manager_verified_by,
+                $weeklyAmbulance->id,
+                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+            );
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
 
 
-                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                            style="width: 150px; margin-top: -10px;" /></td>
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
 
-                </tr>
-            @endif
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -589,6 +621,24 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetOHCSignature(
+                $weeklyAmbulance->l2_manager_verified_by,
+                $weeklyAmbulance->id,
+                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+            );
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

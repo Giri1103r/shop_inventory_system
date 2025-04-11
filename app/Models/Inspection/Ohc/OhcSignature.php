@@ -125,7 +125,7 @@ class OhcSignature extends Model
             $signatures = request()->file($fileInputName);
 
             if (is_array($signatures)) {
-                foreach ($signatures as $signature) {
+                foreach ($signatures as $index => $signature) {
                     if ($signature) {
                         $upload_path = 'public/uploads/inspection/ohc/signatureupload';
 
@@ -142,7 +142,7 @@ class OhcSignature extends Model
 
                         DB::table('inspection_ohc_signatureupload')->insert([
                             'emp_id' => $empId,
-                            'ohc_id' => $sfty_petty_id,
+                            'ohc_id' => $sfty_petty_id[$index],
                             'type' => OHC_SAFETY_PETTY_LOGBOOK_INSPECTION,
                             'sub_type' => $type,
                             'file_path' => $file_path,
@@ -153,35 +153,8 @@ class OhcSignature extends Model
                         ]);
                     }
                 }
-            } else {
-                if ($signatures) {
-                    $upload_path = 'public/uploads/inspection/ohc/signatureupload';
-                    if (!File::exists($upload_path)) {
-                        File::makeDirectory($upload_path, 0777, true, true);
-                    }
-
-                    $file_name = time() . Str::random(10) . '.' . $signatures->getClientOriginalExtension();
-
-                    $signatures->move($upload_path, $file_name);
-
-                    $file_path = $upload_path . '/' . $file_name;
-                    $file_extension = $signatures->getClientOriginalExtension();
-
-                    DB::table('inspection_ohc_signatureupload')->insert([
-                        'emp_id' => $empId,
-                        'ohc_id' => $sfty_petty_id,
-                        'type' => OHC_SAFETY_PETTY_LOGBOOK_INSPECTION,
-                        'sub_type' => $type,
-                        'file_path' => $file_path,
-                        'file_name' => $file_name,
-                        'file_orgname' => $signatures->getClientOriginalName(),
-                        'file_extension' => $file_extension,
-                        'created_by' => Auth::id(),
-                    ]);
-                }
+                return true;
             }
-
-            return true;
         } catch (Exception $ex) {
             report($ex);
         }
@@ -193,13 +166,15 @@ class OhcSignature extends Model
         return $this->where('ohc_id', $id)->where('emp_id', $safetyofficer->approved_by)->where('type', $type)->first();
     }
 
-    public function approversignature($id, $approver, $type){
+    public function approversignature($id, $approver, $type)
+    {
 
-        return $this->where('ohc_id',$id)->where('emp_id',$approver)->where('type',$type)->first();
+        return $this->where('ohc_id', $id)->where('emp_id', $approver)->where('type', $type)->first();
     }
 
-    public function floormanagersignature($id, $floormanger, $type){
-        return $this->where('ohc_id',$id)->where('emp_id',$floormanger->approved_by)->where('type',$type)->first();
+    public function floormanagersignature($id, $floormanger, $type)
+    {
+        return $this->where('ohc_id', $id)->where('emp_id', $floormanger->approved_by)->where('type', $type)->first();
     }
 
     public function requestorSignature($id, $requestorsignature, $type)
@@ -210,12 +185,10 @@ class OhcSignature extends Model
 
     public function getGivenBy($type, $sub_type, $id)
     {
-        $data =  $this->where('ohc_id', $id)
+        return  $this->where('ohc_id', $id)
             ->where('type', $type)
             ->where('sub_type', $sub_type)
             ->first();
-
-        return $data;
     }
     public function getReceivedBy($type, $sub_type, $id)
     {

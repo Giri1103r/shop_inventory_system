@@ -326,7 +326,11 @@ class HoseReelHoseController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -795,7 +799,7 @@ class HoseReelHoseController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            if(count($allData) > 20){
+            if (count($allData) > 20) {
                 return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
