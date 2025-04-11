@@ -201,7 +201,7 @@ class PperequestController extends BaseController
                         }
 
                         $file_name = time() . Str::random(10) . '.' . $fileExt;
-                        $file_path = $upload_path . '/' . $file_name;
+                        $file_path = 'public/'.$upload_path . '/' . $file_name;
 
                         $image_data = base64_decode($sign);
                         file_put_contents(public_path($file_path), $image_data);

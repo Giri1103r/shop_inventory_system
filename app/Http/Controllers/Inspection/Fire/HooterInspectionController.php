@@ -156,18 +156,18 @@ class HooterInspectionController extends Controller
         }
 
         $location = $this->location->getLocationName();
-            $unit = $this->unit->getUnit();
-            $frequency = $this->frequency->getFrequency();
-            $shifts = $this->shift->getShiftname();
-            $department = $this->department->getdepartment();
+        $unit = $this->unit->getUnit();
+        $frequency = $this->frequency->getFrequency();
+        $shifts = $this->shift->getShiftname();
+        $department = $this->department->getdepartment();
 
-            $data = array(
-                'locations' => $location,
-                'units' => $unit,
-                'frequency' => $frequency,
-                'shifts' => $shifts,
-                'department' => $department,
-            );
+        $data = array(
+            'locations' => $location,
+            'units' => $unit,
+            'frequency' => $frequency,
+            'shifts' => $shifts,
+            'department' => $department,
+        );
         return view('inspection.fire.hooter_inspection.list', $data);
     }
 
@@ -315,7 +315,12 @@ class HooterInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/hooter-inspection/list'));
+
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/hooter-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -831,9 +836,9 @@ class HooterInspectionController extends Controller
                 $inspection_image = $this->files->GetFile($inspection_type, $id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
-                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
-                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
-                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, $inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, $inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, $inspection_type);
 
                 $data = [
                     'status_log' => $status_log,

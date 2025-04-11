@@ -333,7 +333,11 @@ class FireExtinguisherController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);

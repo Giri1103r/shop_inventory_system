@@ -195,7 +195,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
         Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
         Route::get('generalExcel/{id}', [MonthlyAuditPlanController::class, 'generalExcel']);
-
     });
 
     Route::group(['prefix' => 'inter-unit-audit/checklist/'], function () {
@@ -368,6 +367,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [MonthlyForkLiftInspectionController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyForkLiftInspectionController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [MonthlyForkLiftInspectionController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [MonthlyForkLiftInspectionController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'forklift-inspection/'], function () {
@@ -477,7 +477,6 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::get('employeeid', [RRAAController::class, 'employeeid']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
     Route::GET('/generalExcel/{id}', [RRAAController::class, 'generalExcel']);
-
 });
 
 Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
@@ -904,6 +903,7 @@ Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('export/excel', [FloorStretcherController::class, 'ExportExcel']);
     Route::GET('export/pdf', [FloorStretcherController::class, 'ExportPdf']);
     Route::GET('exportViewPdf/{id}', [FloorStretcherController::class, 'ExportViewPDF']);
+    Route::GET('export/excel/{id}', [FloorStretcherController::class, 'GeneralExcel']);
     Route::POST('status', [FloorStretcherController::class, 'StatusChange']);
     Route::POST('delete', [FloorStretcherController::class, 'Delete']);
 });
@@ -921,6 +921,8 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
     Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
+    Route::get('generalexcel/{id}', [FirstAidRecordController::class, 'generalExcel']);
+
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {

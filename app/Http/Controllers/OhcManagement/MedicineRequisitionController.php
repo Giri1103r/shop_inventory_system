@@ -584,7 +584,7 @@ class MedicineRequisitionController extends Controller
             $html = view('ohcmanagement.medicine_requisition.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Medicine Receiving Stock Details.pdf";
+            $filename = "Medicine Requisition.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

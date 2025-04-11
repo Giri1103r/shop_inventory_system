@@ -325,7 +325,11 @@ class SprinklarSystemController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/sprinkler-inspection/list'));
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/sprinkler-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
