@@ -1389,6 +1389,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/unique', [OccupationHealthInspectionController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [OccupationHealthInspectionController::class, 'View']);
                     Route::GET('/generalpdf/{id}', [OccupationHealthInspectionController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [OccupationHealthInspectionController::class, 'generalExcel']);
                     Route::get('verification/{id}/{employee_type}', [OccupationHealthInspectionController::class, 'approvals']);
                     Route::post('ehsofficer/verify/submit', [OccupationHealthInspectionController::class, 'EHSOfficerSubmit']);
                     Route::post('capa/submit', [OccupationHealthInspectionController::class, 'CAPASubmit']);
@@ -1486,6 +1487,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/unique', [FirstAiderlistController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [FirstAiderlistController::class, 'View']);
                     Route::GET('/generalpdf/{id}', [FirstAiderlistController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [FirstAiderlistController::class, 'generalExcel']);
                     Route::POST('/status', [FirstAiderlistController::class, 'StatusChange']);
                     Route::GET('/export/excel', [FirstAiderlistController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [FirstAiderlistController::class, 'ExportPDF']);

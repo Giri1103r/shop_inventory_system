@@ -133,7 +133,7 @@ class FirstAidBagChecklist extends Model
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
-            'shift' => decryptId($request->shift_id),
+            'shift_id' => decryptId($request->shift_id),
         ];
         return  $this->create($data);
     }
