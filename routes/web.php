@@ -1409,6 +1409,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/unique', [MonthlyFirstAidboxController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MonthlyFirstAidboxController::class, 'View']);
                     Route::GET('/generalpdf/{id}', [MonthlyFirstAidboxController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [MonthlyFirstAidboxController::class, 'generalExcel']);
                     Route::get('verification/{id}/{employee_type}', [MonthlyFirstAidboxController::class, 'approvals']);
                     Route::post('ehsofficer/verify/submit', [MonthlyFirstAidboxController::class, 'EHSOfficerSubmit']);
                     Route::post('capa/submit', [MonthlyFirstAidboxController::class, 'CAPASubmit']);
@@ -1464,6 +1465,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/list', [DailyDepartmentFirstAidBoxController::class, 'Index']);
                     Route::GET('/add', [DailyDepartmentFirstAidBoxController::class, 'Add']);
                     Route::GET('/generalpdf/{id}', [DailyDepartmentFirstAidBoxController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [DailyDepartmentFirstAidBoxController::class, 'generalExcel']);
                     Route::GET('/approval/view/{id}', [DailyDepartmentFirstAidBoxController::class, 'approval']);
                     Route::POST('/add/submit', [DailyDepartmentFirstAidBoxController::class, 'Store']);
                     Route::POST('/unique', [DailyDepartmentFirstAidBoxController::class, 'UniqueCheck']);

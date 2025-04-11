@@ -15,6 +15,16 @@ use Yajra\DataTables\Facades\DataTables;
 use Exception;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
+
 
 class MonthlyAuditPlanController extends Controller
 {
@@ -67,6 +77,7 @@ class MonthlyAuditPlanController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('audit/monthly-audit/audit-plan/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"><i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('audit/master/task/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -309,6 +320,99 @@ class MonthlyAuditPlanController extends Controller
         } catch (Exception $ex) {
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $monthly_audit_plan = $this->monthly_audit_plan->Selectone($id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+    
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(10);
+                $drawing->setWidth(100);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+    
+            $sheet->mergeCells('C1:K3');
+            $sheet->setCellValue('C1', "MONTHLY AUDIT PLAN\nKARAM SAFETY PRIVATE LIMITED");
+            $sheet->getStyle('C1')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                
+
+            ]);
+    
+            $headers = [
+                'Sr.', 'Auditee Name', 'Unit', 'Task Name', 'Reference Doc No', 'Category',
+                'Frequency', 'Direct/Indirect', 'Status' ,'Points', 'Remarks'
+            ];
+            $colIndex = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue("{$colIndex}4", $header);
+                $sheet->getStyle("{$colIndex}4")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF0000']]
+                ]);
+                $colIndex++;
+            }
+    
+            $row = 5;
+            $sheet->setCellValue("A{$row}", '1');
+            $sheet->setCellValue("B{$row}", $monthly_audit_plan->auditee_name ?? '');
+            $sheet->setCellValue("C{$row}", getUnitname($monthly_audit_plan->unit_id ?? ''));
+            $sheet->setCellValue("D{$row}", getTaskName($monthly_audit_plan->task_id ?? ''));
+            $sheet->setCellValue("E{$row}", $monthly_audit_plan->reference_doc_no ?? '');
+            $sheet->setCellValue("F{$row}", getCategoryType($monthly_audit_plan->compliance_category_id ?? ''));
+            $sheet->setCellValue("G{$row}", getFrequencyname($monthly_audit_plan->frequency_id ?? ''));
+            $sheet->setCellValue("H{$row}", $monthly_audit_plan->direct_in_direct == 1 ? 'Direct' : 'Indirect');
+            $sheet->setCellValue("I{$row}", $monthly_audit_plan->audit_plan_status == 1 ? 'YES' : 'NO');
+            $sheet->setCellValue("J{$row}", $monthly_audit_plan->points ?? '');
+            $sheet->setCellValue("K{$row}", $monthly_audit_plan->remarks ?? '');
+    
+            $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+    
+            foreach (range('A', 'J') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+    
+            $fileName = 'Monthly_Audit_Plan.xlsx';
+            $writer = new Xlsx($spreadsheet);
+    
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $e) {
+            report($e);
+            return back()->with('error', 'Failed to export Monthly Audit Plan');
         }
     }
     
