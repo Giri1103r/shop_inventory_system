@@ -255,7 +255,6 @@ class FirstAidMedicineInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // Set row height for all rows
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
@@ -271,46 +270,37 @@ class FirstAidMedicineInspectionController extends Controller
                 $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
                 $currentRow = $row;
-                // dd(1);
 
-                // Insert Left Logo
                 $logoLeftPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoLeftPath)) {
-                    // Merge cells A1 to F3 to create a single block
-                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2)); // Merging from A to F, and 3 rows
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
 
-                    // Add the left logo in the merged area (starting from B and the current row)
                     $drawing = new Drawing();
                     $drawing->setName('Left Logo');
                     $drawing->setPath($logoLeftPath);
-                    $drawing->setCoordinates('B' . $currentRow); // Place image starting at B and current row
+                    $drawing->setCoordinates('B' . $currentRow);
                     $drawing->setOffsetX(100);
                     $drawing->setOffsetY(15);
                     $drawing->setWidth(70);
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
 
-                    // Apply the border to the merged block (A1 to F3)
-                    $range = "A$currentRow:F" . ($currentRow + 2); // Merged block from A to F and 3 rows
+                    $range = "A$currentRow:F" . ($currentRow + 2);
 
                     $sheet->getStyle($range)->applyFromArray([
                         'borders' => [
                             'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN, // Border thickness
-                                'color' => ['argb' => '000000'], // Border color (black)
+                                'borderStyle' => Border::BORDER_THIN,
+                                'color' => ['argb' => '000000'],
                             ]
                         ],
                         'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER, // Center horizontally
-                            'vertical' => Alignment::VERTICAL_CENTER, // Center vertically
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
                         ],
                     ]);
                 }
 
-
-
-
-                // Heading with border
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
@@ -320,7 +310,6 @@ class FirstAidMedicineInspectionController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                // Insert Right Logo
                 $logoRightPath = public_path('assets/images/plus-image.webp');
                 if (file_exists($logoRightPath)) {
                     $sheet->mergeCells("O$currentRow:S" . ($currentRow + 2));
@@ -335,24 +324,22 @@ class FirstAidMedicineInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
 
-                    $range = "O$currentRow:S" . ($currentRow + 2); // Merged block from A to F and 3 rows
+                    $range = "O$currentRow:S" . ($currentRow + 2);
 
                     $sheet->getStyle($range)->applyFromArray([
                         'borders' => [
                             'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN, // Border thickness
-                                'color' => ['argb' => '000000'], // Border color (black)
+                                'borderStyle' => Border::BORDER_THIN,
+                                'color' => ['argb' => '000000'],
                             ]
                         ],
                         'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER, // Center horizontally
-                            'vertical' => Alignment::VERTICAL_CENTER, // Center vertically
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
                         ],
                     ]);
-
                 }
 
-                // Inspection & Due Date Section
                 $sheet->mergeCells("A" . ($currentRow + 3) . ":J" . ($currentRow + 3));
                 $richText1 = new RichText();
                 $richText1->createTextRun('DATE OF INSPECTION :- ')->getFont()->setBold(true);
@@ -370,7 +357,6 @@ class FirstAidMedicineInspectionController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // Table Headers
                 $headerRow = $currentRow + 4;
                 $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
                 $sheet->mergeCells("D$headerRow:F$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
@@ -385,7 +371,6 @@ class FirstAidMedicineInspectionController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // Table Data
                 $inspectionRow = $headerRow + 1;
                 foreach ($inspection_data as $index => $detail) {
                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index);
@@ -403,7 +388,6 @@ class FirstAidMedicineInspectionController extends Controller
                     $inspectionRow++;
                 }
 
-                // Signature Section
                 $signatureRow = $inspectionRow;
                 $sheet->getRowDimension($signatureRow)->setRowHeight(80);
 
@@ -442,7 +426,6 @@ class FirstAidMedicineInspectionController extends Controller
                 $richTextSig2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
                 $sheet->getCell("K$signatureRow")->setValue($richTextSig2);
 
-                // Center Align Signature Text
                 $sheet->getStyle("A$signatureRow:J$signatureRow")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
                 ]);
@@ -450,12 +433,10 @@ class FirstAidMedicineInspectionController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
                 ]);
 
-                // 🔲 Full Border for this block
                 $sheet->getStyle("A$currentRow:S$signatureRow")->applyFromArray([
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_MEDIUM]],
                 ]);
 
-                // Move to next block after 5-row gap
                 $row = $signatureRow + 6;
             }
 
@@ -469,8 +450,6 @@ class FirstAidMedicineInspectionController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
-
 
 
     public function ExportPDF()
