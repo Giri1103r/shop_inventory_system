@@ -1022,6 +1022,7 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
     Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
     Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [WeeklyFirstAidBoxController::class, 'generalExcel']);
     Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
     Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
 });
@@ -1033,6 +1034,7 @@ Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], funct
     Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
     Route::get('view/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'view']);
     Route::get('generalpdf/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'generalExcel']);
     Route::get('export/pdf', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportPDF']);
     Route::get('export/excel', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportExcel']);
 });
