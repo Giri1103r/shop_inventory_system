@@ -252,44 +252,226 @@ class FirstAidMedicineInspectionController extends Controller
     {
         try {
             $allData = $this->medicine_checklist->exportdata();
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set row height for all rows
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Next Due',
-                'Inspection Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $row = 1;
 
-            $i = 1;
-            foreach ($allData as $data) {
+            foreach ($allData as $inspection_detail) {
+                $inspection_detail = $this->medicine_checklist->selectOne($inspection_detail->id);
+                $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+                $inspection_data = json_decode($inspection_detail->inspection_data, true);
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+                $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  Displaydateformat($data->inspection_date);
-                $export[] =  Displaydateformat($data->next_due);
-                $export[] =  getObservationStatus($data->inspection_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+                $currentRow = $row;
+                // dd(1);
+
+                // Insert Left Logo
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    // Merge cells A1 to F3 to create a single block
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2)); // Merging from A to F, and 3 rows
+
+                    // Add the left logo in the merged area (starting from B and the current row)
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates('B' . $currentRow); // Place image starting at B and current row
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    // Apply the border to the merged block (A1 to F3)
+                    $range = "A$currentRow:F" . ($currentRow + 2); // Merged block from A to F and 3 rows
+
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN, // Border thickness
+                                'color' => ['argb' => '000000'], // Border color (black)
+                            ]
+                        ],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER, // Center horizontally
+                            'vertical' => Alignment::VERTICAL_CENTER, // Center vertically
+                        ],
+                    ]);
+                }
+
+
+
+
+                // Heading with border
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'fill' => ['fillType' => Fill::FILL_SOLID],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                // Insert Right Logo
+                $logoRightPath = public_path('assets/images/plus-image.webp');
+                if (file_exists($logoRightPath)) {
+                    $sheet->mergeCells("O$currentRow:S" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Right Logo');
+                    $drawing->setPath($logoRightPath);
+                    $drawing->setCoordinates('O' . $currentRow);
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "O$currentRow:S" . ($currentRow + 2); // Merged block from A to F and 3 rows
+
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN, // Border thickness
+                                'color' => ['argb' => '000000'], // Border color (black)
+                            ]
+                        ],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER, // Center horizontally
+                            'vertical' => Alignment::VERTICAL_CENTER, // Center vertically
+                        ],
+                    ]);
+
+                }
+
+                // Inspection & Due Date Section
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":J" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun('DATE OF INSPECTION :- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($inspection_detail->inspection_date));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("K" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('NEXT DUE :- ')->getFont()->setBold(true);
+                $richText2->createText(Displaydateformat($inspection_detail->next_due));
+                $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                // Table Headers
+                $headerRow = $currentRow + 4;
+                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("D$headerRow:F$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+                $sheet->mergeCells("G$headerRow:H$headerRow")->setCellValue("G$headerRow", "QUANTITY");
+                $sheet->mergeCells("I$headerRow:K$headerRow")->setCellValue("I$headerRow", "EXPIRY DATE");
+                $sheet->mergeCells("L$headerRow:O$headerRow")->setCellValue("L$headerRow", "INSPECTED BY");
+                $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "REMARKS");
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                // Table Data
+                $inspectionRow = $headerRow + 1;
+                foreach ($inspection_data as $index => $detail) {
+                    $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index);
+                    $sheet->mergeCells("D$inspectionRow:F$inspectionRow")->setCellValue("D$inspectionRow", getMedicinename($detail['medicine_id']));
+                    $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail['available_quantity'] ?? '');
+                    $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail['expired_date']));
+                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", getUsername($detail['emp_id']));
+                    $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $inspectionRow++;
+                }
+
+                // Signature Section
+                $signatureRow = $inspectionRow;
+                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+
+                $sheet->mergeCells("A$signatureRow:J$signatureRow");
+                $sheet->mergeCells("K$signatureRow:S$signatureRow");
+
+                if (file_exists($inspection_created_by)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Requestor Signature');
+                    $drawing->setPath($inspection_created_by);
+                    $drawing->setCoordinates("D$signatureRow");
+                    $drawing->setOffsetX(50);
+                    $drawing->setOffsetY(10);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $richTextSig1 = new RichText();
+                $richTextSig1->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+                $sheet->getCell("A$signatureRow")->setValue($richTextSig1);
+
+                if (file_exists($inspection_updated_by)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Medical Officer Signature');
+                    $drawing->setPath($inspection_updated_by);
+                    $drawing->setCoordinates("N$signatureRow");
+                    $drawing->setOffsetX(50);
+                    $drawing->setOffsetY(10);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $richTextSig2 = new RichText();
+                $richTextSig2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+                $sheet->getCell("K$signatureRow")->setValue($richTextSig2);
+
+                // Center Align Signature Text
+                $sheet->getStyle("A$signatureRow:J$signatureRow")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+                ]);
+                $sheet->getStyle("K$signatureRow:S$signatureRow")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+                ]);
+
+                // 🔲 Full Border for this block
+                $sheet->getStyle("A$currentRow:S$signatureRow")->applyFromArray([
+                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_MEDIUM]],
+                ]);
+
+                // Move to next block after 5-row gap
+                $row = $signatureRow + 6;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly OHC First-Aid Medicine Inspection Checklist.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'ohc-medicine-checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
+
+
+
 
     public function ExportPDF()
     {
@@ -475,126 +657,157 @@ class FirstAidMedicineInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
+
+
+
             $inspection_detail = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
             $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
-            // Insert logo image
-            $logoPath = public_path('assets/images/logo-dark.png');
-            if (file_exists($logoPath)) {
-                $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Company Logo');
-                $drawing->setPath($logoPath);
-                $drawing->setCoordinates('A1');
-                $drawing->setHeight(60); // optional: set height
-                $drawing->setWorksheet($sheet);
-
-                // Adjust cell A1 size for logo
-                $sheet->getColumnDimension('A')->setWidth(15);
-                $sheet->getRowDimension(1)->setRowHeight(60);
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            // Title section
-            $sheet->mergeCells("H1:N3");
-            $sheet->setCellValue("H1", "Monthly OHC First-Aid Medicine Inspection Checklist");
-            $sheet->getStyle("H1")->applyFromArray([
+            $sheet->mergeCells("A1:F3");
+            $sheet->getStyle("A1:F3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("G1:M3");
+            $sheet->setCellValue("G1", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
+            $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true
-                ],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => 'FF0000']
-                ]
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-            $sheet->mergeCells("O1:X1")->setCellValue("O1", "Doc. No.");
-            $sheet->mergeCells("O2:X2")->setCellValue("O2", "Issue Dt.");
-            $sheet->mergeCells("O3:X3")->setCellValue("O3", "Rev. & Dt.");
-
-            $sheet->getStyle("O1:X3")->applyFromArray([
-                'font' => ['bold' => true],
-                'borders' => [
-                    'allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER
-                ]
+            $sheet->mergeCells("N1:S3");
+            $sheet->getStyle("N1:S3")->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
             ]);
+            $logoRightPath = public_path('assets/images/plus-image.webp');
+            if (file_exists($logoRightPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Right Logo');
+                $drawing->setPath($logoRightPath);
+                $drawing->setCoordinates('O1');
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
 
-            $date_of_inspection = Displaydateformat($inspection_detail->inspection_date);
-            $next_due = Displaydateformat($inspection_detail->next_due);
-
-            $sheet->mergeCells("A4:L4");
+            $sheet->mergeCells("A4:J4");
             $richText1 = new RichText();
             $richText1->createTextRun('DATE OF INSPECTION :- ')->getFont()->setBold(true);
-            $richText1->createText($date_of_inspection);
+            $richText1->createText(Displaydateformat($inspection_detail->inspection_date));
             $sheet->getCell("A4")->setValue($richText1);
 
-            $sheet->mergeCells("M4:X4");
+            $sheet->mergeCells("K4:S4");
             $richText2 = new RichText();
             $richText2->createTextRun('NEXT DUE :- ')->getFont()->setBold(true);
-            $richText2->createText($next_due);
-            $sheet->getCell("M4")->setValue($richText2);
+            $richText2->createText(Displaydateformat($inspection_detail->next_due));
+            $sheet->getCell("K4")->setValue($richText2);
 
-            $sheet->getStyle("A4:X4")->applyFromArray([
-                'borders' => [
-                    'allBorders' => ['borderStyle' => Border::BORDER_THICK]
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER
-                ]
+            $sheet->getStyle("A4:S4")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Table Header
             $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
-            $sheet->mergeCells("D5:H5")->setCellValue("D5", "NAME OF THE MEDICINE");
-            $sheet->mergeCells("I5:K5")->setCellValue("I5", "QUANTITY");
-            $sheet->mergeCells("L5:N5")->setCellValue("L5", "EXPIRY DATE");
-            $sheet->mergeCells("O5:S5")->setCellValue("O5", "INSPECTED BY");
-            $sheet->mergeCells("T5:X5")->setCellValue("T5", "REMARKS");
+            $sheet->mergeCells("D5:F5")->setCellValue("D5", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("G5:H5")->setCellValue("G5", "QUANTITY");
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "EXPIRY DATE");
+            $sheet->mergeCells("L5:O5")->setCellValue("L5", "INSPECTED BY");
+            $sheet->mergeCells("P5:S5")->setCellValue("P5", "REMARKS");
 
-            $sheet->getStyle("A5:X5")->applyFromArray([
+            $sheet->getStyle("A5:S5")->applyFromArray([
                 'font' => ['bold' => true],
-                'borders' => [
-                    'allBorders' => ['borderStyle' => Border::BORDER_THICK]
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER
-                ]
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Table Data
             $row = 6;
             foreach ($inspection_data as $index => $detail) {
                 $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index);
-                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
-                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $detail['available_quantity'] ?? '');
-                $sheet->mergeCells("L$row:N$row")->setCellValue("L$row", Displaydateformat($detail['expired_date']));
-                $sheet->mergeCells("O$row:S$row")->setCellValue("O$row", getUsername($detail['emp_id']));
-                $sheet->mergeCells("T$row:X$row")->setCellValue("T$row", $detail['remarks'] ?? '');
+                $sheet->mergeCells("D$row:F$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
+                $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail['available_quantity'] ?? '');
+                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", Displaydateformat($detail['expired_date']));
+                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", getUsername($detail['emp_id']));
+                $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $detail['remarks'] ?? '');
 
-                $sheet->getStyle("A$row:X$row")->applyFromArray([
-                    'borders' => [
-                        'allBorders' => ['borderStyle' => Border::BORDER_THICK]
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER
-                    ]
+                $sheet->getStyle("A$row:S$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-
                 $row++;
             }
 
-            // Export
+            $signatureRow = $row;
+
+            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+
+            $sheet->mergeCells("A{$signatureRow}:J{$signatureRow}");
+            $sheet->getStyle("A{$signatureRow}:J{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            ]);
+            if (file_exists($inspection_created_by)) {
+                $drawing = new Drawing();
+                $drawing->setName('Requestor Signature');
+                $drawing->setPath($inspection_created_by);
+                $drawing->setCoordinates("D{$signatureRow}");
+                $drawing->setOffsetX(50);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $richText = new RichText();
+            $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+            $sheet->mergeCells("K{$signatureRow}:S{$signatureRow}");
+            $sheet->getStyle("K{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+            ]);
+            if (file_exists($inspection_updated_by)) {
+                $drawing = new Drawing();
+                $drawing->setName('Medical Officer Signature');
+                $drawing->setPath($inspection_updated_by);
+                $drawing->setCoordinates("N{$signatureRow}");
+                $drawing->setOffsetX(50);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $richText2 = new RichText();
+            $richText2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+            $sheet->getCell("K{$signatureRow}")->setValue($richText2);
+
             $writer = new Xlsx($spreadsheet);
             $fileName = 'ohc-medicine-checklist.xlsx';
             $filePath = storage_path("app/public/$fileName");
