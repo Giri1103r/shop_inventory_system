@@ -58,7 +58,9 @@ use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
+use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2049,26 +2051,42 @@ if (!function_exists('getMonth')) {
 
     if (!function_exists('GetOHCMedicineFDO')) {
 
-        function GetOHCMedicineFDO( $id,)
+        function GetOHCMedicineFDO($id)
         {
 
-            $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            $medicineRequisition = MedicineRequistionFdoChecklist::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
             return $medicineRequisition;
         }
-
     }
 
     if (!function_exists('GetOHCMedicineFloor')) {
 
-        function GetOHCMedicineFloor( $id,)
+        function GetOHCMedicineFloor($id)
         {
 
-            $medicineRequisition =MedicineRequisitionSlipFloor::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            $medicineRequisition = MedicineRequisitionSlipFloor::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
             return $medicineRequisition;
         }
+    }
+    if (!function_exists('GetOHCDailyDepartment')) {
 
+        function GetOHCDailyDepartment($id)
+        {
+
+            $medicineRequisition = DailyDepartmentFirstAidBox::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
     }
 
+    if (!function_exists('GetMonthlyAuditChecklist')) {
+
+        function GetMonthlyAuditChecklist($id)
+        {
+
+            $medicineRequisition = MonthlyFirstAidboxChecklist::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
     if (!function_exists('GetSignature')) {
         function GetSignature($userid, $id, $type)
         {

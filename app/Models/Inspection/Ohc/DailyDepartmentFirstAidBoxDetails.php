@@ -198,22 +198,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
 
 
         $query = $this->select(
-            'inspection_ohc_daily_department_first_aid_box_details.*',
-            'inspection_static_docno.*',
-            'inspection_ohc_daily_department_first_aid_box_details.id as inspection_id',
-            'inspection_ohc_daily_department_first_aid_box_details.created_by as inspection_created_by',
-            'inspection_ohc_daily_department_first_aid_box_details.created_at as inspection_created_at',
-        )
-
-            ->leftJoin('masters_unit', 'inspection_ohc_daily_department_first_aid_box_details.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_department_first_aid_box_details.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin('masters_department', 'inspection_ohc_daily_department_first_aid_box_details.department', '=', 'masters_department.id')
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_daily_department_first_aid_box_details.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+            'inspection_ohc_daily_department_first_aid_box_details.*');
 
         if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
