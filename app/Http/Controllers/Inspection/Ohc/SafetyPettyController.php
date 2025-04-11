@@ -44,7 +44,6 @@ class SafetyPettyController extends Controller
         $this->user = new User();
         $this->document_reference = new InspectionStaticDocno();
         $this->department = new Department();
-
     }
 
     public function Index(Request $request)
@@ -59,11 +58,11 @@ class SafetyPettyController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '1'>Active</span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '0'>In-Active</span>";
-                                }
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '1'>Active</span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->safety_petty_id) . "' data-type = '0'>In-Active</span>";
+                            }
                             // }
                             return $text;
                         })
@@ -84,9 +83,8 @@ class SafetyPettyController extends Controller
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
-
                         })
-                        ->rawColumns(['action', 'created_date','issue_date', 'inspection_status', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'issue_date', 'inspection_status', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -146,22 +144,36 @@ class SafetyPettyController extends Controller
     {
         try {
 
+            // dd($request->all());
             $sfty_petty_details = $this->sfty_petty_details->store();
 
-            $sfty_petty_id = $sfty_petty_details[0]->id;
+
+            // dd($sfty_petty_details);
+            $id = [];
+            $index = 1;
+            foreach ($sfty_petty_details as $details) {
+
+                $id[$index] = $details->id;
+                $index++;
+            }
+
+
 
             $empId =  Auth::user()->id;
 
             $this->signature->signatureLogUpload(
-                $empId, $sfty_petty_id ,
+                $empId,
+                $id,
                 OHC_AMOUNT_GIVENBY_INSPECTION,
                 'signature_givenby_image'
             );
             $this->signature->signatureLogUpload(
-                $empId, $sfty_petty_id ,
+                $empId,
+                $id,
                 OHC_AMOUNT_RECEIVEDBY_INSPECTION,
                 'signature_receivedby_image'
             );
+
 
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
@@ -204,9 +216,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
+                $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
@@ -214,7 +226,6 @@ class SafetyPettyController extends Controller
                     'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
                 );
-
             }
             return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
@@ -294,7 +305,7 @@ class SafetyPettyController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
@@ -350,9 +361,9 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type,$sub_type_given, $sfty_petty_details->id);
+                $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type,$sub_type_received, $sfty_petty_details->id);
+                $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
@@ -402,5 +413,4 @@ class SafetyPettyController extends Controller
             return Response::json(true);
         }
     }
-
 }

@@ -922,6 +922,8 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
     Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
+    Route::get('generalexcel/{id}', [FirstAidRecordController::class, 'generalExcel']);
+
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {

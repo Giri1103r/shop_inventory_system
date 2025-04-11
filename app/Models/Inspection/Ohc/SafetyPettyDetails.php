@@ -126,7 +126,6 @@ class SafetyPettyDetails extends Model
     public function store()
     {
         $request = request();
-
         $insertedData = [];
 
         foreach ($request->amount as $index => $amount) {
@@ -146,7 +145,7 @@ class SafetyPettyDetails extends Model
                 'created_by' => Auth::id(),
             );
 
-            $insertedData []=  $this->create($insert_array);
+            $insertedData[]=  $this->create($insert_array);
 
         }
 
