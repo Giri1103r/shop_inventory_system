@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>MONTHLY FORKLIFT INSPECTION Checklist | KARAM</title>
+    <title>MONTHLY FIRE PUMP HOUSE INSPECTION Checklist | KARAM</title>
 
     <style>
         .badge {
