@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,6 +41,10 @@ class CoTypeFireExtinguisher extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'ehs_officer_verified_at',
+        'l1_manager_updated_at',
+        'l2_manager_updated_at',
+        'fire_associate_updated_at',
     ];
 
     protected $attributes = [
@@ -232,6 +237,7 @@ class CoTypeFireExtinguisher extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -240,6 +246,7 @@ class CoTypeFireExtinguisher extends Model
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -252,6 +259,7 @@ class CoTypeFireExtinguisher extends Model
             'capa_remarks' => $request->capa_remarks,
             'updated_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+            'fire_associate_updated_at' => Carbon::now(),
         ];
         $this->where('id', $id)->update($update_array);
     }
@@ -265,6 +273,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L1_VERIFICATION,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -273,6 +282,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => EHS_OFFICER_REJECTED,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -286,6 +296,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -294,6 +305,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -308,6 +320,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -316,6 +329,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }

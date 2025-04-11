@@ -111,8 +111,10 @@ class HospitalDetails extends Model
 
     public function existUniqueCheck($hospital_name, $mobile_no, $id)
     {
-        return $this->where('hospital_name', $hospital_name)
-        ->orwhere('mobile_no',$mobile_no)
+        return $this->where(function ($query) use ($hospital_name, $mobile_no) {
+                $query->where('hospital_name', $hospital_name)
+                      ->orWhere('mobile_no', $mobile_no);
+            })
             ->where('id', '!=', $id)
             ->get();
     }

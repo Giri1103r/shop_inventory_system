@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Medical Requisition Slip- Fdo & Security Gate | KARAM</title>
+    <title>Medicine Requisition Slip Floor| KARAM</title>
 
     <style>
         .badge {
@@ -156,7 +156,7 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
-                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                <th colspan="6" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black;">
@@ -168,7 +168,7 @@
                     </h3>
                 </th>
 
-                <th colspan="8" style="border:1px solid black;">
+                <th colspan="6" style="border:1px solid black;">
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
@@ -210,17 +210,18 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
                     MEDICINE
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">FREEZE QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARKS
                 </th>
 
             </tr>
             @php
                 $medicineRequisitionDetails = GetOHCMedicineFloor($details->id);
             @endphp
+
             @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
                 <tr>
 
@@ -230,13 +231,13 @@
                     <td colspan="6"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
-                    <td colspan="4"
+                    <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->freeze_quantity }}</td>
-                    <td colspan="4"
+                    <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->quantity }}</td>
-                    <td colspan="4"
+                    <td colspan="6"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->remarks }}</td>
 
@@ -264,12 +265,12 @@
                     );
                 @endphp
 
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Requestor Signature </div>
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
                     <img src="{{ admin_url($FloorManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Floor Manager Signature</div>

@@ -459,13 +459,8 @@ Route::group(['prefix' => 'msds/'], function () {
     Route::get('export/pdf', [MSDSController::class, 'exportPdf']);
     Route::post('status', [MSDSController::class, 'statusChange']);
     Route::post('unique', [MSDSController::class, 'Uniquecheck']);
-    Route::get('verification/{id}/{employee_type}', [MSDSController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [MSDSController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [MSDSController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [MSDSController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [MSDSController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [MSDSController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [MSDSController::class, 'generalpdf']);
+    Route::GET('/generalExcel/{id}', [MSDSController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () {
@@ -480,13 +475,9 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('status', [RRAAController::class, 'statusChange']);
     Route::post('unique', [RRAAController::class, 'Uniquecheck']);
     Route::get('employeeid', [RRAAController::class, 'employeeid']);
-    Route::get('verification/{id}/{employee_type}', [RRAAController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [RRAAController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [RRAAController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [RRAAController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [RRAAController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [RRAAController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
+    Route::GET('/generalExcel/{id}', [RRAAController::class, 'generalExcel']);
+
 });
 
 Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
@@ -967,6 +958,7 @@ Route::group(['prefix' => 'ohc/first-aid/opd-medicine-inspection/'], function ()
     Route::get('generalpdf/{id}', [FirstAidMedicineInspectionController::class, 'generalpdf']);
     Route::get('export/pdf', [FirstAidMedicineInspectionController::class, 'exportPdf']);
     Route::get('export/excel', [FirstAidMedicineInspectionController::class, 'exportExcel']);
+    Route::get('generalexcel/{id}', [FirstAidMedicineInspectionController::class, 'generalExcel']);
     Route::post('status', [FirstAidMedicineInspectionController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [FirstAidMedicineInspectionController::class, 'ExportViewPDF']);
     Route::get('approval/{id}', [FirstAidMedicineInspectionController::class, 'approval']);
