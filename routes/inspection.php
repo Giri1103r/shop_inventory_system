@@ -947,6 +947,7 @@ Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function ()
     Route::get('export/excel', [MonthlyMedicineStoreController::class, 'exportExcel']);
     Route::post('status', [MonthlyMedicineStoreController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
+    Route::get('generalexcel/{id}', [MonthlyMedicineStoreController::class, 'generalExcel']);
     Route::get('approval/{id}', [MonthlyMedicineStoreController::class, 'approval']);
     Route::post('verify/submit', [MonthlyMedicineStoreController::class, 'approvalSubmit']);
 });
@@ -976,6 +977,7 @@ Route::group(['prefix' => 'ohc/emergency-floor-first-aid-bag/checklist/'], funct
     Route::get('export/excel', [FirstAidBagChecklistController::class, 'exportExcel']);
     Route::post('status', [FirstAidBagChecklistController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [FirstAidBagChecklistController::class, 'ExportViewPDF']);
+    Route::get('generalexcel/{id}', [FirstAidBagChecklistController::class, 'generalExcel']);
     Route::get('approval/{id}', [FirstAidBagChecklistController::class, 'approval']);
     Route::post('verify/submit', [FirstAidBagChecklistController::class, 'approvalSubmit']);
 });
@@ -1009,6 +1011,7 @@ Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
     Route::get('export/excel', [OHCHygieneCleaningChecklistController::class, 'ExportExcel']);
     Route::get('approval/{id}', [OHCHygieneCleaningChecklistController::class, 'approval']);
     Route::post('verify/submit', [OHCHygieneCleaningChecklistController::class, 'approvalSubmit']);
+    Route::get('generalexcel/{id}', [OHCHygieneCleaningChecklistController::class, 'generalExcel']);
     Route::get('generalpdf/{id}', [OHCHygieneCleaningChecklistController::class, 'generalpdf']);
 });
 
@@ -1045,6 +1048,7 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+    Route::get('generalexcel/{id}', [DailyVitalEquipmentController::class, 'generalExcel']);
 });
 
 

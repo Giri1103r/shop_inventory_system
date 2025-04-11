@@ -230,7 +230,7 @@ class MSDSController extends Controller
             $i = 1;
 
             foreach ($allData as $data) {
-                // === Logo ===
+                
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
@@ -243,7 +243,6 @@ class MSDSController extends Controller
                     $drawing->setWorksheet($sheet);
                 }
 
-                // === Header Title and Document Info ===
                 $sheet->mergeCells("A{$row}:B" . ($row + 2));
                 $sheet->mergeCells("C{$row}:L" . ($row + 2));
                 $sheet->setCellValue("C{$row}", "Chemical (MSDS) Master List PN International Pvt.Ltd.");
@@ -253,7 +252,6 @@ class MSDSController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
 
-                // === Document Info Labels and Values ===
                 $docLabels = [
                     'M1:N1' => 'Doc. No.',
                     'M2:N2' => 'Issue Dt.',
@@ -282,7 +280,6 @@ class MSDSController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // === Table Headers ===
                 $headerRow = $row + 3;
                 $sheet->mergeCells("A{$headerRow}:C{$headerRow}")->setCellValue("A{$headerRow}", 'Sr. No');
                 $sheet->mergeCells("D{$headerRow}:F{$headerRow}")->setCellValue("D{$headerRow}", 'Item Code');
@@ -297,7 +294,6 @@ class MSDSController extends Controller
                     'fill' => ['fillType' => Fill::FILL_SOLID],
                 ]);
 
-                // === Data Row ===
                 $dataRow = $headerRow + 1;
 
                 $sheet->mergeCells("A{$dataRow}:C{$dataRow}")->setCellValue("A{$dataRow}", 1); // Always 1 for each block
@@ -337,12 +333,10 @@ class MSDSController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                // === Advance row for next block with 4-row gap ===
                 $row = $dataRow + 5;
                 $i++;
             }
 
-            // Auto-size columns
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
@@ -361,9 +355,6 @@ class MSDSController extends Controller
             return redirect(admin_url('msds/list'));
         }
     }
-
-
-
 
 
     public function generalpdf(Request $request)
@@ -417,7 +408,6 @@ class MSDSController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // === Company Logo ===
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -430,7 +420,6 @@ class MSDSController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            // === Header Title ===
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells('C1:L3');
             $sheet->setCellValue('C1', "Chemical (MSDS) Master List PN International Pvt.Ltd.");
@@ -470,7 +459,6 @@ class MSDSController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // === Header Definition ===
             $headers = [
                 'Sr. No',
                 'Item Code',
@@ -479,7 +467,6 @@ class MSDSController extends Controller
                 'Remarks'
             ];
 
-            // === Header Row ===
             $sheet->mergeCells('A4:C4')->setCellValue('A4', $headers[0]);
             $sheet->mergeCells('D4:F4')->setCellValue('D4', $headers[1]);
             $sheet->mergeCells('G4:I4')->setCellValue('G4', $headers[2]);
@@ -499,7 +486,6 @@ class MSDSController extends Controller
                 ],
             ]);
 
-            // === Data Row ===
             $row = 5;
             $sheet->mergeCells("A{$row}:C{$row}")->setCellValue("A{$row}", '1');
             $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->item_code ?? '');
@@ -555,12 +541,10 @@ class MSDSController extends Controller
             ]);
 
 
-            // === Auto-size columns ===
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            // === Export File ===
             $fileName = 'MSDS.xlsx';
             $writer = new Xlsx($spreadsheet);
 

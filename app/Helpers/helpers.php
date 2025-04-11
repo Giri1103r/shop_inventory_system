@@ -59,6 +59,7 @@ use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
+use App\Models\Inspection\Ohc\FirstAiderListDetails;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
 
@@ -2065,6 +2066,15 @@ if (!function_exists('getMonth')) {
         {
 
             $medicineRequisition = MedicineRequisitionSlipFloor::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
+    if (!function_exists('GetFirstAiderList')) {
+
+        function GetFirstAiderList($id)
+        {
+
+            $medicineRequisition = FirstAiderListDetails::where('reference_id', $id)->where('trash', 'NO')->get();
             return $medicineRequisition;
         }
     }

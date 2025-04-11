@@ -271,7 +271,7 @@ class RRAAController extends Controller
             $currentRow = 1;
 
             foreach ($allData as $recordIndex => $data) {
-                // === Company Logo ===
+               
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -284,7 +284,6 @@ class RRAAController extends Controller
                     $drawing->setWorksheet($sheet);
                 }
 
-                // === Title & Header Cell Merging ===
                 $sheet->mergeCells("A{$currentRow}:C" . ($currentRow + 2));
                 $sheet->mergeCells("D{$currentRow}:N" . ($currentRow + 2));
                 $sheet->mergeCells("O{$currentRow}:Q{$currentRow}");
@@ -294,7 +293,6 @@ class RRAAController extends Controller
                 $sheet->mergeCells("R" . ($currentRow + 1) . ":T" . ($currentRow + 1));
                 $sheet->mergeCells("R" . ($currentRow + 2) . ":T" . ($currentRow + 2));
 
-                // === Content Filling ===
                 $sheet->setCellValue("D{$currentRow}", "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
                 $sheet->setCellValue("O{$currentRow}", 'Doc. No.');
                 $sheet->setCellValue("O" . ($currentRow + 1), 'Issue Dt.');
@@ -303,7 +301,6 @@ class RRAAController extends Controller
                 $sheet->setCellValue("R" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
                 $sheet->setCellValue("R" . ($currentRow + 2), $document_no->rev_dt);
 
-                // === Style Entire Header Block ===
                 $sheet->getStyle("A{$currentRow}:T" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12],
                     'alignment' => [
@@ -342,7 +339,6 @@ class RRAAController extends Controller
                     'font' => ['bold' => true],
                 ]);
 
-                // === Headers ===
                 $headerRow = $currentRow + 3;
                 $headers = [
                     'Sr. No', 'Category', 'OHS Compliance Index (Role)', 'Scope', 'Responsibility',
@@ -375,7 +371,6 @@ class RRAAController extends Controller
                     ],
                 ]);
 
-                // === Data Row ===
                 $dataRow = $headerRow + 1;
                 $sheet->mergeCells("A{$dataRow}:B{$dataRow}")->setCellValue("A{$dataRow}", 1);
                 $sheet->mergeCells("C{$dataRow}:E{$dataRow}")->setCellValue("C{$dataRow}", getCategoryname($data->category));
@@ -394,16 +389,13 @@ class RRAAController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                // === Next Section Row ===
                 $currentRow = $dataRow + 5;
             }
 
-            // === Auto-size columns ===
             foreach (range('A', 'T') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            // === Export File ===
             $fileName = 'RRAA.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -469,7 +461,6 @@ class RRAAController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            // === Company Logo ===
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -482,7 +473,6 @@ class RRAAController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            // === Header Title ===
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells('D1:N3');
             $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
@@ -522,7 +512,6 @@ class RRAAController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // === Header Columns ===
             $headers = [
                 'Sr. No',
                 'Category',
@@ -558,7 +547,6 @@ class RRAAController extends Controller
                 ],
             ]);
 
-            // === Data Row ===
             $row = 5;
             $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", '1');
             $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", getCategoryname($rraa_details->category) ?? '');
@@ -577,12 +565,10 @@ class RRAAController extends Controller
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-            // === Auto-size all columns ===
             foreach (range('A', 'T') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            // === Export File ===
             $fileName = 'RRAA.xlsx';
             $writer = new Xlsx($spreadsheet);
 

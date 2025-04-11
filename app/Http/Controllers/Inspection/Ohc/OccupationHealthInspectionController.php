@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Inspection\Ohc;
+
 use App\Models\Inspection\Ohc\OccupationHealthInspection;
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Safety\SafetyInspection;
@@ -29,42 +30,43 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\InspectionStaticDocno;
+
 class OccupationHealthInspectionController extends Controller
 {
 
 
     private $document_reference;
-        private $OhcDetails;
-        private $user;
-        private $occupation_inspection;
-        private $frequency;
-        private $upload_log;
-        private $unit;
-        private $shift;
-        private $department;
-        private $checklist_type;
-        private $sub_type_data;
-        private $sub_type_data_name;
-        private $questionery;
-        private $signature;
-        private $location;
-        private $inspection_ohc_status_log;
-        public function __construct()
-        {
+    private $OhcDetails;
+    private $user;
+    private $occupation_inspection;
+    private $frequency;
+    private $upload_log;
+    private $unit;
+    private $shift;
+    private $department;
+    private $checklist_type;
+    private $sub_type_data;
+    private $sub_type_data_name;
+    private $questionery;
+    private $signature;
+    private $location;
+    private $inspection_ohc_status_log;
+    public function __construct()
+    {
 
-            $this->upload_log = new UploadLog();
-            $this->unit = new Unit();
-            $this->department = new Department();
-            $this->shift = new Shift();
-            $this->location = new Location();
-            $this->occupation_inspection = new OccupationHealthInspection();
-            $this->user = new User();
-            $this->frequency = new Frequency();
-            $this->document_reference = new InspectionStaticDocno();
-            $this->signature = new OhcSignature();
-            $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
-        }
-        public function Index(Request $request)
+        $this->upload_log = new UploadLog();
+        $this->unit = new Unit();
+        $this->department = new Department();
+        $this->shift = new Shift();
+        $this->location = new Location();
+        $this->occupation_inspection = new OccupationHealthInspection();
+        $this->user = new User();
+        $this->frequency = new Frequency();
+        $this->document_reference = new InspectionStaticDocno();
+        $this->signature = new OhcSignature();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
+    }
+    public function Index(Request $request)
     {
         if (Auth::check()) {
             if ($request->ajax()) {
@@ -148,6 +150,10 @@ class OccupationHealthInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/inspection/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+
+                            $btn .= '<a href="' . admin_url('ohc/inspection/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'approve_status'])
@@ -171,7 +177,7 @@ class OccupationHealthInspectionController extends Controller
             'shift' => $shift,
             'location' => $location,
         );
-        return view('inspection.inspection_ohc.occupational_heath_inspection.list',$data);
+        return view('inspection.inspection_ohc.occupational_heath_inspection.list', $data);
     }
 
 
@@ -297,7 +303,7 @@ class OccupationHealthInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-               $occupational_health_center = $this->occupation_inspection->Selectone($id);
+                $occupational_health_center = $this->occupation_inspection->Selectone($id);
 
                 $inspectionCkeclist = json_decode($occupational_health_center);
                 $checklist_details = getCheckListQuestion(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
@@ -312,13 +318,14 @@ class OccupationHealthInspectionController extends Controller
                 $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
                 $data = array(
-                    'occupational_health_center' =>$occupational_health_center,
+                    'occupational_health_center' => $occupational_health_center,
                     'inspectionCkeclist' => $inspectionCkeclist,
-                    'checklist_details' =>  $checklist_details, 'requestorsignature' => $requestor_signature,
+                    'checklist_details' =>  $checklist_details,
+                    'requestorsignature' => $requestor_signature,
                     'getoption' => $getoption,
                     'statuslog' => $statuslog,
-                    'signatureview'=> $requestor_signature,
-                    'document_no'=> $document_no
+                    'signatureview' => $requestor_signature,
+                    'document_no' => $document_no
                 );
             }
             return view('inspection.inspection_ohc.occupational_heath_inspection.view', $data);
@@ -332,7 +339,7 @@ class OccupationHealthInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-               $occupational_health_center = $this->occupation_inspection->Selectone($id);
+                $occupational_health_center = $this->occupation_inspection->Selectone($id);
 
                 $inspectionCkeclist = json_decode($occupational_health_center);
                 $checklist_details = getCheckListQuestion(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
@@ -345,12 +352,13 @@ class OccupationHealthInspectionController extends Controller
                 $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
 
                 $data = array(
-                    'occupational_health_center' =>$occupational_health_center,
+                    'occupational_health_center' => $occupational_health_center,
                     'inspectionCkeclist' => $inspectionCkeclist,
-                    'checklist_details' =>  $checklist_details, 'requestorsignature' => $requestor_signature,
+                    'checklist_details' =>  $checklist_details,
+                    'requestorsignature' => $requestor_signature,
                     'getoption' => $getoption,
-                    'signatureview'=> $requestor_signature,
-                    'document_no'=> $document_no
+                    'signatureview' => $requestor_signature,
+                    'document_no' => $document_no
 
                 );
             }
@@ -367,7 +375,7 @@ class OccupationHealthInspectionController extends Controller
             $id = decryptId($request->id);
 
             $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
-           $occupational_health_center = $this->occupation_inspection->Selectone($id);
+            $occupational_health_center = $this->occupation_inspection->Selectone($id);
             if ($request->is_passed == 1) {
                 $message = 'Occupational Health Center Inspection Checklist Approved Successfully';
                 $web_link =   admin_url('ohc/inspection/view/' . encryptId($occupational_health_center->id));
@@ -380,7 +388,7 @@ class OccupationHealthInspectionController extends Controller
 
             $inspection_updates = $this->occupation_inspection->EHSOfficerUpdate($id);
             $userIds = [
-                'users' =>$occupational_health_center->created_by,
+                'users' => $occupational_health_center->created_by,
             ];
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
@@ -391,7 +399,7 @@ class OccupationHealthInspectionController extends Controller
                     'title' => $mailsubject,
                     'message' => $message,
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' =>$occupational_health_center->id,
+                    'id' => $occupational_health_center->id,
                     'module' => 1,
                 )),
                 'web_link' =>  $web_link,
@@ -401,7 +409,7 @@ class OccupationHealthInspectionController extends Controller
             notificationSave($notificationData);
 
             $title = $message;
-            $user =$occupational_health_center->created_by;
+            $user = $occupational_health_center->created_by;
             $email_id = getUseremail($user);
             $url = admin_url('ohc/inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
@@ -410,7 +418,7 @@ class OccupationHealthInspectionController extends Controller
                 'mail_subject' => $mailsubject,
                 'title' => $title,
                 'url' => $url,
-                'data' =>$occupational_health_center
+                'data' => $occupational_health_center
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
 
@@ -879,7 +887,7 @@ class OccupationHealthInspectionController extends Controller
                 $checklist_details = getCheckListQuestion(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
                 $options =  getoption(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
-                $document_no = $this->document_reference->selectUsingName('OccupationalHealthCentreInspectionCheklist');
+                $document_no = $this->document_reference->selectOne($weeklyAmbulance->document_reference_id);
 
             }
             $data = [

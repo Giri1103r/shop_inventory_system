@@ -198,49 +198,157 @@ class MonthlyAuditPlanController extends Controller
         }
     }
 
+   
+    
+
+
     public function ExportExcel(Request $request)
     {
-
         try {
             $allData = $this->monthly_audit_plan->exportdata();
+    
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-
-            $header = [
-                __("common.sno"),
-                'Auditee Name',
-                'Unit',
-                'Task Name',
-                 'Complaince Category',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->auditee_name;
-                $export[] =  getUnitname($data->unit_id);
-                $export[] =  getTaskName($data->task_id);
-                $export[] =  getCategoryType($data->compliance_category_id);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-
-                $i++;
+    
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+    
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
             }
+    
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+    
+            $sheet->setCellValue('C1', 'Monthly EHS Audit');
+            $sheet->mergeCells('C1:G3');
+            $sheet->getStyle("C1:G3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 16],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+    
+            $columnWidths = [
+                'A' => 8,   
+                'B' => 25,  
+                'C' => 30,  
+                'D' => 25,  
+                'E' => 20,  
+                'F' => 15,  
+                'G' => 20,  
+            ];
+    
+            foreach ($columnWidths as $col => $width) {
+                $sheet->getColumnDimension($col)->setWidth($width);
+            }
+    
+            $row = 4;
+    
+            foreach ($allData as $unitName => $records) {
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly Audit plan.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
+                $sheet->setCellValue("A{$row}", strtoupper($unitName));
+                $sheet->mergeCells("A{$row}:G{$row}");
+                $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['rgb' => 'FFFFFF']
+                    ],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'ffb9bf']
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER
+                    ]
+                ]);
+                $row++;
+    
+                $sheet->fromArray([
+                    'S.No', 'Auditee Name', 'Task Name', 'Reference Doc No', 'Category', 'Frequency', 'Created At'
+                ], NULL, "A{$row}");
+    
+                $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+    
+                $row++;
+    
+                $sr = 1;
+                foreach ($records as $item) {
+                    $sheet->fromArray([
+                        $sr,
+                        $item->auditee_name,
+                        $item->task_name,
+                        $item->reference_doc_no,
+                        getCategoryType($item->compliance_category_id),
+                        getFrequencyname($item->frequency_id),
+                        displayDateformat($item->created_at),
+                    ], null, "A{$row}");
+    
+                    $sheet->getStyle("A{$row}:G{$row}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+                    $row++;
+                    $sr++;
+                }
+    
+                $row += 1;
+            }
+    
+            $lastRow = $sheet->getHighestRow();
+            $sheet->getStyle("A3:G{$lastRow}")->applyFromArray([
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_MEDIUM,
+                        'color' => ['argb' => '000000']
+                    ]
+                ]
+            ]);
+    
+            $fileName = 'Monthly_Audit_Plan_' . now()->format('d-m-Y') . '.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment;filename=\"$fileName\"");
+            header('Cache-Control: max-age=0');
+    
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+    
+        } catch (\Exception $e) {
+            report($e);
+            return redirect()->back()->with('error', 'Something went wrong while exporting.');
         }
     }
+    
 
     public function ExportPdf(Request $request)
     {
