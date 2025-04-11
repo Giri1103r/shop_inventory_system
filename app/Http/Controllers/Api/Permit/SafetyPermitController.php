@@ -358,7 +358,7 @@ class SafetyPermitController extends BaseController
                         ],
                         'register_entry_exits' => [
                             'name' => "Register for entry & exits ",
-                            "register_entry_exits_checked" => $confined_space_entry && $confined_space_entry->register_entry_exits  == 1 ? 'Yes' : 'No',
+                            'register_entry_exits_checked' => isset($confined_space_entry->register_entry_exits) && $confined_space_entry->register_entry_exits == 1 ? 'Yes' : 'No',
                         ],
                         'other_gas' => [
                             'name' => "Any Other Gas / PPM",
@@ -482,11 +482,9 @@ class SafetyPermitController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'Safety Permit Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

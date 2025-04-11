@@ -146,7 +146,7 @@ class PpeRequest extends Model
             $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
             $ppe_file->move(public_path($destinationPath), $ppe_file_name);
 
-            $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
+            $ppe_file_path = 'public/'.$destinationPath . '/' . $ppe_file_name;
         }
 
         if ($request->request_for == 1) {

@@ -31,6 +31,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\InspectionStaticDocno;
 
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 class OccupationHealthInspectionController extends Controller
 {
 
@@ -920,6 +930,148 @@ class OccupationHealthInspectionController extends Controller
         } catch (Exception $ex) {
             dd($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+
+            $occupational_health_center = $this->occupation_inspection->Selectone($id);
+                $document_no = $this->document_reference->selectOne($occupational_health_center->document_reference_id);
+
+
+                $currentRow = $row;
+
+                // Logo Section
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                // Document Info
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Review Dates
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":J" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($occupational_health_center->next_review_date));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("K" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('LOCATION :-  ')->getFont()->setBold(true);
+                $richText2->createText(Displaydateformat($occupational_health_center->last_updated_date));
+                $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                // Table Header
+                $headerRow = $currentRow + 4;
+                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE EMPLOYEE");
+                $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "DESIGNATION");
+                $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "DEPARTMENT");
+                $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "UNIT");
+                $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "MOBILE NUMBER");
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Details Rows
+                $inspectionRow = $headerRow + 1;
+                // foreach ($first_aider_details as $index => $detail) {
+                //     $empName = getEmployeename($detail->emp_id) ?? '-';
+                //     $designation = $detail->designation_id ?? '-';
+                //     $department = getDepartment($detail->department_id) ?? '-';
+                //     $unit = getUnitname($detail->unit_id) ?? '-';
+                //     $mobile = $detail->mobile_no ?? '-';
+
+                //     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                //     $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $empName);
+                //     $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $designation);
+                //     $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $department);
+                //     $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $unit);
+                //     $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $mobile);
+
+                //     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+
+                //     $inspectionRow++;
+                // }
+
+
+                $row = $inspectionRow + 2;
+
+
+            // Set headers for download
+            $filename = 'First Aider List.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit;
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }
     }
 }
