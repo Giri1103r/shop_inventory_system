@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Fire;
 
+use Carbon\Carbon;
 use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,10 @@ class CartridgeTypeFireExtinguisher extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'ehs_officer_verified_at',
+        'l1_manager_updated_at',
+        'l2_manager_updated_at',
+        'fire_associate_updated_at',
     ];
 
     protected $attributes = [
@@ -168,7 +173,6 @@ class CartridgeTypeFireExtinguisher extends Model
         $query = $this->select('inspection_cartridge_type_fire_extinguisher.*','inspection_cartridge_type_fire_extinguisher_details.*', 'inspection_shift_option.*', 'inspection_static_docno.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*',
         'inspection_cartridge_type_fire_extinguisher.created_by as checked_by','inspection_cartridge_type_fire_extinguisher.id as fire_id',
         'inspection_cartridge_type_fire_extinguisher_details.type as extinguisher_type')
-            // ->leftJoin('inspection_fire_fire_extinguisher_type', 'inspection_fire_fire_extinguisher_type.id', '=', 'inspection_cartridge_type_fire_extinguisher_details.type')
             ->leftJoin('masters_location', 'inspection_cartridge_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_cartridge_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_cartridge_type_fire_extinguisher.unit', '=', 'masters_unit.id')
@@ -227,6 +231,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -235,6 +240,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -247,6 +253,7 @@ class CartridgeTypeFireExtinguisher extends Model
             'capa_remarks' => $request->capa_remarks,
             'updated_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+            'fire_associate_updated_at' => Carbon::now(),
         ];
         $this->where('id', $id)->update($update_array);
     }
@@ -260,6 +267,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L1_VERIFICATION,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -268,6 +276,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => EHS_OFFICER_REJECTED,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -281,6 +290,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -289,6 +299,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -303,6 +314,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -311,6 +323,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
