@@ -228,7 +228,11 @@ class MonthlyFirePumpHouseController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.created_msg'));
-            return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
+            if ($monthly_fire_inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
