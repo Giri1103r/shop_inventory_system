@@ -107,7 +107,9 @@
         .table_card td {
             text-align: center;
         }
-
+        .page-break {
+            page-break-before: always;
+        }
         .table-container {
             padding: 20px;
         }
@@ -270,6 +272,7 @@
 
 
         </table>
+        <div class="page-break"></div>
     @endforeach
 
 

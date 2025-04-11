@@ -31,6 +31,18 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\InspectionStaticDocno;
+
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class MonthlyFirstAidboxController extends Controller
 {
 
@@ -109,6 +121,9 @@ class MonthlyFirstAidboxController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'approve_status'])
@@ -132,7 +147,7 @@ class MonthlyFirstAidboxController extends Controller
 
 
         );
-        return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.list',$data);
+        return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.list', $data);
     }
 
     public function Add(Request $request)
@@ -251,7 +266,7 @@ class MonthlyFirstAidboxController extends Controller
 
             $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
 
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'i');
         } catch (\Exception $ex) {
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -270,6 +285,7 @@ class MonthlyFirstAidboxController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
 
             $header = [
                 __("common.sno"),
@@ -321,6 +337,8 @@ class MonthlyFirstAidboxController extends Controller
         try {
 
             $allData = $this->monthly_first_aid->exportdata();
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
+
             $header = [
                 __("common.sno"),
                 'Document Number',
@@ -336,6 +354,7 @@ class MonthlyFirstAidboxController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",
             );
 
@@ -364,6 +383,257 @@ class MonthlyFirstAidboxController extends Controller
             dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
+
+            $monthly_first_aid = $this->monthly_first_aid->selectOne($id);
+            $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
+            $safetyofficerSignature = GetOHCSignature($monthly_first_aid->approved_by, $id, OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST);
+            $RequestorSignature = GetOHCSignature($monthly_first_aid->created_by, $id, OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST);
+            $logoPath = public_path('assets/images/logo-dark.png');
+
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("C1:L3");
+            $sheet->setCellValue("C1", "Monthly First Aid Box Audit Checklist\nPN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFFFF']]
+            ]);
+
+            $headerLabels = [
+                'M1:N1' => 'Doc. No.',
+                'M2:N2' => 'Issue Dt.',
+                'M3:N3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->setCellValue("O1", $document_no->doc_no);
+            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("O3", $document_no->rev_dt);
+
+            $sheet->getStyle("M1:O3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+            $shift = getShift($monthly_first_aid->shift);
+            $date = Displaydateformat($monthly_first_aid->date_of_inspection);
+
+            $infoData = [
+                'A4:G4' => ['label' => 'SHIFT :- ', 'value' => $shift],
+                'H4:O4' => ['label' => 'DATE :- ', 'value' => $date],
+            ];
+
+            foreach ($infoData as $range => $data) {
+                $cell = explode(':', $range)[0];
+
+                $richText = new RichText();
+                $richText->createTextRun($data['label'])->getFont()->setBold(true);
+                $richText->createText($data['value']);
+
+                $sheet->mergeCells($range);
+                $sheet->getCell($cell)->setValue($richText);
+            }
+
+            $sheet->getStyle("A4:O4")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $frequency = getFrequencyname($monthly_first_aid->frequency);
+            $unit = getUnitname($monthly_first_aid->unit);
+            $infoData2 = [
+                'A5:G5' => ['label' => 'FREQUENCY :- ', 'value' => $shift],
+                'H5:O5' => ['label' => 'UNIT :- ', 'value' => $date],
+            ];
+
+
+
+            foreach ($infoData2 as $range => $data) {
+                $cell = explode(':', $range)[0];
+
+                $richText = new RichText();
+                $richText->createTextRun($data['label'])->getFont()->setBold(true);
+                $richText->createText($data['value']);
+
+                $sheet->mergeCells($range);
+                $sheet->getCell($cell)->setValue($richText);
+            }
+
+            $sheet->getStyle("A5:O5")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->setCellValue("A6", "SR.NO");
+            $sheet->mergeCells("B6:D6")->setCellValue("B6", "First-Aid Box Number");
+            $sheet->mergeCells("E6:G6")->setCellValue("E6", "Department/Location");
+            $sheet->setCellValue("H6", "Does the
+first-aid
+register is
+being
+properly
+maintened
+as & when
+require.");
+            $sheet->setCellValue("I6", "Does the
+first-aid
+box is
+bieng
+inspect as
+per
+periodicity");
+            $sheet->setCellValue("J6", "Does the
+First- aid
+box
+inspection
+Checklist
+is being
+filled as
+per
+periodicity");
+            $sheet->setCellValue("K6", "Does the
+First-aid
+box is
+being
+maintained
+as per the
+freeze
+quantity");
+            $sheet->setCellValue("L6", "Does the
+medical
+requisition slip
+record is being
+maintained.");
+            $sheet->setCellValue("M6", "Does
+the
+first-aid
+box is
+clean");
+            $sheet->setCellValue("N6", "Does the
+first-aid
+box
+sticker
+available");
+            $sheet->setCellValue("O6", "Does the
+First aid
+material
+index is
+available.");
+
+            $sheet->getStyle("A5:O5")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $row = 7; // Data starts after header row
+
+            foreach ($monthly_first_aid_audit_checklist as $index => $detail) {
+                $department = getDepartment($detail->department_id);
+                $sheet->setCellValue("A$row", $index + 1);
+                $sheet->mergeCells("B$row:D$row")->setCellValue("B$row", $detail->first_aid_box_no);
+                $sheet->mergeCells("E$row:G$row")->setCellValue("E$row", $department);
+                $sheet->setCellValue("H$row", getYesNoStatus($detail->first_aid_register_maintained));
+                $sheet->setCellValue("I$row", getYesNoStatus($detail->first_aid_box_inspect_periodicity));
+                $sheet->setCellValue("J$row", getYesNoStatus($detail->first_aid_box_checklist_periodicity));
+                $sheet->setCellValue("K$row", getYesNoStatus($detail->first_aid_box_freeze_quantity));
+                $sheet->setCellValue("L$row", getYesNoStatus($detail->medicine_requisition_slip_record));
+                $sheet->setCellValue("M$row", getYesNoStatus($detail->first_aid_box_clean));
+                $sheet->setCellValue("N$row", getYesNoStatus($detail->first_aid_box_sticker));
+                $sheet->setCellValue("O$row", getYesNoStatus($detail->first_aid_material_index));
+
+                $sheet->getStyle("A$row:O$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+            }
+
+
+            $signatureStartRow = $row;
+            $signatureEndRow = $signatureStartRow + 3;
+            $labelRow = $signatureEndRow + 1;
+            $imageHeight = 60;
+
+            // Requestor Signature
+            $sheet->mergeCells("A{$signatureStartRow}:O{$signatureEndRow}");
+            if (file_exists($RequestorSignature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Creator Signature');
+                $drawing->setDescription('Creator Signature');
+                $drawing->setPath($RequestorSignature);
+                $drawing->setCoordinates("A{$signatureStartRow}");
+                $drawing->setOffsetX(110);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth($imageHeight);
+                $drawing->setHeight($imageHeight);
+                $drawing->setWorksheet($sheet);
+            }
+            $userName = getUsername($monthly_first_aid->created_by);
+            $sheet->mergeCells("A{$labelRow}:O{$labelRow}")->setCellValue("A{$labelRow}", "Creator Signature:{$userName}");
+
+
+            $sheet->getStyle("A{$labelRow}:O{$labelRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+
+            $sheet->getStyle("A{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+
+            $fileName = 'Monthly First Aid Box Audit Checklist.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
 }

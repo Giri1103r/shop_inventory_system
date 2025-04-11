@@ -1047,6 +1047,7 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+    Route::get('generalexcel/{id}', [DailyVitalEquipmentController::class, 'generalExcel']);
 });
 
 

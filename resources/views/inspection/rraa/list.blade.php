@@ -223,6 +223,8 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 category = $('#category').val();
                                 ohs_compliance_index = $('#ohs_compliance_index').val();
+                                frequency = $('#frequency').val();
+                                scope = $('#scope').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();

@@ -160,17 +160,7 @@ class FirstAiderList extends Model
         $search = '';
         $query = $this->select(
             'inspection_ohc_first_aider.*',
-            'inspection_static_docno.*',
-            'inspection_ohc_first_aider.id as inspection_id',
-            'inspection_ohc_first_aider.created_by as inspection_created_by',
-            'inspection_ohc_first_aider.created_at as inspection_created_at',
-        )
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_first_aider.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+         );
 
         if (isset($request->next_review_date) && $request->next_review_date) {
 

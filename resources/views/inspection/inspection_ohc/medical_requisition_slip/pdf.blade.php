@@ -107,7 +107,9 @@
         .table_card td {
             text-align: center;
         }
-
+        .page-break {
+            page-break-before: always;
+        }
         .table-container {
             padding: 20px;
         }
@@ -154,7 +156,7 @@
             </table>
         </div>
         <table
-            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black; margin-top:10px">
             <tr>
                 <th colspan="6" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
@@ -285,6 +287,7 @@
 
 
         </table>
+        <div class="page-break"></div>
     @endforeach
 
 

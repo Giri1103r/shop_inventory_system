@@ -218,25 +218,49 @@
     </tr>
 
     <tr style="background-color: #ddd;">
-        <td rowspan="2" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">SR NO.</td>
-        <td rowspan="2" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">LOCATION</td>
-        <td rowspan="2" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">HOSE BOX NO.</td>
-        <td colspan="6" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">CHECK ITEMS</td>
-        <td rowspan="2" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">APPROACH</td>
-        <td rowspan="2" style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">REMARK</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            SR NO.</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            LOCATION</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            HOSE BOX NO.</td>
+        <td colspan="6"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            CHECK ITEMS</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            APPROACH</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            REMARK</td>
     </tr>
     <tr style="background-color: #ddd;">
-        <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;  text-align: center; font-weight: bold;">TYPE OF HOSE</td>
-        <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">QUANTITY</td>
-        <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">BRANCH QUANTITY</td>
-        <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">HOSE BOX KEY</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;  text-align: center; font-weight: bold;">
+            TYPE OF HOSE</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            QUANTITY</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            BRANCH QUANTITY</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            HOSE BOX KEY</td>
         <td colspan="2">
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
-                    <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">HOSE</td>
+                    <td
+                        style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">
+                        HOSE</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">CONDITION</td>
+                    <td
+                        style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">
+                        CONDITION</td>
                 </tr>
             </table>
         </td>
@@ -262,7 +286,7 @@
                     <p>Missing</p>
                 @endif
             </td>
-            <td colspan="2"  style="border: 1px solid black; padding: 8px;" title="Condition">
+            <td colspan="2" style="border: 1px solid black; padding: 8px;" title="Condition">
                 @if ($detail->condition == GOOD)
                     <p>Good</p>
                 @elseif ($detail->condition == FAIR)
