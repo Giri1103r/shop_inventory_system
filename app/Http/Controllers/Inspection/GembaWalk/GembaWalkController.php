@@ -25,6 +25,15 @@ use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsApproval;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\Shift;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class GembaWalkController extends Controller
 {
     private $location;
@@ -110,8 +119,9 @@ class GembaWalkController extends Controller
                                     $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->id)) . '" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
                                 }
 
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+
                                 return $btn;
                             })
                             ->rawColumns(['action', 'created_date', 'created_by', 'date', 'shift', 'gemba_walk_status'])
@@ -278,7 +288,7 @@ class GembaWalkController extends Controller
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
         }
         if ($gembaWalk->observation_needed == 1) {
-            return redirect(admin_url('fire/checklist-observation/add/'.encryptId($inspection_type).'/'.encryptId($id)));
+            return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
         } else {
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
@@ -923,6 +933,276 @@ class GembaWalkController extends Controller
         }
     }
 
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $gembaWalk_details = $this->gembaWalk->selectOne($id);
+            $getUserId = $this->gembaWalk->getUserId($id);
+            $type = GEMBA_WALK;
+
+            $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
+            $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
+            $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:B3'); // Merge first
+
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ]);
+
+                
+
+
+            $sheet->mergeCells("C1:K3");
+            $sheet->setCellValue("C1", "Gemba Walk Report");
+            $sheet->getStyle("C1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 16],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+
+            ]);
+
+            $gemba = $gembaWalk_details->first(); 
+
+            $sheet->getRowDimension(4)->setRowHeight(30);
+            
+            $sheet->mergeCells("A4:G4");
+            $sheet->setCellValue("A4", "Date: " . Displaydateformat($gemba->date));
+            
+            $sheet->mergeCells("H4:N4");
+            $sheet->setCellValue("H4", "Shift: " . getShift($gemba->shift_id));
+            
+            $sheet->getStyle('A4:N4')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 12,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+
+            ]);
+            
+
+            $headerLabels = [
+                'L1:M1' => 'Doc. No.',
+                'L2:M2' => 'Issue Dt.',
+                'L3:M3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+
+                ]);
+            }
+
+            $sheet->setCellValue("N1", $document_no->doc_no);
+            $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("N3", $document_no->rev_dt);
+
+            $sheet->getStyle("L1:N3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $headers = [
+                'Sr.',
+                'Location',
+                'Unit',
+                'Date of Observation',
+                'Observation Type',
+                'Description',
+                'Hazard',
+                'Image',
+                'CAPA',
+                'Date of Compliance',
+                'Responsible Person',
+                'Status',
+                'Remark',
+                'Observation'
+            ];
+
+            $col = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue("{$col}5", $header);
+                $sheet->getStyle("{$col}5")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $col++;
+            }
+
+            $row = 6;
+            $sr = 1;
+            foreach ($gembaWalk_details as $data) {
+                $sheet->setCellValue("A{$row}", $sr);
+                $sheet->setCellValue("B{$row}", getLocationname($data->location_id ?? ''));
+                $sheet->setCellValue("C{$row}", getUnitname($data->unit_id ?? ''));
+                $sheet->setCellValue("D{$row}", displayDateFormat($data->date_of_observation ?? ''));
+                $sheet->setCellValue("E{$row}", getObservationType($data->observation_type_id ?? ''));
+                $sheet->setCellValue("F{$row}", $data->description ?? '');
+                $sheet->setCellValue("G{$row}", $data->hazard ?? '');
+
+                // Insert Image if exists
+                if (!empty($data->file_path)) {
+                    $imagePath = public_path($data->file_path);
+                    if (file_exists($imagePath)) {
+                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                        $drawing->setPath($imagePath);
+                        $drawing->setCoordinates("H{$row}");
+                        $drawing->setOffsetX(5);
+                        $drawing->setOffsetY(5);
+                        $drawing->setWidth(80);
+                        $drawing->setWorksheet($sheet);
+                        $sheet->getRowDimension($row)->setRowHeight(90);
+                        $sheet->getColumnDimension('H')->setWidth(20);
+                    } else {
+                        $sheet->setCellValue("H{$row}", 'Image not found');
+                    }
+                } else {
+                    $sheet->setCellValue("H{$row}", 'No image');
+                }
+
+                $sheet->setCellValue("I{$row}", $data->capa ?? '');
+                $sheet->setCellValue("J{$row}", displayDateFormat($data->date_of_compliance ?? ''));
+                $sheet->setCellValue("K{$row}", getEmployeename($data->responsibility_id ?? ''));
+                $sheet->setCellValue("L{$row}", getGembaWalkStatus($data->status ?? ''));
+                $sheet->setCellValue("M{$row}", $data->remark ?? '');
+                $sheet->setCellValue("N{$row}", $data->observation_needed == '1' ? 'YES' : 'NO');
+
+                $sheet->getStyle("A{$row}:N{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+                $sr++;
+            }
+
+            foreach (range('A', 'N') as $col) {
+                if ($col !== 'H') {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
+                }
+            }
+
+            $signatureStartRow = $row;
+            $signatureEndRow = $signatureStartRow + 3;
+            $labelRow = $signatureEndRow + 1;
+            $imageHeight = 60;
+
+            // GembaWalk Approved Singnature
+            $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
+            if (file_exists($gembaWalk_approved_singnature)) {
+                $drawing = new Drawing();
+                $drawing->setName('GembaWalk Approved Singnature');
+                $drawing->setDescription('GembaWalk Approved Singnature');
+                $drawing->setPath($gembaWalk_approved_singnature);
+                $drawing->setCoordinates("A{$signatureStartRow}");
+                $drawing->setOffsetX(130);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth($imageHeight);
+                $drawing->setHeight($imageHeight);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("A{$labelRow}:G{$labelRow}")->setCellValue("A{$labelRow}", "GembaWalk Approved Singnature");
+
+            // GembaWalk Verified Singnature
+            $sheet->mergeCells("H{$signatureStartRow}:N{$signatureEndRow}");
+            if (file_exists($gembaWalk_verified_singnature)) {
+                $drawing = new Drawing();
+                $drawing->setName('GembaWalk Verified Singnature');
+                $drawing->setDescription('GembaWalk Verified Singnature');
+                $drawing->setPath($gembaWalk_verified_singnature);
+                $drawing->setCoordinates("H{$signatureStartRow}");
+                $drawing->setOffsetX(130);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth($imageHeight);
+                $drawing->setHeight($imageHeight);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("H{$labelRow}:N{$labelRow}")->setCellValue("H{$labelRow}", "GembaWalk Verified Singnature");
+
+            $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("H{$labelRow}:N{$labelRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("H{$signatureStartRow}:N{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $fileName = 'GembaWalk_Report.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            report($e);
+            return back()->with('error', 'Failed to export Gemba Walk data.');
+        }
+    }
+
+
+
+
     public function ExportPdf(Request $request)
     {
 
@@ -931,11 +1211,11 @@ class GembaWalkController extends Controller
             $allData = $this->gembaWalk->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-           
+
 
             $data = array(
                 'content' => $allData,
