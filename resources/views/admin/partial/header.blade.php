@@ -18,7 +18,7 @@
             <a class="nav-link dropdown-toggle waves-effect waves-light" data-bs-toggle="dropdown" href="#"
                 role="button" aria-haspopup="false" aria-expanded="false">
                 <i class="fe-bell noti-icon"></i>
-  
+
                 @if ($unreadCount > 0)
                     <span class="badge bg-danger rounded-circle noti-icon-badge">{{ $unreadCount }}</span>
                 @endif

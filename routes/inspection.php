@@ -955,6 +955,7 @@ Route::group(['prefix' => 'ohc/first-aid/opd-medicine-inspection/'], function ()
     Route::get('generalpdf/{id}', [FirstAidMedicineInspectionController::class, 'generalpdf']);
     Route::get('export/pdf', [FirstAidMedicineInspectionController::class, 'exportPdf']);
     Route::get('export/excel', [FirstAidMedicineInspectionController::class, 'exportExcel']);
+    Route::get('generalexcel/{id}', [FirstAidMedicineInspectionController::class, 'generalExcel']);
     Route::post('status', [FirstAidMedicineInspectionController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [FirstAidMedicineInspectionController::class, 'ExportViewPDF']);
     Route::get('approval/{id}', [FirstAidMedicineInspectionController::class, 'approval']);

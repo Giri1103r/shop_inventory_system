@@ -8,10 +8,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Ohc\OhcSignature;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
@@ -82,6 +89,10 @@ class FirstAidMedicineInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/exportViewpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+
+                            $btn .= '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'inspection_status', 'inspection_date', 'next_due'])
@@ -288,7 +299,7 @@ class FirstAidMedicineInspectionController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
@@ -453,6 +464,145 @@ class FirstAidMedicineInspectionController extends Controller
             report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection_detail = $this->medicine_checklist->selectOne($id);
+            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_data = json_decode($inspection_detail->inspection_data, true);
+            $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+
+            // Insert logo image
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setHeight(60); // optional: set height
+                $drawing->setWorksheet($sheet);
+
+                // Adjust cell A1 size for logo
+                $sheet->getColumnDimension('A')->setWidth(15);
+                $sheet->getRowDimension(1)->setRowHeight(60);
+            }
+
+            // Title section
+            $sheet->mergeCells("H1:N3");
+            $sheet->setCellValue("H1", "Monthly OHC First-Aid Medicine Inspection Checklist");
+            $sheet->getStyle("H1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'FF0000']
+                ]
+            ]);
+
+            $sheet->mergeCells("O1:X1")->setCellValue("O1", "Doc. No.");
+            $sheet->mergeCells("O2:X2")->setCellValue("O2", "Issue Dt.");
+            $sheet->mergeCells("O3:X3")->setCellValue("O3", "Rev. & Dt.");
+
+            $sheet->getStyle("O1:X3")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ]
+            ]);
+
+            $date_of_inspection = Displaydateformat($inspection_detail->inspection_date);
+            $next_due = Displaydateformat($inspection_detail->next_due);
+
+            $sheet->mergeCells("A4:L4");
+            $richText1 = new RichText();
+            $richText1->createTextRun('DATE OF INSPECTION :- ')->getFont()->setBold(true);
+            $richText1->createText($date_of_inspection);
+            $sheet->getCell("A4")->setValue($richText1);
+
+            $sheet->mergeCells("M4:X4");
+            $richText2 = new RichText();
+            $richText2->createTextRun('NEXT DUE :- ')->getFont()->setBold(true);
+            $richText2->createText($next_due);
+            $sheet->getCell("M4")->setValue($richText2);
+
+            $sheet->getStyle("A4:X4")->applyFromArray([
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_THICK]
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ]
+            ]);
+
+            // Table Header
+            $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
+            $sheet->mergeCells("D5:H5")->setCellValue("D5", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "QUANTITY");
+            $sheet->mergeCells("L5:N5")->setCellValue("L5", "EXPIRY DATE");
+            $sheet->mergeCells("O5:S5")->setCellValue("O5", "INSPECTED BY");
+            $sheet->mergeCells("T5:X5")->setCellValue("T5", "REMARKS");
+
+            $sheet->getStyle("A5:X5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_THICK]
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ]
+            ]);
+
+            // Table Data
+            $row = 6;
+            foreach ($inspection_data as $index => $detail) {
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index);
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
+                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $detail['available_quantity'] ?? '');
+                $sheet->mergeCells("L$row:N$row")->setCellValue("L$row", Displaydateformat($detail['expired_date']));
+                $sheet->mergeCells("O$row:S$row")->setCellValue("O$row", getUsername($detail['emp_id']));
+                $sheet->mergeCells("T$row:X$row")->setCellValue("T$row", $detail['remarks'] ?? '');
+
+                $sheet->getStyle("A$row:X$row")->applyFromArray([
+                    'borders' => [
+                        'allBorders' => ['borderStyle' => Border::BORDER_THICK]
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER
+                    ]
+                ]);
+
+                $row++;
+            }
+
+            // Export
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'ohc-medicine-checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 }

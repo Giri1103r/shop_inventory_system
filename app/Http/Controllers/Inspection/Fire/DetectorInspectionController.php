@@ -227,8 +227,6 @@ class DetectorInspectionController extends Controller
     public function Store(Request $request)
     {
         try {
-
-
             $rules = [
                 'issue_date' => 'required',
                 'rev_date' => 'required',
@@ -276,8 +274,6 @@ class DetectorInspectionController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-
 
             $inspection = $this->detector->store();
             $inspection_type = DETECTOR_INSPECTION;

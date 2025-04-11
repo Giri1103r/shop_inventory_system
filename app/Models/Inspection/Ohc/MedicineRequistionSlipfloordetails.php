@@ -198,19 +198,7 @@ class MedicineRequistionSlipfloordetails extends Model
         $search = '';
         $query = $this->select(
             'inspection_ohc_medicine_requisition_slip_floor_details.*',
-            'inspection_static_docno.*',
-            'inspection_ohc_medicine_requisition_slip_floor_details.id as inspection_id',
-            'inspection_ohc_medicine_requisition_slip_floor_details.created_by as inspection_created_by',
-            'inspection_ohc_medicine_requisition_slip_floor_details.created_at as inspection_created_at',
-        )
-        ->leftJoin('masters_unit', 'inspection_ohc_medicine_requisition_slip_floor_details.unit', '=', 'masters_unit.id')
-        ->leftJoin('masters_department', 'inspection_ohc_medicine_requisition_slip_floor_details.department', '=', 'masters_department.id')
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_medicine_requisition_slip_floor_details.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+          );
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         // dd($query);

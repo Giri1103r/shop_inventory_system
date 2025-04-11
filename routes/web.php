@@ -1432,6 +1432,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/unique', [MedicalRequisitionSlipController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [MedicalRequisitionSlipController::class, 'View']);
                     Route::GET('/generalpdf/{id}', [MedicalRequisitionSlipController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [MedicalRequisitionSlipController::class, 'generalExcel']);
                     Route::GET('/approval/view/{id}', [MedicalRequisitionSlipController::class, 'approval']);
                     Route::POST('/status', [MedicalRequisitionSlipController::class, 'StatusChange']);
                     Route::GET('/export/excel', [MedicalRequisitionSlipController::class, 'ExportExcel']);

@@ -298,25 +298,15 @@ class CurrentNewExtCodeDialingController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->current_new_ext_code->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Unit',
-                'Department',
-                'Employee Name',
-                'Dailing Number',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Current New Code Dailing",
             );
 
             $property = [
