@@ -434,7 +434,7 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->fire_associate_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -469,7 +469,7 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->ehs_officer_verified_at) }}
                 </td>
             </tr>
             <tr>
@@ -505,7 +505,7 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l1_manager_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -540,7 +540,7 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l2_manager_updated_at) }}
                 </td>
             </tr>
             <tr>

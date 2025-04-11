@@ -194,6 +194,8 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('export/excel', [MonthlyAuditPlanController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
         Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [MonthlyAuditPlanController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'inter-unit-audit/checklist/'], function () {
@@ -232,6 +234,7 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
     Route::post('ehs-officer/review/submit', [GembaWalkController::class, 'ehsReviewSubmit']);
     Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [GembaWalkController::class, 'generalExcel']);
     Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
     Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
 });
