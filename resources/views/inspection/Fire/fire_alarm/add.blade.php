@@ -31,13 +31,15 @@
                                         action="{{ admin_url('fire/fire-alarm-inspection/add/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="document_reference_id" value="{{ encryptId($document_no->id) }}">
+                                        <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number" value="{{ $document_no->doc_no }}" readonly>
+                                                        placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -45,7 +47,8 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date" value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
+                                                        class="form-control" placeholder="Issued Date"
+                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -300,13 +303,17 @@
                                                     </button>
                                                 </div> --}}
 
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
+                                                <div class="mb-2">
+                                                    <label class="me-3">
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
+                                                        Yes
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
+                                                        No
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
