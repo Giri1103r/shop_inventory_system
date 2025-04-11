@@ -416,4 +416,142 @@ class FirstAiderlistController extends Controller
             return response()->json(['message' => 'Employee not found'], 404);
         }
     }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $document_no = $this->document_reference->selectUsingName('FirstAiderList');
+
+            $first_aider = $this->first_aider->Selectone($id);
+            $first_aider_details = $this->first_aider_details->Selectone($id);
+
+            $sheet->mergeCells("A1:F3");
+            $sheet->getStyle("A1:F3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("G1:M3");
+            $sheet->setCellValue("G1", "FIRST AIDER LIST");
+            $sheet->getStyle("G1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $headerLabels = [
+                'M1:N1' => 'Doc. No.',
+                'M2:N2' => 'Issue Dt.',
+                'M3:N3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->setCellValue("O1", $document_no->doc_no);
+            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("O3", $document_no->rev_dt);
+
+            $sheet->getStyle("M1:O3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A4:J4");
+            $richText1 = new RichText();
+            $richText1->createTextRun('DATE OF INSPECTION :- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($first_aider->last_updated_date));
+            $sheet->getCell("A4")->setValue($richText1);
+
+            $sheet->mergeCells("K4:S4");
+            $richText2 = new RichText();
+            $richText2->createTextRun('NEXT DUE :- ')->getFont()->setBold(true);
+            $richText2->createText(Displaydateformat($first_aider->next_review_date));
+            $sheet->getCell("K4")->setValue($richText2);
+
+            $sheet->getStyle("A4:S4")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+
+
+        
+
+            $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
+            $sheet->mergeCells("D5:H5")->setCellValue("D5", "NAME OF THE EMPLOYEE");
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "DESIGNATION");
+            $sheet->mergeCells("L5:O5")->setCellValue("L5", "DEPARTMENT");
+            $sheet->mergeCells("L5:O5")->setCellValue("L5", "UNIT");
+            $sheet->mergeCells("L5:O5")->setCellValue("L5", "MOBILE NUMER");
+
+            $sheet->getStyle("A5:O5")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $row = 6;
+            foreach ($first_aider_details as $index => $detail) {
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
+                $unitName = getUnitname($detail->unit_id) ?? '';
+                $deptName = getDepartment($detail->department_id) ?? '';
+                $userName = getUsername($detail->emp_id) ?? '';
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $unitName);
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $deptName);
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $detail->mobile_no);
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $detail->designation_id);
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $detail->mobile_no);
+                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $userName);
+
+                $sheet->getStyle("A$row:O$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+            }
+
+
+            $fileName = 'Medical Requisition Slip- Fdo & Security Gate.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
+        }
+    }
 }
