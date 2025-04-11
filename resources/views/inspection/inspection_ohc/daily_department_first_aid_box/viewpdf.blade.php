@@ -201,7 +201,7 @@
             <td width="50%" style="padding:5px;"><b>First Aid Box Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ (isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '') }}
+                {{ isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '' }}
             </td>
         </tr>
         <tr>
@@ -254,49 +254,129 @@
                 </tr>
             </table>
         </div>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                @if (isset($daily_department_first_aid_box) && $daily_department_first_aid_box->isNotEmpty())
-                    <table class="table table-bordered table-hover tblborder">
+
+        <table
+            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+
+            <tr>
+                <th colspan="6" style="border:1px solid black;height:50;width:40">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </th>
+                <th colspan="6" style="border:1px solid black;">
+                    <h3>
+                        <span><b>DAILY DEPARTMENTAL FIRST-AID BOX INSPECTION CHECKLIST</b></span>
+                        <br>
+                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
+                    </h3>
+                </th>
+
+                <th colspan="6" style="border:1px solid black;">
+                    <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
-                                <th>S.No</th>
-                                <th>Medicine Name</th>
-                                <th>Available Quantity</th>
-                                <th>Freeze Quantity</th>
-                                <th>Material Expiry</th>
-                                <th>Remarks</th>
+                                <td style="border: 1px solid black;width:70;">Doc.No</td>
+                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date )}}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            @if ($daily_department_first_aid_box->isEmpty())
-                                <tr>
-                                    <td colspan="4" class="text-center">No data is available</td>
-                                </tr>
-                            @else
-                                @foreach ($daily_department_first_aid_box as $data)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                        <td>{{ $data->available_quantity }}</td>
-                                        <td>{{ $data->freeze_quantity }}</td>
-                                        <td>{{ Displaydateformat($data->material_expiry) }}</td>
-
-                                        <td>{{ $data->remarks }}</td>
-
-
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
                     </table>
-                @else
-                    <div class="card-body">
-                        <p class="text-dark">{{ __('No status logs available.') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
+
+                </th>
+            </tr>
+            <tr>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DATE OF INSPECTION: {{ Displaydateformat($medicinerequisition->date) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    FIRST AID BOX NO: {{ ($medicinerequisition->first_aid_box_no) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    SHIFT: {{ getShift($medicinerequisition->shift) ?? 'N/A' }}
+                </th>
+            </tr>
+            <tr>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DEPARTMENT: {{ getDepartment($medicinerequisition->department) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    UNIT: {{ getUnitname($medicinerequisition->unit) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    NAME OF THE FIRST AIDER: {{ getFirstAider($medicinerequisition->first_aider) ?? 'N/A' }}
+                </th>
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
+                    THE
+                    MEDICINE</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">FREEZE
+                    QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARK
+                </th>
+
+            </tr>
+            @php
+                $medicineRequisitionDetails = GetOHCDailyDepartment($medicinerequisition->id);
+            @endphp
+            @foreach ($medicineRequisitionDetails as $details)
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">
+                        {{ getMedicinename($details->medicine_id) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->quantity }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="6">{{ $details->remarks }}</td>
+
+                </tr>
+            @endforeach
+
+            @php
+                $createdSignature = GetOHCSignature(
+                    $medicinerequisition->created_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
+                );
+                $FloorManagerSignature = GetOHCSignature(
+                    $medicinerequisition->verified_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
+                );
+
+            @endphp
+
+            <tr>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">First Aider Signature</div>
+                </th>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <img src="{{ admin_url($FloorManagerSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Floor Manager Signature</div>
+                </th>
+
+            </tr>
+        </table>
         <br>
     </div>
 
@@ -342,8 +422,8 @@
                         <img src="{{ admin_url($floormanagersignature->file_path) }}" alt="Approver Signature"
                             style="width: 150px; height: auto;" />
                     @elseif(!empty($floorapproversignatureview) && !empty($floorapproversignatureview->signature_upload))
-                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}" alt="Approver Signature"
-                            style="width: 150px; height: auto;" />
+                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}"
+                            alt="Approver Signature" style="width: 150px; height: auto;" />
                     @else
                         No Signature Available
                     @endif

@@ -159,7 +159,7 @@ class RRAADetails extends Model
             $query = $query->where('inspection_rraa.scope', 'LIKE', '%' . $request->scope . '%');
         }
 
-        $query->orderBy('inspection_rraa.id', 'DESC');
+         $query->orderBy('inspection_rraa.id', 'DESC');
 
         return  $query->get();
     }

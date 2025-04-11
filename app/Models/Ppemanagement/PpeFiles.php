@@ -146,7 +146,7 @@ class PpeFiles extends Model
                     'file_type' => 1,
                     'file_name' => $filenewname,
                     'file_orgname' => $filenewname,
-                    'file_path' => 'public/uploads/ppe_ExemptionFiles/' . $ppeexemption->id . "/" . $filenewname,
+                    'file_path' => 'uploads/ppe_ExemptionFiles/' . $ppeexemption->id . "/" . $filenewname,
                     'file_size' => $fileSize,
                     'file_extension' => $extension,
                     'created_by' => Auth::id(),

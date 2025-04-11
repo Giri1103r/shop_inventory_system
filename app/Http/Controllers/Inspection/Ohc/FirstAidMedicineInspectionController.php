@@ -396,7 +396,7 @@ class FirstAidMedicineInspectionController extends Controller
 
                 if (file_exists($inspection_created_by)) {
                     $drawing = new Drawing();
-                    $drawing->setName('Requestor Signature');
+                    $drawing->setName('Inspection and checked By');
                     $drawing->setPath($inspection_created_by);
                     $drawing->setCoordinates("D$signatureRow");
                     $drawing->setOffsetX(50);
@@ -412,7 +412,7 @@ class FirstAidMedicineInspectionController extends Controller
 
                 if (file_exists($inspection_updated_by)) {
                     $drawing = new Drawing();
-                    $drawing->setName('Medical Officer Signature');
+                    $drawing->setName('Approved By');
                     $drawing->setPath($inspection_updated_by);
                     $drawing->setCoordinates("N$signatureRow");
                     $drawing->setOffsetX(50);
@@ -636,9 +636,6 @@ class FirstAidMedicineInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-
-
-
             $inspection_detail = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
@@ -752,7 +749,7 @@ class FirstAidMedicineInspectionController extends Controller
             ]);
             if (file_exists($inspection_created_by)) {
                 $drawing = new Drawing();
-                $drawing->setName('Requestor Signature');
+                $drawing->setName('Inspection and checked By');
                 $drawing->setPath($inspection_created_by);
                 $drawing->setCoordinates("D{$signatureRow}");
                 $drawing->setOffsetX(50);
@@ -773,7 +770,7 @@ class FirstAidMedicineInspectionController extends Controller
             ]);
             if (file_exists($inspection_updated_by)) {
                 $drawing = new Drawing();
-                $drawing->setName('Medical Officer Signature');
+                $drawing->setName('Approved By');
                 $drawing->setPath($inspection_updated_by);
                 $drawing->setCoordinates("N{$signatureRow}");
                 $drawing->setOffsetX(50);
@@ -791,7 +788,6 @@ class FirstAidMedicineInspectionController extends Controller
             $fileName = 'ohc-medicine-checklist.xlsx';
             $filePath = storage_path("app/public/$fileName");
             $writer->save($filePath);
-
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());

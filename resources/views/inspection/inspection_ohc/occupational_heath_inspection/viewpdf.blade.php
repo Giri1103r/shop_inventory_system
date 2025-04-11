@@ -155,119 +155,161 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($weeklyAmbulance->created_by) ? $weeklyAmbulance->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($weeklyAmbulance->created_at) }}</td>
-        </tr>
-    </table>
+
 
     <br>
     @php
         $user_response = json_decode($weeklyAmbulance->checklist, true);
     @endphp
-    <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover tblborder">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Sr. No
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
-                            colspan="4">
-                            Check Points
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Status
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Quantity
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Remarks
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $decodedData = json_decode($inspectionCkeclist->checklist, true);
-                        $checkItems = $decodedData['check_item'] ?? [];
-                        $statuses = $decodedData['status'] ?? [];
-                        $remarks = $decodedData['remarks'] ?? [];
-                        $quantity = $decodedData['quantity'] ?? [];
-                        $srNo = 1;
-                    @endphp
 
-                    @foreach ($checkItems as $groupId => $checkPoints)
-                        @php $rowCount = count($checkPoints); @endphp
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
-                        @foreach ($checkPoints as $index => $checkPoint)
-                            <tr>
-                                @if ($index == 0)
-                                    <td rowspan="{{ $rowCount }}"
-                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                        {{ $srNo++ }}
-                                    </td>
-                                    <td rowspan="{{ $rowCount }}"
-                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                        {{ getSubcategoryname($groupId) }}
-                                    </td>
-                                @endif
-                                <td colspan="3" style="border: 1px solid black; padding: 8px;">
-                                    {{ getSubcategoryDataname($checkPoint) }}
-                                </td>
-                                <td
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
-                                        <span style="color: green; font-size: 20px;">✓</span>
-                                    @elseif ((!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO') || (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A'))
-                                        <span style="color: red; font-size: 20px;">X</span>
-                                    @else
-                                        <i class="fa-solid fa-minus" style="color: #808080; width: 15px;"></i>
-                                    @endif
-                                </td>
-                                <td style="border: 1px solid black; padding: 8px;">
-                                    {{ $quantity[$checkPoint] ?? 'No Quantity is Available' }}
-                                </td>
-                                <td style="border: 1px solid black; padding: 8px;">
-                                    {{ $remarks[$checkPoint] ?? 'No Remarks' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <tr>
+            <th colspan="6" style="border:1px solid black;height:50;width:40">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black;">
+                <h3>
+                    <span><b> OCCUPATIONAL HEALTH CENTER</b></span>
+                    <br>
+                    <span><b>PN International Pvt Ltd. </b></span>
+                </h3>
+            </th>
 
+            <th colspan="6" style="border:1px solid black;">
+                <table class="table table-bordered scrolldown">
+                    <thead>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
+
+            </th>
+        </tr>
+        <tr>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                DATE OF INSPECTION: {{ Displaydateformat($weeklyAmbulance->date_of_inspection) ?? 'N/A' }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                LOCATION : {{ getLocationname($weeklyAmbulance->location ?? 'N/A') }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                SHIFT: {{ getShift($weeklyAmbulance->shift) ?? 'N/A' }}
+            </th>
+        </tr>
+        </tr>
+        <tr>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                NEXT DUE DATE OF INSPECTION :- {{ Displaydateformat($weeklyAmbulance->next_due) ?? 'N/A' }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                UNIT :- {{ getunitname($weeklyAmbulance->unit) ?? 'N/A' }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                FREQUENCY :- {{ getfrequencyname($weeklyAmbulance->frequency) ?? 'N/A' }}
+            </th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK ITEMS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
+                QUANTITY</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">STATUS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARK
+            </th>
+
+        </tr>
+        @php
+            $decodedData = json_decode($inspectionCkeclist->checklist, true);
+            $checkItems = $decodedData['check_item'] ?? [];
+            $statuses = $decodedData['status'] ?? [];
+            $remarks = $decodedData['remarks'] ?? [];
+            $quantity = $decodedData['quantity'] ?? [];
+            $srNo = 1;
+        @endphp
+        @php
+            $decodedData = json_decode($inspectionCkeclist->checklist, true);
+            $checkItems = $decodedData['check_item'] ?? [];
+            $statuses = $decodedData['status'] ?? [];
+            $remarks = $decodedData['remarks'] ?? [];
+            $quantity = $decodedData['quantity'] ?? [];
+            $srNo = 1;
+        @endphp
+
+        @foreach ($checkItems as $groupId => $checkPoints)
+            @php
+                $rowCount = count($checkPoints);
+                $firstRow = true;
+            @endphp
+
+            @foreach ($checkPoints as $checkPoint)
+                <tr>
+                    @if ($firstRow)
+                        <td rowspan="{{ $rowCount }}" colspan="1"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $srNo++ }}
+                        </td>
+                        <td rowspan="{{ $rowCount }}" colspan="1"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ getSubcategoryname($groupId) }}
+                        </td>
+                        @php $firstRow = false; @endphp
+                    @endif
+
+                    {{-- CHECK ITEM (4 columns) --}}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                        {{ getSubcategoryDataname($checkPoint) }}
+                    </td>
+
+                    {{-- QUANTITY (4 columns) --}}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                        {{ $quantity[$checkPoint] ?? 'No Quantity is Available' }}
+                    </td>
+
+
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
+                            <span style="color: green; font-size: 20px;">✓</span>
+                        @elseif (!empty($statuses[$checkPoint]) && ($statuses[$checkPoint] == 'NO' || $statuses[$checkPoint] == 'N/A'))
+                            <span style="color: red; font-size: 20px;">X</span>
+                        @else
+                            <i class="fa-solid fa-minus" style="color: #808080; width: 15px;"></i>
+                        @endif
+                    </td>
+
+                    {{-- REMARK (6 columns) --}}
+                    <td colspan="6" style="border: 1px solid black; padding: 8px;">
+                        {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                    </td>
+                </tr>
+            @endforeach
+        @endforeach
+
+
+
+
+
+    </table>
 
 
     @if ($weeklyAmbulance->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
@@ -289,6 +331,13 @@
                     <td width="48%" style="padding:5px;"> {{ getUserName($weeklyAmbulance->verified_by) }}</td>
                 </tr>
             @endif
+            @php
+                $signature = GetSignature(
+                    $occupational_health_center->verified_by,
+                    $occupational_health_center->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
             @if (isset($weeklyAmbulance->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -297,6 +346,24 @@
                     </td>
                 </tr>
             @endif
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
+            @php
+                $signature = GetSignature(
+                    $weeklyAmbulance->approved_by,
+                    $weeklyAmbulance->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
             @if (isset($weeklyAmbulance->approved_by))
                 @if ($weeklyAmbulance->verified_by == $weeklyAmbulance->approved_by)
                     <tr>
@@ -307,6 +374,17 @@
                         </td>
                     </tr>
                 @endif
+            @endif
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
             @endif
             @if (isset($weeklyAmbulance->capa_recomendation))
                 <tr>
@@ -351,6 +429,24 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
+            @php
+                $signature = GetSignature(
+                    $weeklyAmbulance->approved_by,
+                    $weeklyAmbulance->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -386,6 +482,24 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
+            @php
+                $signature = GetSignature(
+                    $weeklyAmbulance->verified_by,
+                    $weeklyAmbulance->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -422,6 +536,24 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($weeklyAmbulance->created_at) }}
                 </td>
             </tr>
+            @php
+                $signature = GetFireSignature(
+                    $weeklyAmbulance->l1_manager_verification,
+                    $weeklyAmbulance->id,
+                    EMERGENCY_LIGHT_INSPECTION,
+                );
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

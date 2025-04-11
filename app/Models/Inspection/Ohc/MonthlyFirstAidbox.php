@@ -174,19 +174,7 @@ class MonthlyFirstAidbox extends Model
 
         $query = $this->select(
             'inspection_ohc_monthly_first_aid_audit.*',
-            'inspection_static_docno.*',
-            'inspection_ohc_monthly_first_aid_audit.id as inspection_id',
-            'inspection_ohc_monthly_first_aid_audit.created_by as inspection_created_by',
-            'inspection_ohc_monthly_first_aid_audit.created_at as inspection_created_at',
-        )
-            ->leftJoin('inspection_frequency_option', 'inspection_ohc_monthly_first_aid_audit.frequency', '=', 'inspection_frequency_option.id')
-            ->leftJoin('inspection_shift_option', 'inspection_ohc_monthly_first_aid_audit.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_monthly_first_aid_audit.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+          );
         if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
