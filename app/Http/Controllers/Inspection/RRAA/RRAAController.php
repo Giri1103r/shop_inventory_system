@@ -23,6 +23,15 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class RRAAController extends Controller
 {
 
@@ -70,8 +79,11 @@ class RRAAController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                            </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                     </a>';
+                            $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'issue_date' ,'created_by'])
@@ -329,5 +341,148 @@ class RRAAController extends Controller
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $rraa_details = $this->rraa_details->selectOne($id);
+            $document_no = $this->document_reference->selectUsingName('RRAA');
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // === Company Logo ===
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(10);
+                $drawing->setWidth(100);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            // === Header Title ===
+            $sheet->mergeCells('A1:C3');
+            $sheet->mergeCells('D1:N3');
+            $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
+            $sheet->getStyle('D1')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+            ]);
+
+            $headerLabels = [
+                'O1:Q1' => 'Doc. No.',
+                'O2:Q2' => 'Issue Dt.',
+                'O3:Q3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->mergeCells("R1:T1")->setCellValue("R1", $document_no->doc_no);
+            $sheet->mergeCells("R2:T2")->setCellValue("R2", Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("R3:T3")->setCellValue("R3", $document_no->rev_dt);
+
+            $sheet->getStyle("O1:T3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // === Header Columns ===
+            $headers = [
+                'Sr. No',
+                'Category',
+                'OHS Compliance Index (Role)',
+                'Scope',
+                'Responsibility',
+                'Authority',
+                'Accountability',
+                'Remark',
+            ];
+
+            $mergeMap = [
+                'A4:B4', 'C4:E4', 'F4:H4', 'I4:K4', 'L4:N4', 'O4:P4', 'Q4:R4', 'S4:T4'
+            ];
+
+            foreach ($headers as $index => $label) {
+                $cellRange = $mergeMap[$index];
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+            }
+
+            $sheet->getStyle('A4:T4')->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'F2F2F2']
+                ],
+            ]);
+
+            // === Data Row ===
+            $row = 5;
+            $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", '1');
+            $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", getCategoryname($rraa_details->category) ?? '');
+            $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", $rraa_details->ohs_compliance_index ?? '');
+            $sheet->mergeCells("I{$row}:K{$row}")->setCellValue("I{$row}", $rraa_details->scope ?? '');
+            $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("N{$row}", getUsername($rraa_details->responsibility) ?? '');
+            $sheet->mergeCells("O{$row}:P{$row}")->setCellValue("O{$row}", $rraa_details->authority ?? '');
+            $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", $rraa_details->accountability ?? '');
+            $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", $rraa_details->remark ?? '');
+
+            $sheet->getStyle("A{$row}:T{$row}")->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            // === Auto-size all columns ===
+            foreach (range('A', 'T') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            // === Export File ===
+            $fileName = 'RRAA.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
+        }
+    }
+
+
+
 
 }
