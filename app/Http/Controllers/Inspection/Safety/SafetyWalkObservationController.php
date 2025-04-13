@@ -147,9 +147,6 @@ class SafetyWalkObservationController extends Controller
     public function Store(Request $request)
     {
         try {
-
-
-
             $rules = [
                 'doc_no' => 'required',
                 'issue_date' => 'required',

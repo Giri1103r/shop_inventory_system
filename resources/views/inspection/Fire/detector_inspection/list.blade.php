@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+                        @if (CheckUserPermission('add'))
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
+                        @endif
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">

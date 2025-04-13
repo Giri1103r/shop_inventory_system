@@ -202,23 +202,17 @@
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Name Of Inspection</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Expiry Date</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Inspected By</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.remarks') }}</th>
             </tr>
 
@@ -250,8 +244,8 @@
                 <td colspan="3"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_detail->updated_by != null)
-                        <img src="{{ admin_url($inspection_updated_by) }}"
-                            alt="Verified By Signature" style="height: 50px;">
+                        <img src="{{ admin_url($inspection_updated_by) }}" alt="Verified By Signature"
+                            style="height: 50px;">
                         <div>Verified By: {{ getUsername($inspection_detail->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>
@@ -262,6 +256,38 @@
         </tbody>
     </table>
     <br>
+
+    @if ($inspection_detail->approval_remarks)
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Approvals
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved By</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername(isset($inspection_detail->updated_by) ? $inspection_detail->updated_by : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_detail->updated_at) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Remarks</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ $inspection_detail->approval_remarks }}
+                </td>
+            </tr>
+        </table>
+    @endif
 
 </body>
 

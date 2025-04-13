@@ -338,15 +338,16 @@ class MonthlyForkLiftInspectionController extends Controller
     public function approvals(Request $request)
     {
         try {
-
             $id = decryptId($request->id);
             $approval_type = $request->employee_type;
             $inspection_details = $this->forklift->selectOne($id);
+            $status_log = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
                 'approval_type' => $approval_type,
                 'document_no' => $document_no,
+                'status_log' => $status_log,
             ];
             return view('inspection.Safety.forklift_inspection_monthly.approval', $data);
         } catch (Exception $ex) {

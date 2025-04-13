@@ -1073,3 +1073,16 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::post('import/Submit', [CurrentNewExtCodeDialingController::class, 'ImportSubmit']);
     Route::get('sample_download', [CurrentNewExtCodeDialingController::class, 'DownloadSample']);
 });
+
+
+
+//Role Pending
+//Safety walk observation - Role
+//Monthly Store Medicine - ohc - Role
+//OPD Medicine Inspection - ohc - Role
+//Emergency Floor First Aid Box Checklist - ohc - Role
+
+
+//PDF Pending
+// Forklift Inspection - Whole PDF
+// Safety Walk Observation - Whole PDF

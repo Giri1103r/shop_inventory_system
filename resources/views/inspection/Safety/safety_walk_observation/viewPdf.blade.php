@@ -288,11 +288,13 @@
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
 
                             <td style="border: 2px solid black; padding: 8px;"><img
-                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt="" style="width:80px; height:80px"/>
+                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt=""
+                                    style="width:80px; height:80px" />
                             </td>
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
                             </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ getUsername($details->responsibility) }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ getUsername($details->responsibility) }}</td>
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
                             <td style="border: 2px solid black; padding: 8px;">
                                 @if ($details->observation_status == 1)
@@ -326,7 +328,8 @@
                         {{ Displaydateformat($detail->observation_date) }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
                     <td style="border: 2px solid black; padding: 8px;"><img
-                            src="{{ GetSafetyWalkImage($detail->id) }}" alt="" style="width:80px; height:80px">
+                            src="{{ GetSafetyWalkImage($detail->id) }}" alt=""
+                            style="width:80px; height:80px">
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->recomended_action }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility) }}
@@ -382,6 +385,37 @@
 
 
     <br>
+    @if ($inspection_details->approval_remarks)
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Approvals
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved By</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername(isset($inspection_details->updated_by) ? $inspection_details->updated_by : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_details->updated_at) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Remarks</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ ($inspection_details->approval_remarks) }}
+                </td>
+            </tr>
+        </table>
+    @endif
 
 </body>
 

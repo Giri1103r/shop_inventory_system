@@ -199,7 +199,6 @@ class FireSafetyEquipmentController extends Controller
 
             return view('inspection.Safety.safety_equipment.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));

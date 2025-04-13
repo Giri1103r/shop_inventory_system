@@ -88,7 +88,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row card">
                         <div class="card-header-inner p-2">
                             <h4 class="text-white">Approval</h4>
                         </div>

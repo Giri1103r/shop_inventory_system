@@ -527,7 +527,7 @@
                         signature_image: {
                             required: true,
                         },
-
+                      
                     },
                     messages: {
                         doc_no: {

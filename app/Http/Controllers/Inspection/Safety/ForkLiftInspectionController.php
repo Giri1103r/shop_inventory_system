@@ -235,7 +235,6 @@ class ForkLiftInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
             );
 
             return view('inspection.Safety.forklift_inspection.view', $data);
@@ -404,7 +403,6 @@ class ForkLiftInspectionController extends Controller
             $filename = "Forklift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));
