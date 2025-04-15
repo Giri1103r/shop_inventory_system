@@ -447,19 +447,9 @@ class SafetyPermitController extends BaseController
                         'approver_name' => $getEhSverification->approve_reject_by ?? '',
                         'date' => isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '',
                         'additional_suggestion' => $getEhSverification->remarks ?? '',
-                        'signature' => $file_paths // Use the correctly structured array
+                        'signature' => $file_paths
                     ],
-                    'permit_extention' => [
-                        'approver_name' => getUsername(isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : ''),
-                        'date' =>  isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '',
-                        'time' => isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '',
-                        'remarks' => isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : ''
-                    ],
-                    'permit_extention_approval' => [
-                        'approver_name' => isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '',
-                        'date' =>  isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '',
-                        'remarks' => isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : ''
-                    ],
+
                     'ehs_head_approval' => [
                         'approver_name' => isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '',
                         'date' =>  isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '',
@@ -484,7 +474,7 @@ class SafetyPermitController extends BaseController
                 return $this->sendResponse($success, 'Safety Permit Details');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
