@@ -96,6 +96,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit" id="unit" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Frequency</label>
                                                     <select name="frequency" id="frequency" style="width: 100%"
                                                         class="form-control single-select">
@@ -800,6 +813,9 @@
                     shift: {
                         required: true
                     },
+                    unit: {
+                        required: true
+                    },
                     signature_image: {
                         required: true,
                         extension: "png|jpeg|jpg",
@@ -865,6 +881,9 @@
                 messages: {
                     shift: {
                         required: "Please select the Shift name."
+                    },
+                    unit: {
+                        required: "Please select the Unit name."
                     },
                     signature_image: {
                         required: "Please upload your signature image.",
