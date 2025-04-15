@@ -888,6 +888,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [HydrantRiserInspectionContoller::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [HydrantRiserInspectionContoller::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [HydrantRiserInspectionContoller::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [HydrantRiserInspectionContoller::class, 'generalExcel']);
         Route::GET('export/excel', [HydrantRiserInspectionContoller::class, 'ExportExcel']);
         Route::GET('export/pdf', [HydrantRiserInspectionContoller::class, 'ExportPDF']);
         Route::GET('get/department', [HydrantRiserInspectionContoller::class, 'GetDepartment']);
@@ -932,6 +933,7 @@ Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], fun
     Route::post('add/submit', [HealthInstrumentCalibrationController::class, 'store']);
     Route::get('view/{id}', [HealthInstrumentCalibrationController::class, 'view']);
     Route::get('generalpdf/{id}', [HealthInstrumentCalibrationController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [HealthInstrumentCalibrationController::class, 'generalExcel']);
     Route::get('export/pdf', [HealthInstrumentCalibrationController::class, 'exportPdf']);
     Route::get('export/excel', [HealthInstrumentCalibrationController::class, 'exportExcel']);
     Route::post('status', [HealthInstrumentCalibrationController::class, 'statusChange']);
@@ -1084,5 +1086,4 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
 
 
 //PDF Pending
-// Forklift Inspection - Whole PDF
 // Safety Walk Observation - Whole PDF

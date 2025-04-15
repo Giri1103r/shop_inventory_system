@@ -267,54 +267,6 @@
         </thead>
         <tbody>
 
-            @if ($last_month_observation_details !== false)
-                <tr>
-                    <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">
-                        Previous
-                        Month Observation</td>
-                </tr>
-                @php
-                    $i = 1;
-                @endphp
-                @foreach ($last_month_observation_details as $details)
-                    @foreach ($details as $details)
-                        <tr>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $i }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                {{ getLocationName($details->location) }}
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                {{ Displaydateformat($details->observation_date) }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
-
-                            <td style="border: 2px solid black; padding: 8px;"><img
-                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt=""
-                                    style="width:80px; height:80px" />
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                {{ getUsername($details->responsibility) }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
-                            <td style="border: 2px solid black; padding: 8px;">
-                                @if ($details->observation_status == 1)
-                                    Active
-                                @elseif($details->observation_status == 0)
-                                    Inactive
-                                @else
-                                    Unknown
-                                @endif
-                            </td>
-                            <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                        </tr>
-                        @php
-
-                            $i++;
-                        @endphp
-                    @endforeach
-                @endforeach
-            @endif
-
             <tr>
                 <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">Current
                     Month Observation</td>

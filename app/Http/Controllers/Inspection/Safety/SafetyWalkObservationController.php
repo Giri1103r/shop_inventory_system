@@ -41,7 +41,6 @@ class SafetyWalkObservationController extends Controller
         $this->location = new Location();
         $this->signature = new SignatureUpload();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -403,6 +402,7 @@ class SafetyWalkObservationController extends Controller
             $filename = "Safety Walk Observation.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
