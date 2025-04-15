@@ -1978,7 +1978,6 @@ if (!function_exists('getMonth')) {
         {
 
             $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
-
             if ($shift == null) {
                 return '';
             } else {
