@@ -104,7 +104,7 @@
                                         $requestorsignature = GetOHCSignature(
                                             $occupational_health_center->created_by,
                                             $occupational_health_center->id,
-                                            OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST
+                                            OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                         );
                                     @endphp
                                     <div class="col-md-4 mb-2">
@@ -112,8 +112,8 @@
                                             <label class="form-label" style="display: block;">
                                                 {{ __('inspection.signature') }}
                                             </label>
-                                            <img src="{{ admin_url($requestorsignature) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            <img src="{{ admin_url($requestorsignature) }}" alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;" />
                                         </div>
                                     </div>
 
@@ -235,7 +235,11 @@
                                         </table>
                                     </div>
                                 </div>
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -318,7 +322,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -401,7 +405,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -453,7 +457,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -508,7 +512,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $occupational_health_center->l1_manager_verified_by,
                                                     $occupational_health_center->id,
                                                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -559,7 +563,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $occupational_health_center->l2_manager_verified_by,
                                                     $occupational_health_center->id,
                                                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -595,10 +599,14 @@
                                 @endif
 
                                 @if (
-                                    $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
                                         $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
                                         $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
-                                        $occupational_health_center->approve_status == L1_MANAGER_REJECTED)
+                                        ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)))||(
+                                        $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                            $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
+                                            $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
+                                            ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_SUPERADMIN))))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -652,7 +660,10 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION && CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -703,7 +714,7 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION)
+                                @if (($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('ohc/inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -755,7 +766,7 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION)
+                                @if (($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION&& CheckUserRole(ROLE_L2_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('ohc/inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

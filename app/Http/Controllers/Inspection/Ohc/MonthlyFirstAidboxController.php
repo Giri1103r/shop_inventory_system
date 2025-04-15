@@ -392,109 +392,103 @@ class MonthlyFirstAidboxController extends Controller
             $id = decryptId($request->id);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+
 
             $monthly_first_aid = $this->monthly_first_aid->selectOne($id);
+            $document_no = $this->document_reference->selectOne($monthly_first_aid->document_reference_id);
             $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->selectOne($id);
             $safetyofficerSignature = GetOHCSignature($monthly_first_aid->approved_by, $id, OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST);
             $RequestorSignature = GetOHCSignature($monthly_first_aid->created_by, $id, OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST);
-            $logoPath = public_path('assets/images/logo-dark.png');
 
-            if (file_exists($logoPath)) {
+            $currentRow = $row;
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
                 $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Company Logo');
-                $drawing->setPath($logoPath);
-                $drawing->setCoordinates('A1');
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(60);
-                $drawing->setHeight(60);
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
-            }
 
-            $sheet->mergeCells("C1:L3");
-            $sheet->setCellValue("C1", "Monthly First Aid Box Audit Checklist\nPN INTERNATIONAL PVT. LTD.");
-            $sheet->getStyle("C1")->applyFromArray([
-                'font' => ['bold' => true, 'size' => 14],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFFFF']]
-            ]);
-
-            $headerLabels = [
-                'M1:N1' => 'Doc. No.',
-                'M2:N2' => 'Issue Dt.',
-                'M3:N3' => 'Rev. & Dt.',
-            ];
-
-            foreach ($headerLabels as $cellRange => $label) {
-                $cell = explode(':', $cellRange)[0];
-                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
-                $sheet->getStyle($cell)->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
             }
 
-            $sheet->setCellValue("O1", $document_no->doc_no);
-            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
-            $sheet->setCellValue("O3", $document_no->rev_dt);
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
 
-            $sheet->getStyle("M1:O3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+            // Document Info
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+            // NXT ROW
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":I" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun('SHIFT:- ')->getFont()->setBold(true);
+            $richText1->createText(getShift($monthly_first_aid->shift));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("J" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('DATE :-  ')->getFont()->setBold(true);
+            $richText2->createText(Displaydateformat($monthly_first_aid->date_of_inspection));
+            $sheet->getCell("J" . ($currentRow + 3))->setValue($richText2);
+
+
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
+            // next row 5
 
-            $shift = getShift($monthly_first_aid->shift);
-            $date = Displaydateformat($monthly_first_aid->date_of_inspection);
+            $sheet->mergeCells("A" . ($currentRow + 4) . ":I" . ($currentRow + 4));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' NEXT DUE DATE OF INSPECTION :- ')->getFont()->setBold(true);
+            $richText1->createText(getFrequencyname($monthly_first_aid->frequency));
+            $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
 
-            $infoData = [
-                'A4:G4' => ['label' => 'SHIFT :- ', 'value' => $shift],
-                'H4:O4' => ['label' => 'DATE :- ', 'value' => $date],
-            ];
-
-            foreach ($infoData as $range => $data) {
-                $cell = explode(':', $range)[0];
-
-                $richText = new RichText();
-                $richText->createTextRun($data['label'])->getFont()->setBold(true);
-                $richText->createText($data['value']);
-
-                $sheet->mergeCells($range);
-                $sheet->getCell($cell)->setValue($richText);
-            }
-
-            $sheet->getStyle("A4:O4")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-            $frequency = getFrequencyname($monthly_first_aid->frequency);
-            $unit = getUnitname($monthly_first_aid->unit);
-            $infoData2 = [
-                'A5:G5' => ['label' => 'FREQUENCY :- ', 'value' => $shift],
-                'H5:O5' => ['label' => 'UNIT :- ', 'value' => $date],
-            ];
+            $sheet->mergeCells("J" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :- ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($monthly_first_aid->unit));
+            $sheet->getCell("J" . ($currentRow + 4))->setValue($richText2);
 
 
 
-            foreach ($infoData2 as $range => $data) {
-                $cell = explode(':', $range)[0];
-
-                $richText = new RichText();
-                $richText->createTextRun($data['label'])->getFont()->setBold(true);
-                $richText->createText($data['value']);
-
-                $sheet->mergeCells($range);
-                $sheet->getCell($cell)->setValue($richText);
-            }
-
-            $sheet->getStyle("A5:O5")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 

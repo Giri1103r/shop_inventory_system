@@ -26,7 +26,7 @@
  *  20.validate-checkbox-required  // Dynamic Class Based Validation
  *  21.validate-textarea-required  // Dynamic Class Based Validation
  *  22.validate-file-required // Dynamic Class Based Validation
- *
+ *23.validateFileSize
  */
 
 
@@ -512,7 +512,7 @@ $.validator.addMethod("talpnum", function (value, element) {
 
 $.validator.addMethod("validateFileType", function (value, element) {
     if (element.files.length === 0) {
-        return false; 
+        return false;
     }
 
     let acceptedTypes = ["jpeg", "jpg", "png", "pdf", "doc", "docx", "mp4"];
@@ -522,19 +522,37 @@ $.validator.addMethod("validateFileType", function (value, element) {
         let fileExtension = file.name.split('.').pop().toLowerCase();
         if ($.inArray(fileExtension, acceptedTypes) === -1) {
             isValid = false;
-            return false; 
+            return false;
         }
     });
 
     return isValid;
 }, "Please select a valid file type: jpeg, jpg, png, pdf, doc, docx, mp4");
 
+$.validator.addMethod("validateFileSize", function (value, element) {
+    let maxSize = 5 * 1024 * 1024;
+    let isValid = true;
+
+    $.each(element.files, function (i, file) {
+        if (file.size > maxSize) {
+            isValid = false;
+            return false;
+        }
+    });
+
+    return isValid;
+}, "Each file must be less than or equal to 5 MB");
+
+
 
 $(".validate-file-accept").each(function () {
     $(this).rules("add", {
         validateFileType: true,
+        validateFileSize: true,
         required: true
     });
 });
+
+
 
 

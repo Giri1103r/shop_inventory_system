@@ -254,7 +254,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                     'notification_type' =>OHC_INSPECTION,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -483,7 +483,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Approved';
                     $notificationData = array(
-                        'notification_type' => 1,
+                         'notification_type' =>OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -518,7 +518,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Rejected';
                     $notificationData = array(
-                        'notification_type' => 1,
+                         'notification_type' =>OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
