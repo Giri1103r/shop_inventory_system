@@ -179,12 +179,12 @@
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($forklift_details->created_by) ? $forklift_details->created_by : '') }}</td>
+                {{ getUsername(isset($hydrant_details->created_by) ? $hydrant_details->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($forklift_details->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($hydrant_details->created_at) }}</td>
         </tr>
     </table>
 
@@ -207,29 +207,29 @@
         <tr>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
+                DATE OF INSPECTION: {{ Displaydateformat($hydrant_details->date_of_inspection) ?? 'N/A' }}
             </th>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                LOCATION: {{ getLocationname($forklift_details->location) ?? 'N/A' }}
+                LOCATION: {{ getLocationname($hydrant_details->location) ?? 'N/A' }}
             </th>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                SHIFT: {{ getShift($forklift_details->shift) ?? 'N/A' }}
+                SHIFT: {{ getShift($hydrant_details->shift) ?? 'N/A' }}
             </th>
         </tr>
         <tr>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                NEXT DUE: {{ Displaydateformat($forklift_details->next_due) ?? 'N/A' }}
+                NEXT DUE: {{ Displaydateformat($hydrant_details->next_due) ?? 'N/A' }}
             </th>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                UNIT: {{ getUnitname($forklift_details->unit) ?? 'N/A' }}
+                UNIT: {{ getUnitname($hydrant_details->unit) ?? 'N/A' }}
             </th>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                FREQUENCY: {{ getFrequencyname($forklift_details->frequency) ?? 'N/A' }}
+                FREQUENCY: {{ getFrequencyname($hydrant_details->frequency) ?? 'N/A' }}
             </th>
         </tr>
 
@@ -345,18 +345,18 @@
 
         @php
         $prepared_by_signature = GetFireSignature(
-            $forklift_details->created_by,
-            $forklift_details->id,
+            $hydrant_details->created_by,
+            $hydrant_details->id,
             HYDRANT_RISER,
         );
         $verified_by_signature = GetFireSignature(
-            $forklift_details->updated_by,
-            $forklift_details->id,
+            $hydrant_details->updated_by,
+            $hydrant_details->id,
             HYDRANT_RISER,
         );
         $verified_by_signature = GetFireSignature(
-            $forklift_details->approved_by,
-            $forklift_details->id,
+            $hydrant_details->approved_by,
+            $hydrant_details->id,
             HYDRANT_RISER,
         );
     @endphp
@@ -365,24 +365,24 @@
             style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
             <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                 style="height: 50px;">
-            <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+            <div>Checked & Prepared By: {{ getUsername($hydrant_details->created_by) }}</div>
         </td>
         <td colspan="5"
             style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            @if ($forklift_details->updated_by != null)
+            @if ($hydrant_details->updated_by != null)
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
-                <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
+                <div>Verified By: {{ getUsername($hydrant_details->updated_by) }}</div>
             @else
                 <p>Inspection has not been Verified Yet</p>
             @endif
         </td>
         <td colspan="5"
             style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            @if ($forklift_details->approved_by != null)
+            @if ($hydrant_details->approved_by != null)
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
-                <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+                <div>Approved By: {{ getUsername($hydrant_details->approved_by) }}</div>
             @else
                 <p>Inspection has not been Verified Yet</p>
             @endif
@@ -405,7 +405,7 @@
     <table width="100%" style="width:100%;">
         <tr>
             <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }} :</b>
-                {{ $forklift_details->observation == '1' ? 'YES' : 'NO' }}
+                {{ $hydrant_details->observation == '1' ? 'YES' : 'NO' }}
             </td>
           
         </tr>
@@ -414,7 +414,7 @@
 
 
 
-    @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+    @if ($hydrant_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -426,38 +426,38 @@
             </table>
         </div>
         <table width="100%" style="width:100%;">
-            @if (isset($forklift_details->verified_by))
+            @if (isset($hydrant_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                    <td width="48%" style="padding:5px;"> {{ getUserName($hydrant_details->verified_by) }}</td>
                 </tr>
             @endif
-            @if (isset($forklift_details->created_at))
+            @if (isset($hydrant_details->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($hydrant_details->created_at) }}
                     </td>
                 </tr>
             @endif
-            @if (isset($forklift_details->approved_by))
-                @if ($forklift_details->verified_by == $forklift_details->approved_by)
+            @if (isset($hydrant_details->approved_by))
+                @if ($hydrant_details->verified_by == $hydrant_details->approved_by)
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ getUsername($forklift_details->approved_by) }}
+                            {{ getUsername($hydrant_details->approved_by) }}
                         </td>
                     </tr>
                 @endif
             @endif
-            @if (isset($forklift_details->capa_recomendation))
+            @if (isset($hydrant_details->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->capa_recomendation }}
+                        {{ $hydrant_details->capa_recomendation }}
                     </td>
                 </tr>
             @else
@@ -465,14 +465,14 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->remarks }}
+                        {{ $hydrant_details->remarks }}
                 </tr>
             @endif
         </table>
         <br>
     @endif
 
-    @if (isset($forklift_details->capa_remarks))
+    @if (isset($hydrant_details->capa_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -487,19 +487,19 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->created_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($hydrant_details->created_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($hydrant_details->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_remarks }}
+                    {{ $hydrant_details->capa_remarks }}
                 </td>
             </tr>
         </table>
@@ -507,7 +507,7 @@
     @endif
 
 
-    @if ($forklift_details->capa_ehs_remarks)
+    @if ($hydrant_details->capa_ehs_remarks)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -522,19 +522,19 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($hydrant_details->verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($hydrant_details->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_ehs_remarks }}
+                    {{ $hydrant_details->capa_ehs_remarks }}
                 </td>
             </tr>
         </table>
@@ -542,7 +542,7 @@
     @endif
 
 
-    @if (isset($forklift_details->level_one_manager_remarks))
+    @if (isset($hydrant_details->level_one_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -558,26 +558,26 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l1_manager_verified_by) }}</td>
+                    {{ getUserName($hydrant_details->l1_manager_verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($hydrant_details->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_one_manager_remarks }}
+                    {{ $hydrant_details->level_one_manager_remarks }}
                 </td>
             </tr>
         </table>
         <br>
     @endif
 
-    @if (isset($forklift_details->level_two_manager_remarks))
+    @if (isset($hydrant_details->level_two_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -593,26 +593,26 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l2_manager_verified_by) }}</td>
+                    {{ getUserName($hydrant_details->l2_manager_verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($hydrant_details->created_at) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUsername($forklift_details->approved_by) }}
+                    {{ getUsername($hydrant_details->approved_by) }}
                 </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_two_manager_remarks }}
+                    {{ $hydrant_details->level_two_manager_remarks }}
                 </td>
             </tr>
         </table>

@@ -92,7 +92,7 @@ class WeeklyFirstAidBoxController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                             return $btn;
                         })
@@ -356,8 +356,8 @@ class WeeklyFirstAidBoxController extends Controller
 
 
             $sheet->mergeCells("A4:C4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-            $sheet->mergeCells("D4:E4")->setCellValue("D4", "Location First Aid Bag: " . $inspection_detail->location_first_aid_bag);
-            $sheet->mergeCells("F4:H4")->setCellValue("F4", "Shift: " . getShift($inspection_detail->shift));
+            $sheet->mergeCells("D4:E4")->setCellValue("D4", "Location First Aid Bag:- " . $inspection_detail->location_first_aid_bag);
+            $sheet->mergeCells("F4:H4")->setCellValue("F4", "Shift:- " . getShift($inspection_detail->shift));
 
             $sheet->mergeCells("A5:C5")->setCellValue("A5", "Location:- " . getLocationname($inspection_detail->location));
             $sheet->mergeCells("D5:E5")->setCellValue("D5", "Unit:- " . getUnitname($inspection_detail->unit));
@@ -422,7 +422,7 @@ class WeeklyFirstAidBoxController extends Controller
                 $drawing = new Drawing();
                 $drawing->setName('Inspection and checked By');
                 $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("C{$signatureRow}");
+                $drawing->setCoordinates("D{$signatureRow}");
                 $drawing->setOffsetX(50);
                 $drawing->setOffsetY(10);
                 $drawing->setWidth(70);
@@ -447,12 +447,10 @@ class WeeklyFirstAidBoxController extends Controller
         }
     }
 
-
     public function ExportExcel(Request $request)
     {
         try {
             $allData = $this->weekly_first_aid->exportdata();
-
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -462,154 +460,152 @@ class WeeklyFirstAidBoxController extends Controller
             }
 
             $row = 1;
-
+            
             foreach ($allData as $inspection_detail) {
-                $startRow = $row;
-
+                $headerRowStart = $row;
+            
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_data = json_decode($inspection_detail->inspection_data, true);
                 $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
-
+            
                 // Logo
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
                     $drawing->setName('Logo');
                     $drawing->setPath($logoPath);
-                    $drawing->setCoordinates('A' . $row);
+                    $drawing->setCoordinates('A' . $headerRowStart);
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
+            
+                // Title and Document Info
+                $sheet->mergeCells("A{$headerRowStart}:B" . ($headerRowStart + 2));
+                $sheet->getStyle("A{$headerRowStart}:B" . ($headerRowStart + 2))->applyFromArray([
+                                    'font' => ['bold' => true, 'size' => 14],
+                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                
+                                ]);
 
-                // Title and Headers
-                $sheet->mergeCells("A{$row}:B" . ($row + 2));
-                $sheet->mergeCells("C{$row}:F" . ($row + 2));
-                $sheet->setCellValue("C{$row}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
-                $sheet->getStyle("C{$row}:F" . ($row + 2))->applyFromArray([
-                    'font' => ['bold' => true, 'size' => 14],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                $sheet->mergeCells("C{$headerRowStart}:F" . ($headerRowStart + 2));
+                $sheet->setCellValue("C{$headerRowStart}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+                $sheet->getStyle("C{$headerRowStart}:F" . ($headerRowStart + 2))->applyFromArray([
+                                    'font' => ['bold' => true, 'size' => 14],
+                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+
+                                ]);
+
+                $sheet->setCellValue("G{$headerRowStart}", 'Doc. No.');
+                $sheet->setCellValue("G" . ($headerRowStart + 1), 'Issue Dt.');
+                $sheet->setCellValue("G" . ($headerRowStart + 2), 'Rev. & Dt.');
+                $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
+                $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
+                $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
+                $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // Document details
-                $headerLabels = [
-                    'G1' => 'Doc. No.',
-                    'G2' => 'Issue Dt.',
-                    'G3' => 'Rev. & Dt.'
-                ];
-
-                $values = [
-                    'H1' => $document_no->doc_no,
-                    'H2' => Displaydateformat($document_no->issue_date),
-                    'H3' => $document_no->rev_dt
-                ];
-
-                foreach (['1', '2', '3'] as $i) {
-                    $labelCell = "G{$i}";
-                    $valueCell = "H{$i}";
-                    $sheet->setCellValue($labelCell, $headerLabels["G{$i}"] ?? '');
-                    $sheet->setCellValue($valueCell, $values[$valueCell] ?? '');
-                    $sheet->getStyle("{$labelCell}:{$valueCell}")->applyFromArray([
-                        'font' => ['bold' => true],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    ]);
-                }
-
-                $row += 3;
-
-                // Inspection details
-                $sheet->mergeCells("A{$row}:C{$row}")->setCellValue("A{$row}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-                $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", "Location First Aid Bag: " . $inspection_detail->location_first_aid_bag);
-                $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", "Shift: " . getShift($inspection_detail->shift));
-                $row++;
-
-                $sheet->mergeCells("A{$row}:C{$row}")->setCellValue("A{$row}", "Location:- " . getLocationname($inspection_detail->location));
-                $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", "Unit:- " . getUnitname($inspection_detail->unit));
-                $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", "Name Of First-Aider:- " . getFirstAider($inspection_detail->first_aider));
-
-                $sheet->getStyle("A" . ($row - 1) . ":H{$row}")->applyFromArray([
+                // Details
+                $detailsRowStart = $headerRowStart + 3;
+                $sheet->mergeCells("A{$detailsRowStart}:C{$detailsRowStart}")->setCellValue("A{$detailsRowStart}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+                $sheet->mergeCells("D{$detailsRowStart}:E{$detailsRowStart}")->setCellValue("D{$detailsRowStart}", "First Aid Box No:- " . $inspection_detail->first_aid_box_no);
+                $sheet->mergeCells("F{$detailsRowStart}:H{$detailsRowStart}")->setCellValue("F{$detailsRowStart}", "Shift:-" . getShift($inspection_detail->shift_id));
+                $sheet->getRowDimension($detailsRowStart)->setRowHeight(25);
+            
+                $detailsRow2 = $detailsRowStart + 1;
+                $sheet->mergeCells("A{$detailsRow2}:C{$detailsRow2}")->setCellValue("A{$detailsRow2}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("D{$detailsRow2}:E{$detailsRow2}")->setCellValue("D{$detailsRow2}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("F{$detailsRow2}:H{$detailsRow2}")->setCellValue("F{$detailsRow2}", "Name Of First-Aider:- " . getFirstAider($inspection_detail->first_aider));
+                $sheet->getRowDimension($detailsRow2)->setRowHeight(25);
+                $sheet->getStyle("A" . ($detailsRow2 - 1) . ":H{$detailsRow2}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-                $row++;
 
                 // Table Header
-                $sheet->setCellValue("A{$row}", "SERIAL NO");
-                $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", "NAME OF THE MATERIAL");
-                $sheet->setCellValue("D{$row}", "FREEZE QUANTITY");
-                $sheet->setCellValue("E{$row}", "AVAILABLE QUANTITY");
-                $sheet->setCellValue("F{$row}", "MATERIAL EXPIRY");
-                $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", "REMARK");
+                $tableRowStart = $detailsRow2 + 1;
+                $sheet->setCellValue("A{$tableRowStart}", "SERIAL NO");
+                $sheet->mergeCells("B{$tableRowStart}:C{$tableRowStart}")->setCellValue("B{$tableRowStart}", "NAME OF THE MATERIAL");
+                $sheet->setCellValue("D{$tableRowStart}", "FREEZE QUANTITY");
+                $sheet->setCellValue("E{$tableRowStart}", "AVAILABLE QUANTITY");
+                $sheet->setCellValue("F{$tableRowStart}", "MATERIAL EXPIRY");
+                $sheet->mergeCells("G{$tableRowStart}:H{$tableRowStart}")->setCellValue("G{$tableRowStart}", "REMARK");
+                $sheet->getRowDimension($tableRowStart)->setRowHeight(20);
 
-                $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-                $row++;
+                $sheet->getStyle("A{$tableRowStart}:H{$tableRowStart}")->applyFromArray([
+                                    'font' => ['bold' => true],
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                                ]);
 
-                // Data Rows
+                // Table Data
+                $dataRow = $tableRowStart + 1;
                 $sr = 1;
                 foreach ($inspection_data as $detail) {
-                    $sheet->setCellValue("A{$row}", $sr++);
-                    $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", getMedicinename($detail['medicine_id']));
-                    $sheet->setCellValue("D{$row}", $detail['freeze_quantity'] ?? '');
-                    $sheet->setCellValue("E{$row}", $detail['available_quantity'] ?? '');
-                    $sheet->setCellValue("F{$row}", Displaydateformat($detail['expired_date']));
-                    $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", $detail['remarks'] ?? '');
-
-                    $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
+                    $sheet->setCellValue("A{$dataRow}", $sr++);
+                    $sheet->mergeCells("B{$dataRow}:C{$dataRow}")->setCellValue("B{$dataRow}", getMedicinename($detail['medicine_id']));
+                    $sheet->setCellValue("D{$dataRow}", $detail['freeze_quantity'] ?? '');
+                    $sheet->setCellValue("E{$dataRow}", $detail['available_quantity'] ?? '');
+                    $sheet->setCellValue("F{$dataRow}", Displaydateformat($detail['expired_date']));
+                    $sheet->mergeCells("G{$dataRow}:H{$dataRow}")->setCellValue("G{$dataRow}", $detail['remarks'] ?? '');
+                    
+                    $sheet->getStyle("A{$dataRow}:H{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
-                    $row++;
+                    $dataRow++;
                 }
-
-                // Remark Row
-                $sheet->mergeCells("A{$row}:H{$row}");
-                $sheet->setCellValue("A{$row}", "Remark By:- " . $inspection_detail->remark_by);
-                $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-                $row++;
-
-                // Signature
-                $sheet->getRowDimension($row)->setRowHeight(80);
-                $sheet->mergeCells("A{$row}:H{$row}");
-                $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                ]);
-
+            
+                // Remark
+                $sheet->mergeCells("A{$dataRow}:H{$dataRow}");
+                $sheet->setCellValue("A{$dataRow}", "Remark By:- " . $inspection_detail->remark_by);
+                $sheet->getRowDimension($dataRow)->setRowHeight(20);
+                $sheet->getStyle("A{$dataRow}:H{$dataRow}")->applyFromArray([
+                                    'font' => ['bold' => true],
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                                ]);
+                $dataRow++;
+            
+                // Signature Section
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                                ]);
+            
                 if (file_exists($inspection_created_by)) {
                     $drawing = new Drawing();
                     $drawing->setName('Signature');
                     $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("C{$row}");
+                    $drawing->setCoordinates("D{$signatureRowStart}");
                     $drawing->setOffsetX(50);
                     $drawing->setOffsetY(10);
                     $drawing->setWidth(70);
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                 }
-
+            
                 $richText = new RichText();
                 $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
-                $sheet->getCell("A{$row}")->setValue($richText);
-
-                $row += 6; // spacing before next inspection
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+            
+                // Leave gap between inspections
+                $row = $signatureRowStart + 6;
             }
-
-            // Final output
+            
+            // Output file (optional)
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'Weekly_First_Aid_Inspection.xlsx';
+            $fileName = 'Weekly_First_Aid_Box_Inspection.xlsx';
             $filePath = storage_path("app/public/$fileName");
             $writer->save($filePath);
 
@@ -622,7 +618,6 @@ class WeeklyFirstAidBoxController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");

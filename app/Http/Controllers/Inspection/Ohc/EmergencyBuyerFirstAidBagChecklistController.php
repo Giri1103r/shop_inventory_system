@@ -85,7 +85,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
 
-                            $btn .= '<a href="' . admin_url('ohc/emergency-buyer-first-aid-bag/checklist/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/emergency-buyer-first-aid-bag/checklist/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
 
                             return $btn;
@@ -264,36 +264,36 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $id = decryptId($request->id);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-    
-            $sheet->getColumnDimension('A')->setWidth(12); 
-            $sheet->getColumnDimension('B')->setWidth(40);  
-            $sheet->getColumnDimension('C')->setWidth(15);  
-            $sheet->getColumnDimension('D')->setWidth(20);  
-            $sheet->getColumnDimension('E')->setWidth(30);  
-            $sheet->getColumnDimension('F')->setWidth(25);  
-    
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(40);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(30);
+            $sheet->getColumnDimension('F')->setWidth(25);
+
             $inspection_detail = $this->emergency_buyer_first_aid_bag->selectOne($id);
             $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
             $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
-    
+
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
-    
+
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
                 $drawing->setName('Logo');
                 $drawing->setDescription('Company Logo');
                 $drawing->setPath($logoPath);
-                $drawing->setCoordinates('A1');
+                $drawing->setCoordinates('B1');
                 $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
+                $drawing->setOffsetY(10);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
-    
+
             $sheet->mergeCells('A1:B3');
             $sheet->getStyle('A1:B3')->applyFromArray([
                 'alignment' => [
@@ -307,7 +307,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                     ],
                 ],
             ]);
-    
+
             $sheet->mergeCells("C1:F3");
             $sheet->setCellValue("C1", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
             $sheet->getStyle("C1:F3")->applyFromArray([
@@ -328,60 +328,60 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                     ],
                 ],
             ]);
-    
+
             $sheet->mergeCells("A4:B4");
             $sheet->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-    
+
             $sheet->mergeCells("C4:D4");
             $sheet->setCellValue("C4", "Location First Aid Bag: " . $inspection_detail->location_first_aid_bag);
-    
+
             $sheet->mergeCells("E4:F4");
             $sheet->setCellValue("E4", "Shift: " . getShift($inspection_detail->shift_id));
-    
+
             $sheet->mergeCells("A5:B5");
             $sheet->setCellValue("A5", "Next Due On:- " . Displaydateformat($inspection_detail->due_date));
-    
+
             $sheet->mergeCells("C5:D5");
             $sheet->setCellValue("C5", "Unit:- " . getUnitname($inspection_detail->unit_id));
-    
+
             $sheet->mergeCells("E5:F5");
             $sheet->setCellValue("E5", "Frequency:- " . getFrequencyname($inspection_detail->frequency_id));
-    
+
             $sheet->getStyle("A4:F4")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
-    
+
             $sheet->getStyle("A5:F5")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
-    
+
             $sheet->setCellValue("A6", "SERIAL NO");
             $sheet->setCellValue("B6", "NAME OF THE MEDICINE");
             $sheet->setCellValue("C6", "FREEZE QUANTITY");
             $sheet->setCellValue("D6", "AVAILABLE QUANTITY");
             $sheet->setCellValue("E6", "EXPIRY DATE");
             $sheet->setCellValue("F6", "REMARKS");
-    
+
             $sheet->getStyle("A6:F6")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
-    
+
             $row = 7;
             $sr = 1;
             foreach ($inspection_data as $index => $detail) {
-                $sheet->setCellValue("A$row", $sr); 
+                $sheet->setCellValue("A$row", $sr);
                 $sheet->setCellValue("B$row", getMedicinename($detail['medicine_id']));
                 $sheet->setCellValue("C$row", $detail['freeze_quantity'] ?? '');
                 $sheet->setCellValue("D$row", $detail['available_quantity'] ?? '');
                 $sheet->setCellValue("E$row", Displaydateformat($detail['expired_date']));
                 $sheet->setCellValue("F$row", $detail['remarks'] ?? '');
-    
+
                 $sheet->getStyle("A$row:F$row")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -389,7 +389,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $row++;
                 $sr++;
             }
-    
+
             $sheet->mergeCells("A{$row}:F{$row}");
             $sheet->setCellValue("A{$row}", "PPE'S For Visitors:- 05 Air Plugs, 05 Pairs Cotton Gloves, 02 Pairs Rubber Gloves, 05 Mask, 04 Spectacles.");
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
@@ -398,7 +398,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
-    
+
             $sheet->mergeCells("A{$row}:F{$row}");
             $sheet->setCellValue("A{$row}", "Remark By:- " . $inspection_detail->remark_by);
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
@@ -407,7 +407,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
-    
+
             $signatureRow = $row;
             $sheet->getRowDimension($signatureRow)->setRowHeight(80);
             $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
@@ -415,7 +415,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
-    
+
             if (file_exists($inspection_created_by)) {
                 $drawing = new Drawing();
                 $drawing->setName('Inspection and checked By');
@@ -427,24 +427,23 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
             }
-    
+
             $richText = new RichText();
             $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
             $sheet->getCell("A{$signatureRow}")->setValue($richText);
-    
+
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Emergency Buyer First Aid Bag.xlsx';
             $filePath = storage_path("app/public/$fileName");
             $writer->save($filePath);
-    
+
             return response()->download($filePath)->deleteFileAfterSend(true);
-    
         } catch (\Exception $e) {
             dd($e);
             return back()->with('error', $e->getMessage());
         }
     }
-    
+
 
     public function ExportExcel()
     {
@@ -452,24 +451,24 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $allData = $this->emergency_buyer_first_aid_bag->exportdata();
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-    
-           
-            $sheet->getColumnDimension('A')->setWidth(12);  
-            $sheet->getColumnDimension('B')->setWidth(35);  
-            $sheet->getColumnDimension('C')->setWidth(15);  
-            $sheet->getColumnDimension('D')->setWidth(18);  
-            $sheet->getColumnDimension('E')->setWidth(28);  
-            $sheet->getColumnDimension('F')->setWidth(25);  
-    
+
+            // Set column widths
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(35);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(28);
+            $sheet->getColumnDimension('F')->setWidth(25);
+
             $row = 1;
-    
+
             foreach ($allData as $inspection_detail) {
-                $startRow = $row;
-    
+                $headerRowStart = $row;
+
                 $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
                 $inspection_data = json_decode($inspection_detail->inspection_data, true);
                 $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
-    
+
                 // Add logo
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
@@ -477,119 +476,124 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                     $drawing->setName('Logo');
                     $drawing->setDescription('Company Logo');
                     $drawing->setPath($logoPath);
-                    $drawing->setCoordinates("A{$row}");
+                    $drawing->setCoordinates("B{$headerRowStart}");
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
-    
-                $sheet->mergeCells("A{$row}:B" . ($row + 2));
-                $sheet->getStyle("A{$row}:B" . ($row + 2))->applyFromArray([
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]]
-                ]);
-    
-                $sheet->mergeCells("C{$row}:F" . ($row + 2));
-                $sheet->setCellValue("C{$row}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
-                $sheet->getStyle("C{$row}:F" . ($row + 2))->applyFromArray([
+
+                // Title
+                $sheet->mergeCells("A{$headerRowStart}:B" . ($headerRowStart + 2));
+                $sheet->mergeCells("C{$headerRowStart}:F" . ($headerRowStart + 2));
+                $sheet->setCellValue("C{$headerRowStart}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+                $sheet->getStyle("A{$headerRowStart}:F" . ($headerRowStart + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-    
-                $row += 3;
-    
-                $sheet->mergeCells("A{$row}:B{$row}");
-                $sheet->setCellValue("A{$row}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-    
-                $sheet->mergeCells("C{$row}:D{$row}");
-                $sheet->setCellValue("C{$row}", "Location First Aid Bag: " . $inspection_detail->location_first_aid_bag);
-    
-                $sheet->mergeCells("E{$row}:F{$row}");
-                $sheet->setCellValue("E{$row}", "Shift: " . getShift($inspection_detail->shift_id));
-    
-                $row++;
-    
-                $sheet->mergeCells("A{$row}:B{$row}");
-                $sheet->setCellValue("A{$row}", "Next Due On:- " . Displaydateformat($inspection_detail->due_date));
-    
-                $sheet->mergeCells("C{$row}:D{$row}");
-                $sheet->setCellValue("C{$row}", "Unit:- " . getUnitname($inspection_detail->unit_id));
-    
-                $sheet->mergeCells("E{$row}:F{$row}");
-                $sheet->setCellValue("E{$row}", "Frequency:- " . getFrequencyname($inspection_detail->frequency_id));
-    
-                $sheet->getStyle("A" . ($row - 1) . ":F{$row}")->applyFromArray([
+
+                // Detail rows
+                $detailRow1 = $headerRowStart + 3;
+                $detailRow2 = $detailRow1 + 1;
+
+                $sheet->mergeCells("A{$detailRow1}:B{$detailRow1}");
+                $sheet->setCellValue("A{$detailRow1}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+
+                $sheet->mergeCells("C{$detailRow1}:D{$detailRow1}");
+                $sheet->setCellValue("C{$detailRow1}", "Location First Aid Bag: " . $inspection_detail->location_first_aid_bag);
+
+                $sheet->mergeCells("E{$detailRow1}:F{$detailRow1}");
+                $sheet->setCellValue("E{$detailRow1}", "Shift: " . getShift($inspection_detail->shift_id));
+
+                $sheet->getRowDimension($detailRow1)->setRowHeight(20);
+
+                $sheet->mergeCells("A{$detailRow2}:B{$detailRow2}");
+                $sheet->setCellValue("A{$detailRow2}", "Next Due On:- " . Displaydateformat($inspection_detail->due_date));
+
+                $sheet->mergeCells("C{$detailRow2}:D{$detailRow2}");
+                $sheet->setCellValue("C{$detailRow2}", "Unit:- " . getUnitname($inspection_detail->unit_id));
+
+                $sheet->mergeCells("E{$detailRow2}:F{$detailRow2}");
+                $sheet->setCellValue("E{$detailRow2}", "Frequency:- " . getFrequencyname($inspection_detail->frequency_id));
+
+                $sheet->getRowDimension($detailRow2)->setRowHeight(20);
+
+                $sheet->getStyle("A{$detailRow1}:F{$detailRow2}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-    
-                $row++;
-    
-                // Header row
-                $sheet->setCellValue("A6", "SERIAL NO");
-                $sheet->setCellValue("B6", "NAME OF THE MEDICINE");
-                $sheet->setCellValue("C6", "FREEZE QUANTITY");
-                $sheet->setCellValue("D6", "AVAILABLE QUANTITY");
-                $sheet->setCellValue("E6", "EXPIRY DATE");
-                $sheet->setCellValue("F6", "REMARKS");
-    
-                $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
+
+                // Table header
+                $tableHeaderRow = $detailRow2 + 1;
+                $sheet->setCellValue("A{$tableHeaderRow}", "SERIAL NO");
+                $sheet->setCellValue("B{$tableHeaderRow}", "NAME OF THE MEDICINE");
+                $sheet->setCellValue("C{$tableHeaderRow}", "FREEZE QUANTITY");
+                $sheet->setCellValue("D{$tableHeaderRow}", "AVAILABLE QUANTITY");
+                $sheet->setCellValue("E{$tableHeaderRow}", "EXPIRY DATE");
+                $sheet->setCellValue("F{$tableHeaderRow}", "REMARKS");
+                $sheet->getRowDimension($tableHeaderRow)->setRowHeight(20);
+
+                $sheet->getStyle("A{$tableHeaderRow}:F{$tableHeaderRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-    
-                $row++;
-                $sr =  1;
-                foreach ($inspection_data as $index => $detail) {
-                    $sheet->setCellValue("A$row", $sr); 
-                    $sheet->setCellValue("B$row", getMedicinename($detail['medicine_id']));
-                    $sheet->setCellValue("C$row", $detail['freeze_quantity'] ?? '');
-                    $sheet->setCellValue("D$row", $detail['available_quantity'] ?? '');
-                    $sheet->setCellValue("E$row", Displaydateformat($detail['expired_date']));
-                    $sheet->setCellValue("F$row", $detail['remarks'] ?? '');
-    
-                    $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
+
+                // Data rows
+                $dataRow = $tableHeaderRow + 1;
+                $sr = 1;
+                foreach ($inspection_data as $detail) {
+                    $sheet->setCellValue("A{$dataRow}", $sr++);
+                    $sheet->setCellValue("B{$dataRow}", getMedicinename($detail['medicine_id']));
+                    $sheet->setCellValue("C{$dataRow}", $detail['freeze_quantity'] ?? '');
+                    $sheet->setCellValue("D{$dataRow}", $detail['available_quantity'] ?? '');
+                    $sheet->setCellValue("E{$dataRow}", Displaydateformat($detail['expired_date']));
+                    $sheet->setCellValue("F{$dataRow}", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
-                    $row++;
-                    $sr++;
+                    $dataRow++;
                 }
 
-                $sheet->mergeCells("A{$row}:F{$row}");
-                $sheet->setCellValue("A{$row}", "PPE'S For Visitors:- 05 Air Plugs, 05 Pairs Cotton Gloves, 02 Pairs Rubber Gloves, 05 Mask, 04 Spectacles.");
-                $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
+                // PPE Note
+                $sheet->mergeCells("A{$dataRow}:F{$dataRow}");
+                $sheet->setCellValue("A{$dataRow}", "PPE'S For Visitors:- 05 Air Plugs, 05 Pairs Cotton Gloves, 02 Pairs Rubber Gloves, 05 Mask, 04 Spectacles.");
+                $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-                $row++;
+                $sheet->getRowDimension($dataRow)->setRowHeight(40);
+                $dataRow++;
 
-                $sheet->mergeCells("A{$row}:F{$row}");
-                $sheet->setCellValue("A{$row}", "Remark By:- " . $inspection_detail->remark_by);
-                $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
+                // Remark
+                $sheet->mergeCells("A{$dataRow}:F{$dataRow}");
+                $sheet->setCellValue("A{$dataRow}", "Remark By:- " . $inspection_detail->remark_by);
+                $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-                $row++;
-    
+                $sheet->getRowDimension($dataRow)->setRowHeight(40);
+                $dataRow++;
+
                 // Signature Row
-                $signatureRow = $row;
+                $signatureRow = $dataRow;
                 $sheet->getRowDimension($signatureRow)->setRowHeight(80);
                 $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+
                 $sheet->getStyle("A{$signatureRow}:F{$signatureRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
-    
+
                 if (file_exists($inspection_created_by)) {
                     $drawing = new Drawing();
-                    $drawing->setName('Inspection and checked By');
+                    $drawing->setName('Signature');
                     $drawing->setPath($inspection_created_by);
                     $drawing->setCoordinates("C{$signatureRow}");
                     $drawing->setOffsetX(50);
@@ -598,33 +602,33 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                 }
-    
+
                 $richText = new RichText();
                 $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
                 $sheet->getCell("A{$signatureRow}")->setValue($richText);
-    
-                // Draw a border around the whole block
+
+                // Border for complete block
                 $endRow = $signatureRow;
-                $sheet->getStyle("A{$startRow}:F{$endRow}")->applyFromArray([
+                $sheet->getStyle("A{$headerRowStart}:F{$endRow}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THIN],
                     ]
                 ]);
-    
-                $row = $signatureRow + 6; // spacing after each section
+
+                // Add space before next block
+                $row = $signatureRow + 6;
             }
-    
+
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'Monthly Medicine Store Inspection.xlsx';
+            $fileName = 'Emergency Buyer First-Aid Bag checklist.xlsx';
             $filePath = storage_path("app/public/$fileName");
             $writer->save($filePath);
-    
+
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
-    
 
     public function ExportPdf(Request $request)
     {

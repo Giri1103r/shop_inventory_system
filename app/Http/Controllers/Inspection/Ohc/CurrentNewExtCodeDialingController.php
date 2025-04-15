@@ -20,6 +20,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 class CurrentNewExtCodeDialingController extends Controller
 {
     private $current_new_ext_code;
@@ -196,21 +206,25 @@ class CurrentNewExtCodeDialingController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            // $rules = [
-            //     'medicine_id' => 'required',
-            //     'freeze_quantity' => 'required',
-
-            // ];
-            // $messages = [
-            //     'medicine_id.required' => 'Medicine Name is Required',
-            //     'freeze_quantity.required' => 'Freeze Qantity is Required',
-
-            // ];
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     dd($validator);
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
+            $rules = [
+                'unit_id.*'        => 'required',
+                'department_id.*'  => 'required',
+                'emp_name.*'       => 'required',
+                'number.*'         => 'required',
+            ];
+            
+            $messages = [
+                'unit_id.*.required'        => 'Please select a unit for each row.',
+                'department_id.*.required'  => 'Please select a department for each row.',
+                'emp_name.*.required'       => 'Please enter the employee name for each row.',
+                'number.*.required'         => 'Please enter the number .',
+            ];
+            
+            $validator = Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             $this->current_new_ext_code->updates($id);
 
@@ -252,40 +266,125 @@ class CurrentNewExtCodeDialingController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $header = [
-                __("common.sno"),
-                'Unit',
-                'Department',
-                'Employee Name',
-                'Dailing Number',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
 
-            $i = 1;
-            foreach ($allData as $data) {
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->unit_name;
-                $export[] =  $data->department_name;
-                $export[] =  $data->emp_name;
-                $export[] =  $data->number;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
+            $row = 1;
 
-                $i++;
+            $leftLogoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($leftLogoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('KARAM Logo');
+                $drawing->setPath($leftLogoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Code Dailing .xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'borders' => [
+                    'outline' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+            ]);
+
+            $sheet->mergeCells("C1:D3");
+            $sheet->setCellValue("C1", "EOU Global Dialing");
+            $sheet->getStyle("C1:D3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 16],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => [
+                    'outline' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+            ]);
+
+            $headerRow = $row;
+
+            $headerRow = 4;
+
+            // --- HEADER ROW ---
+            $sheet->setCellValue("A{$headerRow}", "Sr.NO");
+            $sheet->setCellValue("B{$headerRow}", "Department");
+            $sheet->setCellValue("C{$headerRow}", "Employee Name");
+            $sheet->setCellValue("D{$headerRow}", "Code");
+            $sheet->getRowDimension($headerRow)->setRowHeight(15);
+
+
+            $sheet->getStyle("A{$headerRow}:D{$headerRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $dataRow = $headerRow + 1;
+
+            foreach ($allData as $unitName => $items) {
+                $sheet->mergeCells("A{$dataRow}:D{$dataRow}");
+                $sheet->setCellValue("A{$dataRow}", strtoupper($unitName));
+                $sheet->getRowDimension($dataRow)->setRowHeight(20);
+
+                $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'F4B2B2'], 
+                    ],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $dataRow++;
+            
+                $groupedByDept = $items->groupBy('department_name');
+            
+                foreach ($groupedByDept as $deptName => $deptItems) {
+                    $sheet->mergeCells("A{$dataRow}:D{$dataRow}");
+                    $sheet->setCellValue("A{$dataRow}", strtoupper($deptName));
+                    $sheet->getRowDimension($dataRow)->setRowHeight(20);
+
+                    $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'fill' => [
+                            'fillType' => Fill::FILL_SOLID,
+                            'startColor' => ['rgb' => 'D9EDF7'], 
+                        ],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+                    $dataRow++;
+            
+                    $sr = 1;
+                    foreach ($deptItems as $detail) {
+                        $sheet->setCellValue("A{$dataRow}", $sr);
+                        $sheet->setCellValue("B{$dataRow}", $detail['department_name']);
+                        $sheet->setCellValue("C{$dataRow}", $detail['emp_name']);
+                        $sheet->setCellValue("D{$dataRow}", $detail['number'] ?? '');
+            
+                        $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        ]);
+            
+                        $dataRow++;
+                        $sr++;
+                    }
+                }
+            }
+
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Current New Ext Dialing Code .xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+           
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }
