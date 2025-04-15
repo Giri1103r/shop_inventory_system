@@ -144,9 +144,10 @@ class SafetyWalkObservation extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id')
+        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as safety_id', 'inspection_safety_walk_observation.created_by as checked_by', 'inspection_safety_walk_observation.updated_by as verified_by', 'inspection_safety_walk_observation_details.*')
             ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_safety_walk_observation_details', 'inspection_safety_walk_observation.id', '=', 'inspection_safety_walk_observation_details.safety_walk_observation_id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -175,7 +176,7 @@ class SafetyWalkObservation extends Model
         }
 
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
 
         return  $query->get();
     }

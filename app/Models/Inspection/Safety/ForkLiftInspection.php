@@ -119,9 +119,10 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
+        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as safety_id', 'inspection_safety_forklift_inspection_details.*', 'inspection_safety_forklift_inspection.created_by as checked_by', 'inspection_safety_forklift_inspection.updated_by as verified_by')
             ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('inspection_safety_forklift_inspection_details', 'inspection_safety_forklift_inspection.id', '=', 'inspection_safety_forklift_inspection_details.inspection_id');
+
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];

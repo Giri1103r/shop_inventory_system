@@ -1084,5 +1084,4 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
 
 
 //PDF Pending
-// Forklift Inspection - Whole PDF
 // Safety Walk Observation - Whole PDF
