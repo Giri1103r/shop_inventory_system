@@ -101,6 +101,7 @@
                                             $inspection_details->id,
                                             SAFETY_GALLERY_INSPECTION,
                                         );
+
                                     @endphp
                                     @if (isset($signature))
                                         <div class="col-md-4 mb-2">
@@ -186,6 +187,13 @@
                                                             $inspection_details->id,
                                                             SAFETY_GALLERY_INSPECTION,
                                                         );
+                                                        $updated_time = GetSafetyUpdatedTime(
+                                                            $inspection_details->verified_by,
+                                                            $inspection_details->id,
+                                                            SAFETY_GALLERY_INSPECTION,
+                                                            WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                                                        );
+
                                                     @endphp
                                                 @endif
                                                 @if (isset($inspection_details->created_at))
@@ -193,7 +201,7 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label ">{{ __('inspection.date') }}</label>
                                                             <div class="view_data">
-                                                                {{ Displaydateformat($inspection_details->created_at) }}
+                                                                {{ Displaydateformat($updated_time->created_at) }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -275,21 +283,27 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
                                                         SAFETY_GALLERY_INSPECTION,
                                                     );
+                                                    $updated_time = GetSafetyUpdatedTime(
+                                                        $inspection_details->created_by,
+                                                        $inspection_details->id,
+                                                        SAFETY_GALLERY_INSPECTION,
+                                                        WAITING_FOR_CAPA_ACTION,
+                                                    );
                                                 @endphp
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($updated_time->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -328,21 +342,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection_details->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
                                             @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->verified_by,
                                                     $inspection_details->id,
                                                     SAFETY_GALLERY_INSPECTION,
                                                 );
+
+                                                $updated_time = GetSafetyUpdatedTime(
+                                                    $inspection_details->verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                    WAITING_FOR_CAPA_VERIFICATION,
+                                                );
                                             @endphp
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -380,21 +401,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection_details->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
                                             @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l1_manager_verified_by,
                                                     $inspection_details->id,
                                                     SAFETY_GALLERY_INSPECTION,
                                                 );
+
+                                                $updated_time = GetSafetyUpdatedTime(
+                                                    $inspection_details->l1_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                    WAITING_FOR_L1_VERIFICATION,
+                                                );
                                             @endphp
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -431,21 +459,27 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection_details->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
                                             @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l2_manager_verified_by,
                                                     $inspection_details->id,
                                                     SAFETY_GALLERY_INSPECTION,
                                                 );
+                                                $updated_time = GetSafetyUpdatedTime(
+                                                    $inspection_details->l2_manager_verified_by,
+                                                    $inspection_details->id,
+                                                    SAFETY_GALLERY_INSPECTION,
+                                                    WAITING_FOR_L2_VERIFICATION,
+                                                );
                                             @endphp
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -473,6 +507,7 @@
                                                     $inspection_details->id,
                                                     SAFETY_GALLERY_INSPECTION,
                                                 );
+
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">

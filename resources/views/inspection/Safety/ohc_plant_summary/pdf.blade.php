@@ -268,16 +268,16 @@
             <table id="firewaterpump" class="table table-bordered text-center" style="border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Sr.
+                        <th rowspan="2" style="border: 1px solid #000;  background-color: #ddd; vertical-align:middle; text-align:center">Sr.
                             No.
                         </th>
-                        <th rowspan="2" style="border: 1px solid #000; vertical-align:middle; text-align:center">Name
+                        <th rowspan="2" style="border: 1px solid #000;  background-color: #ddd; vertical-align:middle; text-align:center">Name
                             of
                             Water
                             Pump & Water Storage Tank
                         </th>
                         <th colspan="{{ $rowcount }}"
-                            style="border: 1px solid #000; text-align: center; vertical-align:middle; text-align:center">
+                            style="border: 1px solid #000; text-align: center;  background-color: #ddd; vertical-align:middle; text-align:center">
                             Capacity
                         </th>
                     </tr>

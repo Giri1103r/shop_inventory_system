@@ -217,7 +217,6 @@
                                             </div>
                                         </div>
                                     @endforeach
-                                    {{-- @dd($inspection_details); --}}
                                     @if (isset($inspection_details->approval_remarks))
                                         <div class="card-header-inner p-2">
                                             <h4 class="text-white">Approval</h4>
@@ -236,7 +235,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($inspection_details->created_at) }}
+                                                        {{ Displaydateformat($inspection_details->updated_at) }}
                                                     </div>
                                                 </div>
                                             </div>

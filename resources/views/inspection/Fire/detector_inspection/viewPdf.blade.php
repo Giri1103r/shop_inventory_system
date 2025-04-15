@@ -361,13 +361,20 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
                 </tr>
-
             @endif
+            @php
+                $updated_time = GetFireUpdatedTime(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    DETECTOR_INSPECTION,
+                    WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                );
+            @endphp
             @if (isset($forklift_details->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
                     </td>
                 </tr>
             @endif
@@ -382,10 +389,6 @@
                         </td>
                     </tr>
                 @endif
-
-
-
-
             @endif
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
@@ -424,10 +427,18 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->created_by) }}</td>
             </tr>
+            @php
+                $updated_time = GetFireUpdatedTime(
+                    $forklift_details->created_by,
+                    $forklift_details->id,
+                    DETECTOR_INSPECTION,
+                    WAITING_FOR_CAPA_ACTION,
+                );
+            @endphp
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
                 </td>
             </tr>
             <tr>
@@ -462,10 +473,18 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
             </tr>
+            @php
+                $updated_time = GetFireUpdatedTime(
+                    $forklift_details->verified_by,
+                    $forklift_details->id,
+                    DETECTOR_INSPECTION,
+                    WAITING_FOR_CAPA_VERIFICATION,
+                );
+            @endphp
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
                 </td>
             </tr>
             <tr>
@@ -500,10 +519,18 @@
                 <td width="48%" style="padding:5px;">
                     {{ getUserName($forklift_details->l1_manager_verified_by) }}</td>
             </tr>
+            @php
+                $updated_time = GetFireUpdatedTime(
+                    $forklift_details->l1_manager_verified_by,
+                    $forklift_details->id,
+                    DETECTOR_INSPECTION,
+                    WAITING_FOR_L1_VERIFICATION,
+                );
+            @endphp
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
                 </td>
             </tr>
             <tr>
@@ -538,10 +565,18 @@
                 <td width="48%" style="padding:5px;">
                     {{ getUserName($forklift_details->l2_manager_verified_by) }}</td>
             </tr>
+            @php
+                $updated_time = GetFireUpdatedTime(
+                    $forklift_details->l2_manager_verified_by,
+                    $forklift_details->id,
+                    DETECTOR_INSPECTION,
+                    WAITING_FOR_L2_VERIFICATION,
+                );
+            @endphp
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
                 </td>
             </tr>
             <tr>

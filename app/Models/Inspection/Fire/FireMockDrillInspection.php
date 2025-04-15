@@ -116,18 +116,13 @@ class FireMockDrillInspection extends Model
     {
         $request = request();
 
-
         $data = array(
             'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
-            'location' => decryptId($request->location_id),
-            'observation' => $request->observation['1'],
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
         );
-
-
         return $this->create($data);
     }
 

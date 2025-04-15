@@ -41,6 +41,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class OccupationHealthInspectionController extends Controller
 {
 
@@ -898,7 +899,6 @@ class OccupationHealthInspectionController extends Controller
                 $options =  getoption(OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
                 $document_no = $this->document_reference->selectOne($weeklyAmbulance->document_reference_id);
-
             }
             $data = [
                 'weeklyAmbulance' => $weeklyAmbulance,
@@ -948,116 +948,154 @@ class OccupationHealthInspectionController extends Controller
             $row = 1;
 
             $occupational_health_center = $this->occupation_inspection->Selectone($id);
-                $document_no = $this->document_reference->selectOne($occupational_health_center->document_reference_id);
+            $document_no = $this->document_reference->selectOne($occupational_health_center->document_reference_id);
 
 
-                $currentRow = $row;
+            $currentRow = $row;
 
-                // Logo Section
-                $logoLeftPath = public_path('assets/images/logo-dark.png');
-                if (file_exists($logoLeftPath)) {
-                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+            // Logo Section
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Left Logo');
-                    $drawing->setPath($logoLeftPath);
-                    $drawing->setCoordinates("B$currentRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(15);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
 
-                    $range = "A$currentRow:F" . ($currentRow + 2);
-                    $sheet->getStyle($range)->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }
-
-                // Title Section
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
-                    'font' => ['bold' => true, 'size' => 14],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                ]);
-
-                // Document Info
-                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
-                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
-
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
-
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'font' => ['bold' => true],
-                ]);
-
-                // Review Dates
-                $sheet->mergeCells("A" . ($currentRow + 3) . ":J" . ($currentRow + 3));
-                $richText1 = new RichText();
-                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
-                $richText1->createText(Displaydateformat($occupational_health_center->next_review_date));
-                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
-
-                $sheet->mergeCells("K" . ($currentRow + 3) . ":S" . ($currentRow + 3));
-                $richText2 = new RichText();
-                $richText2->createTextRun('LOCATION :-  ')->getFont()->setBold(true);
-                $richText2->createText(Displaydateformat($occupational_health_center->last_updated_date));
-                $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
-
-                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
+            }
 
-                // Table Header
-                $headerRow = $currentRow + 4;
-                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
-                $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE EMPLOYEE");
-                $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "DESIGNATION");
-                $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "DEPARTMENT");
-                $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "UNIT");
-                $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "MOBILE NUMBER");
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'font' => ['bold' => true],
+            // Document Info
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            // Review Dates
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($occupational_health_center->date_of_inspection));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('LOCATION :-  ')->getFont()->setBold(true);
+            $richText2->createText(getLocationname($occupational_health_center->location));
+            $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getShift($occupational_health_center->shift));
+            $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // next row 5
+
+            $sheet->mergeCells("A" . ($currentRow +4) . ":G" . ($currentRow +4));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' NEXT DUE DATE OF INSPECTION :- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($occupational_health_center->next_due));
+            $sheet->getCell("A" . ($currentRow +4))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow +4) . ":N" . ($currentRow +4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :- ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($occupational_health_center->unit));
+            $sheet->getCell("K" . ($currentRow +4))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow +4) . ":S" . ($currentRow +4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('FREQUENCY :-')->getFont()->setBold(true);
+            $richText2->createText(getFrequencyname($occupational_health_center->frequency));
+            $sheet->getCell("K" . ($currentRow +4))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // Table Header
+            $headerRow = $currentRow + 5;
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "CHECK ITEMS");
+            $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "QUANTITY");
+            $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "STATUS");
+            $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "REMARKS");
+
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $checklist=json_decode($occupational_health_center->checklist,true);
+
+            // Details Rows
+            $inspectionRow = $headerRow + 1;
+
+              foreach ($checklist as $index => $item) {
+                // Decode checklist if it's encoded as JSON
+                $decodedChecklist = is_string($item->check_items) ? json_decode($item->check_items, true) : $item->check_items;
+
+                // Convert decoded array to a readable string if it's an array
+                $checkItemsText = is_array($decodedChecklist) ? implode(', ', $decodedChecklist) : (string) $decodedChecklist;
+
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
+                $sheet->mergeCells("D$row:G$row")->setCellValue("D$row", $checkItemsText);
+                $sheet->mergeCells("H$row:J$row")->setCellValue("H$row", $item->quantity);
+                $sheet->mergeCells("K$row:M$row")->setCellValue("K$row", $item->status);
+                $sheet->mergeCells("N$row:P$row")->setCellValue("N$row", $item->remarks);
+
+
+                $sheet->getStyle("A$row:S$row")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
                 ]);
 
-                // Details Rows
-                $inspectionRow = $headerRow + 1;
-                // foreach ($first_aider_details as $index => $detail) {
-                //     $empName = getEmployeename($detail->emp_id) ?? '-';
-                //     $designation = $detail->designation_id ?? '-';
-                //     $department = getDepartment($detail->department_id) ?? '-';
-                //     $unit = getUnitname($detail->unit_id) ?? '-';
-                //     $mobile = $detail->mobile_no ?? '-';
-
-                //     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
-                //     $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $empName);
-                //     $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $designation);
-                //     $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $department);
-                //     $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $unit);
-                //     $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $mobile);
-
-                //     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
-                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                //     ]);
-
-                //     $inspectionRow++;
-                // }
-
-
-                $row = $inspectionRow + 2;
+                $inspectionRow++;
+            }
+            $row = $inspectionRow + 2;
 
 
             // Set headers for download
@@ -1069,7 +1107,6 @@ class OccupationHealthInspectionController extends Controller
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
             exit;
-
         } catch (\Exception $e) {
             return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }

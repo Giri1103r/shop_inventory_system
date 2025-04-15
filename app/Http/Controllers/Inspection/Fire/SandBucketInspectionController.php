@@ -244,7 +244,6 @@ class SandBucketInspectionController extends Controller
                 'paint_condition.*' => 'required',
                 'qualtiy_quantity_sand.*' => 'required',
                 'approach.*' => 'required',
-                'observation' => 'required',
             ];
 
             $messages = [
@@ -264,28 +263,18 @@ class SandBucketInspectionController extends Controller
                 'paint_condition.*.required' => 'Paint Condition is required.',
                 'qualtiy_quantity_sand.*.required' => 'Quality/Quantity of Sand is required.',
                 'approach.*.required' => 'Approach is required.',
-                'observation.*.required' => 'Observation is required.',
             ];
 
-
-
             $validator = Validator::make($request->all(), $rules, $messages);
-
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-
-
             $inspection = $this->detector->store();
             $inspection_type = SAND_BUCKET_INSPECTION;
             $id = $inspection->id;
-
             $inspection_details = $this->sandbucket_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
-
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'SAND BUCKET INSPECTION';
@@ -305,7 +294,6 @@ class SandBucketInspectionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             $title = 'Fire Associate create the Sand Bucket Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
@@ -330,7 +318,11 @@ class SandBucketInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
+            if (decryptId($request->observation_needed) == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -799,7 +791,7 @@ class SandBucketInspectionController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }else if (count($allData) > 20) {
+            } else if (count($allData) > 20) {
                 return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
