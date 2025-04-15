@@ -29,7 +29,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="weeklyambulance"
+                                    <form method="POST" id="OccupationalHealth"
                                         action="{{ admin_url('ohc/inspection/add/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
@@ -91,6 +91,20 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require" for="frequency_id">Frequency</label>
+                                                    <select name="frequency_id" id="frequency_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($frequency as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->frequency_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id" style="width: 100%"
                                                         class="form-control single-select">
@@ -135,7 +149,8 @@
                                                         inspection</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_inspection"
-                                                            id="date_of_inspection" class="form-control"autocomplete="off">
+                                                            id="date_of_inspection"
+                                                            class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -218,8 +233,8 @@
                                                                     <td
                                                                         style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                         <input type="number"
-                                                                            name="quantity[{{ $checklist->checklist_id ?? '' }}]" min="1"
-                                                                            class="form-control">
+                                                                            name="quantity[{{ $checklist->checklist_id ?? '' }}]"
+                                                                            min="1" class="form-control">
                                                                     </td>
 
                                                                     <td
@@ -239,33 +254,36 @@
 
 
                                         @if ($signature_upload->signature_upload != '')
-                                        <label class="form-label view_label">Requestor Signature</label>
+                                            <label class="form-label view_label">Requestor Signature</label>
 
-                                        <p>
-                                            <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                target="_blank">
-                                                <img src="{{ asset( $signature_upload->signature_upload) }}"
-                                                    style="width: 100px" alt="image">
-                                            </a>
-                                        </p>
-                                    @else
-                                        <div class="col-md-4 mb-3">
-                                            <label for="signature_image"
-                                                class="form-label fw-bold require">Requestor Signature</label>
-                                            <input type="file"
-                                                class="form-control validate-file-accept validate-file-required"
-                                                accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                id="signature_image">
-                                            <div class="text-danger"></div>
-                                            <small>Allowed file types: png, jpeg, jpg</small>
+                                            <p>
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="signature_image"
+                                                        class="form-label fw-bold require">Requestor
+                                                        Signature</label>
+                                                    <input type="file" class="form-control "
+                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                        id="signature_image">
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg, jpg</small>
 
-                                            <!-- Preview Container -->
-                                            <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                <img id="imagePreview" src="#" alt="Signature Preview"
-                                                    class="img-thumbnail" width="200">
+                                                    <!-- Preview Container -->
+                                                    <div id="imagePreviewContainer" class="mt-2"
+                                                        style="display: none;">
+                                                        <img id="imagePreview" src="#" alt="Signature Preview"
+                                                            class="img-thumbnail" width="200">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif  
+                                        @endif
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -313,83 +331,97 @@
             minDate: new Date()
 
         });
+
+
+        $(document).ready(function() {
+            $('#signature_image').on('change', function() {
+
+
+
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#imagePreview').attr('src', e.target.result);
+                    $('#imagePreviewContainer').show();
+                };
+                reader.readAsDataURL(file);
+            });
+
+        });
+
         $(function() {
-            $('#weeklyambulance').validate({
+            // Initialize validator
+            var validator = $('#OccupationalHealth').validate({
                 rules: {
-                    document_no: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 100,
-                    },
-                    issue_date: {
-                        required: true,
-                    },
                     shift: {
-                        required: true,
+                        required: true
                     },
                     review_date: {
-                        required: true,
+                        required: true
                     },
                     unit_id: {
+                        required: true
+                    },
+                    signature_image: {
                         required: true,
+                        extension: "png|jpeg|jpg",
+                        filesize: 5242880
                     },
                     date_of_inspection: {
-                        required: true,
+                        required: true
                     },
                     location_id: {
-                        required: true,
+                        required: true
                     },
                     next_due_on: {
-                        required: true,
+                        required: true
+                    },
+                    frequency_id: {
+                        required: true
                     }
                 },
                 messages: {
-                    document_no: {
-                        required: "Document Number is Required",
-                        minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
-                    },
-                    issue_date: {
-                        required: "Issue date is required",
-                    },
                     shift: {
-                        required: "Shift is required",
+                        required: "Shift is required"
                     },
+                    frequency_id: {
+                        required: "Frequency Name is required"
+                    },
+                    signature_image: {
+                        required: "Please upload your signature image.",
+                        extension: "Allowed file types: PNG, JPEG, JPG.",
+                        filesize: "File must be less than 5 MB."
+                    },
+
                     date_of_inspection: {
-                        required: "Date Of Inspection is required",
+                        required: "Date Of Inspection is required"
                     },
                     review_date: {
-                        required: "Review Date is required",
+                        required: "Review Date is required"
                     },
                     next_due_on: {
-                        required: "Next Due date is required",
+                        required: "Next Due date is required"
                     },
                     location_id: {
-                        required: "Location is required",
+                        required: "Location is required"
                     },
                     unit_id: {
-                        required: "Unit is required",
+                        required: "Unit is required"
                     }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
-                    if (element.is(':radio')) {
+                    if (element.is(':radio') || element.is('textarea') || element.is(
+                            'input[type="number"]')) {
                         element.closest('td').append(error);
-                    } else if (element.is('textarea')) {
-                        element.closest('td').append(error);
-                    }
-                    else if (element.is('input[type="number"]')) {
-                        element.closest('td').append(error);
-                    }
-                   else {
+                    } else {
                         element.closest('.form-input').append(error);
                     }
                 },
-                highlight: function(element, errorClass, validClass) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                 },
-                unhighlight: function(element, errorClass, validClass) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
@@ -406,62 +438,72 @@
                 }
             });
 
+            // Custom method for radio button requirement
+            $.validator.addMethod("radioRequired", function(value, element, param) {
+                return $('input[name="' + param + '"]:checked').length > 0;
+            }, "Please select an option");
 
-            // $.validator.addMethod("radioRequired", function(value, element, param) {
-            //     return $('input[name="' + param + '"]:checked').length > 0;
-            // }, "Please select an option");
-
-            // $.validator.addMethod("remarksRequired", function(value, element) {
-            //     var checklistId = $(element).attr('name').match(/\d+/)[
-            //         0];
-            //     return $('input[name="checklist_type_status[' + checklistId + ']"]:checked').length > 0 ? $
-            //         .trim(value).length > 0 : true;
-            // }, "Please provide remarks ");
-
+            // Custom method for quantity field
             $.validator.addMethod("quantityRequired", function(value, element) {
-                var checklistId = $(element).attr('name').match(/\d+/)[
-                    0];
-                return $('input[name="checklist_type_status[' + checklistId + ']"]:checked').length > 0 ? $
-                    .trim(value).length > 0 : true;
-            }, "Please provide remarks ");
+                var checklistId = $(element).attr('name').match(/\d+/);
+                if (checklistId && checklistId[0]) {
+                    return $('input[name="checklist_type_status[' + checklistId[0] + ']"]:checked').length >
+                        0 ?
+                        $.trim(value).length > 0 :
+                        true;
+                }
+                return true;
+            }, "Please provide quantity");
 
+            // Custom method for remarks field
+            $.validator.addMethod("remarksRequired", function(value, element) {
+                var checklistId = $(element).attr('name').match(/\d+/);
+                if (checklistId && checklistId[0]) {
+                    return $('input[name="checklist_type_status[' + checklistId[0] + ']"]:checked').length >
+                        0 ?
+                        $.trim(value).length > 0 :
+                        true;
+                }
+                return true;
+            }, "Please provide remarks");
 
-
-
+            // Add rules for radio buttons
             $('input[type="radio"]').each(function() {
                 var name = $(this).attr("name");
-                $('#weeklyambulance').validate().settings.rules[name] = {
+                validator.settings.rules[name] = {
                     radioRequired: name
                 };
             });
 
-            // Apply validation dynamically to remarks fields
+            // Add rules for remarks textarea
             $('textarea[name^="remarks"]').each(function() {
                 var name = $(this).attr("name");
-                $('#weeklyambulance').validate().settings.rules[name] = {
+                validator.settings.rules[name] = {
                     remarksRequired: true,
                     minlength: 3,
                     maxlength: 600
                 };
-                $('#weeklyambulance').validate().settings.messages[name] = {
+                validator.settings.messages[name] = {
                     remarksRequired: "Remarks are required if an option is selected",
                     minlength: "Remarks must be at least 3 characters",
                     maxlength: "Remarks must not exceed 600 characters"
                 };
             });
 
-            // Apply validation dynamically to quantity fields
+            // Add rules for quantity fields
             $('input[name^="quantity"]').each(function() {
                 var name = $(this).attr("name");
-                $('#weeklyambulance').validate().settings.rules[name] = {
+                validator.settings.rules[name] = {
                     quantityRequired: true,
-                    digits: true,
+                    digits: true
                 };
-                $('#weeklyambulance').validate().settings.messages[name] = {
+                validator.settings.messages[name] = {
                     quantityRequired: "Quantity is required if an option is selected",
-                    digits: "Quantity should be numeric",
+                    digits: "Quantity should be numeric"
                 };
             });
         });
+
+
     </script>
 @endpush

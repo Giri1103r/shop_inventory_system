@@ -650,22 +650,12 @@ class SafetyPermitController extends Controller
                 );
             }
 
-            // $user=$safetypermit->created_by;
-            // $unitID = User::where('id', $user)->pluck('unit_id')->first();
-
-            // if (CheckUserRole(ROLE_EHS_OFFICER)) {
-
-            //     if ($unitID != Auth::user()->unit_id) {
-            //         Session::flash('error', 'This permit belongs to another unit');
-            //         return redirect('safetypermit/list');
-            //     }
-            // }
+            
 
 
             return view('permit.safetypermit.approvereject', $data);
         } catch (Exception $ex) {
 
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong. Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -748,7 +738,7 @@ class SafetyPermitController extends Controller
 
 
             $this->statuslog->create($insert_array);
-
+            Session::flash('success', 'User Updated Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -1038,7 +1028,7 @@ class SafetyPermitController extends Controller
             );
 
             $this->statuslog->create($insert_array);
-
+            Session::flash('success', 'User Updated Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 
@@ -1135,7 +1125,7 @@ class SafetyPermitController extends Controller
                 'approved_by' => Auth::id(),
             );
             $this->statuslog->create($insert_array);
-
+            Session::flash('success', 'User Updated Successfully');
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
 

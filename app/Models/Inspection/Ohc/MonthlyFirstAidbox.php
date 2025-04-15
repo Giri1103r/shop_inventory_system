@@ -149,10 +149,11 @@ class MonthlyFirstAidbox extends Model
     {
 
         $request = request();
-        // dd($request->all());
+
         $insert_array = [
             'document_reference_id' => decryptId($request->document_reference_id),
             'shift' => decryptId($request->shift),
+            'unit' => decryptId($request->unit),
             'frequency' => decryptId($request->frequency),
             'date_of_inspection' => DBdateformat($request->date),
             'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

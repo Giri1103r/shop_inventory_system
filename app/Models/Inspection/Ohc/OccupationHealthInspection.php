@@ -160,6 +160,7 @@ class OccupationHealthInspection extends Model
             'checklist' => json_encode($responses),
 
             'shift' => decryptId($request->shift),
+            'frequency' => decryptId($request->frequency_id),
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
             'next_due' => DBdateformat($request->next_due_on),
@@ -279,24 +280,7 @@ class OccupationHealthInspection extends Model
         $search = '';
 
         $query = $this->select(
-            'inspection_ohc_occupational_health_inspection.*',
-            'inspection_static_docno.*',
-            'masters_unit.*',
-            'masters_location.*',
-            'inspection_shift_option.*',
-            'inspection_ohc_occupational_health_inspection.id as inspection_id',
-            'inspection_ohc_occupational_health_inspection.status as inspection_status',
-        )
-        ->leftJoin('masters_unit', 'inspection_ohc_occupational_health_inspection.unit', '=', 'masters_unit.id')
-        ->leftJoin('masters_location', 'inspection_ohc_occupational_health_inspection.location', '=', 'masters_location.id')
-        ->leftJoin('inspection_shift_option', 'inspection_ohc_occupational_health_inspection.shift', '=', 'inspection_shift_option.id')
-
-            ->leftJoin(
-                'inspection_static_docno',
-                'inspection_ohc_occupational_health_inspection.document_reference_id',
-                '=',
-                'inspection_static_docno.id'
-            );
+            'inspection_ohc_occupational_health_inspection.*');
             if (isset($request->status) && $request->status) {
                 $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status',decryptId( $request->status));
             }
