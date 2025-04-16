@@ -76,59 +76,65 @@ class AuditAnalysisChecklist extends Model
         return $datas;
     }
 
-    public function store($msdsId)
+
+    public function store($auditanalysis_id)
     {
         $request = request();
-        $data = [];
+        $audits = $request->input('audit');
 
-        foreach ($request->serial_number as $index => $serialNumber) {
-            $marksPerMonth = [];
+        if (!empty($audits) && is_array($audits)) {
+            foreach ($audits as $auditsData) {
+                $marksPerMonth = [];
 
-            $months = [
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December',
-                'January',
-                'February',
-                'March'
-            ];
+                // Month from the form (e.g., 'Sep')
+                $inputMonth = $auditsData['month'];
+                $mark = $auditsData['mark'] ?? 0;
 
-            foreach ($months as $month) {
-                $monthKey = strtolower($month);
-                $marksPerMonth[$monthKey] = $request->input("marks_{$monthKey}.{$index}", 0); // Default to 0
+                // Normalize month keys: April to March
+                $months = [
+                    'April',
+                    'May',
+                    'June',
+                    'July',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December',
+                    'January',
+                    'February',
+                    'March'
+                ];
+
+                foreach ($months as $month) {
+                    $monthKey = strtolower($month);
+                    $marksPerMonth[$monthKey] = (strcasecmp($inputMonth, substr($month, 0, 3)) === 0) ? $mark : 0;
+                }
+
+                $data = [
+                    'audit_analysis_id' => $auditanalysis_id,
+                    'serial_number'     => $auditsData['serial_number'],
+                    'department_id'     => decryptId($auditsData['department_id']),
+                    'unit_id'           => decryptId($auditsData['unit_id']),
+                    'marks'             => json_encode($marksPerMonth),
+                    'no_of_audit'       => $auditsData['no_of_audit'],
+                    'total_marks'       => $auditsData['total_marks'],
+                    'marks_obtained'    => $auditsData['marks_obtained'],
+                    'percentage'        => $auditsData['percentage'],
+                    'created_by'        => Auth::id(),
+                ];
+                $this->create($data);
             }
-
-            $insert_array = [
-                'audit_analysis_id' => $msdsId,
-                'serial_number' => $serialNumber,
-                'department_id' => $request->department_id[$index] ?? null, // Keep it as an integer
-                'unit_id' => $request->unit_id[$index] ?? null, // Keep it as an integer
-                'marks' => json_encode($marksPerMonth),
-                'no_of_audit' => $request->no_of_audit[$index] ?? 0,
-                'total_marks' => $request->total_marks[$index] ?? 0,
-                'marks_obtained' => $request->marks_obtained[$index] ?? 0,
-                'percentage' => $request->percentage[$index] ?? 0,
-                'created_by' => Auth::id(),
-            ];
-            
-
-
-            $data[] = $this->create($insert_array);
         }
-
-        return $data;
     }
 
-
-    public function selectOne($id)
+    public function selectOne($auditId)
     {
-        return  $this->where('id', $id)->first();
+        $data = $this->select('inspection_audit_analysis_checklist.*', 'masters_department.department_name', 'masters_unit.unit_name', 'inspection_audit_analysis.audit_analysis_id')
+            ->leftJoin('masters_department', 'inspection_audit_analysis_checklist.department_id', '=', 'masters_department.id')->leftJoin('inspection_audit_analysis', 'inspection_audit_analysis_checklist.audit_analysis_id', '=', 'inspection_audit_analysis.id')
+            ->leftJoin('masters_unit', 'inspection_audit_analysis_checklist.unit_id', '=', 'masters_unit.id')->where('inspection_audit_analysis_checklist.audit_analysis_id', $auditId)
+            ->get();
+        return $data;
     }
 
 
@@ -203,7 +209,7 @@ class AuditAnalysisChecklist extends Model
         return true;
     }
 
-    public function statuschange($id)
+    public function statuschange($auditId)
     {
         $request = request();
 
@@ -218,28 +224,48 @@ class AuditAnalysisChecklist extends Model
             );
         }
 
-        return $this->where('id', $id)->update($update_data);
+        return $this->where('audit_analysis_id', $auditId)->update($update_data);
     }
 
-    public function deleterecord($id)
+
+    public function getUniqueSchedule($departmentId, $unitId, $year, $month)
     {
+        $conflicts = [];
 
-        $update_data = array(
-            'status' => 0,
-            'trash' => 'YES',
-        );
+        $exists = self::where('department_id', $departmentId)
+            ->where('unit_id', $unitId)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->exists();
 
-        return $this->where('id', $id)->update($update_data);
+        if ($exists) {
+            $conflicts['exists'] = 'This department and unit already have a record for the selected year and month.';
+        }
+
+        return $conflicts;
+    }
+
+    public function getExistUniqueSchedule($departmentId, $unitId, $year, $month, $excludeId)
+    {
+        $conflicts = [];
+
+        $exists = self::where('department_id', $departmentId)
+            ->where('unit_id', $unitId)
+            ->whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->where('id', '!=', $excludeId)
+            ->exists();
+
+        if ($exists) {
+            $conflicts['exists'] = 'Another record with this department, unit, year and month already exists.';
+        }
+
+        return $conflicts;
     }
 
 
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_audit_analysis_checklist'));
-        static::created(function ($model) {
-
-            $uniqueId = 'AUDIT-ASSESSMENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['audit_id' => $uniqueId]);
-        });
     }
 }

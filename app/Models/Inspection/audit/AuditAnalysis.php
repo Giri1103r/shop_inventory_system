@@ -41,16 +41,16 @@ class AuditAnalysis extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                // $query->orWhereRaw('floor_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('audit_analysis_id LIKE "%' . $search . '%"');
             });
         }
 
-        // if (isset($request->category_name) && $request->category_name) {
-        //     $query = $query->where('inspection_audit_analysis.category_name', 'LIKE', '%' . $request->category_name . '%');
-        // }
-        // if (isset($request->category_id) && $request->category_id) {
-        //     $query = $query->where('inspection_audit_analysis.category_id', 'LIKE', '%' . $request->category_id . '%');
-        // }
+        if ($request->has('audit_analysis_id') && $request->audit_analysis_id) {
+            $query = $query->where('id', decryptId($request->audit_analysis_id));
+        }
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', decryptId($request->status));
+        }
         $query->orderBy('id', 'desc');
 
         $data_count = $query;
@@ -83,11 +83,13 @@ class AuditAnalysis extends Model
 
         return $this->create($insert_array);
     }
+  
+
     public function selectOne($id)
     {
-        return  $this->where('id', $id)->first();
+        $data = $this->select('inspection_audit_analysis.*')->where('id', $id)->first();
+        return $data;
     }
-
 
     public function exportdata()
     {
@@ -96,69 +98,17 @@ class AuditAnalysis extends Model
 
         $query = $this->select('inspection_audit_analysis.*');
 
-        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('category_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
-            });
+        if ($request->has('audit_analysis_id') && $request->audit_analysis_id) {
+            $query = $query->where('id', decryptId($request->audit_analysis_id));
         }
-
-        if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_audit_analysis.category_name', 'LIKE', '%' . $request->category_name . '%');
-        }
-        if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_audit_analysis.category_id', 'LIKE', '%' . $request->category_id . '%');
-        }
-
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "category_name":
-                    $query->orderBy('inspection_audit_analysis.category_name', $columnorder);
-                    break;
-                case "category_id":
-                    $query = $query->orderBy('inspection_audit_analysis.category_id', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_audit_analysis.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_audit_analysis.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_audit_analysis.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_audit_analysis.id', 'DESC');
-                    break;
-            }
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('status', decryptId($request->status));
         }
 
         return $query->orderBy('id', 'desc')->get();
     }
 
 
-    public function UniqueCheck($data)
-    {
-        $unique =  $this->where('category_name',  $data)->get();
-        if (count($unique) > 0) {
-            return false;
-        }
-        return true;
-    }
-
-    public function ExistuniqueCheck($data)
-    {
-        $unique =  $this->where('category_name',  $data['category_name'])
-            ->where('id', '!=', decryptId($data['id']))
-            ->get();
-        if (count($unique) > 0) {
-            return false;
-        }
-        return true;
-    }
 
     public function statuschange($id)
     {
@@ -195,8 +145,8 @@ class AuditAnalysis extends Model
         static::addGlobalScope(new TrashScope('inspection_audit_analysis'));
         static::created(function ($model) {
 
-            $uniqueId = 'AUDIT-ASSESSMENT-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['audit_id' => $uniqueId]);
+            $uniqueId = 'AUDIT-ANALYSIS--' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['audit_analysis_id' => $uniqueId]);
         });
     }
 }
